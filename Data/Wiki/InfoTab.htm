@@ -1,0 +1,45 @@
+#summary Info tab
+<font face="Verdana">
+
+=Info Tab Item Descriptions=
+
+<ul>
+    <li>
+        ==Histogram Bounds==
+
+        When the histogram is allocated before starting a render, it does not have the exact dimensions the user requested. Instead, it is slightly larger
+        to allow for filter padding around the edges. The box helps the user understand the relationship between the Cartesian space the histogram represents and the
+        dimensions of the memory allocated for it. This is mostly of engineering interest.
+
+        The corners going clockwise from the top left correspond to the bounds of the Cartesian space the histogram represents. They are upper left,
+        upper right, lower right, lower left.
+
+        The values in the middle of the top and left sides of the box represent the height and width of the histogram in memory.
+
+        <ul>
+            <li>
+                ===Gutter===
+
+                The amount of padding added to the edges of the histogram to allow for filtering.
+            </li>
+
+            <li>
+                ===DE Box Dimensions===
+
+                The size of the density filtering box used, with the pixel being filtered in the center. This value is used in calculating the gutter.
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        ==File Opening==
+
+        If there were any warnings or errors opening a file, the details will be displayed here.
+    </li>
+
+    <li>
+        ==Rendering==
+
+        If there were any problems creating a renderer, or finishing the rendering process, the details will be displayed here.
+    </li>
+</ul>

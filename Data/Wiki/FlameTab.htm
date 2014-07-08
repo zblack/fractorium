@@ -1,0 +1,319 @@
+#summary Flame tab
+<font face="Verdana">
+
+=Flame Tab Item Descriptions=
+
+<ul>
+    <li>
+        ==Color==
+
+        These settings affect color. There is no set combination to make a perfect image. Once you've settled on a design you like,
+        play with different color combinations to give it the desired final look.
+
+        <ul>
+            <li>
+                ===Brightness===
+
+                The brightness of the final output image.
+
+                Range: 0.05 - 50.
+
+                Render State: Density filtering.
+            </li>
+
+            <li>
+                ===Gamma===
+
+                The gamma of the final output image. Higher values will give better color, but will reveal more scattered points.
+                Lower values will reduce scattered points but will wash the colors out to white.
+
+                Range: 1 - 9999.
+
+                Render State: Final accumulation.
+            </li>
+
+            <li>
+                ===Gamma Threshold===
+
+                The gamma threshold of the final output image. Higher values will reduce scattered points, but will also reduce color quality.
+                Lower values will reveal more scattered points, but give better color. 
+
+                Range: 0 - 10.
+
+                Render State: Final accumulation.
+            </li>
+
+            <li>
+                ===Vibrancy===
+
+                The scale factor to apply to the alpha channel log scaling when gamma correcting the final output image. Higher values will
+                give more saturated colors. Lower values will wash the colors out to white.
+
+                Range: 0 - 1.
+
+                Render State: Final accumulation.
+            </li>
+
+            <li>
+                ===Highlight Power===
+
+                The highlight power of the final image. Set this to a value greater than zero if the colors don't look right.
+
+                A more thorough discussion of highlight power from the original flam3 documentation is <a href="https://code.google.com/p/flam3/wiki/HighlightPower">here</a> and <a href="https://code.google.com/p/flam3/wiki/NewFeatures">here</a>.
+
+                Range: -1 - 2.
+
+                Render State: Final accumulation.
+            </li>
+
+            <li>
+                ===Background===
+
+                The background color of the image. Ignored on the final image output if transparency is used.
+
+                Range: 0-255 for RGB.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Palette Mode===
+
+                The mode used for palette indexing when accumulating to the histogram.
+
+                Step: If the specified palette index is a fraction, round down to the nearest integer.
+
+                Linear: Blend the specified index with the one after it.
+
+                Render State: Full render.
+            </li>
+        </ul>
+    </li>
+    <li>
+        ==Geometry==
+        <ul>
+            <li>
+                ===Width===
+
+                The width in pixels of the viewable area. Read only.
+            </li>
+
+            <li>
+                ===Height===
+
+                The height in pixels of the viewable area. Read only.
+            </li>
+
+            <li>
+                ===Center X===
+
+                The center offset of the camera. The image will move in the opposite direction on the X axis.
+
+                Range: -10 - 10.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Center Y===
+
+                The center offset of the camera. The image will move in the opposite direction on the Y axis.
+
+                Range: -10 - 10.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Scale===
+
+                The number of pixels in the final image that correspond to the distance from 0 to 1 in the Cartesian rendering plane.
+                Increasing zooms in, decreasing zooms out. Quality is not scaled when this value is adjusted, so increased values
+                will degrade the final image quality.
+
+                Range: 10 - 3000.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Zoom===
+
+                The zoom level of the final image. Quality is scaled when this value is adjusted, so rendering time is greatly increased.
+
+                Range: 0 - 5.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Rotate===
+
+                The rotation of the final image.
+
+                Range: -180 - 180.
+
+                Render State: Full render.
+            </li>
+        </ul>
+    </li>
+    <li>
+        ==Filter==
+        <ul>
+            <li>
+                ===Spatial Filter Width===
+
+                The width of the spatial filter applied to the final image.
+
+                Range: 0.1 - 10.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Spatial Filter Type===
+
+                The type of the spatial filter applied to the final image.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Temporal Filter Width===
+
+                The width of the temporal filter used during animation. This value has no effect on the
+                interactive renderer, however it's stored in the Xml when saved.
+
+                Render State: Unchanged.
+            </li>
+
+            <li>
+                ===Temporal Filter Type===
+
+                The type of the temporal filter used during animation. This value has no effect on the
+                interactive renderer, however it's stored in the Xml when saved.
+
+                Render State: Unchanged.
+            </li>
+
+            <li>
+                ===DE Filter Min Radius===
+
+                The minimum filter radius to use when performing density filtering. Increasing this value
+                will add additional blurring even in high density areas, which is generally undesirable. This must
+                always be less than or equal to the DE max radius.
+
+                A more thorough discussion of density filtering from the original flam3 documentation is <a href="https://code.google.com/p/flam3/wiki/DensityEstimation">here</a>.
+
+                Range: 0 - 25.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===DE Filter Max Radius===
+
+                The maximum filter radius to use when performing density filtering. Increasing this value
+                will add additional blurring only to low density areas, which is generally desirable. This must
+                always be greater than or equal to the DE min radius.
+
+                When using OpenCL, if this value multiplied by the supersample is greater than 9, the performance
+                of density filtering will drop to that of the CPU. This is because a filter size greater than 9
+                cannot fit into local shared memory.
+
+                Range: 0 - 25.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===DE Curve===
+
+                The speed with which the density filter values decrease when moving away from the center pixel
+                being filtered. This value will almost never need to be anything other than the default of 0.40.
+
+                Range: 0.01 - 5.
+
+                Render State: Full render.
+            </li>
+        </ul>
+    </li>
+    <li>
+        ==Iteration==
+        <ul>
+            <li>
+                ===Passes===
+
+                The number of steps to break iteration into, applying density filtering each time.
+
+                This value should never be anothing other than one and will most likely be removed in a future release.
+
+                Range: 1 - 3.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Temporal Samples===
+
+                The number of temporal samples used to blend between frames during animation. This value has no effect on the
+                interactive renderer, however it's stored in the Xml when saved.
+
+                Range: 1 - 5,000.
+
+                Render State: Unchanged.
+            </li>
+
+            <li>
+                ===Quality===
+
+                The number of iterations per pixel in the final output image. Suggested values:
+
+                CPU, Interactive: 10
+
+                OpenCL, Interactive: 20 - 60
+
+                Final Render: 2000+
+
+                Values greater than 2000 don't offer much noticeable improvement.
+
+                Range: 1 - 200,000.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Supersample===
+
+                The value to multiply the dimensions of the histogram and density filter buffer by
+                to help eliminate jagged lines. During interactive editing, it should always be one,
+                and should only be increased when preparing for a final render. Values greater than one
+                will greatly impact performance and will increase memory usage.
+                                    
+                While a value of 2 offers some visual improvement, values greater than 2 don't offer noticeable improvement.
+
+                Range: 1 - 4.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Affine Interpolation===
+
+                The method to use when interpolating affine transforms during animation. This value has no effect on the
+                interactive renderer, however it's stored in the Xml when saved.
+
+                Render State: Unchanged.
+            </li>
+
+            <li>
+                ===Interpolation===
+
+                The method to use when interpolating flames during animation. This value has no effect on the
+                interactive renderer, however it's stored in the Xml when saved.
+
+                Render State: Unchanged.
+            </li>
+        </ul>
+    </li>
+</ul>

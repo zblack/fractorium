@@ -1,0 +1,266 @@
+#summary EmberCL implementation details.
+<font face="Verdana">
+
+= Introduction =
+
+EmberCL resides in a separate project that links to Ember and uses OpenCL to perform iteration, density filtering and final accumulation. Xml parsing, interpolation, and palette setup are still performed by the base library on the CPU.
+
+OpenCL was chosen because it provides run-time compilation and cross platform interoperability, both of which nVidia's CUDA platform lack.
+
+
+= Details =
+<ul>
+<li>
+==OpenCLWrapper==
+
+OpenCL programming requires a large amount of setup code before getting to the point where a kernel can be invoked. To relieve the programmer of having to deal with such details, a class named `OpenCLWrapper` is provided. It holds all buffers, images, kernel source and compiled programs in memory and automatically frees them as necessary. Each object can be accessed via name string or index in a vector.
+
+</li>
+<li>
+
+==Kernel Creators==
+
+At the heart of OpenCL is the kernel. It's a small program ran as the body of a number of threads executing in parallel. It takes the form of a text string that is compiled at run-time. The compiled binary output is passed to the device running OpenCL along with various arguments and grid dimensions. The grid is is a 1D, 2D or 3D matrix of blocks, and each block is a 1D, 2D or 3D matrix of threads. A full discussion of OpenCL is beyond the scope of this Wiki.
+
+EmberCL takes a unique approach to building and running kernels for fractal flame rendering that differs from the other two major OpenCL implementations, flam4 and Fractron. The Single Instruction-Multiple Thread (SIMT) nature of the devices OpenCL runs on suffer from an interesting limitation that CPUs do not suffer from. CPUs are very good at processing conditionals, but are slower at doing calculations. SIMT devices are bad at processing conditionals, but are very fast at doing calculations. Because of this, the EmberCL kernel creators build special versions of kernels for each rendering processing step with the conditionals dynamically stripped out at runtime. This creates highly condensed kernels that only run what is absolutely necessary for the Ember currently being rendered. The drawback of this approach is that if the Ember currently being rendered differs enough from the previous one rendered, an OpenCL recompilation will be triggered. These take from one third to one half of a second on a modern processor.
+
+<ul>
+<li>
+
+===Iteration Kernel===
+
+The iteration kernel is the most advanced, and most important portion of the EmberCL library. It is here that EmberCL achieves its large performance lead over other OpenCL implementations of the fractal flame algorithm.
+
+<ul>
+<li>
+
+====The Naive Implementation===
+
+The naive implementation copies the code from the CPU implementation to a kernel and each thread runs it in parallel. This is very inefficient and is an improper use of OpenCL.
+
+SIMT devices excel at executing the same instruction across multiple threads in a group. On nVidia hardware, this group is known as a warp and is 32 threads wide. On AMD hardware, it's known as a wavefront and is 64 threads wide. They operate at peak efficiency when every thread is executing the same instruction at once. If any threads take a different execution path than the others, then warp divergence occurs. Some threads have to sit idle and wait while others complete their operations until they can all get back in sync. This is a waste of resources and prevents the OpenCL device from achieving its full potential.
+
+This scenario occurs with the naive implementation. If each thread is choosing random xforms to apply, then they will be diverging from all other threads which picked different xforms. A smarter implementation for randomization is needed when using OpenCL, enter cuburn.
+
+</li>
+<li>
+
+====Randomization Without Warp Divergence====
+
+Cuburn was the senior project for 4 students at Central Florida University in the fall of 2011. It investigated this exact issue and came up with a novel solution using Python and CUDA. Their solution is implemented and improved on here in OpenCL and is what gives EmberCL its performance advantage. It takes the following form.
+
+Each iteration  block is 32 threads wide by 8 threads high, giving 256 threads. Each block gets a buffer of on-chip local shared memory with the same dimensions as the block (32x8) to store point iterations to.
+
+For each iteration, instead of every thread picking a random xform to apply, each row of threads gets a single random xform and all threads in it execute the same xform. The output of each iteration is accumulated to the histogram and also written to a different thread's location within shared memory.
+
+After each iteration, the process repeats by re-randomizing each row and having each thread use the point at its location in the shared memory buffer, which was the previous output of a different thread, as the input to the xform it applies. This process is repeated 256 times for each thread, giving a total of 65,536 iterations per block.
+
+The combination of point shuffling and randomizing the xform each row applies on each iteration achieves the goal of eliminating warp divergence while also producing high quality randomization.
+
+</li>
+<li>
+
+====MWC vs ISAAC====
+
+As mentioned in the Ember description, ISAAC is the RNG used in both Ember and flam3. While performing very well on the CPU, it's a poor choice for OpenCL since it would require a large amount of memory for each thread to keep its own copy. An alternative used in cuburn is the multiply-with-carry RNG. EmberCL uses this as well because it gives good randomization while requiring very little memory. Each block is passed a different seed, and each thread adds its index to the seed to ensure that all threads take a different trajectory when using the RNG.
+
+</li>
+<li>
+
+====Run-time Compilation====
+
+As mentioned above, one of the key strengths of OpenCL is run-time compilation. EmberCL takes heavy advantage of this at every opportunity to achieve maximum performance. The CPU implementation has many conditional checks during iteration. These include the presence/absence of post affine transforms, final xforms, palette indexing mode, pre-blur variations as well as virtual functions (or a case statement in flam3) to execute each variation. Such a large number of conditionals would be detrimental to OpenCL performance. Run-time compilation allows us to eliminate these completely. Once the `Ember` to be rendered is known, the kernel to render it is dynamically generated with only the necessary parts included and is compiled on the fly.
+
+</li>
+<li>
+
+====Race Conditions====
+
+One area where EmberCL differs from cuburn is that it does not account for the case of two threads accumulating to the same bucket in the histogram at the same time by default. Cuburn devoted a large portion of the paper to experimenting with every possible way to avoid such a condition. EmberCL ignores these efforts by default because they are mostly unnecessary. The whole point of using the GPU is to get real-time fractal flame rendering, or to make pre-rendered animations more quickly. With animating flames, a few pixels missing a few iteration values will be unnoticeable to the human eye. The small benefit of a clever implementation of such a mechanism is nowhere near being worth the performance hit and additional code complexity. However, is still interested in comparing the differences between locked and unlocked iteration, they can specify the `--lock_accum` argument on the command line for `EmberRender.exe` and `EmberAnimate.exe`. This will prevent race conditions, but will dramatically slow down the performance because the locking is achieved by using software atomic operations which are very slow.
+
+</li>
+<li>
+
+====Compatibility With CPU====
+
+A concern with GPU implementations of any program originally written for a CPU is that it will not be able to implement every feature from the original. EmberCL addresses these concerns by implementing all other features involved with iteration which were originally implemented on the CPU. These are fusing, opacity, bad value detection, xaos, post affine transforms, final xforms, and step vs linear palette indexing for histogram accumulation.
+<br></br>
+
+</li>
+</ul>
+</li>
+
+<li>
+===Density Filter Kernel===
+
+As mentioned in the algorithm overview description, density filtering can either be basic log scaling, or a more advanced Gaussian blur filter. EmberCL implements both of these. The former is trivial, the latter is very complex. The extreme difficulty of fully implementing density filtering such that it operates efficiently and also gives identical output to the CPU has prevented it from being done elsewhere. EmberCL overcomes this and is the first full implementation of variable width Gaussian density filtering for fractal flames in OpenCL. Seven different methods were tried, with the fastest being the chosen one. There are two main kernels used for density filtering, one with shared memory and one without.
+
+<ul>
+<li>
+
+====Shared Memory Kernel====
+
+The shared memory kernel is used for final filter widths of 9 or less with float data types due to the limited space of shared memory. As stated in the algorithm overview, density filtering multiplies the log scaled value at a given histogram bucket by a filter value and adds it to the surrounding pixels in the accumulator. This process repeats for the width of the filter and the scaling values decrease as it moves outward from the pixel being operated on.
+
+When running on a GPU, these repeated reads and writes to global memory are very slow. A better approach is for each thread to read a pixel from the histogram, and perform filtering to a shared memory buffer. Once all threads in the block have finished, the final result from the shared memory box is written to the accumulator.
+
+In the EmberCL implementation, each block is 32x32 threads, and the box size of the shared memory is the size of the block plus the width of the filter in each direction. So for the commonly used filter width of 9, the box size would be 32 + 9 x 32 + 9, or 41 x 41. Each block processes a box and exits. No column or row advancements take place.
+
+The filter is applied in a different manner than on the CPU to avoid race conditions. On the CPU, it's applied from the center pixel outward. In OpenCL, it's applied by row from top to bottom.
+
+Certain variables were reused because the code is so complex, the card runs out of resources for block sizes greater than 24.
+
+</li>
+<li>
+
+====Non-shared Memory Kernel====
+
+The non-shared memory kernel is used for double precision data types or for final filter widths of 10 or more. This is commonly the case when supersampling is used because the final filter width is the supersample value times the max density filter radius. It takes roughly the same form as the shared memory kernel, but omits shared memory and deals directly with the histogram and accumulator for all reads and writes. Due to the excessive global memory accesses in this method, it offers no real performance improvement over the CPU.
+
+</li>
+<li>
+
+====Filter Overlapping====
+
+Both of these methods present a problem when two kernels are operating on an adjacent block of pixels. Although the pixels themselves don't overlap, the filters extending out from the edges of the blocks do overlap. To overcome this, the kernels are launched in multiple passes that are spaced far enough apart vertically and horizontally on the image so as to not overlap.
+
+</li>
+<li>
+
+====Special Supersampling Cases====
+
+Density filtering performs a few extra calculations depending on the supersample value used. To eliminate conditionals and achieve maximum performance, a separate kernel is built for each of these cases for the shared and non-shared memory cases. This leads to a total of 6 possible kernels being built to cover all scenarios. After being built once, the compiled output is saved for all subsequent renders during a program run.
+<br></br>
+
+</li>
+</ul>
+</li>
+
+<li>
+
+===Final Accumulation Kernel===
+
+The implementation of final accumulation in OpenCL is the simplest of the kernels and is copied almost verbatim from the Ember CPU code. To maintain complete compatibility with the CPU, all advanced features such as transparency, early clipping and highlight power are implemented. Like density filtering, unnecessary calculations and conditionals are eliminated by providing different kernels depending on the parameters of the Ember being rendered. They are:
+
+-Early clipping with transparency.<br></br>
+-Early clipping without transparency.<br></br>
+-Late clipping with transparency.<br></br>
+-Late clipping without transparency.
+
+All are assumed to have an alpha channel. Three channel RGB output is implemented, but not supported.
+<br></br>
+
+</li>
+</ul>
+</li>
+
+<li>
+
+==RendererCL==
+
+The main rendering class in Ember is `Renderer`. EmberCL contains a class  which derives from `Renderer<T>` named `RendererCL<T>` and fully supports both single and double precision data types like the base class does.
+
+`RendererCL` overrides various virtual functions defined in `Renderer` and implements their processing on the GPU in OpenCL.
+
+<ul>
+<li>
+
+===Shared vs. Un-shared===
+
+`RendererCL` can operate in two modes, shared and un-shared.
+
+<ul>
+<li>
+====Un-shared====
+
+The final output is rendered to an OpenCL 2D image which no other running program is accessing.
+</li>
+<li>
+
+====Shared====
+
+The final output is rendered to an OpenCL 2D image which another program is also using as an OpenGL 2D texture. This is how interactive rendering is done in the Fractorium GUI. Shared mode benefits from the efficiency of a shared image/texture because no copying is necessary and all outputs remain on the GPU.
+For sharing to work, every call to create, access or destroy the output image must be preceded by a call to acquire the object from OpenGL and followed by a call to release it. These calls are handled internally by `OpenCLWrapper`.
+</li>
+
+In either of these modes, the output image can be copied back into main memory as needed for use in writing the final output file.
+</ul>
+</li>
+<li>
+
+===Parameter Differences===
+
+A few user configurable properties from `Renderer` are hard coded in `RendererCL` due to how processing is implemented.
+
+<ul>
+<li>
+====Thread Count====
+
+Always considered to be 1, because threading is managed inside the kernels.
+</li>
+<li>
+====Channels====
+
+Always 4 because the type of the output image is `CL_RGBA`. Final output file type can only be PNG.
+</li>
+<li>
+====Bits Per Pixel====
+
+Always 8, 16bpp for PNG images is only supported in Ember on the CPU.
+</li>
+<li>
+====Sub Batch Size====
+
+Always `iterblocksWide * iterblockshigh * 256 * 256` since that is the number of iterations performed in a single kernel call.
+</li>
+</ul>
+</li>
+<li>
+
+===Kernel Launching===
+
+<ul>
+<li>
+
+====Iteration Grid Dimensions====
+
+The iteration kernel is launched in a grid which is 64 blocks wide by 2 blocks high. Each block has 256 (32x8) threads which each perform 256 iterations. This gives 8,388,608 iterations per kernel launch. The grid dimensions were empirically derived and may change in the future as new hardware is released.
+
+</li>
+<li>
+
+====Passing Arguments====
+
+An `Ember` object cannot be passed directly from the CPU side to an OpenCL kernel. Instead, stripped down versions of the `Ember` object and its filters are created and copied right before each kernel launch and are passed as arguments. However, the palette can be passed verbatim since it's just a 256 element `vector<vec4<float>>`.
+
+</li>
+<li>
+
+====Fusing====
+
+Fusing is very important for image quality. Omitting it or choosing the wrong value will lead to strange artifacts in the final output image. Since there are so many threads, setting the fuse value is not as simple as just using the same value from the CPU side.
+
+Forcing each thread to fuse on each kernel call would be a huge waste of resources since each only performs 256 iterations. On the other hand, not fusing often enough after several kernel calls leads to bad image quality. `RendererCL` uses an empirically derived solution of having every thread fuse 100 times for every 4 kernel calls, which is 1024 iterations.
+
+</li>
+<li>
+
+====Recompilation====
+
+As mentioned above, a custom kernel is created and compiled for every `Ember` that is rendered. However, compilation is not always required if the `Ember` to be rendered does not differ significantly from the previous one rendered. Differences in the following parameters will trigger a recompilation:
+
+-Xform count.<br></br>
+-Presence/absence of post affine transform.<br></br>
+-Presence/absence of final xform.<br></br>
+-Presence/absence of xaos.<br></br>
+-Step/linear palette indexing mode.<br></br>
+-Variations present in each xform.
+
+When requesting iteration to commence, the checks above will be made. If any mismatches occur, a recompilation will be triggered right before the kernel launch.
+
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>

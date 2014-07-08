@@ -1,0 +1,171 @@
+#summary Ember implementation details for developers.
+<font face="Verdana">
+
+=Introduction=
+
+This page is intended for developers who wish to get familiar with the Ember code.
+
+As stated on the main page, the intent of Ember was to re-write the entire flam3 library and the 3 command line programs that use it, in C++. By using modern design and language techniques, a legacy code base was made to be easily understandable to the common programmer. The extensibility of C++ also allows derived projects to implement alternative renderers as they are developed, while still maintaining 100% compatibility with the original. Below are the main design features of Ember and how they compare to the original implementation in flam3.
+
+Ember takes advantage of a few core language features in C++ that help simplify the coding effort.
+
+<ul>
+<li>
+===Templates===
+
+Since the process of rendering a fractal flame from start to finish is lengthy, it's interesting to experiment with how using different data types affects performance and image quality. flam3 implemented just such a capability, but since C doesn't have the concept of templates, it did something else. It used a tricky method of strategically positioning #include statements after #defines for each type. C++ provides a more elegant solution through the use of template arguments. Ember supports not only changing the data types of the histogram, but of every calculation used in the entire algorithm. Supported types are float and double.
+</li>
+
+<li>
+===Lambdas===
+
+These were added to the standard in C++0x and have been a blessing to those implementing multi-threaded programs ever since. Before that, the traditional threading model required a programmer to butcher their design just to achieve parallelism. Modern C++ offers a vast improvement through the use of lambdas. These allow us to write multi-threaded code while keeping good program design structure in tact. Ember achieves this by using the Intel Threading Building Blocks library for all threading needs.
+</li>
+</ul>
+=Details=
+
+<ul>
+<li>
+==Containers==
+
+Flam3 contained very verbose code for managing seemingly simple memory operations such as keeping a list of xforms. With the C++ Standard Template Library, such code can be greatly reduced. Containers are used extensively throughout Ember, greatly simplifying the code, reducing its verbosity and enhancing its readability.
+
+</li>
+<li>
+
+==Variations==
+
+In flam3, for any action to be taken on a variation, such as calling it or setting parameters, a massive case statement had to be used. The number of cases equaled the number of variations supported by that build. If a new variation was added, all case statements had to be updated.
+
+In Ember, this cumbersome burden was alleviated by making each variation a class which derived from a base variation class. Each implements a virtual function which does the processing work. Other virtual functions are used for setting random or default states for parametric variations.
+
+In Apophysis, users can add variations by compiling their own DLLs. Ember could conceivably support such a feature in the future by having DLLs return pointers to base variation objects that have been instantiated as derived variations. However, no such support has been implemented. For the time being, new variation classes will periodically be added to Ember.
+
+</li>
+<li>
+
+==Iterating==
+
+Iteration is the portion of the algorithm where the most time is spent. Any possible optimization that can be taken, should be taken within the innermost loops. Flam3 missed a few opportunities to do this, so Ember optimized every last piece to the maximum possible extent.
+
+<ul>
+<li>
+===Fusing===
+
+As stated in the paper, the first 20 iterations are not plotted in order to get a more concentrated image with less stray points. This is somewhat misleading, since the number flam3 actually uses is 15. If early clipping is used, the number of fuse iterations is 100.
+
+Further deviating from the paper, fusing is not just done at the very beginning. Rather, all iteration is broken up into chunks, or sub batches, of 10,000. At the beginning of each sub batch, the point trajectory is reset, and fused again. Assuming a fuse value of 15 and a sub batch size of 10,000, fusing takes place for 0.0015 of the total iterations.
+
+For each iteration, flam3 checks to see whether fusing is done yet, if so, the point is plotted. This is wasteful to check for something every iteration that occurs so infrequently. In the interest of maximum efficiency, Ember splits all iteration up into two identical loops, one with fusing and one without. This reduces the number of conditional checks needed.
+
+A further optimization opportunity was that when a final xform was present, flam3 applied it during fusing, even though the computed point was never used. Ember omits the application of the final xform during fusing.
+
+</li>
+<li>
+
+===Point Assignment===
+
+The general structure of the iteration loop in flam3 looks like:
+
+{{{
+p2 = xform(p1)
+save p2 to temp buffer for plotting later
+p1 = p2
+}}}
+
+This was optimized to omit the assignment from p2 back to p1 for the start of the next iteration. Instead, no temporary points are ever created. Rather, the indices of the temporary buffer to read from and write to are incremented. Further, the buffer is read from and written to directly, alleviating the need for temporary assignments. It roughly takes the form of:
+
+{{{
+i = 0
+while (i < SubBatchSize)
+{
+    xform(buf[i], buf[i + 1])
+    i++
+}
+}}}
+
+</li>
+<li>
+
+===Xaos===
+
+When xaos is used, an additional calculation must be performed to look up the next random xform to apply. Ember bypasses this when xaos is not present by having two separate classes for iteration, one with xaos and one without.
+
+</li>
+</ul>
+</li>
+<li>
+
+==Filtering==
+
+For density and spatial filtering, a box of pixels is processed. Flam3 accessed pixels in row, column order. This is cache inefficient because every pixel access is on a different row. Ember optimizes filtering by processing in a more cache-friendly column, row order.
+
+While flam3 parallelized the Gaussian density filtering, it did not do so for basic log scale filtering (max radius = 0). While this method is seldom used for a final output image, it is used for interactive renders to give a preview image before full iteration is complete. In an effort to give a more responsive GUI, Ember parallelized this method.
+
+During an interactive render, the only parameters that are usually changing are the affine transforms. Because this doesn't affect many of the other parameters used to render, intelligent checks are used to skip any unnecessary memory allocations each time the main render function is called. This technique is used with density and spatial filters to only recreate them if the requested filter differs from the one previously used.
+
+</li>
+<li>
+
+==Incremental Rendering==
+
+Ember is designed to be run from the command line, or from an interactive GUI. To facilitate the latter, the rendering process keeps state information about its progress. This is done so that it can be aborted in mid-render, and resumed later on. It also serves to ensure the minimum amount of processing is performed in response to a change in the `Ember` being rendered. For example, if a render completes and the user only wants to change the vibrancy, then only final accumulation needs to be ran again. Another feature is that if a render completes and the user increases the quality, all previous iteration information is preserved in the histogram and the new iterations for the quality difference are simply added to them.
+
+The downside of this design is that it admittedly butchers the structure of the main rendering function with numerous conditionals. The cost is worth it as the state-preserving design greatly facilitates interactive rendering from a GUI.
+
+</li>
+<li>
+
+==Final Accumulation==
+
+This stage is where color correction and spatial filtering are done. Flam3 did not multi-thread this step because the percentage of the total time spent here is small. Ember easily parallelized it with the aforementioned use of lambdas and TBB. While inconsequential in a headless render, it's very helpful in providing more responsiveness in an interactive render.
+
+The process was further optimized by eliminating many of the redundant assignments and bounds checks that flam3 did.
+
+</li>
+<li>
+
+==Xml Parsing==
+
+While not much of a speed bottleneck, Xml parsing can take some time if reading in a large file, such as is used for animations. Flam3 implemented this in the least efficient manner possible by reading a single character at a time. Ember does this much faster by reading the entire file at once. The structure of the Xml parsing functions remains mostly the same.
+
+</li>
+<li>
+
+==Affine Transforms==
+
+In every iteration, these are applied before, and optionally after, variations are applied. Flam3 treated them as an array of 6 coefficients arranged in column, row order. Ember puts them in a class called Affine2D so they can be accessed more clearly using their coefficient labels, A-F. The layout of the two is like so:
+
+flam3: 3 columns of 2 rows each. Accessed col, row.
+
+{{{
+[a(0,0)][b(1,0)][c(2,0)]
+[d(0,1)][e(1,1)][f(2,1)]
+}}}
+
+Ember: 2 columns of 3 rows each. Accessed col, row.
+
+{{{
+[a(0,0)][d(1,0)]
+[b(0,1)][e(1,1)]
+[c(0,2)][f(1,2)]
+}}}
+
+</li>
+<li>
+
+==Matrices==
+
+All matrices and vectors are from the glm library and receive the same template argument used to create the classes they're used in.
+
+</li>
+<li>
+
+==Random Numbers==
+
+Randomization is at the heart of the fractal flames algorithm. Flam3 used the ISAAC random number generator. Ember does the same, but uses a C++ version with a few additional convenience functions added.
+
+The flam3 method of using a buffer to hold xform indices to randomly select is also used in Ember. However, flam3 made each element an unsigned short. Since an Ember will have nowhere near 256 xforms, the elements were made to be 1 byte each in an effort to make the buffer fit into the cache better.
+
+</li>
+</ul>

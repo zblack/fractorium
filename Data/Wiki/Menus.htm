@@ -1,0 +1,214 @@
+#summary Menus
+<font face="Verdana">
+
+=Menu Item Descriptions=
+<ul>
+    <li>
+        ===Menu===
+        <ul>
+            <li>
+                ====File====
+                <ul>
+
+                    <li>
+                        =====New Flock=====
+
+                        Create a new set of 10 randomly generated flames and set the first one as the current flame. This will clear whatever is currently open.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====New Empty Flame=====
+
+                        Add a new empty flame to the end of the open flames and set it as the current flame.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====New Random Flame=====
+
+                        Add a new random flame to the end of the open flames and set it as the current flame.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Copy Flame=====
+
+                        Add a copy of the current flame to the end of the open flames and set it as the current flame.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Open=====
+
+                        Open a flame Xml file. This will clear whatever is currently open.
+                    </li>
+
+                    <li>
+                        =====Save Current as Xml=====
+
+                        Save the current flame to an Xml file. If it has not yet been saved, a file save dialog will be shown. On subsequent saves, no dialog will be shown
+                        and it will use the filename specified the first time the dialog was shown.
+                    </li>
+
+                    <li>
+                        =====Save Entire File as Xml=====
+
+                        Save the all currently open flames to a single Xml file. If it has not yet been saved, a file save dialog will be shown. On subsequent saves, no dialog will be shown
+                        and it will use the filename specified the first time the dialog was shown.
+                    </li>
+
+                    <li>
+                        =====Save Current Screen=====
+
+                        Save the current screen to an image file.
+                    </li>
+
+                    <li>
+                        =====Save Current To Open File=====
+
+                        Save the current flame back to the open flame list in memory. This does not save anything to disk.
+                    </li>
+
+                    <li>
+                        =====Exit=====
+
+                        Exit the program. Save all current work before exiting.
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                ====Edit====
+                <ul>
+                    <li>
+                        =====Undo=====
+
+                        Revert to the previous edit. The undo list is updated upon completion of the rendering process, when not traversing the undo list.
+                        
+                        If an edit is made while traversing the list, the list is cleared.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Redo=====
+
+                        If traversing the undo list, move forward to the next edit.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Copy Xml=====
+
+                        Copy the current flame as an Xml to the clipboard.
+                    </li>
+
+                    <li>
+                        =====Copy All Xmls=====
+
+                        Copy all flames in the currently opened file as Xmls to the clipboard.
+                    </li>
+
+                    <li>
+                        =====Paste Xml Append=====
+
+                        Paste the current clipboard text as a flame appended to the list of currently opened flames.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Paste Xml Over=====
+
+                        Paste the current clipboard text over the list of currently opened flames. This will clear whatever is currently open.
+
+                        Render State: Full render.
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                ====Tools====
+                <ul>
+                    <li>
+                        =====Add Reflective Symmetry=====
+
+                        Add an xform that will reflect the image along the Y axis. This is accomplished by giving the xform a weight of one, color speed of 0 and
+                        a single linear variation with a weight of one. Its affine is centered on 0,0 with X at -1,0 and Y at 0,1.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Add Rotational Symmetry=====
+
+                        Add an xform that will duplicate a rotated portion of the image along the Y axis. This is accomplished by giving the xform a weight of one, color speed of 0 and
+                        a single linear variation with a weight of one. Its affine is centered on 0,0 with X at -1,0 and Y at 0,-1.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Add Reflective and Rotational Symmetry=====
+
+                        Add two xforms, one for reflective symmetry and another for rotational symmetry.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Clear Flame=====
+
+                        Clear the current flame such that it only has one xform with no variations, pre and post affine transforms set to the identity matrix, and no xaos.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        =====Render Previews=====
+
+                        Re-render all previews.
+                    </li>
+
+                    <li>
+                        =====Stop Rendering Previews=====
+
+                        Stop rendering previews.
+                    </li>
+
+                    <li>
+                        =====Final Render=====
+
+                        Display the final rendering dialog. This will stop the render, and restart it from the beginning when the dialog is closed.
+
+                        Render State: Full render.
+                    </li>
+                    <li>
+                        =====Options=====
+
+                        Display the options dialog. This will stop the render, and restart it from the beginning when the dialog is closed.
+
+                        Render State: Full render.
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                ====Help====
+                <ul>
+                    <li>
+                        =====About=====
+
+                        Show the about box which gives a description, version, and licensing information about the code this project uses.
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+</ul>

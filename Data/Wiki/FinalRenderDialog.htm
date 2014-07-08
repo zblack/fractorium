@@ -1,0 +1,229 @@
+#summary Final render dialog
+<font face="Verdana">
+
+=Final Render Dialog=
+
+This dialog allows the user to render flames to an output file. It can render either the current flame, or all
+open flames. When rendering all, they can either be treated as individual images, or as frames in an animation. If the
+later is chosen, temporal samples are used to achieve motion blur. All values specified here will be saved between program runs.
+
+Before rendering begins, the current flame will be saved back to the opened file in memory.
+
+Miscellaneous messages are shown in the bottom text box.
+
+<ul>
+    <li>
+        ==Early Clip==
+
+        Whether to apply color correction before spatial filtering. It's recommended to only use this if the colors don't look right.
+
+        A more thorough discussion of early clip from the original flam3 documentation is <a href="https://code.google.com/p/flam3/wiki/NewFeatures">here</a>.
+    </li>
+
+    <li>
+        ==Transparency==
+
+        Whether the empty pixels in the image should be transparent, or use the background color. This only applies when saving as PNG.
+    </li>
+
+    <li>
+        ==Use OpenCL==
+
+        Whether to use OpenCL in the rendering process. It is highly recommended that you use this if your video card supports it.
+    </li>
+                        
+    <li>
+        ==Use Double Precision==
+
+        Whether to use double precision numbers in the rendering process. This will slow down the render and double the memory usage, but will produce a better looking image in some cases.
+    </li>
+
+    <li>
+        ==Save Xml==
+
+        Whether to also save the Xml of every rendered image in the same folder the image is saved.
+    </li>
+
+    <li>
+        ==Render All==
+
+        Whether to render all currently opened flames, or just the current one. When checked, image and Xml output names will be auto generated.
+    </li>
+
+    <li>
+        ==Render as Animation Sequence==
+
+        When Render All is checked, whether to use the Temporal Samples value specified to create motion blurring. Disabled if Render All is unchecked.
+    </li>
+
+    <li>
+        ==Keep Aspect Ratio==
+
+        Whether to keep the aspect ratio of the final output image the same as the original flame. When checked, changing the value of one of the dimensions
+        will cause the other dimension to change a corresponding amount times the aspect ratio of the original.<br></br>
+        The original dimensions will be those of the render preview window if the flame originated in Fractorium.
+        If the flame originated from a file or pasted Xml, the original dimensions will be whatever was specified in those parameters.
+    </li>
+    
+    <li>
+        ==Scale==
+
+        The scaling method to use. This is used to adjust the zoom specified in the scale parameter based on the difference between the original image dimensions and the final image dimensions.
+        
+        <ul>
+            <li>
+                ===None===
+                
+                Do not adjust the scale parameter in response to the difference between the original dimensions and the final dimensions. This is useful for cropping without zooming.
+            </li>
+
+            <li>
+                ===Width===
+                
+                Scale the scale parameter by the percentage difference between the original width and the final width.
+            </li>
+
+            <li>
+                ===Height===
+                
+                Scale the scale parameter by the percentage difference between the original height and the final height.
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        ==Render All Extension==
+
+        The image type to use when Render All is checked. Disabled if Render All is unchecked.
+    </li>
+
+    <li>
+        ==OpenCL Platforms==
+
+        The available OpenCL platforms on the system. Disabled if Use OpenCL is unchecked.
+    </li>
+
+    <li>
+        ==OpenCL Device==
+
+        The available devices on the currently selected platform. Disabled if Use OpenCL is unchecked.
+    </li>
+
+    <li>
+        ==Threads==
+
+        The number of threads to use when using the traditional CPU renderer. Disabled if Use OpenCL is unchecked.
+
+        Range: 1 - number of cores.
+    </li>
+
+    <li>
+        ==Width==
+
+        The width of the final output image.
+
+        Range: 10 - 100,000.
+    </li>
+
+    <li>
+        ==Height==
+
+        The height of the final output image.
+
+        Range: 10 - 100,000.
+    </li>
+
+    <li>
+        ==Quality==
+
+        The quality of the final output image. Values above 500 don't offer noticeable improvement.
+
+        Range: 1 - 200,000.
+    </li>
+
+    <li>
+        ==Temporal Samples==
+
+        The temporal samples to use when applying motion blur. A value of 1000 is recommended. Only used when Render as Animation Sequence is checked, otherwise a value of 1 is internally used.
+
+        Range: 1 - 5,000.
+    </li>
+
+    <li>
+        ==Supersample==
+
+        The value to multiply the dimensions of the histogram and density filter buffer by to help eliminate jagged lines.
+        Values greater than one will greatly impact performance and will increase memory usage. See the Memory Usage field for the effect.
+
+        While a value of 2 offers some visual improvement, values greater than 2 don't offer noticeable improvement.
+
+        Range: 1 - 4.
+    </li>
+
+    <li>
+        ==Memory Usage==
+
+        The amount of memory required for the the entire render, which is the histogram, density filtering buffer and final image.
+    </li>
+
+    <li>
+        ==Output==
+
+        The file to save a single image render to, or the folder to save multiple image renders to. This is set by clicking the ... button.
+        Clicking Open will open the folder location in an explorer window.
+    </li>
+
+    <li>
+        ==Prefix==
+
+        The prefix to prepend to all image and Xml files.
+    </li>
+                        
+    <li>
+        ==Suffix==
+
+        The suffix to append to all image and Xml files.
+    </li>
+
+    <li>
+        ==Total Progress==
+
+        The percentage of the entire rendering process which has completed.
+    </li>
+
+    <li>
+        ==Iteration==
+
+        The percentage of the iteration step in the current image render which has completed.
+    </li>
+
+    <li>
+        ==Density Filtering==
+
+        The percentage of the density filtering step in the current image render which has completed.
+    </li>
+
+    <li>
+        ==Final Accumulation==
+
+        The percentage of the final color correction and spatial filtering step in the current image render which has completed. This is almost always instantaneous.
+    </li>
+
+    <li>
+        ==Start==
+
+        Begin the rendering process. If a render is already running, it will stop it first.
+    </li>
+
+    <li>
+        ==Stop==
+
+        Stop the rendering process.
+    </li>
+
+    <li>
+        ==Close==
+
+        Stop the rendering process, close the dialog and return to the main window.
+    </li>
+</ul>

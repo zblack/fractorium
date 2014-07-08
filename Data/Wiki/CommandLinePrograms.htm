@@ -1,0 +1,29 @@
+#summary User's guide for command line programs.
+<font face="Verdana">
+
+=Introduction=
+
+Usage of EmberRender, EmberAnimate and EmberGenome command line programs.
+
+These are advanced tools mostly used in a scripted environment.
+
+
+=Details=
+
+These programs are replacements for the original flam3-render, flam3-animate and flam3-genome programs. They function the same and produce identical output, however they offer two major advantages over the originals:
+
+-Option to use OpenCL renderer.<br>
+-Ability to use command line arguments in addition to environment variables. The originals only supported the latter.<br>
+
+Running any with the `--help` argument will provide a list of the options available to that program.
+
+More information on the what these do and the options to pass them can be found in the original flam3 documentation here:
+
+<a href="https://code.google.com/p/flam3/wiki/Flam3Render">EmberRender</a>
+
+<a href="https://code.google.com/p/flam3/wiki/Flam3Animate">EmberAnimate</a>
+
+<a href="https://code.google.com/p/flam3/wiki/Flam3Genome">EmberGenome</a>
+
+
+The only option omitted was `field` which was used to render progressive scanned images for animations. Modern LCD/LED displays overcome the need for this.

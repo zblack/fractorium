@@ -1,0 +1,108 @@
+#summary Palette tab
+<font face="Verdana">
+
+=Palette Tab Item Descriptions=
+
+<ul>
+    The list of available palettes as well as optional adjustment values.
+
+    <li>
+        ==Adjustments==
+
+        Adjustments are applied to the selected palette in the following order: frequency, hue, saturation, brightness, contrast, blur.
+
+        Double clicking a spinner will reset it to its default value.
+
+        <ul>
+            <li>
+                ===Hue===
+
+                The degrees to rotate the hue of the HSV representation of the RGB color by.
+
+                Range: -180 - 180.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Saturation===
+
+                The percentage to add to the saturation (intensity) component of the HSV representation of the RGB color.
+
+                Range: 0 - 100.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Brightness===
+
+                The value to add to each channel. Negative values bring it toward black, positive values toward white.
+
+                Range: -255 - 255.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Contrast===
+
+                The difference between lightest and darkest colors in the palette. Negative values decrease the difference, and
+                bring the colors toward gray. Positive values increase the difference and make the colors more saturated.
+
+                Range: -100 - 100.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Blur===
+
+                The width in pixels of the blurring.
+
+                Range: 0 - 127.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Frequency===
+
+                The number of times to repeat the palette.
+
+                Range: 1 - 10.
+
+                Render State: Full render.
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        ==Palette Preview==
+
+        What the final adjusted palette looks like. This is what's used for iteration.
+    </li>
+
+    <li>
+        ==Palette List==
+                             
+        The full list of palettes and their names in the current palette file, which defaults to flam3-palettes.xml.
+
+        <ul>
+            <li>
+            ===Single click===
+
+            Set the selected palette as the current one and apply the specified adjustments.
+
+            Render State: Full render.
+            </li>
+            <li>
+            ===Double click===
+
+            Set the selected palette as the current one and reset all adjustments.
+
+            Render State: Full render.
+            </li>
+        </ul>
+    </li>
+</ul>

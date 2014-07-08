@@ -1,0 +1,318 @@
+#summary How the fractal flames algorithm actually works.
+<font face="Verdana">
+
+=Introduction=
+
+The standard way of getting familiar with the algorithm is reading the paper by Scott Draves and Erik Reckase, titled <a href="http://flam3.com/flame_draves.pdf">The Fractal Flame Algorithm</a>. Reading it is highly recommended before proceeding.
+
+Another paper which gives more detail, and which this project borrows heavily from is the <a href="http://www.eecs.ucf.edu/seniordesign/su2011fa2011/g12/report.pdf">Cuburn paper</a>. The first few sections give a better description of the algorithm. The later sections are more focused on GPU implementations, so they are only recommended for advanced readers.
+
+While the original paper gives a great introduction, it omits some important details. If one reads the flam3 code, they will notice that quite a bit is left out of the paper. This section of the wiki gives a detailed description of what actually happens when a fractal flame is rendered.
+
+It's broken down into the data used, and the processing performed on the data in order from start to finish. It dispenses with mathematical terms and notation, and expresses the process in plain English with pseudo code.
+<br><br>
+
+=Details=
+
+<ul>
+<li>
+==Data==
+
+<ul>
+<li>
+===Buffers===
+
+-Histogram: Supersampled with gutter, iteration is plotted here.
+
+-Density filter buffer/accumulator: Same dimensions as histogram, density filter output written here.
+
+-Final image buffer: Not supersampled, final output written here.<br></br>
+
+The dimensions of the final image are straightforward. They are just the values specified in the size field of the Xml.
+
+The dimensions of the histogram are slightly more complex to calculate:
+
+{{{
+histwidth = (finalwidth * supersample) + (2 * gutter)
+histheight = (finalheight * supersample) + (2 * gutter)
+}}}
+
+The gutter is to account for the extra space needed when filtering at edge pixels. It's calculated by:
+
+{{{
+gutter = max((spatialfilterwidth - supersample) / 2, maxdensityfilterradius * supersample)
+}}}
+
+Computing the histogram bounds (camera) is much more complex. The values are based off of the following Xml fields: size, supersample, scale, zoom, center, spatial and density filter widths.
+
+Scale is the pixels per unit, meaning the number of raster pixels needed to represent the distance from 0 to 1 in the Cartesian plane. The higher the value, the more zoomed in the camera is. Increasing scale will degrade image quality.
+
+Zoom is the amount of zoom to apply to the image. It has a similar effect to increasing scale, but does not suffer from quality loss. This will increase the number of iterations done to compensate.
+
+Supersample is the value to multiply the dimensions of the histogram and accumulator by to accomplish anti-aliasing.
+
+Center is the camera offset in on each axis. The image will move in the opposite direction of these values.
+
+</li>
+<li>
+
+===Fractal Flame (Ember)===
+
+The main data structure is the fractal flame itself. In this project, it is referred to as an `Ember`.
+
+An `Ember` contains the following pieces:<br></br>
+-Dimensions, filter parameters, and quality settings.<br></br>
+-A list of xforms, which each contain a weight, color index, color speed, pre and post affine transforms, and a list of variations.<br></br>
+-A color palette.
+</li>
+<li>
+
+===Xml===
+
+An `Ember` is stored in an Xml file, which can contain one or more `Embers` in them. The first step in rendering is to read the data out of the Xml and into a vector of `Embers`.
+
+The first parameters encountered in each `Ember` are ones that specify general information about what is to be rendered, such as the dimensions, rotation, quality, supersampling, filter types and sizes, and color information. The colors that are to be used during iteration are specified in a palette, which is a list of 256 colors.
+
+</li>
+<li>
+
+===Palettes===
+
+Palettes can be specified in one of two ways: An index into a palette file, or as an inserted block of data present in the `Ember` Xml. For the first case, the palette file is usually the standard flam3-palettes.xml file which contains 700 palettes and is shipped with all fractal flame editors. The `Ember` has an Xml field named palette whose value is an integer index into the file. A value of -1 means to select a random palette from the file. The palette index field is used in conjunction with the hue field. Hue signifies a hue rotation to be applied to the palette after it's read. The palettes in the file are stored as RGB values in the range of 0-255. Upon reading, the hue rotation is applied to them, and they are converted into normalized values ranging from 0-1. They are stored with the `Ember` in a `Palette` object.
+
+The other way of specifying a palette is to embed it directly in the Xml as either individual tags for each color entry, or as a hexadecimal representation of the binary data. The latter is preferred because it keeps the Xml files smaller. When embedding the palette, no hue adjustment is applied after reading it.
+
+</li>
+<li>
+
+===Xforms===
+
+The xforms are what contribute most to defining the look of the final output image. Each xform contains several parameters:
+
+<ul>
+<li>
+====Weight====
+
+The probability that the xform will be chosen in each iteration. All weights are normalized before running.
+</li><li>
+====Color Index====
+
+The index in the palette the xform uses.
+</li><li>
+====Color Speed====
+
+The speed with which the color indices are pulled toward this xform's color index. This value can be negative.
+</li><li>
+====Opacity====
+
+How visible the xform's contribution to the image is.
+</li><li>
+====Pre Affine Transform====
+
+The affine transform that is applied to the input coordinates which will be used as inputs to the variations.
+</li><li>
+====Post Affine Transform====
+
+The affine transform that is applied to the output of the sum of the variations, optionally omitted.
+</li><li>
+====Variations====
+
+A list of functions which each contain a weight, and optionally more parameters.
+</li><li>
+====Xaos====
+
+Xaos is an optional advanced feature that adds an element of control to the random selection of xforms during iteration. It adds an adjustment to the probability that a given xform will be selected based on the xform that was selected in the previous iteration. This is usually omitted.
+</li>
+</ul>
+
+
+In addition to the list of xforms, an additional one can be specified as the final xform. It contains all of the same parameters, except weight. This is because it is always applied in each iteration.
+</li>
+
+<li>
+===Filters===
+
+As mentioned earlier, each `Ember` contains filtering parameters. These are values used to specify details about the three filtering stages used to improve the quality of the final output image. They are:
+<ul>
+<li>
+====Temporal====
+
+In addition to creating a still image, the algorithm can be used to create a series of still images where each represents a frame in an animation. This is done by adjusting the affine transforms slightly for each frame. It also involves interpolating (blending) between two different `Embers`. Sometimes, even slight changes in the `Ember` parameters can cause a large change in the final output image. To mitigate this effect, each frame splits its render into a number of temporal samples. This does not increase the number of iterations. Instead, it breaks the total number of iterations into chunks. Each chunk renders an interpolated `Ember` at a specific time between the current frame and the next one to be rendered. The histogram is not cleared between temporal samples, so all iteration values are accumulated to produce a motion blurring effect. A temporal samples value of 1000 is commonly used for animation. When rendering a single frame, the number of temporal samples is always set to 1 since there is nothing to interpolate.
+</li><li>
+====Density====
+
+Flam3 refers to this as density estimation, or DE. This is a misnaming as there is no estimation taking place. Rather, a variable width Gaussian filter is applied to each log scaled histogram cell. The Xml specifies the minimum and maximum widths that the filter can be, as well as the decay curve for how quickly the filter's values drop off when extending outward from the pixel being filtered.
+</li><li>
+====Spatial====
+
+After iterating and density filtering are done, final color correction to the output image is computed. Spatial filtering is applied during this step. The Xml parameters specify both the width of the filter as well as the type. This gives very fine adjustment over what the final image looks like.
+<br></br>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+
+==Processing==
+
+The process contains 3 main steps:
+
+-Iterating<br></br>
+-Density Filtering<br></br>
+-Final Accumulation
+
+<ul>
+<li>
+===Iterating===
+<ul>
+<li>
+====Xform Application====
+
+Iterating is described in the paper, however it's worth clarifying because it's the most important part of the algorithm.
+
+Random numbers are obviously a core component of the algorithm, however the paper doesn't touch on exactly how they're implemented and used. Flam3 uses a very fast and high quality RNG named ISAAC because system RNGs are usually of poor quality. Using ISAAC also allows for producing the exact same image on different platforms when supplied with the same seed.
+
+More interesting though, is how the numbers from ISAAC are used to select random xforms. Before iterating begins, a buffer of 10,000 elements is created. All xform weights are normalized and the elements of the buffer are populated with xform indices with a distribution proportional to each of their weights. For example, given an Ember with 4 xforms, each with a weight of 1, their normalized weights would each become 0.25. The random selection buffer would then be populated like so:
+
+{{{
+buf[0..2499] = 0
+buf[2500..4999] = 1
+buf[5000..7499] = 2
+buf[7500..9999] = 3
+}}}
+
+To select a random xform, retrieve the next random unsigned integer from ISAAC and perform a modulo (%) 10,000. The value at that index in the buffer is the index of the next xform to use.<br></br>
+
+The classic Iterated Function System works like the following pseudo code in flam3 and Ember:
+
+x and y = random numbers between -1 and 1.
+
+Pick a random xform from the Ember, with biases specified by their weights.
+
+Calculate tx and ty by applying the selected xform's pre affine transform to x and y:
+
+{{{
+tx = Ax * By + C
+ty = Dx * Ey + F
+}}}
+
+Pass the transformed point to each of the variations and sum the results. Note that this does not change the transformed points at all, they are only used as inputs.
+
+{{{
+vx = 0
+vy = 0
+
+vx,vy += var1(tx, ty)
+vx,vy += var2(tx, ty)
+vx,vy += var3(tx, ty)
+...
+vx,vy += varN(tx, ty)
+
+ox, oy = vx, vy
+}}}
+
+If a post affine transform is present, apply it to the result calculated from summing the outputs of the variations above.
+
+{{{
+ox = pAvx * pBvy + pC
+oy = pDvx * pEvy + pF
+}}}
+
+Now that the new point has been calculated, compute the new color coordinate. As the paper states, the coordinate is the one specified in the currently chosen xform, blended with the one from the previously chosen xform. It incorrectly states that blending is achieved by adding the current and previous coordinates and dividing by 2. Not only is it calculated differently, but the hard coded value of 2 is actually the user specified color speed parameter of each xform. The real calculation is:
+
+{{{
+newindex = colorspeed * thisindex + (1.0 - colorspeed) * oldindex
+}}}
+
+It's important to note that the colors themselves are not being blended, only their indices in the palette are.
+
+At this point, we have the final output point ox,oy to be plotted to the histogram. However, we can't use it just yet. There is a slight possibility that the calculated value was not valid. This is detected by checking for it being very close to infinity, or very close to zero. If either are the case, 5 attempts at the following correction method are tried:
+
+-Pick a new input point with x and y each being a different random number between -1 and 1.<br></br>
+-Pick a new random xform and apply it.<br></br>
+-Keep color index from the first xform that was applied, which originally gave us the bad values.<br></br>
+
+If after 5 attempts, a valid point is not produced, the output point is assigned random numbers between -1 and 1. The number of bad values are saved for statistical use later.
+
+After computing this point, apply a final xform if one is present. Plot its output next, however do not feed it back into the iteration loop. Rather, only feed the output of the randomly selected xform above to the next iteration of the loop.
+
+</li>
+<li>
+====Plotting====
+
+Once we have our new point, it's time to plot it. This is one of the most important parts of the algorithm, so it's worth detailing what exactly happens. First, let's review the information the point contains:
+
+-An x,y coordinate in Cartesian space.<br></br>
+-A color index from 0-255.<br></br>
+
+The first step in plotting is applying any rotation specified in the Xml. Rotation is specified in terms of the camera, so it will actually rotate the image in the opposite direction.
+
+After applying rotation to the coordinate, bounds checking is done. If the point is outside of the Cartesian space the histogram covers, then it's discarded, otherwise it's plotted if the opacity is non-zero.
+
+The point can't be plotted directly because it's in a different coordinate system than the one used for indexing the histogram memory. The points are decimal numbers in Cartesian space with 0,0 at the center. The histogram is stored in raster coordinates with 0,0 at the top left and each bucket specified by an integer x,y index. So before plotting, the coordinates must be converted to determine the histogram bucket to write to.
+
+After computing the raster coordinate, a color must be added to the bucket. This is gotten from the Ember's color palette, at the index specified in the point. A similar coordinate problem occurs in that the computed color index is a decimal number, but the indices in the palette are integers. The algorithm offers two methods for retrieving the color. The first is called "Step" and just rounds the index down to the nearest integer. The other is called "Linear" and does a blending of the values at the integer index and the one next to it.
+
+Once a color is retrieved, multiply all three RBG values by the opacity and add the result to the RGB values in the histogram bucket at the specified location. The alpha channel is unused for transparency and is instead used as a hit counter to record how many times a given bucket was hit during iteration. Each hit adds one to the alpha channel.
+
+The Cartesian coordinate calculated from applying the xform in the previous step is fed back into the iteration loop and is used as the starting point for repeating the process all over again. The number of times this is done is referred to as the quality and is equal to:
+
+{{{
+quality * finalwidth * finalheight
+}}}
+
+Note that while supersampling increases the size of the histogram, it does not increase the number of iterations performed.
+
+</li>
+<li>
+====Trajectory====
+
+Iterating and plotting don't occur exactly in the order described above or in the paper. The point is not plotted immediately after each xform application. Rather, the points are all stored in a temporary buffer whose size defaults to 10,000, known as a sub batch. Once 10,000 iterations have completed, all of the points are plotted to the histogram. Before the next sub batch begins, the point trajectory is reset by re-enabling the fuse state and assigning the first input coordinate random numbers between -1 and 1.
+
+This method of using sub batches reveals an interesting characteristic of the algorithm not covered in the paper. That is, the point trajectory need not remain continuous to produce a final image. Even when resetting every 10,000 iterations, the trajectory still converges on the attractor. Thanks to this property, multi-threading does not degrade the image quality by breaking up the trajectory, since each thread will run many sub batches.<br></br>
+
+</li>
+</ul>
+</li>
+<li>
+===Density Filtering===
+
+After the iteration loop is performed many times, most of the buckets in the histogram will have been hit many times. This puts their color values far outside the allowed range for display, 0-255 (or 0-1 for normalized colors).
+
+To bring these color values into the valid range, log scaling is applied. There are two types, basic log scaling or log scaling with density estimation filtering. As stated above, the term density estimation is misleading, since no estimating of any kind takes place.
+
+Basic log scaling is triggered by setting the maximum density filtering radius to zero. It is achieved by performing the following step on each histogram bucket:
+
+{{{
+scale = 2^zoom
+scaledquality = quality * scale * scale
+area = (finalwidth * finalheight) / (pixelsperunitx * pixelsperunity)
+k1 = (brightness * 268) / 256
+k2 = supersample^2 / (area * scaledquality * temporalfilter.sumfilt)
+accumulator[index] = (k1 * log(1 + histogram[index].hitcount * k2)) / histogram[index].hitcount
+}}}
+
+This calculation is much more complex than the simplistic log(a)/a mentioned in the flam3 paper. Note the presence of the somewhat mysterious k1 and k2 variables. They are mentioned nowhere in the paper, and are completely undocumented in the flam3 code, yet play a large role in how the final output image appears. k1 is intended to be the brightness multiplied by a magic number. k2 helps adjust the log scaling based on the supersample.
+
+If the max density filtering radius is greater than zero, a much more advanced algorithm is used for filtering. As stated in the paper, it's a Gaussian blur filter whose width is inversely proportional to the number of hits in a given bucket. This means that buckets which were hit infrequently will have a wide blur applied to the surrounding pixels. A bucket with many hits will have very little blur applied.
+
+The result of these filtering operations is written to another buffer of identical size called the filtering buffer, or accumulator.
+</li>
+<li>
+
+===Final Accumulation===
+
+Despite filtering, the image is still not ready for final display. One more step is needed, and that is final accumulation with spatial filtering.
+
+For each pixel in the filtering buffer at the beginning (top left) of each supersample block (SSxSS), a spatial filter is applied and the resulting value is written as a single pixel to the final output image.
+
+The spatial filter is of a fixed width and type specified in the original Xml. It multiplies the filter values by the pixel values of all pixels extending forward and down by the length of the filter, and sums them to a final value. This final value will most likely be out of range, so further color correction is necessary. Gamma correction is applied and the final pixels are clamped to the valid range of 0-255 and written to the output image buffer. Note that the color correction process is not documented anywhere and remains mostly a mystery, however it works.
+
+If early clipping is specified, the color correction is applied before the spatial filter.
+
+The process is done.
+</li>
+</ul>
+</li>
+</ul>

@@ -1,0 +1,159 @@
+#summary User's guide for Fractorium.
+<font face="Verdana">
+
+=Introduction=
+
+Fractorium is a fractal flame editor written in C++ with the Qt library. It uses Ember and EmberCL to perform all rendering.
+
+The intent of Fractorium is to create an editor which has a cleaner interface, easier usage and better performance than any currently available in order to provide the artist with the best possible experience.
+<br></br>
+
+=Details=
+
+<ul>
+    <li>
+        ==General Usage==
+
+        Fractorium aims to allow the artist maximum creative freedom with the minimal possible effort. To achieve this, the entire program was designed to be used with a mouse containing two buttons and a wheel. Using Fractorium with a less capable input device will most likely be cumbersome and is not supported.
+
+        In keeping with the idea of minimizing effort, a novel feature is that the user need not click in the spinners or combo boxes they are editing. Rather, just hover over them and scroll the mouse wheel. Almost every control in the program is designed to be altered with the mouse wheel. Scrolling it only applies to the control the mouse is hovering over. Once the mouse moves away from the control, it loses focus and mouse wheel scrolling no longer applies to it.
+
+        In addition to being designed for a mouse, the user is also meant to have one hand on the keyboard with their fingers on the shift, ctrl and alt keys.
+
+        Most controls have a default non-zero value. Fractorium makes it easy for the user to switch back and forth between a default value and a reasonable non-default value. Just double click in any control with a default value and you will see the value change to a reasonable non-default value. Double click again and it will change back to the default.
+
+        If you need to enter a specific value with finer granularity than is provided by double clicking or mouse wheel scrolling, you can enter it by hand. Select the text of the control and type in it while the mouse is still hovering over it. Be careful not to move the mouse away, because it will cause the control to lose focus.
+
+        Note that all rendering is done without locking the histogram. While this is theoretically imperfect, it doesn't seem to have any visual impact. An option to control this may be revisited later.
+    </li>
+
+    <li>
+        ==Usage Tips==
+
+        A responsive interface has the highest positive impact on user experience. These tips will help get you running in the best possible configuration for your hardware.
+
+        The first step is to enable OpenCL in the options if your video card supports it. This will give incredibly fluid real-time feedback while editing transforms.
+
+        When running with OpenCL enabled, you may find the movement is a little bit jerky if you have a fast card. This is a case of running "too fast". The jerkiness comes from the fact that your card is so fast that it's completing the render in between every mouse movement and is attempting to perform full Gaussian density filtering which can be slow. To avoid this jerkiness, increase the quality slightly to a value between 20 and 50. This will cause the render to take long enough such that full density filtering will not be performed between rapid mouse movements.
+
+        If OpenCL does not work, and you are forced to use the CPU, keep your quality setting on 10. This will give reasonably responsive feedback.
+
+        Regardless of the renderer type being used, do not increase the quality to a high value until your design is solid enough to be ready for a final render. Keep the quality low until you are sure you've got something you want to keep.
+
+        You can optionally select single or double precision numbers. Single is much faster and is highly recommended. Double will produce better image quality but is so slow that it is only recommended when doing a final render.
+
+        Never use supersampling during interactive rendering. It won't produce any noticeable improvement in quality and will greatly slow down performance. Only use it if you want to determine if it will help a final render look better. After experimenting with values greater than one, always restore supersample to one when finished. As a general rule, values higher than 2 don't add any benefit.
+
+        For each mouse movement, a number of iterations are ran before displaying a preview image. This value is controlled by the sub batch count option. Separate values are allowed for CPU and OpenCL. Increase these to get a better preview, decrease them to get more responsive feedback.
+
+        By default, preview images for mouse movements are scaled using basic log density scaling. Only when iteration has fully completed after the mouse is held still is full Gaussian density filtering performed. If you have an extremely fast processor or video card, try setting the filtering method to Full DE. This will perform full Gaussian density filtering on every mouse movement. The processing cost is high, but the feedback is stunning.
+
+        The circles shown on the main display are the affine transforms for each xform. Dragging them around is how most editing is done. Holding down certain keys can alter the effect dragging has on them.
+
+        To get an existing Xml file open in the editor, you can either select it by clicking the File | Open menu, or by dragging and dropping the file onto the window.
+
+        <ul>
+            <li>
+                ====No Keys====
+
+                X & Y: Rotate and Scale.
+
+                Center: Move.
+            </li>
+
+            <li>
+                ====Shift====
+
+                X & Y: Rotate only.
+
+                Local Pivot:
+
+                Center: Rotate around 0,0, while keeping local orientation fixed.
+
+                World Pivot:
+
+                Center: Rotate around 0,0, also rotating local orientation.
+            </li>
+
+            <li>
+                ====Control====
+
+                X, Y and Center: Snap current movement to grid.
+            </li>
+
+            <li>
+                ====Alt====
+
+                X & Y: Free movement.
+
+                Center: No effect.
+            </li>
+
+            <li>
+                ====Shift + Alt====
+
+                Local Pivot:
+
+                X & Y: Rotate around transform center.
+
+                Center: No effect.
+
+                World Pivot:
+
+                X & Y: Rotate around 0,0.
+
+                Center: No effect.
+            </li>
+        </ul>
+
+        Dragging the image with the right mouse button rotates and scales.
+
+        Dragging the image with the middle mouse button pans.
+    </li>
+
+    <li>
+        ==Parameter Descriptions==
+
+        Behavior and recommended usage of all UI elements.
+
+        [Menus Menus]<br></br>
+        [Toolbar Toolbar]
+
+        <ul>
+            <li>
+                ===Tabs===
+                <ul>
+                    <li>
+                        [FlameTab Flame]<br></br>
+                    </li>
+                    <li>
+                        [XformsTab Xforms]<br></br>
+                    </li>
+                    <li>
+                        [PaletteTab Palette]<br></br>
+                    </li>
+                    <li>
+                        [LibraryTab Library]<br></br>
+                    </li>
+                    <li>
+                        [InfoTab Info]<br></br>
+                    </li>
+                </ul>
+            </li>
+            <li>
+                ===Dialogs===
+                <ul>
+                    <li>
+                        [FinalRenderDialog Final Render]<br></br>
+                    </li>
+                    <li>
+                        [OptionsDialog Options]<br></br>
+                    </li>
+                    <li>
+                        [AboutDialog About]<br></br>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+ </ul>

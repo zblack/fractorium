@@ -1,0 +1,34 @@
+#summary Library tab
+<font face="Verdana">
+
+=Library Tab Item Descriptions=
+<ul>
+    <li>
+        ==Current Flame File==
+
+        This shows a list of all flames present in the currently opened file, or randomly generated flock. When editing, the latest updates to the
+        current flame will not be saved back to this list in memory, and the preview will not be updated, unless the user specifically does so. This allows restoration of the original flame
+        if needed.
+
+
+        The entire file will not be saved back to disk unless the user specifically does so.
+
+        <ul>
+            <li>
+            ===Single click===
+
+            Edit the name of the selected flame. This will be used as the name within the Xml file when the user saves it back to disk.
+
+            Render State: Unchanged.
+            </li>
+
+            <li>
+            ===Double click===
+
+            Set the flame as the current one. This will overwrite any edits currently pending, so be sure to save them first before switching between flames. This will also reset the undo list.
+
+            Render State: Full render.
+            </li>
+        </ul>
+    </li>
+</ul>

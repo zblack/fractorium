@@ -1,0 +1,686 @@
+0.4.0.1 Beta 07/06/2014
+--Bug Fixes
+	Fix name collision of mobius and Mobius. The former is treated as mobius_strip.
+
+0.4.0.0 Beta 07/06/2014
+--User Changes
+	Addition of over 200 new variations.
+	Almost all variations now come with pre and post version. Bringing the total to almost 900. Pre/post are omitted for some direct coloring variations.
+	Support for 3D fields from Apophysis: cam_zpos, cam_persp, cam_yaw, cam_pitch, cam_dof.
+	Support for direct coloring dc_ variations.
+	Allow for saturation spin box to go negative like Apo does.
+	Select all when first clicking in any of the spin boxes.
+	Add a Clear Xaos button to easily reset all xaos values to 1.
+	Default threads to processors - 1 for first time users to keep the UI more responsive.
+	The following variations have extra precalcs added to them and should run faster: bent2, bipolar, blob, cpow, curve, escher, fan2, flux, modulus, oscilloscope, rings2, separation, split, wedge.
+
+--Bug Fixes
+	The wrong visibility value was being used on final xforms.
+	The options dialog was not being restored to the previous UI state when the user clicked cancel.
+	Pie variation was not properly using the slices parameter.
+	Erroneously included gutter when computing bounds and units of OpenGL display window.
+	Needlessly calling floor() when calculating histogram index during point accumulation.
+
+--Code Changes
+DoubleSpinBox
+	Change step.
+	Allow for selecting all on click by making the line edit a custom derived class.
+
+Ember
+	Add new fields and functions for 3D projection.
+	Add new export macro to handle pre, regular and post variations.
+	Add function to get a list of pointers to the variations present in all xforms with no duplicates and only single entries for reg, pre and post types. Used to construct OpenCL function strings.
+	Better calling of CacheXforms() in interpolate.
+
+EmberAnimate, EmberGenome, EmberRender
+	Print platform and device information when running with OpenCL.
+
+EmberCLFunctions
+	Add new global math functions to correspond to the ones added in Utils.
+
+EmberCLStructs
+	Add support for 3D fields.
+	Make m_LastXfUsed be a member of PointCL, rather than a local variable declared in the kernel.
+
+EmberDefines
+	Add a define to only instantiate float type. Useful for reducing build times while debugging, and removed on release.
+	Add defines: M_2PI, M_3PI, CUBE, TLOW, TMAX, m3T, acosh and fma. The last two will be removed once the project moves to C++11 in the future.
+
+EmberFile
+	Add UniqueFilename() function to ensure what we save is never overwritten with subsequent saves.
+
+EmberTester
+	Add many test functions to test the integrity of the Variations design. This will be made into a formal testing suite in the future, but for now is just a collection of global functions.
+
+EmberToXml
+	Write out legacy symmetry field in addition to color speed for each xform.
+	Write out name field for each xform for Apo compatibility.
+
+FinalRenderDialog
+	Add MoveCursorToEnd() signal function to be called from the final render thread.
+
+FinalRenderEmberController
+	Call invokeMethod to move cursor to the end rather than directly. This was possibly causing intermittent crashes before.
+	When saving on render complete, call new UniqueFilename() function for saving both the xml and the image to ensure no overwriting occurs.
+
+Fractorium
+	Add functions to support 3D.
+
+FractoriumColor
+	Add fields and functions to support direct coloring.
+
+FractoriumPalette
+	Allow for saturation to go negative like Apo does.
+
+FractoriumParams
+	Add functions to support 3D.
+
+FractoriumVariations
+	Add min/max range for params.
+	Call SetParamVal() on spinner change rather than directly assining to the param to ensure values are in a valid range.
+
+Interpolate
+	Use new SetParamVal() function for interpolating all params. This ensures the interpolated values are in the proper range specified by each variation.
+	Use M_2PI constant.
+
+Isaac
+	Make ALPHA template argument 4 instead of 8 for more compactness.
+	Make functions inline.
+	Add check for modulo zero in ranged Rand().
+
+Iterator
+	Add support for 3D projections.
+	During fuse loop, iterate on the same point rather than to the samples buffer to be more cache friendly. Gives a ~1% speedup.
+
+IterOpenCLKernelCreator
+	Add support for 3D projections.
+	Add support for new pre/reg/post variation design.
+	Directly assign points rather than doing one field at a time.
+
+OptionsDialog
+	Add reject() function to restore the UI to the previous state when the user clicks cancel.
+
+PaletteList
+	Remove Isaac member and use the new global one instead.
+
+Point
+	Add m_Z member for 3D.
+
+Renderer
+	Make temporary Isaac seeds buffer match 1 << ISAAC_SIZE, rather than hard code to 256.
+
+RendererCL
+	Copy new 3D and DC fields to EmberCL object.
+
+Utils
+	Add a global Isaac object for use in places where none exists. Only to be used in single threaded scenarios.
+	Add many functions for use in new variations: ClampMod(), ClampLteRef(), Sign(), Sqr(), SafeSqrt(), Cube(), Hypot(), Spread(), Powq4(), Powq4c(), Zeps(), Lerp(), Fabsmod(), Fosc(), Foscn(), LogScale(), LogMap().
+	Add new int Floor<T>(T val) function that is faster than the system floor() and use it everywhere. Time test proved to be faster.
+
+Variation
+	Complete redesign of variations. Split into multiple files to avoid one becoming unweildy.
+	Each variation will have a type: pre, regular or post, and will have an assignment type that dictates how the results will be assigned to the output points: direct assign or sum, to be used in pre and post variations. Regular ones always sum.
+	Variation enums are now sorted alphabetically rather than the traditional arbitrary sorting of flam3.
+	Add Precalc() and PrecalcOpenCLString() functions to be called with pre and post variations. Placed here instead of xform because they depend on the variation type, pre or post.
+	Add additional functions to help handle pre/post logic and naming.
+	Add fields to specify valid value ranges for parametric params. Taken from Apo.
+	Reserve 5 for params vector in parametric variations.
+	Add randomization function for parametric variations.
+	Use new range and value checked Set() function in CopyParamVals() instead of directly assigning values.
+	Add non-null checks in copy macros to delete to prevent a memory leak.
+	Add new macros to handle creating and copying pre and post variations.
+	
+VariationList
+	Add new macro for handling the adding of pre, regular, and post variations.
+	Add three new vectors to hold pointers, but not copies, to pre, regular and post variations.
+	Add helper function GetVariationCopy().
+	
+Xform
+	Add direct color support.
+	Major rework of Apply() function to use new style of pre/reg/post variations as well as direct coloring.
+	Add Read() functions and their OpenCL counterparts, to handle reading from the appropriate inputs for pre and post variations.
+	Move members around to match the order they're accessed to be more cache friendly.
+	
+XmlToEmber
+	Add support for 3D fields, direct color, and the legacy symmetry field.
+	Correct poorly named variations and their parameters.
+	Remove Isaac member and use the new global one instead.
+
+	
+0.3.7.3 Beta 05/04/2014 (Intermediate commit without an associated release)
+--User Changes
+	Fix a bug that reset the render when adjusting a parameter of a variation whose weight was zero. Now only update the render if the variation is actually present with a non-zero weight.
+	Add many new variations, with more to come. Any Z coordinate functionality has been commented out for the time being until 3D support is added.
+	Preserve xform index during undo/redo.
+	In EmberRender and EmberAnimate, report iters as ran/requested rather than requested/ran.
+
+--Code Changes
+Solution
+	Update glm, libjpeg, libpng, libxml2 and tbb to their latest versions.
+	Change include/link order for every project for all configurations and platforms to prefer AMD over nVidia since AMD's OpenCL support is more current.
+
+Variations
+	Split variations into three files, Variation.h, PreVariations.h, and PostVariations.h.
+	Add many new variations from the Apophysis plugins.
+	Place Variations in their own project filter folder in Ember.
+
+Affine2D
+	Change the name of the template parameter to T instead of Tt.
+	Make T() function O().
+	Remove glm typedefs, they are global now.
+
+EmberDefines
+	Add some new constant defines.
+	Add global glm defines.
+
+Utils
+	Add some additional rounding functions needed in the newly added variations.
+
+Xform
+	Split variations into three separate lists for regular, pre and post variations.
+	Add new function to retrieve the total variation count between all three lists.
+	Add other various functionality to handle the three lists.
+
+EmberCLFunctions
+	Add OpenCL equivalent of new rounding functions.
+
+EmberCLStructs
+	Add OpenCL equivalent of new constant defines.
+	Rearrange the members of the structures to match the order they are used in, and remove unused members.
+
+IterOpenCLKernelCreator
+	Add support for the three variations lists in each xform.
+
+OpenCLWrapper
+	Add #define to use Image2DGL for OpenCL 1.1 on nVidia, or ImageGL for OpenCL 1.2 on AMD.
+	Fix a glaring bug (device and platform = 0 in the constructor) that was compiling, but was causing an out of bounds memory read under the covers and was only detected in debug mode.
+
+
+0.3.7.2 Beta 04/16/2014
+--User Changes
+	Fix bug where images with a high number of bad values would crash the rendering process on nVidia cards.
+	Disable mouse wheel scrolling when it's held down for panning. This makes panning easier on sensitive mice.
+
+--Code Changes
+
+Variations
+	Begin implementing more variations from Apophysis, but leave them disabled for now.
+
+Ember
+	Fixed a bug when adding symmetry to an ember that sorted all of the xforms by color speed value, instead of only the newly added symmetry xforms.
+
+IterOpenCLKernelCreator
+	Fixed a bug where final xform was considered for the randomly selected xform during each iteration. It was never actually hit, but should have never been there regardless.
+	Major change in how bad values were being handled. They were failing out on nVidia but running ok on AMD, but giving worse images. Now it's done in a while loop to avoid severe warp divergence.
+
+
+0.3.7.1 Beta 04/07/2014
+--User Changes
+	Fixed a bug that accidentally disabled double precision support on nVidia cards in the last commit.
+
+
+0.3.7.0 Beta 04/06/2014
+--User Changes
+	Support for most recent AMD cards.
+	Final render dialog is now non-modal, allowing the main window to be minimized while doing a lengthy render.
+	Fixed device selection which was completely broken in the final render dialog.
+	Save backup Xml before rendering starts just in case it crashes mid way through. The backup file is deleted upon successful render completion.
+	Set the GPU_MAX_ALLOC_PERCENT env var to 100 to allow full usage of GPU memory.
+	New --dump_kernel command line option for EmberRender to print the kernel if using OpenCL.
+	Fix hiding of xform indices in the xforms combo when their count was >= 10 by making the combo slightly wider.
+	Add ABCDEF to affine xform values table to clarify the meaning of x1, y1, x2, y2, o1, o2.
+	Variations is now the default shown tab when clicking into the xforms tab.
+
+--Code Changes
+
+IterOpenCLKernelCreator, DEOpenCLKernelCreator, OpenCLWrapper
+	Support for AMD.
+	
+EmberCLFunctions
+	Support for AMD.
+	When resizing a buffer, clear the existing one first to avoid having both resident in memory for a brief moment.
+
+EmberCLStructs
+	Allow for 21 xforms per ember, was previously 17.
+
+RendererCL
+	Support AMD.
+	Limit variations per xform to MAX_CL_VARS.
+
+EmberTreeWidgetItem
+	Derive EmberTreeWidgetItem from EmberTreeWidgetItemBase to make casting possible since a templated argument can't be passed to invokeMethod().
+
+Fractorium
+	New functions to allow updating the preview renders from within a thread better.
+
+FractoriumLibrary
+	Better flushing of event queues when starting and stopping preview renderer.
+	Place a try/catch block around EmberTreeItemChanged() because it seems to get called spurriously for tree items that have already been deleted.
+
+FractoriumEmberController
+	Fix bug where Fractorium would crash when opening a new file before the preview renders were finished by doing two things: Updating the thumbnail via invokeMethod() and using BlockingQueuedConnection for that call.
+
+
+0.3.6.0 Beta 03/11/2014
+--User Changes
+	Fix bug when using early clip.
+	Fix crash when more than once device is present.
+	Fix bug where saving the current Xml would continually prompt.
+	Fix bug where renderer wouldn't reinitialize after changing platform or device.
+	Add default click values for: brightness, gamma, gamma threshold, vibrancy, highlight power, spatial filter width, min and max DE radius, DE curve, 
+
+--Code Changes
+
+EmberCL.vcxproj
+	Add paths for AMD APP SDK. Support will be coming in the following months.
+	
+Renderer
+	Fix bug in EarlyClip() function signature that prevented it from being overrided, add const in base.
+	Formatting cleanup.
+
+EmberCLStructs
+	Remove typedefs for sbyte, byte and uint. They are not needed.
+
+IterOpenCLKernelCreator
+	Change byte to uchar.
+
+OpenCLWrapper
+	Fix bug in DeviceAndPlatformNames() that would crash the program when more than one platform was present.
+
+FractoriumLibrary
+	Fix bug where saving the current Xml would continually prompt.
+
+FractoriumRenderer
+	Fix bug where renderer wouldn't reinitialize after changing platform or device.
+
+OptionsDialog
+	Better initialization of the platform/device combo boxes when more than one platform/device is present.
+
+
+0.3.5.0 Beta 02/14/2014
+--User Changes
+	Add Hemisphere variation because it was needed for some testing. Many more to follow soon.
+	Integer spin boxes can be scrolled by 1 when shift is held down.
+	Support for dragging and dropping multiple files.
+	Support for DnD and pasting Xml over the current file or appending them to it.
+	Proper behavior when zero variations are present. This differs from flam3, but makes more sense.
+	Preview and scaling options when doing a final render.
+	Bug fix in EmberGenome that would crash when creating a sequence that included embers with final Xforms in them.
+
+--Code Changes
+
+Ember
+	Add two members to preserve the original raster width and height of an ember as it was read from file. This is used for aspect ratio calculations later on.
+	
+EmberDefines
+	Add two new enums for render status and scaling preference.
+
+EmberToXml
+	Make some buffers size 128 instead of 100.
+	Add function AddFilenameWithoutAmpersand() to ensure an ampersand is never added to the edits because Xml can't parse those.
+	Error in ConvertLinearToPolar() was calling GetXform(). Changed to GetTotalXform().
+
+PaletteList
+	Use a string instead of a vector because it's needed now to deal with ampersands.
+
+Renderer, RendererCL
+	Rendering functions now no longer return just true or false. Rather, they return an enum indicating whether it ran ok, with an error, or aborted.
+	Ok function was inadvertently made not to be an override in OpenCL. Fixed by adding const to match the base.
+
+SheepTools
+	Clean up to use our modern design instead of some remnants left over from flam3.
+	Consolidate variation weight normalization to a function call, NormalizeVariationWeights().
+
+Utils
+	Add some functionality to EmberReport.
+	Add a function FindAndReplace() to replace all isntances of a value within a collection with a specified value.
+
+Variation, VariationList
+	Formatting cleanup.
+	Add new variation Hemisphere().
+
+Xform
+	Change the behavior for when zero variations are present to just treat them as linear variations with weight 1.
+
+XmlToEmber
+	Formatting cleanup.
+	Preserve original raster width and height in new member variables.
+	Reserve space in the embers vector based on a rough estimate of how many are present in the file.
+	Account for strings which contain an ampersand, which Xml can't parse.
+
+EmberCommon
+	Generalize CreateRenderer() function to work in all scenarios, which reduced code duplication in the GUI.
+
+EmberRender, EmberAnimate, EmberGenome
+	Better error reporting when renderer creation fails.
+
+IterOpenCLKernelCreator
+	Update GPU side to use the new Xform behavior when variations are empty.
+
+DoubleSpinBox
+	Style cleanup.
+
+EmberFile
+	Remove unused CreateRenderer() function.
+
+EmberTreeWidgetItem
+	Use RGBA for previews because that's what QPixmap prefers.
+
+FinalRenderDialog
+	General cleanup.
+	Support for new scaling features.
+
+FinalRenderEmberController
+	Add support for preview renders.
+	Support for new scaling features.
+	Use new CreateRenderer() function.
+	Use invokeMethod() for all GUI updates inside of the render and preview threads. This was causing an occasional crash before.
+	Preserve the state of some of the checkboxes that were not being saved before.
+
+Fractorium
+	Add support for drag n drop of multiple files at once.
+	Better drag n drop code.
+
+FractoriumEmberController
+	Make the preview renderer keep one core free, instead of maxing out all cores.
+
+FractoriumInfo
+	Use invokeMethod() to account for when ErrorReportToQTextEdit() is called from a thread.
+
+FractoriumLibrary
+	General cleanup.
+	Add support for undo/redo list.
+
+FractoriumMenus
+	Add support for undo/redo list.
+	Add support pasting Xml as an append, as well as a replacement.
+	Preserve original dimension with new m_OrigFinalRasW and m_OrigFinalRasH fields.
+	Better handling of unicode and html junk in pasted strings.
+	Stop preview render whenever the open file/list of embers changes in response to user action.
+
+FractoriumRender
+	Add support for undo/redo list.
+	Clear both front and back screen buffers on the main window when showing the final render dialog.
+	Use new CreateRenderer() function.
+
+FractoriumSettings
+	General cleanup and reordering.
+	Add support for saving scaling options from the final render dialog.
+	Preserve the state of some of the checkboxes that were not being saved before.
+
+SpinBox
+	Add a default small step of 1 to be used when scrolling and holding shift. DoubleSpinBox already had this functionality.
+
+
+0.3.4.0 Beta 01/26/2014
+--User Changes
+	Fix bug where the last few rows of an image weren't being rendered.
+	Add commas to various command line numerical outputs to make them easier to read.
+	Apply sort mode to variations list every time filter is changed or cleared.
+	Prevent crash when clicking on main window before initialization is complete on program startup.
+
+--Code Changes
+
+OpenCLWrapper, RendererCL
+	Refactor to better separate OpenCL detection from initialization. This should help detect devices better.
+	
+EmberOptions
+	Fix small formatting errors in command line help text.
+
+EmberFile
+	Prevent assign to self.
+
+
+0.3.3.0 Beta 01/23/2014
+--User Changes
+	More intelligent checking for OpenCL.
+	Greater zoom amount when scrolling the mouse wheel on the main window.
+
+0.3.2.0 Beta 01/19/2014
+--User Changes
+	Add previews to open embers in the Library tab.
+	Allow for starting and stopping the preview renderer.
+	Make library tab first and automatically selected.
+	Fix the ngon and rays variations to use the sum of the squares, instead of their square root. Ngon and rays were completely erroneous before this fix.
+	Add support for copying and pasting Xml text from and into the GUI.
+	Holding shift while scrolling xform weight adjusts the value by 0.001 for more precise manipulation.
+
+--Code Changes
+
+CarToRas
+	Prevent assign to self.
+	Remove padded variables for bounds checking, and check bounds properly. Also discovered that even when points are in bounds, the roundoff error from converting to raster can put them out of bounds. Add a final check in Accum.
+
+DensityFilter
+	General cleanup.
+	Save the filter width (oddly enough, this wasn't being done before).
+	Add a vector of indices that is used in OpenCL to apply the filter by row, rather than moving from the center outward. This fixes a race condition when applying the DE filter on the GPU.
+	Remove FinalMinRad, FinalMaxRad and ActualMaxRad members and accessor functions.
+
+Affine2D, Color, Ember, Palette, Point, Variation, Xform
+	Prevent assign to self.
+
+Renderer
+	Fully setup gutter width the way smoulder does.
+	In GaussianDensityFilter(), do a more optimized assignment of the bucket hit count if SS=1.
+	Reorder the assignments for the case (jj == ii) to be cache efficient.
+	In Accumulate(), add one final check after Car to Ras conversion to make absolutely sure it's within bounds. This was the source of a seldom occurring, but lethal memory error.
+
+EmberToXml
+	Clamp supersample to always be greater than 1 just to be safe.
+
+XmlToEmber
+	Add a Parse() overload that takes a vector<unsigned char>.
+	More consistent formatting of error messages.
+	Add, but comment out, an attempt to capture missing variations when parsing. Revisit later.
+
+FractoriumEmberController, FractoriumMenus
+	Properly account for scale when opening from file, dragging and dropping, or pasting Xmls into the GUI.
+
+FractoriumParams
+	Allow brightness to go to 50 and gamma to go to 9999.
+	Allow spatial filter width to go down to 0.1, was 0.4 before.
+
+FractoriumRender
+	Renderer was not properly being created when returning from options if params other than OpenCL or double precision were changed. Now properly construct for all options changes.
+
+FractoriumSettings
+	Default XmlSupersample to 2 if not found in settings file.
+
+FractoriumXformsAffine
+	Respect world vs. local pivot when flipping affine to mimic Apophysis behavior. Was previously always using world pivot behavior.
+	
+FractoriumXformsColor
+	NULL check for empty pixmap on startup.
+
+GLWidget
+	Check for m_Init in SetSelectedXform() to avoid recursive paint operation.
+
+EmberCLStructs
+	Remove pad members from CarToRas structures to mirrow the CPU side.
+	
+EmberCLFunctions
+	Remove AddToAccum functions, they are no longer used with new DE code. Add AccumCheck() function to check bounds, but not accumulate.
+	Change CarToRasInBounds() to check bounds the same way the new CPU code does.
+
+IterOpenCLKernelCreator
+	Add histSize parameter to kernel.
+	Add (histIndex < histSize) check after call to CarToRasConvertPointToSingle() to match the extra check done on the CPU side now. This will guarantee memory errors will never happen while iterating.
+
+RendererCL
+	Add support for different block widths and heights for DE.
+	Add a DE coefficients buffer for applying DE by row, which fixes the race condition problem that occurs when applying from the center outward.
+	DE blocksize is now 32x32, unless SS>1 or type is double, in which case they run at 32x30.
+	Add debugging code in GaussianDensityFilter() to fall back to the CPU for testing, leave commented out.
+
+DEOpenCLKernelCreator
+	Re-design to apply filter by row, rather than from the center outward. This solves the race condition error that would lead to missing pixels on some images.
+	Eliminate needless variables and make every effort to get the kernel as compact as possible. This allows running a block size of 32x32.
+	Rename blockHistCol and blockHistRow to threadHistCol and threadHistRow since that's what they are.
+	In CreateGaussianDEKernel(), have the last row accumulate since it's slightly faster than having the first row do it.
+	In CreateGaussianDEKernel(), Change the local buffer to be size 3000.
+
+
+0.3.1.0 Beta 01/06/2014
+--User Changes
+	Changing size when dragging in an image (orig -> window), resizing (window -> window), or doing a final render (window -> final render) now compensates for scale (pixels per unit).
+	Spatial filter width now allows values >= 0 and defaults to 0.4.
+	All spinners now scroll by the normal step / 10 when holding shift. Variation spinners are a special case and scroll by 0.001 with shift held down.
+	Final render now shows pure render time along with total time.	
+	Fix bug in final render dialog where only the first image in the file would get rendered.
+	Installer will now uninstall the previous version automatically.
+	Installer now includes this file.
+	About box now fully specifies version with 4 digits.
+
+--Code Changes
+-Ember
+	Add function SetSizeAndAdjustScale() to adjust the scale for a size change.
+
+-RendererCL
+	Report error when adding spatial filter params fails, which can happen when GPU memory runs out.
+
+-DoubleSpinBox
+	Add m_Step and m_SmallStep members to specify how much to scroll by based on the keyboard modifier.
+
+-FinalRenderEmberController
+	Add m_TotalTimer member to differentiate between render time and total time.
+
+
+0.3 Beta 12/27/2013
+--User Changes
+	Support for single and double precision data types in Fractorium.
+	Support for single and double precision data types with OpenCL.
+	Support for --nstrips on the command line with OpenCL.
+	Support for --lock_accum on the command line.
+	Fix memory errors.
+	Fix affine circle selection bugs.
+	
+--Code Changes
+Provide templated copy constructors and assignment operators for:
+	-Affine2D
+	-CarToRas
+	-Color
+	-Ember
+	-Palette
+	-Point
+	-Variation
+
+-CarToRas
+	More clearly name raster bounds member variables.
+
+-DensityFilter
+	Make a non-templated base with a single virtual function.
+	Make ToString() and other member functions const.
+
+-Ember.cpp
+	Better export defines for single and double template classes.
+	Only export double template classes with the same type, no more type mixing.
+
+-Ember.h
+	Add EqualizeWeights() function.
+	Replace INTERP macros with templated function that take member variable addresses as template parameters.
+	Supply proper template type for some mat2x3 objects in Interpolate().
+	Make TotalXformCount() const like XformCount().
+	Make CompareEmbers() static function conform to new std comparison signature, taking two references and returning a bool.
+	Make ToString() const.
+
+EmberDefines.h
+	Explicitly specify types for all enums.
+
+Isaac.h
+	Improve code style.
+
+Palette.h
+	Require template argument for newRgb parameter in CalcNewRgb() to support copying to pixels of a different type (float to double, or double to float).
+
+Renderer.h/cpp
+	Derive Renderer<T, bucketT> from a non-templated based named RendererBase.
+	Add virtual function MakeDmap() which creates the scaled, final palette to use so that RendererCL can override it to specifically use a float palette at all times.
+	Check results of AccumulatorToFinalImage() instead of blindly assuming it succeeded.
+	Add virtual function Callback() to set the callback object.
+	Fix bug in ogScaleDensityFilter() which was causing the last line not to be filtered by starting at the gutter width offset. Filter all pixels now.
+	Properly template temporary bucket objects in GaussianDensityFilter(), AccumulatorToFinalImage(), Accumulate(), AddToAccum() and GammaCorrection().
+	Fix bug in Iterate() where the returned iter count was junk due to overflow. Use unsigned __int64 for everything, including literals with the ULL suffix.
+	Properly template m_Dmap and m_AccumulatorBuckets members.
+	Add virtual MemoryAvailable() function to return how much memory is available on the CPU, or on the GPU in derived classes.
+
+SheepTools.h
+	Allow it to take two template parameters to pass to the internal renderer.
+
+SpatialFilter.h
+	Make ToString(), Filter() and other member functions const.
+
+TemporalFilter.h
+	Make ToString() and other member functions const.
+
+Utils.h
+	Add global static function CopyVec() to copy a vector of one type to another.
+	Add global static function RgbaToRgb() to copy an RGBA buffer to an RGB one.
+	Add global static function ClampGte0Ref() as a thin wrapper.
+
+Variation.h
+	Supply templated copy constructors to support creating copies of variations using different types.
+	Use initializer in Variation constructor for m_Name to avoid unnecessary string constructor call.
+	Make ToString() const.
+	Add two new virtual functions to all variations to make a copy of themselves using a different type and placing the new object in a reference to a pointer passed in.
+	Add ParentXform() function.
+	Rename SetParentXform() to ParentXform().
+	Use real_t instead of float to support double in OpenCL.
+
+-Xform.h
+	Rename m_Density member to m_Weight.
+	Make ToString() and other member functions const.
+	
+
+EmberRender, EmberAnimate, EmberGenome:
+	Take two template arguments to pass to renderer.
+	Better handling of erroneous arguments for bits per channel and thread count when using OpenCL.
+	Use proper std::sort() comparison function.
+	Support saving as 3 channel image, such as bmp or jpg when using 4 channels with OpenCL.
+	Add --lock_accum option.
+	Add full double precision support for OpenCL.
+	Add support for --nstrips when using OpenCL.
+	Ensure strips divide evenly into the final raster image height.
+	Move CalcStrips() out of EmberEnder.cpp and into EmberCommon.h.
+	Dump errors if anything went wrong while rendering.
+
+EmberCL
+	Template all kernel creators to support float and double.
+	
+DEOpenCLKernelCreator.h/cpp
+	Put global barrier on all accum writes.
+	Only use no-cache version when using double.
+
+EmberCLFunctions.h
+	Support double, including when doing atomics using ulong for the int part of the unions.
+
+EmberCLStructs.h
+	Template all CL structures.
+	Remove m_MinRad and m_MaxRad from DensityFilterCL since they are never used.
+
+FinalAccumOpenCLKernelCreator.h/cpp
+	Template all.
+
+IterOpenCLKernelCreator.h/cpp
+	Template all.
+	Fix glaring bug in zeroize kernel that was writing past the end of memory. Most likely the source of previous crashes.
+
+OpenCLWrapper.h/cpp
+	Add support for double.
+
+RendererCL.h/cpp
+	Template to support double.
+	Use cached color values m_ColorSpeedCache and m_OneMinusColorCache instead of m_Density and m_ColorX.
+	In RunDensityFilter(), reduce the block size by 2 when running with double, else the GPU runs out of resources.
+
+Fractorium.h/cpp
+	Complete rework to a controller architecture to move the processing code out of the GUI and to support templating.
+
+	
+0.2 Beta 11/2013
+-Minor fixes.
+-Install to Program Data to avoid admin privileges errors.
+
+
+0.1 Beta 11/2013
+-Initial release.

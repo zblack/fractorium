@@ -1,0 +1,178 @@
+#summary Options Dialog
+<font face="Verdana">
+
+=Options=
+
+Options to use in various parts of Fractorium.
+
+<ul>
+    <li>
+        ==Interactive Rendering==
+                            
+        Options used when editing flames and displaying them in the output window.
+
+        <ul>
+            <li>
+                ===Early Clip===
+
+                Whether to apply color correction before spatial filtering. It's recommended to only use this if the colors don't look right.
+
+                A more thorough discussion of early clip from the original flam3 documentation is <a href="https://code.google.com/p/flam3/wiki/NewFeatures">here</a>.
+            </li>
+
+            <li>
+                ===Transparency===
+
+                This has no effect since the output window will always have the same color as the flame's specified background color.
+            </li>
+
+            <li>
+                ===Use OpenCL===
+
+                Whether to use OpenCL in the rendering process. It is highly recommended that you use this if your video card supports it.
+            </li>
+                                
+            <li>
+                ===Use Double Precision===
+
+                Whether to use double precision numbers in the rendering process. This will slow down the render and double the memory usage, but will produce a better looking image in some cases. It is recommended you don't use this for interactive rendering on the GPU unless you have an extremely fast graphics card with double precision support.
+            </li>
+
+            <li>
+                ===OpenCL Platforms===
+
+                The available OpenCL platforms on the system. Disabled if Use OpenCL is unchecked.
+            </li>
+
+            <li>
+                ===OpenCL Device===
+
+                The available devices on the currently selected platform. Disabled if Use OpenCL is unchecked.
+            </li>
+
+            <li>
+                ===Threads===
+
+                The number of threads to use when using the traditional CPU renderer. Disabled if Use OpenCL is unchecked.
+
+                Range: 1 - number of cores.
+            </li>
+
+            <li>
+                ===CPU Sub Batch===
+
+                The number of sub batches of 10,000 iterations to run on each mouse movement. Values between 1 and 10 are recommended.
+
+                Higher values give better preview images, but a less responsive UI. Decrease this value if you have a slower processor.
+            </li>
+
+            <li>
+                ===OpenCL Sub Batch===
+
+                The number of sub batches of ~8 million iterations to run on each mouse movement. Values between 1 and 3 are recommended.
+
+                Higher values give better preview images, but a less responsive UI. Decrease this value if you have a slower video card.
+
+                Note that since the sub batch size for the OpenCL renderer is so large, low quality renders can complete on the first sub batch. In that case, 
+                full density filtering will be performed, which can give a choppy UI. In such cases, increase the quality a bit.
+            </li>
+
+            <li>
+                ===CPU Filtering===
+
+                The type of filtering to perform for preview renders on each mouse movement when using the CPU renderer. Log scaling is recommended for all but the fastest processors. However, if
+                you have a very fast processor and want to see a more realistic representation of what the final output image will look like on every mouse movement, select
+                the Full DE option.
+            </li>
+
+            <li>
+                ===OpenCL Filtering===
+
+                The type of filtering to perform for preview renders on each mouse movement when using the OpenCL renderer. Log scaling is recommended for all but the fastest video cards. However, if
+                you have a very fast processor and want to see a more realistic representation of what the final output image will look like on every mouse movement, select
+                the Full DE option.
+
+                Note that as stated above under OpenCL Sub Batch, even if this option is set to log scaling, full DE might get performed on each mouse movement for low quality renders.
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        ==Xml Saving==
+
+        When editing flames, the user will save the parameters as an Xml file once they are satisfied with the result. Most of the values will be displayed exactly as they
+        are on the UI. However, there are a few that make sense to override each time.
+                            
+        <ul>
+            <li>
+                ===Width===
+
+                The width of the final output image.
+
+                Range: 10 - 100,000.
+            </li>
+
+            <li>
+                ===Height===
+
+                The height of the final output image.
+
+                Range: 10 - 100,000.
+            </li>
+
+            <li>
+                ===Quality===
+
+                The quality of the final output image. Values above 2000 don't offer much noticeable improvement.
+
+                Range: 1 - 200,000.
+            </li>
+
+            <li>
+                ===Temporal Samples===
+
+                The temporal samples to use when applying motion blur. A value of 1000 is recommended. Only used during animation, otherwise the value is overridden with one.
+
+                Range: 1 - 5,000.
+            </li>
+
+            <li>
+                ===Supersample===
+
+                The value to multiply the dimensions of the histogram and density filter buffer by to help eliminate jagged lines.
+                Values greater than one will greatly impact performance and will increase memory usage.
+
+                While a value of 2 offers some visual improvement, values greater than 2 don't offer noticeable improvement.
+
+                Range: 1 - 4.
+            </li>
+        </ul>
+    </li>
+                        
+    <li>
+        ==Identity==
+
+        When saving flame parameters to an Xml file, there is a field for the identity of the artist who made the flame. Fill these out with your identity so that you
+        get proper attribution for your work.
+
+        <ul>
+            <li>
+                ===Id===
+
+                The identity of the user.
+            </li>
+
+            <li>
+                ===Url===
+
+                The website of the user.
+            </li>
+
+            <li>
+                ===Nick===
+
+                The nick name of the user.
+            </li>
+        </ul>
+    </li>
+</ul>

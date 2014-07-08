@@ -1,0 +1,88 @@
+=Description=
+<font face="Verdana" size="2">
+A Qt-based fractal flame editor which uses a C++ re-write of the flam3 algorithm named Ember and a GPU capable version named EmberCL which implements a portion of the cuburn algorithm in OpenCL.
+</font>
+<br></br>
+
+==Installer==
+<font face="Verdana" size="2">
+<a href="https://drive.google.com/file/d/0Bws5xPbHJph6Vm1jOVRZSVJ6OUk/edit?usp=sharing">Windows 7 64-bit Installer</a>
+</font>
+<br></br>
+
+==Requirements and Prerequisites==
+<font face="Verdana" size="2">
+Windows 7, 64-bit
+
+Install the latest drivers for your video card
+
+An nVidia video card to take advantage of OpenCL
+
+If you have an Intel processor, but do not have a device capable of running OpenCL, and still want to run Fractorium with only CPU support, you must install Intel's CPU-only OpenCL libraries <a href="http://registrationcenter.intel.com/irc_nas/3608/intel_sdk_for_ocl_applications_2013_r2_runtime_x64_setup.msi">here</a>.
+</font>
+<br></br>
+
+==Running==
+<font face="Verdana" size="2">
+Fractorium and its associated command line tools can render fractal flames using the CPU, or OpenCL. In order to use OpenCL, you must have an nVidia card that has the Fermi architecture or later. If you attempt to use an unsupported card, you will receive an error message and the CPU renderer will be used instead.
+
+AMD cards will be supported shortly.
+</font>
+<br></br>
+
+==Current Status==
+<font face="Verdana" size="2">
+ Initial beta release supporting the following:
+
+ ===Hardware:===
+ -CPU: x64 Intel and AMD CPUs.
+
+ -GPU: nVidia Fermi and later cards.
+
+ ===Variations:===
+ -The 98 standard variations included with flam3.
+
+ ===Palettes:===
+ -The 700 palettes included in the standard flam3-palettes.xml file.
+
+ ===Compilers:===
+ -Microsoft Visual Studio 2010 (project files upgrade-able to 2012).
+
+ ===Operating Systems:===
+ -Windows 7 x64.
+</font>
+
+==Future Direction==
+<font face="Verdana" size="2">
+Help is needed and welcome for implementing the following features:
+
+-Support for AMD hardware.
+
+-More variations from Apophysis.
+
+-Support for other compilers, such as gcc and MingW.
+
+-Support for other operating systems, Mac and Linux.
+
+-Conversion of OpenGL calls to shader programs.
+
+-Implementation of more alternative rendering methods.
+
+-Standalone animator/music visualizer.
+
+-Benchmarking suite.
+</font>
+<br></br>
+
+==Gratitude==
+<font face="Verdana" size="2">
+A sincere thanks to the following people for answering all of my questions:
+
+Scott Draves
+
+Erik Reckase
+
+Steve Robertson
+
+Mike Thiesen
+</font>

@@ -1,0 +1,338 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{44a6e761-1e1f-46ce-820d-b80d1c0265ae}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{cc25f297-1a73-4c08-9b5f-8dad7c7c7452}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Glm">
+      <UniqueIdentifier>{d61ea4d8-e7a6-4d86-934e-992611e1c181}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Widgets">
+      <UniqueIdentifier>{84e24710-0e4f-4aa3-9f74-82cd2a3b39a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dialogs">
+      <UniqueIdentifier>{5555e39d-b8d2-4bac-bf6c-6763228b15bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MainWindows">
+      <UniqueIdentifier>{26fa32d9-268c-4021-8398-d40d46344dff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controllers">
+      <UniqueIdentifier>{811962f9-51c1-48ba-a9da-f5ce981aea71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Generated Files\ReleaseNvidia">
+      <UniqueIdentifier>{52886ad8-fa57-4c60-b799-7c648147b7f1}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Fractorium\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_Fractorium.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumPch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\DoubleSpinBox.cpp">
+      <Filter>Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\SpinBox.cpp">
+      <Filter>Widgets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\AboutDialog.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FinalRenderDialog.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\OptionsDialog.cpp">
+      <Filter>Dialogs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\Fractorium.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\GLWidget.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumParams.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXforms.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsColor.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsAffine.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsVariations.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsXaos.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumPalette.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumLibrary.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumInfo.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumMenus.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumRender.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumSettings.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumToolbar.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FinalRenderEmberController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumEmberController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\GLEmberController.cpp">
+      <Filter>Controllers</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TwoButtonWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TwoButtonWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_TwoButtonWidget.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TableWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TableWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_TableWidget.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_StealthComboBox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_StealthComboBox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_StealthComboBox.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SpinBox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SpinBox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_SpinBox.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_OptionsDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_OptionsDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_OptionsDialog.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GLWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GLWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_GLWidget.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_FractoriumSettings.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_FractoriumSettings.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_FractoriumSettings.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Fractorium.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Fractorium.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_Fractorium.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_FinalRenderDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_FinalRenderDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_FinalRenderDialog.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DoubleSpinBox.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DoubleSpinBox.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_DoubleSpinBox.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_AboutDialog.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_AboutDialog.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_AboutDialog.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_Fractorium.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\glm\glm\glm.hpp">
+      <Filter>Glm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\EmberFile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\FractoriumPch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_OptionsDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_AboutDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_FinalRenderDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\FinalRenderEmberController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\FractoriumEmberController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\GLEmberController.h">
+      <Filter>Controllers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\Source\EmberCommon\EmberCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\OptionsDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\AboutDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\FinalRenderDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\DoubleSpinBox.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\TableWidget.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\VariationTreeWidgetItem.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\AboutDialog.h">
+      <Filter>Dialogs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\FinalRenderDialog.h">
+      <Filter>Dialogs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\OptionsDialog.h">
+      <Filter>Dialogs</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\SpinBox.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\GLWidget.h">
+      <Filter>MainWindows</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.h">
+      <Filter>MainWindows</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\EmberTreeWidgetItem.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\StealthComboBox.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\FractoriumSettings.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\TwoButtonWidget.h">
+      <Filter>Widgets</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\Source\Fractorium\Fractorium.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Source\Fractorium\Icons\Fractorium.ico" />
+  </ItemGroup>
+</Project>

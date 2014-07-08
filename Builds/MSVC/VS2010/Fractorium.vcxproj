@@ -1,0 +1,1109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseNvidia|Win32">
+      <Configuration>ReleaseNvidia</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ReleaseNvidia|x64">
+      <Configuration>ReleaseNvidia</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{6547D5FA-64CE-44BA-9D3C-B6E217456445}</ProjectGuid>
+    <Keyword>Qt4VSv1.0</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'" />
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)..\..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)..\..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)..\..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(SolutionDir)..\..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)..\..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(SolutionDir)..\..\..\Bin\$(Platform)\$(Configuration)\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Obj\$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Obj\$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(SolutionDir)Obj\$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Obj\$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Obj\$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(SolutionDir)Obj\$(TargetName)\$(Platform)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_HELP_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName;$(QTDIR)\..\qtmultimedia\include\QtMultimedia;$(QTDIR)\..\qtmultimedia\include;$(QTDIR)\..\qttools\include;$(QTDIR)\..\qttools\include\QtHelp;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;.\GeneratedFiles;$(ProjectDir)..\..\..\Source\Ember;$(ProjectDir)..\..\..\Source\EmberCL;$(ProjectDir)..\..\..\Source\EmberCommon;$(ProjectDir)..\..\..\..\glm;$(ProjectDir)..\..\..\..\tbb\include;$(ProjectDir)..\..\..\..\libjpeg;$(ProjectDir)..\..\..\..\libpng;$(ProjectDir)..\..\..\..\libxml2\include;$(ProjectDir)..\..\..\..\glew\include;$(AMDAPPSDKROOT)\include;$(CUDA_PATH)include;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>FractoriumPch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4661</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(AMDAPPSDKROOT)\lib\x86;$(CUDA_PATH)lib\$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;opencl.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /F /Y /R /D "$(SolutionDir)$(Platform)\$(Configuration)\*.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(ProjectDir)..\..\..\..\tbb\build\vsproject\ia32\$(Configuration)\tbb_debug.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(ProjectDir)..\..\..\..\tbb\build\vsproject\ia32\$(Configuration)\tbb_debug.pdb" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_HELP_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName;$(QTDIR)\..\qtmultimedia\include\QtMultimedia;$(QTDIR)\..\qtmultimedia\include;$(QTDIR)\..\qttools\include;$(QTDIR)\..\qttools\include\QtHelp;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;.\GeneratedFiles;$(ProjectDir)..\..\..\Source\Ember;$(ProjectDir)..\..\..\Source\EmberCL;$(ProjectDir)..\..\..\Source\EmberCommon;$(ProjectDir)..\..\..\..\glm;$(ProjectDir)..\..\..\..\tbb\include;$(ProjectDir)..\..\..\..\libjpeg;$(ProjectDir)..\..\..\..\libpng;$(ProjectDir)..\..\..\..\libxml2\include;$(ProjectDir)..\..\..\..\glew\include;$(AMDAPPSDKROOT)\include;$(CUDA_PATH)include;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <Optimization>Disabled</Optimization>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>FractoriumPch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4661</DisableSpecificWarnings>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(AMDAPPSDKROOT)\lib\x86_64;$(CUDA_PATH)lib\$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmaind.lib;Qt5Cored.lib;Qt5Guid.lib;Qt5OpenGLd.lib;opengl32.lib;glu32.lib;opencl.lib;Qt5Widgetsd.lib;Qt5Xmld.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /F /Y /R /D "$(SolutionDir)$(Platform)\$(Configuration)\*.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)intel64\$(Configuration)\tbb_debug.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)intel64\$(Configuration)\tbb_debug.pdb" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_HELP_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName;$(QTDIR)\..\qtmultimedia\include\QtMultimedia;$(QTDIR)\..\qtmultimedia\include;$(QTDIR)\..\qttools\include;$(QTDIR)\..\qttools\include\QtHelp;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;.\GeneratedFiles;$(ProjectDir)..\..\..\Source\Ember;$(ProjectDir)..\..\..\Source\EmberCL;$(ProjectDir)..\..\..\Source\EmberCommon;$(ProjectDir)..\..\..\..\glm;$(ProjectDir)..\..\..\..\tbb\include;$(ProjectDir)..\..\..\..\libjpeg;$(ProjectDir)..\..\..\..\libpng;$(ProjectDir)..\..\..\..\libxml2\include;$(ProjectDir)..\..\..\..\glew\include;$(AMDAPPSDKROOT)\include;$(CUDA_PATH)include;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>FractoriumPch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4661</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(AMDAPPSDKROOT)\lib\x86;$(CUDA_PATH)lib\$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;opencl.lib;Qt5Widgets.lib;Qt5Xml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /F /Y /R /D "$(SolutionDir)$(Platform)\$(Configuration)\*.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(ProjectDir)..\..\..\..\tbb\build\vsproject\ia32\$(Configuration)\tbb.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(ProjectDir)..\..\..\..\tbb\build\vsproject\ia32\$(Configuration)\tbb.pdb" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_HELP_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName;$(QTDIR)\..\qtmultimedia\include\QtMultimedia;$(QTDIR)\..\qtmultimedia\include;$(QTDIR)\..\qttools\include;$(QTDIR)\..\qttools\include\QtHelp;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;.\GeneratedFiles;$(ProjectDir)..\..\..\Source\Ember;$(ProjectDir)..\..\..\Source\EmberCL;$(ProjectDir)..\..\..\Source\EmberCommon;$(ProjectDir)..\..\..\..\glm;$(ProjectDir)..\..\..\..\tbb\include;$(ProjectDir)..\..\..\..\libjpeg;$(ProjectDir)..\..\..\..\libpng;$(ProjectDir)..\..\..\..\libxml2\include;$(ProjectDir)..\..\..\..\glew\include;$(AMDAPPSDKROOT)\include;$(CUDA_PATH)include;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>FractoriumPch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4661</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(AMDAPPSDKROOT)\lib\x86;$(CUDA_PATH)lib\$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;opencl.lib;Qt5Widgets.lib;Qt5Xml.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /F /Y /R /D "$(SolutionDir)$(Platform)\$(Configuration)\*.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(ProjectDir)..\..\..\..\tbb\build\vsproject\ia32\$(Configuration)\tbb.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(ProjectDir)..\..\..\..\tbb\build\vsproject\ia32\$(Configuration)\tbb.pdb" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_HELP_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName;$(QTDIR)\..\qtmultimedia\include\QtMultimedia;$(QTDIR)\..\qtmultimedia\include;$(QTDIR)\..\qttools\include;$(QTDIR)\..\qttools\include\QtHelp;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;.\GeneratedFiles;$(ProjectDir)..\..\..\Source\Ember;$(ProjectDir)..\..\..\Source\EmberCL;$(ProjectDir)..\..\..\Source\EmberCommon;$(ProjectDir)..\..\..\..\glm;$(ProjectDir)..\..\..\..\tbb\include;$(ProjectDir)..\..\..\..\libjpeg;$(ProjectDir)..\..\..\..\libpng;$(ProjectDir)..\..\..\..\libxml2\include;$(ProjectDir)..\..\..\..\glew\include;$(AMDAPPSDKROOT)\include;$(CUDA_PATH)include;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>FractoriumPch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4661</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(AMDAPPSDKROOT)\lib\x86_64;$(CUDA_PATH)lib\$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;opencl.lib;Qt5Widgets.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>0.1</Version>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /F /Y /R /D "$(SolutionDir)$(Platform)\$(Configuration)\*.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)intel64\$(Configuration)\tbb.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)intel64\$(Configuration)\tbb.pdb" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>UNICODE;WIN32;QT_DLL;QT_NO_DEBUG;NDEBUG;QT_CORE_LIB;QT_GUI_LIB;QT_MULTIMEDIA_LIB;QT_HELP_LIB;QT_OPENGL_LIB;QT_WIDGETS_LIB;QT_XML_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.;$(QTDIR)\include;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles;$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName;$(QTDIR)\..\qtmultimedia\include\QtMultimedia;$(QTDIR)\..\qtmultimedia\include;$(QTDIR)\..\qttools\include;$(QTDIR)\..\qttools\include\QtHelp;$(QTDIR)\include\QtConcurrent;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui;$(QTDIR)\include\QtOpenGL;$(QTDIR)\include\QtWidgets;$(QTDIR)\include\QtXml;.\GeneratedFiles;$(ProjectDir)..\..\..\Source\Ember;$(ProjectDir)..\..\..\Source\EmberCL;$(ProjectDir)..\..\..\Source\EmberCommon;$(ProjectDir)..\..\..\..\glm;$(ProjectDir)..\..\..\..\tbb\include;$(ProjectDir)..\..\..\..\libjpeg;$(ProjectDir)..\..\..\..\libpng;$(ProjectDir)..\..\..\..\libxml2\include;$(ProjectDir)..\..\..\..\glew\include;$(CUDA_PATH)include;.\GeneratedFiles\$(ConfigurationName);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <TreatWChar_tAsBuiltInType>false</TreatWChar_tAsBuiltInType>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>FractoriumPch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <ProgramDataBaseFileName>$(TargetDir)$(TargetName).pdb</ProgramDataBaseFileName>
+      <DisableSpecificWarnings>4661</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <OutputFile>$(OutDir)\$(ProjectName).exe</OutputFile>
+      <AdditionalLibraryDirectories>$(QTDIR)\lib;$(CUDA_PATH)lib\$(PlatformName);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>qtmain.lib;Qt5Core.lib;Qt5Gui.lib;Qt5OpenGL.lib;opengl32.lib;glu32.lib;opencl.lib;Qt5Widgets.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <Version>0.1</Version>
+    </Link>
+    <PostBuildEvent>
+      <Command>xcopy /F /Y /R /D "$(SolutionDir)$(Platform)\$(Configuration)\*.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)intel64\$(Configuration)\tbb.dll" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)intel64\$(Configuration)\tbb.pdb" "$(OutDir)"
+xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\Source\Fractorium\AboutDialog.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FinalRenderDialog.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FinalRenderEmberController.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\Fractorium.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumEmberController.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumInfo.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumLibrary.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumMenus.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumPalette.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumParams.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumRender.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumSettings.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumToolbar.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXforms.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsAffine.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsColor.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsVariations.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsXaos.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\GLEmberController.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\GLWidget.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\main.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\DoubleSpinBox.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\OptionsDialog.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\SpinBox.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumPch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_AboutDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_DoubleSpinBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_FinalRenderDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_Fractorium.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_FractoriumSettings.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_GLWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_OptionsDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_SpinBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_StealthComboBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TableWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TwoButtonWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_Fractorium.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_AboutDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_DoubleSpinBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_FinalRenderDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_Fractorium.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_FractoriumSettings.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_GLWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_OptionsDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_SpinBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_StealthComboBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_TableWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_TwoButtonWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_AboutDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_DoubleSpinBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_FinalRenderDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_Fractorium.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_FractoriumSettings.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_GLWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_OptionsDialog.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_SpinBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_StealthComboBox.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TableWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TwoButtonWidget.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\OptionsDialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing OptionsDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/OptionsDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing OptionsDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/OptionsDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing OptionsDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing OptionsDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/OptionsDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/OptionsDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing OptionsDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing OptionsDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/OptionsDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/OptionsDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\AboutDialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing AboutDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/AboutDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing AboutDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/AboutDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing AboutDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing AboutDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/AboutDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/AboutDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing AboutDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing AboutDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/AboutDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/AboutDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\FinalRenderDialog.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing FinalRenderDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FinalRenderDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing FinalRenderDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FinalRenderDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing FinalRenderDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing FinalRenderDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FinalRenderDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FinalRenderDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing FinalRenderDialog.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing FinalRenderDialog.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FinalRenderDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FinalRenderDialog.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\EmberTreeWidgetItem.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\FractoriumSettings.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing FractoriumSettings.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FractoriumSettings.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing FractoriumSettings.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FractoriumSettings.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing FractoriumSettings.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing FractoriumSettings.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FractoriumSettings.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FractoriumSettings.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing FractoriumSettings.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing FractoriumSettings.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FractoriumSettings.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/FractoriumSettings.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\TwoButtonWidget.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing TwoButtonWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TwoButtonWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing TwoButtonWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TwoButtonWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing TwoButtonWidget.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing TwoButtonWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TwoButtonWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TwoButtonWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing TwoButtonWidget.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing TwoButtonWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TwoButtonWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TwoButtonWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <ClInclude Include="..\..\..\Source\EmberCommon\EmberCommon.h" />
+    <ClInclude Include="..\..\..\Source\Fractorium\FinalRenderEmberController.h" />
+    <ClInclude Include="..\..\..\Source\Fractorium\FractoriumEmberController.h" />
+    <ClInclude Include="..\..\..\Source\Fractorium\GLEmberController.h" />
+    <ClInclude Include="..\..\..\Source\Fractorium\resource.h" />
+    <ClInclude Include="GeneratedFiles\ui_AboutDialog.h" />
+    <ClInclude Include="GeneratedFiles\ui_FinalRenderDialog.h" />
+    <ClInclude Include="GeneratedFiles\ui_OptionsDialog.h" />
+    <CustomBuild Include="..\..\..\Source\Fractorium\GLWidget.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing GLWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/GLWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing GLWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/GLWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing GLWidget.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing GLWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/GLWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/GLWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing GLWidget.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing GLWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/GLWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/GLWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <ClInclude Include="..\..\..\..\glm\glm\glm.hpp" />
+    <CustomBuild Include="..\..\..\Source\Fractorium\DoubleSpinBox.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing DoubleSpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/DoubleSpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing DoubleSpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/DoubleSpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing DoubleSpinBox.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing DoubleSpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/DoubleSpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/DoubleSpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing DoubleSpinBox.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing DoubleSpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/DoubleSpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/DoubleSpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\SpinBox.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing SpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/SpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing SpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/SpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing SpinBox.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing SpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/SpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/SpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing SpinBox.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing SpinBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/SpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/SpinBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\StealthComboBox.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing StealthComboBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/StealthComboBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing StealthComboBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/StealthComboBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing StealthComboBox.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing StealthComboBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/StealthComboBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/StealthComboBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing StealthComboBox.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing StealthComboBox.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/StealthComboBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/StealthComboBox.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <ClInclude Include="..\..\..\Source\Fractorium\EmberFile.h" />
+    <CustomBuild Include="..\..\..\Source\Fractorium\VariationTreeWidgetItem.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+      </Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">
+      </Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+      </Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">
+      </Command>
+    </CustomBuild>
+    <CustomBuild Include="..\..\..\Source\Fractorium\TableWidget.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing TableWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TableWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing TableWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TableWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing TableWidget.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing TableWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TableWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TableWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing TableWidget.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing TableWidget.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TableWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/TableWidget.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <ClInclude Include="GeneratedFiles\ui_Fractorium.h" />
+    <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.h">
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Moc%27ing Fractorium.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/Fractorium.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Moc%27ing Fractorium.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/Fractorium.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Moc%27ing Fractorium.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Moc%27ing Fractorium.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/Fractorium.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/Fractorium.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\moc.exe;%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Moc%27ing Fractorium.h...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Moc%27ing Fractorium.h...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/Fractorium.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(AMDAPPSDKROOT)\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\moc.exe"  "%(FullPath)" -o ".\GeneratedFiles\$(ConfigurationName)\moc_%(Filename).cpp" "-fFractoriumPch.h" "-f../../../../../Source/Fractorium/Fractorium.h"  -DUNICODE -DWIN32 -DQT_DLL -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB -DQT_MULTIMEDIA_LIB -DQT_HELP_LIB -DQT_OPENGL_LIB -DQT_WIDGETS_LIB -DQT_XML_LIB -D_MBCS "-I." "-I$(QTDIR)\include" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles" "-I$(ProjectDir)..\..\..\Fractorium\GeneratedFiles\ConfigurationName" "-I$(QTDIR)\..\qtmultimedia\include\QtMultimedia" "-I$(QTDIR)\..\qtmultimedia\include" "-I$(QTDIR)\..\qttools\include" "-I$(QTDIR)\..\qttools\include\QtHelp" "-I$(QTDIR)\include\QtConcurrent" "-I$(QTDIR)\include\QtCore" "-I$(QTDIR)\include\QtGui" "-I$(QTDIR)\include\QtOpenGL" "-I$(QTDIR)\include\QtWidgets" "-I$(QTDIR)\include\QtXml" "-I.\GeneratedFiles" "-I$(ProjectDir)..\..\..\Source\Ember" "-I$(ProjectDir)..\..\..\Source\EmberCL" "-I$(ProjectDir)..\..\..\Source\EmberCommon" "-I$(ProjectDir)..\..\..\..\glm" "-I$(ProjectDir)..\..\..\..\tbb\include" "-I$(ProjectDir)..\..\..\..\libjpeg" "-I$(ProjectDir)..\..\..\..\libpng" "-I$(ProjectDir)..\..\..\..\libxml2\include" "-I$(ProjectDir)..\..\..\..\glew\include" "-I$(CUDA_PATH)include" "-I.\GeneratedFiles\$(ConfigurationName)\."</Command>
+    </CustomBuild>
+    <ClInclude Include="..\..\..\Source\Fractorium\FractoriumPch.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.qrc">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Rcc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Rcc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Rcc%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Rcc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">%(FullPath);%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Rcc%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Rcc%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\qrc_%(Filename).cpp;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\rcc.exe" -name "%(Filename)" -no-compress "%(FullPath)" -o .\GeneratedFiles\qrc_%(Filename).cpp</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\..\..\Source\Fractorium\Fractorium.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <SubType>Designer</SubType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\libjpeg\jpeg.vcxproj">
+      <Project>{019dbd2a-273d-4ba4-bf86-b5efe2ed76b1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\libpng\projects\vstudio\libpng\libpng.vcxproj">
+      <Project>{d6973076-9317-4ef2-a0b8-b7a18ac0713e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\libxml2\win32\VC10\libxml2.vcxproj">
+      <Project>{1d6039f6-5078-416f-a3af-a36efc7e6a1c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\tbb\build\vs2010\tbb.vcxproj">
+      <Project>{f62787dd-1327-448b-9818-030062bcfaa5}</Project>
+    </ProjectReference>
+    <ProjectReference Include="Ember.vcxproj">
+      <Project>{2bdb7a54-bb1a-476b-a6e5-f81e90ad4e67}</Project>
+    </ProjectReference>
+    <ProjectReference Include="EmberCL.vcxproj">
+      <Project>{f6a9102c-69a9-48fb-bc4b-49e49af43236}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\OptionsDialog.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\AboutDialog.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <SubType>Designer</SubType>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="..\..\..\Source\Fractorium\FinalRenderDialog.ui">
+      <FileType>Document</FileType>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|Win32'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">$(QTDIR)\bin\uic.exe;%(AdditionalInputs)</AdditionalInputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Uic%27ing %(Identity)...</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Uic%27ing %(Identity)...</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">.\GeneratedFiles\ui_%(Filename).h;%(Outputs)</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">"$(QTDIR)\bin\uic.exe" -o ".\GeneratedFiles\ui_%(Filename).h" "%(FullPath)"</Command>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\Source\Fractorium\Icons\Fractorium.ico" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties UicDir=".\GeneratedFiles" MocDir=".\GeneratedFiles\$(ConfigurationName)" MocOptions="" RccDir=".\GeneratedFiles" lupdateOnBuild="0" lupdateOptions="" lreleaseOptions="" Qt5Version_x0020_Win32="5.0.1" Qt5Version_x0020_x64="5.0.1" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

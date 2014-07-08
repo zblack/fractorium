@@ -1,0 +1,44 @@
+<RCC>
+  <qresource prefix="/Fractorium">
+    <file>Icons/arrow-undo.png</file>
+    <file>Icons/arrow-redo.png</file>
+    <file>Icons/stop.png</file>
+    <file>Icons/application_side_boxes.png</file>
+    <file>Icons/page_copy.png</file>
+    <file>Icons/page_paste.png</file>
+    <file>Icons/window-close.png</file>
+    <file>Icons/068123-3d-transparent-glass-icon-alphanumeric-question-mark3.png</file>
+    <file>Icons/layer--plus.png</file>
+    <file>Icons/layers.png</file>
+    <file>Icons/layers-stack.png</file>
+    <file>Icons/monitor.png</file>
+    <file>Icons/016938-3d-transparent-glass-icon-symbols-shapes-shape-square-clear-16.png</file>
+    <file>Icons/document-hf-insert.png</file>
+    <file>Icons/010425-3d-transparent-glass-icon-animals-spiderweb2.png</file>
+    <file>Icons/database-medium.png</file>
+    <file>Icons/databases.png</file>
+    <file>Icons/drive-harddisk-5.png</file>
+    <file>Icons/folder-visiting-4.png</file>
+    <file>Icons/display-brightness-off.png</file>
+    <file>Icons/cog.png</file>
+    <file>Icons/proxy.png</file>
+    <file>Icons/shape_flip_horizontal.png</file>
+    <file>Icons/shape_flip_vertical.png</file>
+    <file>Icons/arrow_down.png</file>
+    <file>Icons/arrow_in.png</file>
+    <file>Icons/arrow_left.png</file>
+    <file>Icons/arrow_out.png</file>
+    <file>Icons/arrow_right.png</file>
+    <file>Icons/arrow_rotate_anticlockwise.png</file>
+    <file>Icons/arrow_rotate_clockwise.png</file>
+    <file>Icons/arrow_turn_left.png</file>
+    <file>Icons/arrow_turn_right.png</file>
+    <file>Icons/arrow_up.png</file>
+    <file>Icons/configure.png</file>
+    <file>Icons/infomation.png</file>
+    <file>Icons/del.png</file>
+    <file>Icons/add.png</file>
+    <file>Icons/eraser.png</file>
+    <file>Icons/editraise.png</file>
+  </qresource>
+</RCC>

@@ -1,0 +1,746 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>OptionsDialog</class>
+ <widget class="QDialog" name="OptionsDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>286</width>
+    <height>388</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>286</width>
+    <height>388</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>286</width>
+    <height>388</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Options</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>6</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="OptionsTabWidget">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="tabShape">
+      <enum>QTabWidget::Triangular</enum>
+     </property>
+     <property name="currentIndex">
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="OptionsInteractiveRenderingTab">
+      <attribute name="title">
+       <string>Interactive Rendering</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <property name="verticalSpacing">
+        <number>6</number>
+       </property>
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="EarlyClipCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: clip colors and gamma correct after density filtering.&lt;/p&gt;&lt;p&gt;Unchecked: do it after spatial filtering.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="statusTip">
+          <string/>
+         </property>
+         <property name="whatsThis">
+          <string/>
+         </property>
+         <property name="text">
+          <string>Early Clip</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="TransparencyCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use transparency in the final image.&lt;/p&gt;&lt;p&gt;This will not make a difference in the editor, but will when saving as .png and opening in other programs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Transparency</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="OpenCLCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use OpenCL to render if your video card supports it.&lt;/p&gt;&lt;p&gt;This is highly recommended as it will give fluid, real-time interactive editing.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Use OpenCL</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2">
+        <widget class="QComboBox" name="PlatformCombo"/>
+       </item>
+       <item row="5" column="0" colspan="2">
+        <widget class="QComboBox" name="DeviceCombo"/>
+       </item>
+       <item row="6" column="0">
+        <widget class="QSpinBox" name="ThreadCountSpin">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of threads to use with CPU rendering.&lt;/p&gt;&lt;p&gt;Decrease for more responsive editing, increase for better performance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="prefix">
+          <string>Threads </string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>64</number>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0">
+        <widget class="QGroupBox" name="InteraciveCpuFilteringGroupBox">
+         <property name="title">
+          <string>CPU Filtering</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <property name="spacing">
+           <number>6</number>
+          </property>
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="CpuFilteringLogRadioButton">
+            <property name="toolTip">
+             <string>Use log scale filtering for interactive editing on the CPU.</string>
+            </property>
+            <property name="text">
+             <string>Log Scale</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="CpuFilteringDERadioButton">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use full density estimation filtering for interactive editing on the CPU.&lt;/p&gt;&lt;p&gt;This is slower, but gives better feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Full DE</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QGroupBox" name="InteraciveGpuFilteringGroupBox">
+         <property name="title">
+          <string>OpenCL Filtering</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>3</number>
+          </property>
+          <property name="rightMargin">
+           <number>4</number>
+          </property>
+          <property name="bottomMargin">
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="OpenCLFilteringLogRadioButton">
+            <property name="toolTip">
+             <string>Use log scale filtering for interactive editing using OpenCL.</string>
+            </property>
+            <property name="text">
+             <string>Log Scale</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="OpenCLFilteringDERadioButton">
+            <property name="toolTip">
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use full density estimation filtering for interactive editing using OpenCL.&lt;/p&gt;&lt;p&gt;This is slower, but gives better feedback.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            </property>
+            <property name="text">
+             <string>Full DE</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="7" column="0">
+        <widget class="QSpinBox" name="CpuSubBatchSpin">
+         <property name="toolTip">
+          <string>The number of 10,000 iteration chunks ran per thread on the CPU
+in interactive mode for each mouse movement</string>
+         </property>
+         <property name="prefix">
+          <string>CPU Sub Batch </string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QSpinBox" name="OpenCLSubBatchSpin">
+         <property name="toolTip">
+          <string>The number of ~8M iteration chunks ran using OpenCL
+in interactive mode for each mouse movement</string>
+         </property>
+         <property name="prefix">
+          <string>OpenCL Sub Batch </string>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QCheckBox" name="DoublePrecisionCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: use 64-bit double precision numbers (slower, but better image quality).&lt;/p&gt;&lt;p&gt;Unchecked: use 32-bit single precision numbers (faster, but worse image quality).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Use Double Precision</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="OptionsXmlSavingTab">
+      <attribute name="title">
+       <string>Xml Saving</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0" colspan="2">
+        <widget class="TableWidget" name="OptionsXmlSavingTable">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>122</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>122</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Panel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="tabKeyNavigation">
+          <bool>false</bool>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="showGrid">
+          <bool>true</bool>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::SolidLine</enum>
+         </property>
+         <property name="cornerButtonEnabled">
+          <bool>false</bool>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>110</number>
+         </attribute>
+         <attribute name="horizontalHeaderHighlightSections">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>35</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>24</number>
+         </attribute>
+         <attribute name="verticalHeaderHighlightSections">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>24</number>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <row>
+          <property name="text">
+           <string>Width</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Height</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Temporal Samples</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Quality</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Supersample</string>
+          </property>
+         </row>
+         <column>
+          <property name="text">
+           <string>Field</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string/>
+          </property>
+         </column>
+         <item row="0" column="0">
+          <property name="text">
+           <string>Width</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="0" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </item>
+         <item row="1" column="0">
+          <property name="text">
+           <string>Height</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="1" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </item>
+         <item row="2" column="0">
+          <property name="text">
+           <string>Temporal Samples</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="2" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </item>
+         <item row="3" column="0">
+          <property name="text">
+           <string>Quality</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="3" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </item>
+         <item row="4" column="0">
+          <property name="text">
+           <string>Supersample</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="4" column="1">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="OptionsIdentityTab">
+      <attribute name="title">
+       <string>Identity</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_3">
+       <property name="leftMargin">
+        <number>6</number>
+       </property>
+       <property name="topMargin">
+        <number>6</number>
+       </property>
+       <property name="rightMargin">
+        <number>6</number>
+       </property>
+       <property name="bottomMargin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0" colspan="2">
+        <widget class="TableWidget" name="OptionsIdentityTable">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>74</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>74</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="frameShape">
+          <enum>QFrame::Panel</enum>
+         </property>
+         <property name="frameShadow">
+          <enum>QFrame::Plain</enum>
+         </property>
+         <property name="verticalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="editTriggers">
+          <set>QAbstractItemView::NoEditTriggers</set>
+         </property>
+         <property name="tabKeyNavigation">
+          <bool>false</bool>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>false</bool>
+         </property>
+         <property name="selectionMode">
+          <enum>QAbstractItemView::NoSelection</enum>
+         </property>
+         <property name="verticalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="horizontalScrollMode">
+          <enum>QAbstractItemView::ScrollPerPixel</enum>
+         </property>
+         <property name="showGrid">
+          <bool>true</bool>
+         </property>
+         <property name="gridStyle">
+          <enum>Qt::SolidLine</enum>
+         </property>
+         <property name="cornerButtonEnabled">
+          <bool>false</bool>
+         </property>
+         <property name="columnCount">
+          <number>2</number>
+         </property>
+         <attribute name="horizontalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderCascadingSectionResizes">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderDefaultSectionSize">
+          <number>110</number>
+         </attribute>
+         <attribute name="horizontalHeaderHighlightSections">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="horizontalHeaderMinimumSectionSize">
+          <number>35</number>
+         </attribute>
+         <attribute name="horizontalHeaderStretchLastSection">
+          <bool>true</bool>
+         </attribute>
+         <attribute name="verticalHeaderVisible">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>24</number>
+         </attribute>
+         <attribute name="verticalHeaderHighlightSections">
+          <bool>false</bool>
+         </attribute>
+         <attribute name="verticalHeaderMinimumSectionSize">
+          <number>24</number>
+         </attribute>
+         <attribute name="verticalHeaderStretchLastSection">
+          <bool>false</bool>
+         </attribute>
+         <row>
+          <property name="text">
+           <string>Id</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Url</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Nick</string>
+          </property>
+         </row>
+         <column>
+          <property name="text">
+           <string>Field</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string/>
+          </property>
+         </column>
+         <item row="0" column="0">
+          <property name="text">
+           <string>Id</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="0" column="1">
+          <property name="text">
+           <string>-</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="1" column="0">
+          <property name="text">
+           <string>Url</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="1" column="1">
+          <property name="text">
+           <string>-</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="2" column="0">
+          <property name="text">
+           <string>Nick</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+         <item row="2" column="1">
+          <property name="text">
+           <string>-</string>
+          </property>
+          <property name="flags">
+           <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="OptionsButtonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>TableWidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>OptionsButtonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>OptionsDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>OptionsButtonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>OptionsDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

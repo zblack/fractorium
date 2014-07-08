@@ -1,0 +1,343 @@
+#summary Xforms tab
+<font face="Verdana">
+
+=Xforms Tab Item Descriptions=
+
+<ul>
+    <li>
+        ==Current Xform==
+
+        The number shown is the index of the currently selected xform. The values on all controls within the xforms tab
+        will be from the current xform.
+    </li>
+
+    <li>
+        ==Add Xform==
+
+        Add an empty xform to the current flame and set it as the current one. It will have no variations and its affine trasforms will be set to the identity matrix
+
+        Render State: Full render.
+    </li>
+
+    <li>
+        ==Duplicate Xform==
+
+        Make a copy of the current xform and add it to the end of the xforms and set it as the current one.
+
+        Render State: Full render.
+    </li>
+
+    <li>
+        ==Clear Xform Variations==
+
+        Delete all variations from the current xform.
+
+        Render State: Full render.
+    </li>
+                        
+    <li>
+        ==Delete Xform==
+
+        Delete the current xform from the flame.
+
+        Render State: Full render.
+    </li>
+                        
+    <li>
+        ==Add Final Xform==
+
+        Add a final xform if one is not already present.
+
+        Render State: Full render.
+    </li>
+                        
+    <li>
+        ==Weight==
+
+        The probability that the current xform will be chosen among the others during iteration. Note that all weight values
+        are normalized before iteration begins.
+
+        Render State: Full render.
+    </li>
+                        
+    <li>
+        ==Equalize Weights==
+
+        Set all xform weights to be 1 / xform count.
+
+        Render State: Full render.
+    </li>
+                        
+    <li>
+        ==Name==
+
+        Optional name for this xform to help more easily identify it. Note this values is only used for display purposes
+        in Fractorium and is not saved to the Xml file.
+    </li>
+    <li>
+        ==Color==
+        <ul>
+
+            <li>
+                ===Color Index===
+
+                The index in the palette the current xform uses. This value can be changed by scrolling the mouse wheel in the box displaying the value
+                or by dragging the scroll bar.
+
+                Range: 0 - 1.
+
+                Render State: Full render.
+            </li>
+                                
+            <li>
+                ===Color Speed===
+
+                The speed with which the color indices are pulled toward the current xform's color index. This value can be negative.
+
+                Range: -1 - 1.
+                                    
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Opacity===
+
+                How visible the current xform's contribution to the image is. 0 is invisible, 1 is totally visible.
+
+                Range: 0 - 1.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Solo===
+
+                When checked, the current xform is the only visible one. The text of the checkbox specifies which xform is
+                the solo one. If none are selected as solo, no number is displayed. This feature is useful for determining how much
+                each xform contributes to the final image.
+
+                Note that checking this does not affect the opacity values stored in the Xml file when saved.
+
+                Render State: Full render.
+            </li>
+
+        </ul>
+    </li>
+    <li>
+        ==Affine==
+        <ul>
+
+            <li>
+                ===Pre Affine Transform===
+
+                The affine transform applied to the input points before variations are applied on each iteration.
+
+                The values correspond to the usual affine transform of:
+                                    
+                {{{
+                tx = Ax * By + C
+                ty = Dx * Ey + F
+                }}}
+
+                like so:
+
+                A: X1, D: X2
+
+                B: Y1, E: Y2
+
+                C: O1, F: O2
+
+                <ul>
+
+                    <li>
+                        ====Enable====
+
+                        Checking/unchecking shows/hides pre affine transforms and enables/disables the controls.
+                    </li>
+
+                    <li>
+                        ====Reset====
+
+                        Reset the pre affine transform to the identity matrix.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        ====Adjustments====
+
+                        Change the values of the pre affine transform as the tool tips describe.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        ====Show Current/All====
+
+                        Show current only draws a circle around the current xform's pre affine transform.
+
+                        Show all draws a circle around all xforms' pre affine transforms. This can sometimes clutter
+                        the view if the flame contains many xforms, hence the option to only show current.
+                    </li>
+                </ul>
+            </li>
+
+            <li>
+                ===Post Affine Transform===
+
+                The affine transform applied to the sum of the applying the variations.
+
+                The values correspond to the usual affine transform of:
+                                    
+                {{{
+                tx = Ax * By + C
+                ty = Dx * Ey + F
+                }}}
+
+                like so:
+
+                A: X1, D: X2
+
+                B: Y1, E: Y2
+
+                C: O1, F: O2
+
+                <ul>
+
+                    <li>
+                        ====Enable====
+
+                        Checking/unchecking shows/hides post affine transforms and enables/disables the controls.
+                    </li>
+
+                    <li>
+                        ====Reset====
+
+                        Reset the post affine transform to the identity matrix.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        ====Adjustments====
+
+                        Change the values of the post affine transform as the tool tips describe.
+
+                        Render State: Full render.
+                    </li>
+
+                    <li>
+                        ====Show Current/All====
+
+                        Show current only draws a circle around the current xform's post affine transform.
+
+                        Show all draws a circle around all xforms' post affine transforms. This can sometimes clutter
+                        the view if the flame contains many xforms, hence the option to only show current.
+                    </li>
+
+                </ul>
+            </li>
+
+            <li>
+                ===Pivot===
+
+                <ul>
+                    <li>
+                        ====When dragging the X or Y component of an affine transform and holding Shift+Alt:====
+
+                        Local: Rotates the point around the center of the transform.
+
+                        World: Rotates the point around 0, 0.
+                    </li>
+
+                    <li>
+                        ====When dragging the center of an affine transform and holding Shift:====
+
+                        Local: Rotates entire transform around the origin, keeping its local orientation fixed.
+
+                        World: Rotates entire transform around the origin, also rotating the local orientation.
+                    </li>
+
+                    <li>
+                        ====When reflecting an affine transform:====
+
+                        Local: Reflect horizontally and vertically around the center of the transform.
+
+                        World: Reflect horizontallly around the Y axis, and vertically around the X axis.
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+                            
+    </li>
+                        
+    <li>
+        ==Variations==
+        <ul>
+            Each xform has one or more variations contained in it that get applied during each iteration. The value to the right of the
+            variation name is its weight. Values below it in sub-tree items are for parametric variations.
+
+            <li>
+                ===Weight===
+
+                Add a variation to the current xform by scrolling its weight to a non-zero value. Remove it by scrolling
+                its weight back to zero. Variations present in the current xform will have a gray background to make them easily
+                identifiable.
+
+                A quick way to add or remove a variation is to double click the weight spinner, which will flip the weight
+                between 0 and 1.
+                                    
+                Adding or removing variations will trigger an OpenCL recompile, so you will see a slight pause when doing so.
+
+                Render State: Full render.
+            </li>
+
+            <li>
+                ===Search===
+
+                Typing in this box does a case insensitive search which will only show variations
+                with matching text. To restore all, click the X button to the right.
+            </li>
+
+            <li>
+                ===Sorting===
+
+                Clicking on the left header column will sort by variation ID (which is hidden from the user).
+
+                Clicking on the right header column will sort by weight, placing all variations in the current xform
+                with non-zero weights at the top.
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        ==Xaos==
+        <ul>
+            Xaos is an advanced feature that adds an element of control to the random selection of xforms during iteration.
+            It adds an adjustment to the probability that a given xform will be selected based on the xform that was selected in the previous iteration.
+
+            Each of the spinners in the right column show a value to adjust the probability of the scenario described in the left column by.
+
+            Values greater than one make it more likely to happen, values less than one make it less likely. Setting all values equal to one indicate no xaos is used.
+
+            Render State: Full render.
+
+            <li>
+                ===Direction===
+
+                Different users understand xaos more easily based on the "direction" the terms are specified in. Switching the direction changes the text description in the left column
+                and changes the spinner values accordingly.
+
+                To: Adjust the probability of each xform being selected when going from the currently selected xform "to" all of the others.
+
+                From: Adjust the probability of the currently selected xform being selected when coming "from" all of the others.
+            </li>
+            <li>
+                ===Clear Xaos===
+
+                Set all xaos values in all xforms to 1.
+            </li>
+        </ul>
+    </li>
+</ul>

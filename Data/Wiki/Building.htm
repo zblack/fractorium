@@ -1,0 +1,232 @@
+#summary How to build Fractorium from source.
+<font face="Verdana">
+
+=Introduction=
+
+Step by step instructions for building Fractorium and its associated libraries from source.
+
+The development environment currently supported is Visual Studio 2010 SP1. In the future, other compilers and operating systems will be supported. For now, this page focuses on VS 2010 SP1.
+
+First install Visual Studio 2010, and run it once. Then close it and install SP1.
+
+=Details=
+
+The release built into the installer on the main page is for x64 systems only. This is because x64 gives a ~30% performance improvement over x86, which is most likely due to additional registers in the x64 standard. Another reason for x64 only, is that such processors have been around for almost a decade, with popular operating system support existing since Windows Vista. There is simply no reason to support x86 systems. This project aims to help move the target platforms of popular applications away from x86 and toward x64.
+
+Sadly, the free version of Visual Studio does not support building x64 targets. You are welcome to build for x86, but understand that the CPU performance will be significantly lower than what you experience with the executable contained in the installer.
+
+These steps must be followed exactly as stated, and in the order stated. Skipping any step, or doing any step out of order will break the build.
+
+==Prerequisites==
+
+These are the libraries that the project depends on. Download the zip files and extract them into folders organized in the following way:
+
+/<a href="http://sourceforge.net/projects/ogl-math/">glm</a> (Matrix math)<br></br>
+/<a href="http://www.ijg.org/">libjpeg</a> (Jpg image support)<br></br>
+/<a href="https://sourceforge.net/projects/libpng/files/">libpng</a> (Png image support)<br></br>
+/<a href="https://git.gnome.org/browse/libxml2/">libxml2</a> (Xml parsing support)<br></br>
+/<a href="https://www.threadingbuildingblocks.org/">tbb</a> (Intel Threading Building Blocks)<br></br>
+/<a href="http://www.zlib.net/">zlib</a> (Zip compression)
+
+===libjpeg===
+
+libjpeg does not ship with VS 2010 projects, so its older project files must first be converted before opening the solution.
+
+Open a Visual Studio command prompt and navigate to:
+
+/libjpeg
+
+and run:
+
+{{{
+NMAKE /f makefile.vc  setup-v10
+}}}
+
+This will create all of the necessary project files for libjpeg.
+
+===libxml2===
+
+The libxml2 project is crippled out of the box so it needs some changes before it will open. Further changes will be required later once it's opened.
+
+Navigate to:
+
+libxml2\win32
+
+and find the file configure.js. Right click on it and click Properties. Ensure the default program used to open it is Windows Based Script Host, click Ok. Double click configure.js and you will see several message boxes telling you the project files it created.
+
+===OpenCL===
+
+Install the latest drivers for your video card.
+<ul>
+    <li>
+====nVidia====
+Install the latest <a href="https://developer.nvidia.com/cuda-downloads">CUDA</a> development kit, which will contain un-advertized OpenCL libraries.
+
+Get the file <a href="http://www.khronos.org/registry/cl/api/1.1/cl.hpp">cl.hpp</a> and place it here:
+
+C:\Program Files\NVIDIA GPU Computing Toolkit\CUDA\v5.0\include\CL
+    </li>
+    <li>
+====AMD====
+Install the APP SDK.
+    </li>
+</ul>
+===Qt===
+
+Qt is what Fractorium uses for its GUI. Sadly, the pre-compiled version of Qt cannot be used. Instead, it must be completely rebuilt from source. The reason being that it does not use the desktop OpenGL library and instead uses OpenGL ES. Since Qt is a very large build, you should only do this step if you plan to build the full Fractorium GUI. If you are only interested in the Ember libraries and command line programs, skip this step.
+
+Further, Qt will not work with Express versions of Visual Studio.
+
+These instructions roughly follow what's listed <a href="http://qt-project.org/wiki/Building-Qt-5-from-Git">here</a>, however they are a bit more concise.
+
+Install the <a href="http://qt-project.org/downloads">Visual Studio Qt Add-on</a> found in the Other Downloads section of the Qt downloads page.
+
+Install <a href="http://msysgit.github.io/">Git</a>, <a href="http://www.activestate.com/activeperl/downloads">Perl</a>, <a href="http://www.python.org/download/releases/">Python</a> and <a href="http://qt-project.org/wiki/jom">Jom</a>.
+
+Assuming Jom was installed to C:\jom and Python was installed to C:\Python27, add both of these to your PATH variable:
+
+{{{
+C:\jom
+C:\Python27\DLLs
+}}}
+
+Open a Visual Studio x64 command prompt and cd to the folder which contains all prerequisites and Fractorium. Enter the following commands:
+
+{{{
+git clone git://gitorious.org/qt/qt5.git qt5
+cd qt5
+git checkout stable
+}}}
+
+This will take roughly 15 minutes. After it's done, add these paths to your PATH variable:
+
+{{{
+/your/dev/dir/qt5/qtbase/bin
+/your/dev/dir/qt5/gnuwin32/bin
+}}}
+
+Add these environment variables:
+
+{{{
+QMAKESPEC win32-msvc2010
+QTDIR /your/dev/dir/qt5/qtbase
+}}}
+
+Enter the following commands to configure and build:
+
+{{{
+Perl init-repository –no-webkit
+cd qtbase
+configure -developer-build -opensource -shared -opengl desktop -platform win32-msvc2010 -nomake examples -nomake tests
+jom.exe
+}}}
+
+The jom.exe command is what actually starts the build. Note that you should replace the number 4 with the number of cores on your system. Configuring and building will take roughly one hour.
+
+Once finished, open Visual Studio and verify there is a menu item named Qt5. Click on it and click Qt Options.
+
+Add a new Qt version to the list with the exact name of "5.0.1", and set its path to /your/dev/dir/qt5/qtbase
+
+The name must match exactly and must be created before any Qt solution is opened. If not, the Qt add-in will completely ruin all solution and project files that use Qt.
+
+Set the default version to the newly created Qt version and click Ok.
+
+===Fractorium===
+
+Next, checkout Fractorium with cvs so that it's on the same level with the other dependencies like so:
+
+/<a href="https://code.google.com/p/fractorium/source/checkout">fractorium</a>
+
+/glm
+
+/libjpeg
+
+/libpng
+
+/libxml2
+
+/qt5
+
+/tbb
+
+/zlib
+
+To build the installer, you must have <a href="http://wixtoolset.org/">Wix</a> installed. If you are unconcerned with it, you can skip this step and just dismiss the warning that shows when opening the solution later.
+
+==Opening the Solution==
+Navigate to the subfolder:
+
+fractorium/Builds/MSVC/VS2010
+
+and open Fractorium.sln
+
+If all dependencies were placed in the proper hierarchy, the solution should open with no warnings or errors. However, it's not ready to build yet.
+
+==Build Configuration==
+
+Visual Studio merges all build configurations and platforms from every project in a solution. Because Fractorium has dependencies on other libraries, the configuration manager will show all configurations from all projects in the solution. Most of these can safely be ignored. The only configurations that matter are Debug/Release. The only platforms that matter are Win32/x64.
+
+Building other configurations and platforms is not advised and is unsupported.
+
+Despite x64 support in Visual Studio for many years, most third party libraries do not ship with an x64 build target in their project files. You must manually create them here before you can build for x64. If you are only building for Win32, you can skip this step.
+
+Right click on the solution and open the Configuration Manager.
+
+Set the configuration to Release, and the platform to x64. Do the following for jpeg, libpng, libxml2, pnglibconf, and zlib:
+
+-Click the combo box in the platform column on the project's row and select New...
+
+-Set New Platform to x64, and Copy Settings From to Win32. Click Ok. Note, Visual Studio has a bug where you may need to do this twice for each project. After you click Ok, click the combo box again to verify it worked. If x64 is shown as a valid platform in the list, it worked. If not, you must repeat this step.
+
+===Further libxml2 Changes===
+
+Right click on the libxml2 project and open the properties dialog and click Configuration Properties.
+
+Navigate to General, select all configurations and all platforms and set the configuration type to Dynamic Library (.dll).
+
+Set Output Directory to:
+
+{{{
+$(SolutionDir)$(Platform)\$(Configuration)\
+}}}
+
+Set Intermediate Directory to:
+
+{{{
+$(Platform)\$(Configuration)\
+}}}
+
+and click Apply.
+
+Navigate to C/C++ | General and make sure these paths are present in the Additional Include Directories for Debug/Release configurations and Win32/x64 platforms, and click Apply:
+
+{{{
+$(ProjectDir);
+$(ProjectDir)..\..\include;
+}}}
+
+Navigate to C/C++ | Preprocessor, select All Configurations and All Platforms and add ;WIN32 to the list in Preprocessor Definitions, and click Apply.
+
+Navigate to Linker | Input, select All Configurations and All Platforms and add ;Ws2_32.lib to the list of Additional Dependencies, and click Ok.
+
+Find the file /include/libxml/xmlversion.h and comment out line 277:
+
+{{{
+#define LIBXML_ICONV_ENABLED
+}}}
+
+because Fractorium doesn't need Iconv support.
+
+===zlib Changes===
+
+Open the file zutil.h, and comment out line 33:
+
+{{{
+typedef long ptrdiff_t;
+}}}
+
+The solution is now ready to build. The output will be placed in:
+
+{{{
+/your/dev/dir/fractorium/Bin/$(Platform)/$(Configuration)
+}}}
