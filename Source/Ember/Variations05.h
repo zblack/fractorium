@@ -2392,6 +2392,7 @@ public:
 		   << "\t\t	   }\n"
 		   << "\t\t	   break;\n"
 		   << "\t\t   case 2:\n"
+		   << "\t\t	  {\n"
 		   << "\t\t	   real_t sigma = dist * randy * M_2PI;\n"
 		   << "\t\t	   real_t phi = dist * randz * M_PI;\n"
 		   << "\t\t	   real_t rad = dist * randx;\n"
@@ -2405,6 +2406,7 @@ public:
 		   << "\t\t	   vOut.z = vIn.z + " << mulZ << " * rad * sigmas;\n"
 		   << "\t\t	   outPoint->m_ColorX = fabs(fmod(outPoint->m_ColorX + " << mulC << " * randc * dist, 1.0));\n"
 		   << "\t\t	   break;\n"
+		   << "\t\t	  }\n"
 		   << "\t\t}\n"
 		   << "\t}\n";
 
