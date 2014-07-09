@@ -25,7 +25,7 @@ namespace EmberNs
 	extern void sincos(double x, double *s, double *c);
 #endif
 
-#define EMBER_VERSION "0.4.0.2"
+#define EMBER_VERSION "0.4.0.3"
 #define EPS6 T(1e-6)
 #define EPS T(1e-10)//Apoplugin.h uses -20, but -10 seems to work fine.
 #define ISAAC_SIZE 4
