@@ -2486,7 +2486,7 @@ public:
 		   << "\t\t	{\n"
 		   << "\t\t		d = sqrt(r + vIn.x);\n"
 		   << "\t\t		vOut.x = -(" << v2 << " * d);\n"
-		   << "\t\t		vOut.Y = -(" << v2 << " / d * vIn.y);\n"
+		   << "\t\t		vOut.y = -(" << v2 << " / d * vIn.y);\n"
 		   << "\t\t	}\n"
 		   << "\t\t	else\n"
 		   << "\t\t	{\n"
