@@ -325,7 +325,7 @@ void Fractorium::dropEvent(QDropEvent* e)
 void Fractorium::SetupCombo(QTableWidget* table, const QObject* receiver, int& row, int col, StealthComboBox*& comboBox, vector<string>& vals, const char* signal, const char* slot, Qt::ConnectionType connectionType)
 {
 	comboBox = new StealthComboBox(table);
-	std::for_each(vals.begin(), vals.end(), [&](string s) { comboBox->addItem(s.c_str()); });
+	ForEach(vals, [&](string s) { comboBox->addItem(s.c_str()); });
 	table->setCellWidget(row, col, comboBox);
 	connect(comboBox, signal, receiver, slot, connectionType);
 	row++;

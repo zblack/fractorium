@@ -1262,6 +1262,8 @@ bool OpenCLWrapper::CreateSPK(std::string& name, std::string& program, std::stri
 			err = spk.m_Program.build(m_DeviceVec, "-cl-mad-enable");//Tinker with other options later.
 		else
 			err = spk.m_Program.build(m_DeviceVec, "-cl-mad-enable -cl-no-signed-zeros -cl-single-precision-constant");
+			//err = spk.m_Program.build(m_DeviceVec, "-cl-single-precision-constant");
+			//err = spk.m_Program.build(m_DeviceVec, "-cl-mad-enable -cl-single-precision-constant");
 			//err = spk.m_Program.build(m_DeviceVec, "-cl-mad-enable -cl-no-signed-zeros -cl-fast-relaxed-math -cl-single-precision-constant");//This can cause some rounding.
 			//err = spk.m_Program.build(m_DeviceVec, "-cl-mad-enable -cl-single-precision-constant");
 			

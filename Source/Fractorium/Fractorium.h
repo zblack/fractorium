@@ -109,6 +109,8 @@ public slots:
 	void OnActionAddReflectiveSymmetry(bool checked);//Tools.
 	void OnActionAddRotationalSymmetry(bool checked);
 	void OnActionAddBothSymmetry(bool checked);
+	void OnActionFlatten(bool checked);
+	void OnActionUnflatten(bool checked);
 	void OnActionClearFlame(bool checked);
 	void OnActionRenderPreviews(bool checked);
 	void OnActionStopRenderingPreviews(bool checked);

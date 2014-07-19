@@ -27,7 +27,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t t = xform->m_VariationWeights[" << varIndex << "] / sqrt(precalcSumSquares + 1.0);\n"
@@ -64,7 +64,13 @@ public:
 		{
 			helper.Out.x = m_Weight * t * cos(theta);
 			helper.Out.y = m_Weight * t * sin(theta);
-			helper.Out.z = m_Weight * helper.In.z;
+			helper.Out.z = 0;
+		}
+		else
+		{
+			helper.Out.x = 0;
+			helper.Out.y = 0;
+			helper.Out.z = 0;
 		}
 	}
 	
@@ -86,7 +92,13 @@ public:
 		   << "\t\t{\n"
 		   << "\t\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * t * cos(theta);\n"
 		   << "\t\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * t * sin(theta);\n"
-		   << "\t\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
+		   << "\t\t\tvOut.z = 0;\n"
+		   << "\t\t}\n"
+		   << "\t\telse\n"
+		   << "\t\t{\n"
+		   << "\t\t\tvOut.x = 0;\n"
+		   << "\t\t\tvOut.y = 0;\n"
+		   << "\t\t\tvOut.z = 0;\n"
 		   << "\t\t}\n"
 		   << "\t}\n";
 
@@ -239,7 +251,7 @@ public:
 	virtual void Precalc()
 	{
 		T radius = T(0.5) * (m_BwrapsCellsize / (1 + SQR(m_BwrapsSpace)));
-		m_G2 = SQR(m_BwrapsGain) / (radius + EPS6) + EPS6;
+		m_G2 = Zeps(SQR(m_BwrapsGain) / Zeps(radius));
 		T maxBubble = m_G2 * radius;
 		
 		if (maxBubble > 2)
@@ -505,7 +517,7 @@ protected:
 		string prefix = Prefix();
 		
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_BlurPixelizeSize,  prefix + "blur_pixelize_size", T(0.1), REAL, EPS6));
+		m_Params.push_back(ParamWithName<T>(&m_BlurPixelizeSize,  prefix + "blur_pixelize_size", T(0.1), REAL, EPS));
 		m_Params.push_back(ParamWithName<T>(&m_BlurPixelizeScale, prefix + "blur_pixelize_scale", 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_V,	      prefix + "blur_pixelize_v"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_InvSize, prefix + "blur_pixelize_inv_size"));
@@ -920,7 +932,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		if (m_VarType == VARTYPE_REG)
+		if (m_VarType == VARTYPE_REG)//Rare and different usage of in/out.
 		{
 			helper.Out.x = helper.Out.y = helper.Out.z = 0;
 			outPoint.m_Z = 0;
@@ -937,10 +949,12 @@ public:
 	{
 		ostringstream ss;
 
-		if (m_VarType == VARTYPE_REG)//Rare and different usage of in/out.
+		if (m_VarType == VARTYPE_REG)
 		{
 			ss << "\t{\n"
-			   << "\t\tvOut.x = vOut.y = vOut.z = 0;\n"
+			   << "\t\tvOut.x = 0;\n"
+			   << "\t\tvOut.y = 0;\n"
+			   << "\t\tvOut.z = 0;\n"
 			   << "\t\toutPoint->m_Z = 0;\n"
 			   << "\t}\n";
 		}
@@ -978,12 +992,12 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-			<< "\t\tvOut.x = vOut.y = 0;\n"
-			<< "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) + MwcNext01(mwc) + MwcNext01(mwc) + MwcNext01(mwc) - 2.0);\n"
-			<< "\t}\n";
+		   << "\t\tvOut.x = vOut.y = 0;\n"
+		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) + MwcNext01(mwc) + MwcNext01(mwc) + MwcNext01(mwc) - 2.0);\n"
+		   << "\t}\n";
 
 		return ss.str();
 	}
@@ -991,6 +1005,7 @@ public:
 
 /// <summary>
 /// ZScale.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API ZScaleVariation : public Variation<T>
@@ -1009,12 +1024,12 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-			<< "\t\tvOut.x = vOut.y = 0;\n"
-			<< "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
-			<< "\t}\n";
+		   << "\t\tvOut.x = vOut.y = 0;\n"
+		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
+		   << "\t}\n";
 
 		return ss.str();
 	}
@@ -1022,6 +1037,7 @@ public:
 
 /// <summary>
 /// ZTranslate.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API ZTranslateVariation : public Variation<T>
@@ -1040,12 +1056,12 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-			<< "\t\tvOut.x = vOut.y = 0;\n"
-			<< "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "];\n"
-			<< "\t}\n";
+		   << "\t\tvOut.x = vOut.y = 0;\n"
+		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t}\n";
 
 		return ss.str();
 	}
@@ -1053,6 +1069,7 @@ public:
 
 /// <summary>
 /// zcone.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API ZConeVariation : public Variation<T>
@@ -1064,7 +1081,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		if (m_VarType == VARTYPE_REG)
+		if (m_VarType == VARTYPE_REG)//Rare and different usage of in/out.
 		{
 			helper.Out.x = helper.Out.y = 0;
 		}
@@ -1080,23 +1097,22 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
+
+		ss << "\t{\n";
 
 		if (m_VarType == VARTYPE_REG)
 		{
-			ss << "\t{\n"
-			   << "\t\tvOut.x = vOut.y = 0;\n"
-			   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * precalcSqrtSumSquares;\n"
-			   << "\t}\n";
+			ss << "\t\tvOut.x = vOut.y = 0;\n";
 		}
 		else
 		{
-			ss << "\t{\n"
-			   << "\t\tvOut.x = vIn.x;\n"
-			   << "\t\tvOut.y = vIn.y;\n"
-			   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * precalcSqrtSumSquares;\n"
-			   << "\t}\n";
+			ss << "\t\tvOut.x = vIn.x;\n"
+			   << "\t\tvOut.y = vIn.y;\n";
 		}
+
+		ss << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * precalcSqrtSumSquares;\n"
+		   << "\t}\n";
 
 		return ss.str();
 	}
@@ -1109,7 +1125,7 @@ template <typename T>
 class EMBER_API Blur3DVariation : public Variation<T>
 {
 public:
-	Blur3DVariation(T weight = 1.0) : Variation<T>("blur_3d", VAR_BLUR3D, weight) { }
+	Blur3DVariation(T weight = 1.0) : Variation<T>("blur3D", VAR_BLUR3D, weight) { }
 
 	VARCOPY(Blur3DVariation)
 
@@ -1131,7 +1147,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t angle = MwcNext01(mwc) * M_2PI;\n"
@@ -1164,7 +1180,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T r2 = m_Weight / (helper.m_PrecalcSumSquares + helper.In.z + EPS6);
+		T r2 = m_Weight / Zeps(helper.m_PrecalcSumSquares + SQR(helper.In.z));
 
 		helper.Out.x = r2 * helper.In.x;
 		helper.Out.y = r2 * helper.In.y;
@@ -1174,10 +1190,10 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-		   << "\t\treal_t r2 = xform->m_VariationWeights[" << varIndex << "] / (precalcSumSquares + vIn.z + EPS6);\n"
+		   << "\t\treal_t r2 = xform->m_VariationWeights[" << varIndex << "] / Zeps(precalcSumSquares + SQR(vIn.z));\n"
 		   << "\n"
 		   << "\t\tvOut.x = r2 * vIn.x;\n"
 		   << "\t\tvOut.y = r2 * vIn.y;\n"
@@ -1205,7 +1221,7 @@ public:
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T r2 = helper.m_PrecalcSumSquares + SQR(helper.In.z);
-		T r = m_Weight / ((r2 * m_C2) + (m_C2x * helper.In.x) - (m_C2y * helper.In.y) + (m_C2z * helper.In.z) + 1);
+		T r = m_Weight / Zeps(r2 * m_C2 + m_C2x * helper.In.x - m_C2y * helper.In.y + m_C2z * helper.In.z + 1);
 
 		helper.Out.x = r * (helper.In.x + m_Cx * r2);
 		helper.Out.y = r * (helper.In.y - m_Cy * r2);
@@ -1228,7 +1244,7 @@ public:
 
 		ss << "\t{\n"
 		   << "\t\treal_t r2 = precalcSumSquares + SQR(vIn.z);\n"
-		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / ((r2 * " << c2 << ") + (" << c2x << " * vIn.x) - (" << c2y << " * vIn.y) + (" << c2z << " * vIn.z) + 1.0);\n"
+		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / Zeps(r2 * " << c2 << " + " << c2x << " * vIn.x - " << c2y << " * vIn.y + " << c2z << " * vIn.z + 1.0);\n"
 		   << "\n"
 		   << "\t\tvOut.x = r * (vIn.x + " << cx << " * r2);\n"
 		   << "\t\tvOut.y = r * (vIn.y - " << cy << " * r2);\n"
@@ -1243,7 +1259,7 @@ public:
 		m_C2x = 2 * m_Cx;
 		m_C2y = 2 * m_Cy;
 		m_C2z = 2 * m_Cz;
-		m_C2 = SQR(m_C2x) + SQR(m_C2y) + SQR(m_C2z);
+		m_C2 = SQR(m_Cx) + SQR(m_Cy) + SQR(m_Cz);
 	}
 
 protected:
@@ -1291,7 +1307,7 @@ public:
 		T temp = r * m_Pi;
 		T sr = sin(temp);
 		T cr = cos(temp);
-		T vv = m_Weight * helper.m_PrecalcAtanxy / (m_Pi + EPS6);
+		T vv = m_Weight * helper.m_PrecalcAtanxy / Zeps(m_Pi);
 
 		helper.Out.x = vv * sr;
 		helper.Out.y = vv * cr;
@@ -1311,7 +1327,7 @@ public:
 		   << "\t\treal_t temp = r * " << pi << ";\n"
 		   << "\t\treal_t sr = sin(temp);\n"
 		   << "\t\treal_t cr = cos(temp);\n"
-		   << "\t\treal_t vv = xform->m_VariationWeights[" << varIndex << "] * precalcAtanxy / (" << pi << " + EPS6);\n"
+		   << "\t\treal_t vv = xform->m_VariationWeights[" << varIndex << "] * precalcAtanxy / Zeps(" << pi << ");\n"
 		   << "\n"
 		   << "\t\tvOut.x = vv * sr;\n"
 		   << "\t\tvOut.y = vv * cr;\n"
@@ -1350,8 +1366,8 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T roundX = Rint(helper.In.x);
-		T roundY = Rint(helper.In.y);
+		T roundX = (T)(int)(helper.In.x >= 0 ? (int)(helper.In.x + T(0.5)) : (int)(helper.In.x - T(0.5)));
+		T roundY = (T)(int)(helper.In.y >= 0 ? (int)(helper.In.y + T(0.5)) : (int)(helper.In.y - T(0.5)));
 		T offsetX = helper.In.x - roundX;
 		T offsetY = helper.In.y - roundY;
 
@@ -1407,8 +1423,8 @@ public:
 		string cr   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t roundX = Rint(vIn.x);\n"
-		   << "\t\treal_t roundY = Rint(vIn.y);\n"
+		   << "\t\treal_t roundX = (real_t)(int)(vIn.x >= 0 ? (int)(vIn.x + 0.5) : (int)(vIn.x - 0.5));\n"
+		   << "\t\treal_t roundY = (real_t)(int)(vIn.y >= 0 ? (int)(vIn.y + 0.5) : (int)(vIn.y - 0.5));\n"
 		   << "\t\treal_t offsetX = vIn.x - roundX;\n"
 		   << "\t\treal_t offsetY = vIn.y - roundY;\n"
 		   << "\n"
@@ -1455,13 +1471,9 @@ public:
 
 	virtual void Precalc()
 	{
-		T c = fabs(m_C);
-		T cl = fabs(m_Left);
-		T cr = fabs(m_Right);
-
-		c = c == 0 ? EPS : c;
-		cl = cl == 0 ? EPS : cl;
-		cr = cr == 0 ? EPS : cr;
+		T c =  Zeps(fabs(m_C));
+		T cl = Zeps(fabs(m_Left));
+		T cr = Zeps(fabs(m_Right));
 
 		m_AbsC = c;
 		m_Cl = c * cl;
@@ -1628,7 +1640,7 @@ public:
 
 	virtual void Precalc()
 	{
-		m_Cs = 1 / (m_Size + EPS);
+		m_Cs = 1 / Zeps(m_Size);
 		m_Cx = m_X;
 		m_Cy = m_Y;
 		m_Ncx = -m_X;
@@ -1907,6 +1919,7 @@ public:
 
 		helper.Out.x = -1 + m_Vv2 * Lerp<T>(Lerp(x, Fosc(x, T(4), m_Px), oscnapx), Fosc(bx, T(4), m_Px), oscnapx);//Original did a direct assignment to outPoint, which is incompatible with Ember's design.
 		helper.Out.y = -1 + m_Vv2 * Lerp<T>(Lerp(y, Fosc(y, T(4), m_Py), oscnapy), Fosc(by, T(4), m_Py), oscnapy);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -1937,6 +1950,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = -1 + " << vv2 << " * Lerp(Lerp(x, Fosc(x, 4, " << px << "), oscnapx), Fosc(bx, 4, " << px << "), oscnapx);\n"
 		   << "\t\tvOut.y = -1 + " << vv2 << " * Lerp(Lerp(y, Fosc(y, 4, " << py << "), oscnapy), Fosc(by, 4, " << py << "), oscnapy);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -2014,7 +2028,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t avgr = xform->m_VariationWeights[" << varIndex << "] * (sqrt(SQR(vIn.y) + SQR(vIn.x + 1)) / sqrt(SQR(vIn.y) + SQR(vIn.x - 1)));\n"
@@ -2084,7 +2098,7 @@ public:
 
 	virtual void Precalc()
 	{
-		m_K = T(0.5) * log(SQR(m_Real) + SQR(m_Imag) + EPS);//Original used 1e-300, which isn't representable with a float.
+		m_K = T(0.5) * log(Zeps(SQR(m_Real) + SQR(m_Imag)));//Original used 1e-300, which isn't representable with a float.
 		m_T = atan2(m_Imag, m_Real);
 	}
 
@@ -2218,7 +2232,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t a = M_2PI / (precalcSqrtSumSquares + 1);\n"
@@ -2602,7 +2616,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t x = LRint(vIn.x);\n"
@@ -2766,6 +2780,7 @@ public:
 
 		helper.Out.x = vr * (a * c + b * d);
 		helper.Out.y = vr * (b * c - a * d);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -2789,6 +2804,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = vr * (a * c + b * d);\n"
 		   << "\t\tvOut.y = vr * (b * c - a * d);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -2860,6 +2876,7 @@ public:
 
 		helper.Out.x = vr * (a * c + b * d);
 		helper.Out.y = vr * (b * c - a * d);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -2887,6 +2904,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = vr * (a * c + b * d);\n"
 		   << "\t\tvOut.y = vr * (b * c - a * d);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -2953,6 +2971,7 @@ public:
 
 		helper.Out.x = vr * (x * cosa + y * sina);
 		helper.Out.y = vr * (y * cosa - x * sina);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -2980,6 +2999,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = vr * (x * cosa + y * sina);\n"
 		   << "\t\tvOut.y = vr * (y * cosa - x * sina);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -3542,6 +3562,7 @@ public:
 
 		helper.Out.x = r * cosa;
 		helper.Out.y = r * sina;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -3564,6 +3585,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = r * cosa;\n"
 		   << "\t\tvOut.y = r * sina;\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -4224,11 +4246,7 @@ public:
 		T x2cx = m_C2x * helper.In.x;
 		T y2cy = m_C2y * helper.In.y;
 		T z2cz = m_C2z * helper.In.z;
-		T val = m_C2 * r2 - x2cx - y2cy - z2cz + 1;
-
-		if (val == 0)
-			val  += EPS6;
-
+		T val = Zeps(m_C2 * r2 - x2cx - y2cy - z2cz + 1);
 		T d = m_Weight / val;
 
 		helper.Out.x = d * (helper.In.x * m_S2x + m_Cx * (y2cy + z2cz - r2 - 1));
@@ -4261,11 +4279,7 @@ public:
 		   << "\t\treal_t x2cx = " << c2x << " * vIn.x;\n"
 		   << "\t\treal_t y2cy = " << c2y << " * vIn.y;\n"
 		   << "\t\treal_t z2cz = " << c2z << " * vIn.z;\n"
-		   << "\t\treal_t val = " << c2 << " * r2 - x2cx - y2cy - z2cz + 1.0;\n"
-		   << "\n"
-		   << "\t\tif (val == 0.0)\n"
-		   << "\t\t	val  += EPS6;\n"
-		   << "\n"
+		   << "\t\treal_t val = Zeps(" << c2 << " * r2 - x2cx - y2cy - z2cz + 1.0);\n"
 		   << "\t\treal_t d = xform->m_VariationWeights[" << varIndex << "] / val;\n"
 		   << "\n"
 		   << "\t\tvOut.x = d * (vIn.x * " << s2x << " + " << cx << " * (y2cy + z2cz - r2 - 1.0));\n"
@@ -4622,6 +4636,7 @@ public:
 		//invert the multiplication with scale from before.
 		helper.Out.x = m_Weight * Lerp<T>(u1, u2, m_P) * m_Is;//Original did a direct assignment to outPoint, which is incompatible with Ember's design.
 		helper.Out.y = m_Weight * Lerp<T>(v1, v2, m_P) * m_Is;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -4667,6 +4682,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * Lerp(u1, u2, " << p << ") * " << is << ";\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * Lerp(v1, v2, " << p << ") * " << is << ";\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -4677,7 +4693,7 @@ public:
 		m_F = m_Frequency * 5;
 		m_A = m_Amplitude * T(0.01);
 		m_P = m_Phase * M_2PI - T(M_PI);
-		m_S = m_Scale == 0 ? EPS6 : m_Scale;//Scale must not be zero.
+		m_S = Zeps(m_Scale);//Scale must not be zero.
 		m_Is = 1 / m_S;//Need the inverse scale.
 	
 		//Pre-multiply velocity + phase, phase + amplitude and (PI - phase) + amplitude.
@@ -4792,7 +4808,7 @@ public:
 		{
 			if (m_Sx == 0)
 			{
-				m_Sx = EPS6;
+				m_Sx = EPS;
 				m_Ax = 1;
 			}
 			else
@@ -4911,11 +4927,8 @@ public:
 	{
 		m_Ax = m_AmpX;
 		m_Ay = m_AmpY;
-		m_Fx = m_FreqX * M_2PI;
-		m_Fy = m_FreqY * M_2PI;
-
-		if (m_Fx == 0) m_Fx = EPS6;
-		if (m_Fy == 0) m_Fy = EPS6;
+		m_Fx = Zeps(m_FreqX * M_2PI);
+		m_Fy = Zeps(m_FreqY * M_2PI);
 	}
 
 protected:
@@ -5053,7 +5066,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "];\n"
@@ -5517,7 +5530,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * sin(vIn.x) * (cosh(vIn.y) + 1.0) * Sqr(sin(vIn.x));\n"
@@ -5552,7 +5565,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t d = xform->m_VariationWeights[" << varIndex << "] / precalcSumSquares;\n"
@@ -5700,7 +5713,7 @@ MAKEPREPOSTPARVAR(BlurLinear, blur_linear, BLUR_LINEAR)
 MAKEPREPOSTPARVARASSIGN(BlurSquare, blur_square, BLUR_SQUARE, ASSIGNTYPE_SUM)
 MAKEPREPOSTVAR(Flatten, flatten, FLATTEN)
 MAKEPREPOSTVARASSIGN(Zblur, zblur, ZBLUR, ASSIGNTYPE_SUM)
-MAKEPREPOSTVARASSIGN(Blur3D, blur_3d, BLUR3D, ASSIGNTYPE_SUM)
+MAKEPREPOSTVARASSIGN(Blur3D, blur3D, BLUR3D, ASSIGNTYPE_SUM)
 MAKEPREPOSTVARASSIGN(ZScale, zscale, ZSCALE, ASSIGNTYPE_SUM)
 MAKEPREPOSTVARASSIGN(ZTranslate, ztranslate, ZTRANSLATE, ASSIGNTYPE_SUM)
 MAKEPREPOSTVAR(ZCone, zcone, ZCONE)

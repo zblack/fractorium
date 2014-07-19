@@ -9,6 +9,31 @@
 namespace EmberNs
 {
 /// <summary>
+/// Thin wrapper around std::find_if() to relieve the caller of having to
+/// pass the implicitly obvious .begin() and .end(), and then compare the results to .end().
+/// </summary>
+/// <param name="container">The container to call find_if() on</param>
+/// <param name="pred">The lambda to call on each element</param>
+/// <returns>True if pred returned true once, else false.</returns>
+template<class c, class pr>
+bool inline FindIf(c& container, pr pred)
+{
+	return std::find_if(container.begin(), container.end(), pred) != container.end();
+}
+
+/// <summary>
+/// Thin wrapper around std::for_each() to relieve the caller of having to
+/// pass the implicitly obvious .begin() and .end().
+/// </summary>
+/// <param name="container">The container to call for_each() on</param>
+/// <param name="pred">The lambda to call on each element</param>
+template<class c, class fn>
+void inline ForEach(c& container, fn func)
+{
+	std::for_each(container.begin(), container.end(), func);
+}
+
+/// <summary>
 /// After a run completes, information about what was run can be saved as strings to the comments
 /// section of a jpg or png file. This class is just a container for those values.
 /// </summary>
@@ -100,7 +125,7 @@ public:
 	{
 		stringstream ss;
 
-		std::for_each(errorReport.begin() , errorReport.end() , [&](string s) { ss << s << endl; });
+		ForEach(errorReport, [&](string s) { ss << s << endl; });
 		
 		return ss.str();
 	}
@@ -515,15 +540,15 @@ static inline T Powq4c(T x, T y)
 }
 
 /// <summary>
-/// Return EPS6 if the passed in value was zero, else return the value.
+/// Return EPS if the passed in value was zero, else return the value.
 /// </summary>
 /// <param name="x">The value</param>
 /// <param name="y">The y distance</param>
-/// <returns>EPS6 or the value if it was non-zero</returns>
+/// <returns>EPS or the value if it was non-zero</returns>
 template <typename T>
 static inline T Zeps(T x)
 {
-	return x == 0 ? EPS6 : x;
+	return x == 0 ? EPS : x;
 }
 
 /// <summary>

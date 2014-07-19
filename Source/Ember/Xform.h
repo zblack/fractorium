@@ -267,6 +267,17 @@ public:
 			if (vec->size() < MAX_VARS_PER_XFORM)
 			{
 				vec->push_back(variation);
+
+				//Flatten must always be last.
+				for (size_t i = 0; i < vec->size(); i++)
+				{
+					if ((i != vec->size() - 1) && ((*vec)[i]->Name().find("flatten") != string::npos))
+					{
+						std::swap((*vec)[i], (*vec)[vec->size() - 1]);
+						break;
+					}
+				}
+
 				SetPrecalcFlags();
 				return true;
 			}
@@ -540,8 +551,8 @@ public:
 		{
 			T norm = 0;
 
-			std::for_each(variations.begin(), variations.end(), [&](Variation<T>* var) { norm += var->m_Weight; });
-			std::for_each(variations.begin(), variations.end(), [&](Variation<T>* var) { var->m_Weight /= norm; });
+			ForEach(variations, [&](Variation<T>* var) { norm += var->m_Weight; });
+			ForEach(variations, [&](Variation<T>* var) { var->m_Weight /= norm; });
 		});
 	}
 
@@ -843,8 +854,8 @@ public:
 
 				if (m_NeedPrecalcAngles)
 				{
-					helper.m_PrecalcSina = helper.m_TransX / helper.m_PrecalcSqrtSumSquares;
-					helper.m_PrecalcCosa = helper.m_TransY / helper.m_PrecalcSqrtSumSquares;
+					helper.m_PrecalcSina = helper.m_TransX / Zeps(helper.m_PrecalcSqrtSumSquares);
+					helper.m_PrecalcCosa = helper.m_TransY / Zeps(helper.m_PrecalcSqrtSumSquares);
 				}
 			}
 		}
@@ -856,6 +867,68 @@ public:
 			helper.m_PrecalcAtanyx = atan2(helper.m_TransY, helper.m_TransX);
 	}
 	
+	/// <summary>
+	/// Flatten this xform by adding a flatten variation if none is present, and if any of the
+	/// variations or parameters in the vector are present.
+	/// </summary>
+	/// <param name="names">Vector of variation and parameter names</param>
+	/// <returns>True if flatten was added, false if it already was present or if none of the specified variations or parameters were present.</returns>
+	bool Flatten(vector<string>& names)
+	{
+		bool shouldFlatten = true;
+
+		if (GetVariationById(VAR_FLATTEN) == NULL)
+		{
+			AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
+			{
+				for (size_t i = 0; i < variations.size(); i++)
+				{
+					Variation<T>* var = variations[i];
+
+					if (var->m_Weight != 0)//This should never happen, but just to be safe.
+					{
+						if (FindIf(names, [&] (const string& s) -> bool { return !_stricmp(s.c_str(), var->Name().c_str()); }))
+						{
+							shouldFlatten = false;
+							keepGoing = false;
+							break;
+						}
+					}
+
+					//Now traverse the parameters for this variation.
+					if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var))
+					{
+						ForEach(names, [&] (const string& s)
+						{
+							if (parVar->GetParamVal(s.c_str()) != 0)
+							{
+								shouldFlatten = false;
+								keepGoing = false;
+							}
+						});
+					}
+				}
+			});
+
+			if (shouldFlatten)
+			{
+				Variation<T>* var = new FlattenVariation<T>();
+
+				if (AddVariation(var))
+				{
+					return true;
+				}
+				else
+				{
+					delete var;
+					return false;
+				}
+			}
+		}
+
+		return false;
+	}
+
 	/// <summary>
 	/// Generate the OpenCL string for reading input values to
 	/// be passed to a variation.

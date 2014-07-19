@@ -601,7 +601,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T d = helper.m_PrecalcSumSquares + EPS6;
+		T d = Zeps(helper.m_PrecalcSumSquares);
 
 		helper.Out.x = (m_Weight / d) * (tanh(d) * (2 * helper.In.x));
 		helper.Out.y = (m_Weight / d) * (cos(d)  * (2 * helper.In.y));
@@ -611,10 +611,10 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-		   << "\t\treal_t d = precalcSumSquares + EPS6;\n"
+		   << "\t\treal_t d = Zeps(precalcSumSquares);\n"
 		   << "\n"
 		   << "\t\tvOut.x = (xform->m_VariationWeights[" << varIndex << "] / d) * (tanh(d) * (2.0 * vIn.x));\n"
 		   << "\t\tvOut.y = (xform->m_VariationWeights[" << varIndex << "] / d) * (cos(d)  * (2.0 * vIn.y));\n"
@@ -638,7 +638,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T d = helper.m_PrecalcSumSquares + EPS6;
+		T d = Zeps(helper.m_PrecalcSumSquares);
 
 		helper.Out.x = (m_Weight / 2) * (tanh(d) * (2 * helper.In.x));
 		helper.Out.y = (m_Weight / 2) * (cos(d)  * (2 * helper.In.y));
@@ -648,10 +648,10 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-		   << "\t\treal_t d = precalcSumSquares + EPS6;\n"
+		   << "\t\treal_t d = Zeps(precalcSumSquares);\n"
 		   << "\n"
 		   << "\t\tvOut.x = (xform->m_VariationWeights[" << varIndex << "] / 2.0) * (tanh(d) * (2.0 * vIn.x));\n"
 		   << "\t\tvOut.y = (xform->m_VariationWeights[" << varIndex << "] / 2.0) * (cos(d)  * (2.0 * vIn.y));\n"
@@ -664,6 +664,7 @@ public:
 
 /// <summary>
 /// RotateX.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API RotateXVariation : public ParametricVariation<T>
@@ -678,7 +679,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T z = m_RxCos * helper.In.x - m_RxSin * helper.In.y;
+		T z = m_RxCos * helper.In.z - m_RxSin * helper.In.y;
 
 		if (m_VarType == VARTYPE_REG)
 		{
@@ -704,7 +705,7 @@ public:
 		string rxCos = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t z = " << rxCos << " * vIn.x - " << rxSin << " * vIn.y;\n"
+		   << "\t\treal_t z = " << rxCos << " * vIn.z - " << rxSin << " * vIn.y;\n"
 		   << "\n";
 
 		if (m_VarType == VARTYPE_REG)
@@ -749,6 +750,7 @@ private:
 
 /// <summary>
 /// RotateY.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API RotateYVariation : public ParametricVariation<T>
@@ -913,6 +915,7 @@ private:
 
 /// <summary>
 /// MirrorX.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API MirrorXVariation : public Variation<T>
@@ -924,20 +927,24 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		helper.Out.x = fabs(helper.In.x);
-		
-		if (rand.Rand() & 1)
-			helper.Out.x = -helper.Out.x;
-		
 		if (m_VarType == VARTYPE_REG)
 		{
+			helper.Out.x = fabs(outPoint.m_X);
+		
+			if (rand.RandBit())
+				helper.Out.x = -helper.Out.x;
+
 			helper.Out.y = 0;
 			helper.Out.z = 0;
-			outPoint.m_Y = helper.In.y;
-			outPoint.m_Z = helper.In.z;
+			outPoint.m_X = 0;//Flipped x will be added.
 		}
 		else
 		{
+			helper.Out.x = fabs(helper.In.x);
+		
+			if (rand.RandBit())
+				helper.Out.x = -helper.Out.x;
+
 			helper.Out.y = helper.In.y;
 			helper.Out.z = helper.In.z;
 		}
@@ -947,23 +954,28 @@ public:
 	{
 		ostringstream ss;
 
-		ss << "\t{\n"
-		   << "\t\tvOut.x = fabs(vIn.x);\n"
-		   << "\n"
-		   << "\t\tif (MwcNext(mwc) & 1)\n"
-		   << "\t\t	vOut.x = -vOut.x;\n";
+		ss << "\t{\n";
 
 		if (m_VarType == VARTYPE_REG)
 		{
 			ss <<
+			"\t\tvOut.x = fabs(outPoint->m_X);\n"
+			"\n"
+			"\t\tif (MwcNext(mwc) & 1)\n"
+			"\t\t	vOut.x = -vOut.x;\n"
+			"\n"
 			"\t\tvOut.y = 0;\n"
 			"\t\tvOut.z = 0;\n"
-			"\t\toutPoint->m_Y = vIn.y;\n"
-			"\t\toutPoint->m_Z = vIn.z;\n";
+			"\t\toutPoint->m_X = 0;\n";
 		}
 		else
 		{
 			ss <<
+			"\t\tvOut.x = fabs(vIn.x);\n"
+			"\n"
+			"\t\tif (MwcNext(mwc) & 1)\n"
+			"\t\t	vOut.x = -vOut.x;\n"
+			"\n"
 			"\t\tvOut.y = vIn.y;\n"
 			"\t\tvOut.z = vIn.z;\n";
 		}
@@ -976,6 +988,7 @@ public:
 
 /// <summary>
 /// MirrorY.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API MirrorYVariation : public Variation<T>
@@ -987,20 +1000,24 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		helper.Out.y = fabs(helper.In.y);
-		
-		if (rand.Rand() & 1)
-			helper.Out.y = -helper.Out.y;
-		
 		if (m_VarType == VARTYPE_REG)
 		{
+			helper.Out.y = fabs(outPoint.m_Y);
+		
+			if (rand.RandBit())
+				helper.Out.y = -helper.Out.y;
+
 			helper.Out.x = 0;
 			helper.Out.z = 0;
-			outPoint.m_X = helper.In.x;
-			outPoint.m_Z = helper.In.z;
+			outPoint.m_Y = 0;//Flipped y will be added.
 		}
 		else
 		{
+			helper.Out.y = fabs(helper.In.y);
+		
+			if (rand.RandBit())
+				helper.Out.y = -helper.Out.y;
+
 			helper.Out.x = helper.In.x;
 			helper.Out.z = helper.In.z;
 		}
@@ -1010,23 +1027,28 @@ public:
 	{
 		ostringstream ss;
 
-		ss << "\t{\n"
-		   << "\t\tvOut.y = fabs(vIn.y);\n"
-		   << "\n"
-		   << "\t\tif (MwcNext(mwc) & 1)\n"
-		   << "\t\t	vOut.y = -vOut.y;\n";
+		ss << "\t{\n";
 
 		if (m_VarType == VARTYPE_REG)
 		{
 			ss <<
+			"\t\tvOut.y = fabs(outPoint->m_Y);\n"
+			"\n"
+			"\t\tif (MwcNext(mwc) & 1)\n"
+			"\t\t	vOut.y = -vOut.y;\n"
+			"\n"
 			"\t\tvOut.x = 0;\n"
 			"\t\tvOut.z = 0;\n"
-			"\t\toutPoint->m_X = vIn.x;\n"
-			"\t\toutPoint->m_Z = vIn.z;\n";
+			"\t\toutPoint->m_Y = 0;\n";
 		}
 		else
 		{
 			ss <<
+			"\t\tvOut.y = fabs(vIn.y);\n"
+			"\n"
+			"\t\tif (MwcNext(mwc) & 1)\n"
+			"\t\t	vOut.y = -vOut.y;\n"
+			"\n"
 			"\t\tvOut.x = vIn.x;\n"
 			"\t\tvOut.z = vIn.z;\n";
 		}
@@ -1039,6 +1061,7 @@ public:
 
 /// <summary>
 /// MirrorZ.
+/// This uses in/out in a rare and different way.
 /// </summary>
 template <typename T>
 class EMBER_API MirrorZVariation : public Variation<T>
@@ -1052,21 +1075,25 @@ public:
 	{
 		if (m_VarType == VARTYPE_REG)
 		{
+			helper.Out.z = fabs(outPoint.m_Z);
+		
+			if (rand.RandBit())
+				helper.Out.z = -helper.Out.z;
+
 			helper.Out.x = 0;
 			helper.Out.y = 0;
-			outPoint.m_X = helper.In.x;
-			outPoint.m_Y = helper.In.y;
+			outPoint.m_Z = 0;//Flipped z will be added.
 		}
 		else
 		{
+			helper.Out.z = fabs(helper.In.z);
+		
+			if (rand.RandBit())
+				helper.Out.z = -helper.Out.z;
+
 			helper.Out.x = helper.In.x;
 			helper.Out.y = helper.In.y;
 		}
-
-		helper.Out.z = fabs(helper.In.z);
-		
-		if (rand.Rand() & 1)
-			helper.Out.z = -helper.Out.z;
 	}
 
 	virtual string OpenCLString()
@@ -1078,23 +1105,28 @@ public:
 		if (m_VarType == VARTYPE_REG)
 		{
 			ss <<
+			"\t\tvOut.z = fabs(outPoint->m_Z);\n"
+			"\n"
+			"\t\tif (MwcNext(mwc) & 1)\n"
+			"\t\t	vOut.z = -vOut.z;\n"
+			"\n"
 			"\t\tvOut.x = 0;\n"
 			"\t\tvOut.y = 0;\n"
-			"\t\toutPoint->m_X = vIn.x;\n"
-			"\t\toutPoint->m_Y = vIn.y;\n";
+			"\t\toutPoint->m_Z = 0;\n";
 		}
 		else
 		{
 			ss <<
+			"\t\tvOut.z = fabs(vIn.z);\n"
+			"\n"
+			"\t\tif (MwcNext(mwc) & 1)\n"
+			"\t\t	vOut.z = -vOut.z;\n"
+			"\n"
 			"\t\tvOut.x = vIn.x;\n"
 			"\t\tvOut.y = vIn.y;\n";
 		}
 
-		ss << "\t\tvOut.z = fabs(vIn.z);\n"
-		   << "\n"
-		   << "\t\tif (MwcNext(mwc) & 1)\n"
-		   << "\t\t	vOut.z = -vOut.z;\n"
-		   << "\t}\n";
+		ss << "\t}\n";
 
 		return ss.str();
 	}
@@ -1197,10 +1229,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T jun = EPS6;
-
-		if (fabs(m_N) > EPS6)
-			jun = m_N;
+		T jun = Zeps(fabs(m_N));
 
 		T a = (atan2(helper.In.y, pow(helper.In.x, m_Sep)) + M_2PI * Floor<T>(rand.Frand01<T>() * m_AbsN)) / jun;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn * m_A);
@@ -1224,10 +1253,7 @@ public:
 		string cn   = "parVars[" + ToUpper(m_Params[i++].Name())  + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t jun = EPS6;\n"
-		   << "\n"
-		   << "\t\tif (fabs(" << n << ") > EPS6)\n"
-		   << "\t\t	jun = " << n << ";\n"
+		   << "\t\treal_t jun = Zeps(fabs(" << n << "));\n"
 		   << "\n"
 		   << "\t\treal_t a = (atan2(vIn.y, pow(vIn.x, " << sep << ")) + M_2PI * floor(MwcNext01(mwc) * " << absN << ")) / jun;\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] * pow(precalcSumSquares, " << cn << " * " << a << ");\n"
@@ -1242,10 +1268,7 @@ public:
 
 	virtual void Precalc()
 	{
-		T jun = EPS6;
-
-		if (abs(m_N) > EPS)
-			jun = m_N;
+		T jun = Zeps(fabs(m_N));
 
 		m_AbsN = abs(m_N);
 		m_Cn = 1 / jun / 2;
@@ -1296,6 +1319,7 @@ public:
 
 		helper.Out.x = m_Weight * sin(helper.In.x) * (sqX + m_W - v);
 		helper.Out.y = m_Weight * sin(helper.In.y) * (sqY + m_W - v);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -1313,6 +1337,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * sin(vIn.x) * (sqX + " << w << " - v);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * sin(vIn.y) * (sqY + " << w << " - v);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1383,6 +1408,7 @@ public:
 
 		helper.Out.x = m_Weight * (m_K * (helper.In.x - x0) + x0);
 		helper.Out.y = m_Weight * (m_K * (helper.In.y - y0) + y0);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 	
 	virtual string OpenCLString()
@@ -1434,6 +1460,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (" << m_k << " * (vIn.x - x0) + x0);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (" << m_k << " * (vIn.y - y0) + y0);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1461,7 +1488,7 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_K,     prefix + "Voron_K", T(0.99)));
-		m_Params.push_back(ParamWithName<T>(&m_Step,  prefix + "Voron_Step", T(0.25)));
+		m_Params.push_back(ParamWithName<T>(&m_Step,  prefix + "Voron_Step", T(0.25), REAL_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_Num,   prefix + "Voron_Num", 1, INTEGER, 1, 25));
 		m_Params.push_back(ParamWithName<T>(&m_XSeed, prefix + "Voron_XSeed", 3, INTEGER));
 		m_Params.push_back(ParamWithName<T>(&m_YSeed, prefix + "Voron_YSeed", 7, INTEGER));
@@ -1511,10 +1538,10 @@ public:
 				break;
 			case 1:
 				a = (rand.Rand((ISAAC_INT)m_Slices) + rand.Frand01<T>()) / m_Slices;
-				r = (rand.Rand((ISAAC_INT)m_Slices) + m_YThickness) / m_Slices;
+				r = (rand.Rand((ISAAC_INT)m_Slices) + m_YThickness)      / m_Slices;
 				break;
 			case 2:
-				a = (rand.Rand((ISAAC_INT)m_Slices) + m_XThickness) / m_Slices;
+				a = (rand.Rand((ISAAC_INT)m_Slices) + m_XThickness)      / m_Slices;
 				r = (rand.Rand((ISAAC_INT)m_Slices) + rand.Frand01<T>()) / m_Slices;
 				break;
 			case 3:
@@ -1529,6 +1556,7 @@ public:
 
 		helper.Out.x = m_CosR * a + m_SinR * r;
 		helper.Out.y = -m_SinR * a + m_CosR * r;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -1573,6 +1601,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = " << cosr << " * a + " << sinr << " * r;\n"
 		   << "\t\tvOut.y = -" << sinr << " * a + " << cosr << " * r;\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1590,7 +1619,7 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Slices,     prefix + "waffle_slices", 6, INTEGER));
+		m_Params.push_back(ParamWithName<T>(&m_Slices,     prefix + "waffle_slices", 6, INTEGER_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_XThickness, prefix + "waffle_xthickness", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_YThickness, prefix + "waffle_ythickness", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_Rotation,   prefix + "waffle_rotation"));
@@ -1628,7 +1657,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - 0.5);\n"
@@ -1870,7 +1899,7 @@ public:
 	{
 		T t, rX, rY, rZ;
 	
-		t  = helper.m_PrecalcSumSquares + SQR(helper.In.z) + EPS6;
+		t  = Zeps(helper.m_PrecalcSumSquares + SQR(helper.In.z));
 		rX = m_Weight / pow(t, m_StretchX);
 		rY = m_Weight / pow(t, m_StretchY);
 	
@@ -1899,7 +1928,7 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t t, rX, rY, rZ;\n"
 		   << "\n"
-		   << "\t\tt  = precalcSumSquares + SQR(vIn.z) + EPS6;\n"
+		   << "\t\tt  = Zeps(precalcSumSquares + SQR(vIn.z));\n"
 		   << "\t\trX = xform->m_VariationWeights[" << varIndex << "] / pow(t, " << stretchX << ");\n"
 		   << "\t\trY = xform->m_VariationWeights[" << varIndex << "] / pow(t, " << stretchY << ");\n"
 		   << "\n"
@@ -2239,7 +2268,7 @@ public:
 			}
 			else
 			{
-				r = m_Weight * (1 + m_Space / r);
+				r = m_Weight * (1 + m_Space / Zeps(r));
 				helper.Out.x = r * x + m_X;
 				helper.Out.y = r * y - m_Y;
 			}
@@ -2249,6 +2278,8 @@ public:
 			helper.Out.x = m_Weight * helper.In.x;
 			helper.Out.y = m_Weight * helper.In.y;
 		}
+
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -2305,7 +2336,7 @@ public:
 			<< "\t\t	}\n"
 			<< "\t\t	else\n"
 			<< "\t\t	{\n"
-			<< "\t\t		r = xform->m_VariationWeights[" << varIndex << "] * (1 + " << space << " / r);\n"
+			<< "\t\t		r = xform->m_VariationWeights[" << varIndex << "] * (1 + " << space << " / Zeps(r));\n"
 			<< "\t\t		vOut.x = r * x + " << x << ";\n"
 			<< "\t\t		vOut.y = r * y - " << y << ";\n"
 			<< "\t\t	}\n"
@@ -2315,6 +2346,8 @@ public:
 			<< "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
 			<< "\t\t	vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
 			<< "\t\t}\n"
+			<< "\n"
+			<< "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 			<< "\t}\n";
 
 		return ss.str();
@@ -2592,9 +2625,9 @@ public:
 		T sv = sin(v);
 		T cv = cos(v);
 
-		helper.Out.x += m_X * r * sv * cu;
-		helper.Out.y += m_Y * r * sv * su;
-		helper.Out.z += m_Z * r * cv;
+		helper.Out.x = m_X * r * sv * cu;
+		helper.Out.y = m_Y * r * sv * su;
+		helper.Out.z = m_Z * r * cv;
 	}
 
 	virtual string OpenCLString()
@@ -2675,11 +2708,7 @@ public:
 		const T d = SQR(x) - SQR(y);
 		const T re = Spread(m_C1 * x + m_C2 * d, m_Sx) + 1;
 		const T im = Spread(m_C1 * y + m_C2x2 * x * y, m_Sy);
-		T c = Powq4c(SQR(re) + SQR(im), m_PowerInv);
-
-		if (c == 0)
-			c = EPS6;
-
+		T c = Zeps(Powq4c(SQR(re) + SQR(im), m_PowerInv));
 		const T r = m_Weight / c;
 
 		helper.Out.x = (x * re + y * im) * r;
@@ -2711,10 +2740,7 @@ public:
 		   << "\t\tconst real_t d = SQR(x) - SQR(y);\n"
 		   << "\t\tconst real_t re = Spread(" << c1 << " * x + " << c2 << " * d, " << sx << ") + 1.0;\n"
 		   << "\t\tconst real_t im = Spread(" << c1 << " * y + " << c2x2 << " * x * y, " << sy << ");\n"
-		   << "\t\treal_t c = Powq4c(SQR(re) + SQR(im), " << powerInv << ");\n"
-		   << "\n"
-		   << "\t\tif (c == 0.0)\n"
-		   << "\t\t	c = EPS6;\n"
+		   << "\t\treal_t c = Zeps(Powq4c(SQR(re) + SQR(im), " << powerInv << "));\n"
 		   << "\n"
 		   << "\t\tconst real_t r = xform->m_VariationWeights[" << varIndex << "] / c;\n"
 		   << "\n"
@@ -2785,7 +2811,7 @@ public:
 		r += m_Ar * sin(fma(m_Br, r, m_Cr));
 		
 		if (r == 0)
-			r = EPS6;
+			r = EPS;
 
 		T temp = fma(m_At, sin(fma(m_Bt, r, m_Ct)), helper.m_PrecalcAtanyx);
 		T st = sin(temp);
@@ -2832,7 +2858,7 @@ public:
 		   << "\t\tr += " << ar << " * sin(fma(" << br << ", r, " << cr << "));\n"
 		   << "\n"
 		   << "\t\tif (r == 0)\n"
-		   << "\t\t	r = EPS6;\n"
+		   << "\t\t	r = EPS;\n"
 		   << "\n"
 		   << "\t\treal_t temp = fma(" << at << ", sin(fma(" << bt << ", r, " << ct << ")), precalcAtanyx);\n"
 		   << "\t\treal_t st = sin(temp);\n"
@@ -2978,6 +3004,7 @@ public:
 
 		helper.Out.x = m_Weight * (fp1x + fp2x);
 		helper.Out.y = m_Weight * (fp1y + fp2y);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -3045,6 +3072,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (fp1x + fp2x);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (fp1y + fp2y);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -3055,17 +3083,17 @@ public:
 		return
 			"real_t Interference2Sine(real_t a, real_t b, real_t c, real_t p, real_t x)\n"
 			"{\n"
-			"	return a * pow(ClampGte(sin(b * x + c), EPS6), p);\n"
+			"	return a * pow(ClampGte(sin(b * x + c), EPS), p);\n"
 			"}\n"
 			"\n"
 			"real_t Interference2Tri(real_t a, real_t b, real_t c, real_t p, real_t x)\n"
 			"{\n"
-			"	return a * 2 * pow(ClampGte(asin(cos(b * x + c - M_PI_2)), EPS6) * M_1_PI, p);\n"
+			"	return a * 2 * pow(ClampGte(asin(cos(b * x + c - M_PI_2)), EPS) * M_1_PI, p);\n"
 			"}\n"
 			"\n"
 			"real_t Interference2Squ(real_t a, real_t b, real_t c, real_t p, real_t x)\n"
 			"{\n"
-			"	return a * pow(sin(b * x + c) < 0 ? EPS6 : 1, p);\n"
+			"	return a * pow(sin(b * x + c) < 0 ? EPS : 1, p);\n"
 			"}\n"
 			"\n";
 	}
@@ -3091,17 +3119,17 @@ protected:
 private:
 	inline static T Sine(T a, T b, T c, T p, T x)
 	{
-		return a * pow(ClampGte<T>(sin(b * x + c), EPS6), p);//Original did not clamp.
+		return a * pow(ClampGte<T>(sin(b * x + c), EPS), p);//Original did not clamp.
 	}
 
 	inline static T Tri(T a, T b, T c, T p, T x)
 	{
-		return a * 2 * pow(ClampGte<T>(asin(cos(b * x + c - T(M_PI_2))), EPS6) * T(M_1_PI), p);//Original did not clamp.
+		return a * 2 * pow(ClampGte<T>(asin(cos(b * x + c - T(M_PI_2))), EPS) * T(M_1_PI), p);//Original did not clamp.
 	}
 
 	inline static T Squ(T a, T b, T c, T p, T x)
 	{
-		return a * pow(sin(b * x + c) < 0 ? EPS6 : T(1), p);//Original passed -1 to pow if sin() was < 0. Doing so will return NaN, so EPS6 is passed instead.
+		return a * pow(sin(b * x + c) < 0 ? EPS : T(1), p);//Original passed -1 to pow if sin() was < 0. Doing so will return NaN, so EPS is passed instead.
 	}
 
 	T m_A1;
@@ -3144,7 +3172,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3191,7 +3219,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3239,7 +3267,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3288,7 +3316,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3342,7 +3370,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t sysz = SQR(vIn.y) + SQR(vIn.z);\n"
@@ -3401,7 +3429,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t sysz = SQR(vIn.y) + SQR(vIn.z);\n"
@@ -3454,7 +3482,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3501,7 +3529,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3554,7 +3582,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t sysz = SQR(vIn.y) + SQR(vIn.z);\n"
@@ -3613,7 +3641,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t sysz = SQR(vIn.y) + SQR(vIn.z);\n"
@@ -3667,7 +3695,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3716,7 +3744,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3763,7 +3791,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t absV = Hypot(vIn.y, vIn.z);\n"
@@ -3837,7 +3865,7 @@ protected:
 		string prefix = Prefix();
 		
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Base, prefix + "loq_base", T(M_E), REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_Base, prefix + "loq_base", T(M_E), REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(true, &m_Denom, prefix + "loq_denom"));//Precalc.
 	}
 
@@ -3859,18 +3887,20 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		helper.Out.x = m_Weight / helper.m_PrecalcSqrtSumSquares;
+		helper.Out.x = m_Weight / Zeps(helper.m_PrecalcSqrtSumSquares);
 		helper.Out.y = helper.m_PrecalcAtanyx;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] / precalcSqrtSumSquares;\n"
+		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] / Zeps(precalcSqrtSumSquares);\n"
 		   << "\t\tvOut.y = precalcAtanyx;\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -3901,6 +3931,7 @@ public:
 					   (m_Q04 * xy + m_Q05 * helper.In.y + m_Q06 * sqy);
 		helper.Out.y = (m_Q07 + m_Q08 * helper.In.x + m_Q09 * sqx) + 
 					   (m_Q10 * xy + m_Weight * m_Q11 * helper.In.y + m_Q12 * sqy);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -3931,6 +3962,7 @@ public:
 		   << "\t\t			(" << q04 << " * xy + " << q05 << " * vIn.y + " << q06 << " * sqy);\n"
 		   << "\t\tvOut.y = (" << q07 << " + " << q08 << " * vIn.x + " << q09 << " * sqx) + \n"
 		   << "\t\t			(" << q10 << " * xy + xform->m_VariationWeights[" << varIndex << "] * " << q11 << " * vIn.y + " << q12 << " * sqy);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -3989,11 +4021,11 @@ public:
 	{
 		T xx = (rand.Frand01<T>() - T(0.5)) * 2;
 		T yy = (rand.Frand01<T>() - T(0.5)) * 2;
-		T k = yy < 0 ? T(-1) : T(1);
+		T k = SignNz(yy);
 		T yymax = ((m_A * pow(fabs(xx), m_P) + k * m_B * sqrt(fabs(1 - SQR(xx)))) - m_A);
 		
 		//The function must be in a range 0-1 to work properly.
-		yymax /= (fabs(m_A) + fabs(m_B));
+		yymax /= Zeps(fabs(m_A) + fabs(m_B));
 		
 		//Quick and dirty way to force y to be in range without altering the density.
 		if (k > 0)
@@ -4009,6 +4041,7 @@ public:
 	
 		helper.Out.x = xx * m_Weight;
 		helper.Out.y = yy * m_Weight;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -4024,10 +4057,10 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t xx = (MwcNext01(mwc) - 0.5) * 2;\n"
 		   << "\t\treal_t yy = (MwcNext01(mwc) - 0.5) * 2;\n"
-		   << "\t\treal_t k = yy < 0 ? -1 : 1;\n"
+		   << "\t\treal_t k = SignNz(yy);\n"
 		   << "\t\treal_t yymax = ((" << a << " * pow(fabs(xx), " << p << ") + k * " << b << " * sqrt(fabs(1 - SQR(xx)))) - " << a << ");\n"
 		   << "\n"
-		   << "\t\tyymax /= (fabs(" << a << ") + fabs(" << b << "));\n"
+		   << "\t\tyymax /= Zeps(fabs(" << a << ") + fabs(" << b << "));\n"
 		   << "\n"
 		   << "\t\tif (k > 0)\n"
 		   << "\t\t{\n"
@@ -4042,6 +4075,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xx * xform->m_VariationWeights[" << varIndex << "];\n"
 		   << "\t\tvOut.y = yy * xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -4139,9 +4173,9 @@ public:
 				randInt = seed + niter;
 				randiter = 0;
 
-				while (randiter < niter)
+				while (randiter < niter && randiter < 20)//Allow it to escape.
 				{
-					randiter += 1;
+					randiter++;
 					randInt = fmod((randInt * multiplier + offset), modBase);
 				}
 			}
@@ -4194,6 +4228,8 @@ public:
 			helper.Out.x += m_Size * (x + Floor<T>(helper.In.x));//The += is intended here.
 			helper.Out.y += m_Size * (y + Floor<T>(helper.In.y));
 		}
+
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -4273,9 +4309,9 @@ public:
 		   << "\t\t		randInt = seed + niter;\n"
 		   << "\t\t		randiter = 0;\n"
 		   << "\n"
-		   << "\t\t		while (randiter < niter)\n"
+		   << "\t\t		while (randiter < niter && randiter < 20)\n"
 		   << "\t\t		{\n"
-		   << "\t\t			randiter += 1;\n"
+		   << "\t\t			randiter++;\n"
 		   << "\t\t			randInt = fmod((randInt * multiplier + offset), modBase);\n"
 		   << "\t\t		}\n"
 		   << "\t\t	}\n"
@@ -4327,6 +4363,8 @@ public:
 		   << "\t\t	vOut.x += " << size << " * (x + floor(vIn.x));\n"
 		   << "\t\t	vOut.y += " << size << " * (y + floor(vIn.y));\n"
 		   << "\t\t}\n"
+		   << "\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -4336,7 +4374,7 @@ public:
 	{
 		m_OneOverEx = 1 / m_Exponent;
 		m_AbsSeed = fabs(m_Seed);
-		m_Seed2 = sqrt(m_AbsSeed + (m_AbsSeed / 2) + EPS6) / ((m_AbsSeed * T(0.5)) + EPS6) * T(0.25);
+		m_Seed2 = sqrt(Zeps(m_AbsSeed + (m_AbsSeed / 2))) / Zeps((m_AbsSeed * T(0.5))) * T(0.25);
 		m_OneOverRmax = 1 / (T(0.5) * (pow(T(2), 1 / m_Exponent) - 1) * m_ArcWidth);
 		m_Scale = (cos(-m_Rotation) - sin(-m_Rotation)) / m_Weight;
 	}
@@ -4551,7 +4589,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T r = m_Weight / ((SQR(SQR(helper.In.x)) + SQR(helper.In.z) + SQR(SQR(helper.In.y)) + SQR(helper.In.z)) + EPS6);
+		T r = m_Weight / Zeps((SQR(SQR(helper.In.x)) + SQR(helper.In.z) + SQR(SQR(helper.In.y)) + SQR(helper.In.z)));
 
 		if (r < 2)
 		{
@@ -4565,7 +4603,7 @@ public:
 			helper.Out.y = m_Weight * helper.In.y;
 			helper.Out.z = m_Weight * helper.In.z;
 		 
-			T t = m_Weight / ((sqrt(SQR(helper.In.x)) + sqrt(helper.In.z) + sqrt(SQR(helper.In.y)) + sqrt(helper.In.z)) + EPS6);
+			T t = m_Weight / Zeps((sqrt(SQR(helper.In.x)) + sqrt(helper.In.z) + sqrt(SQR(helper.In.y)) + sqrt(helper.In.z)));
 
 			if (r >= 0)
 			{
@@ -4608,7 +4646,7 @@ public:
 		string z = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / ((SQR(SQR(vIn.x)) + SQR(vIn.z) + SQR(SQR(vIn.y)) + SQR(vIn.z)) + EPS6);\n"
+		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / Zeps((SQR(SQR(vIn.x)) + SQR(vIn.z) + SQR(SQR(vIn.y)) + SQR(vIn.z)));\n"
 		   << "\n"
 		   << "\t\tif (r < 2)\n"
 		   << "\t\t{\n"
@@ -4622,7 +4660,7 @@ public:
 		   << "\t\t	vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
 		   << "\t\t	vOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\n"
-		   << "\t\t	real_t t = xform->m_VariationWeights[" << varIndex << "] / ((sqrt(SQR(vIn.x)) + sqrt(vIn.z) + sqrt(SQR(vIn.y)) + sqrt(vIn.z)) + EPS6);\n"
+		   << "\t\t	real_t t = xform->m_VariationWeights[" << varIndex << "] / Zeps((sqrt(SQR(vIn.x)) + sqrt(vIn.z) + sqrt(SQR(vIn.y)) + sqrt(vIn.z)));\n"
 		   << "\n"
 		   << "\t\t	if (r >= 0)\n"
 		   << "\t\t	{\n"
@@ -4730,6 +4768,8 @@ public:
 				helper.Out.y = m_Weight * helper.In.y;
 			}    
 		}
+
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -4786,6 +4826,8 @@ public:
 		   << "\t\t		vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
 		   << "\t\t	}\n"
 		   << "\t\t}\n"
+		   << "\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -4803,9 +4845,9 @@ protected:
 		string prefix = Prefix();
 		
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_R1, prefix + "trade_r1", 1, REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_R1, prefix + "trade_r1", 1, REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_D1, prefix + "trade_d1", 1, REAL, 0, TMAX));
-		m_Params.push_back(ParamWithName<T>(&m_R2, prefix + "trade_r2", 1, REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_R2, prefix + "trade_r2", 1, REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_D2, prefix + "trade_d2", 1, REAL, 0, TMAX));
 		m_Params.push_back(ParamWithName<T>(true, &m_C1, prefix + "trade_c1"));
 		m_Params.push_back(ParamWithName<T>(true, &m_C2, prefix + "trade_c2"));
@@ -4843,6 +4885,7 @@ public:
 	
 		helper.Out.x = m_Weight * mod2 * cos(temp);
 		helper.Out.y = m_Weight * mod2 * sin(temp);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -4865,6 +4908,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * mod2 * cos(temp);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * mod2 * sin(temp);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -4872,7 +4916,7 @@ public:
 
 	virtual void Precalc()
 	{
-		m_ReInv = 1 / (m_Re + EPS6);
+		m_ReInv = 1 / Zeps(m_Re);
 		m_Im100 = m_Im * T(0.01);
 	}
 
@@ -4922,7 +4966,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t r = MwcNext01(mwc) * xform->m_VariationWeights[" << varIndex << "] * precalcSqrtSumSquares;\n"
@@ -5030,22 +5074,23 @@ public:
 	
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T t = ((cos(helper.In.x) + cos(helper.In.y)) / m_Mp + 1);
+		T t = Zeps((cos(helper.In.x) + cos(helper.In.y)) / m_Mp + 1);
 		T r = m_Weight / t;
 		T tmp = helper.m_PrecalcSumSquares + 1;
 		T x2 = 2 * helper.In.x;
 		T y2 = 2 * helper.In.y;
 		T xmax = T(0.5) * (sqrt(tmp + x2) + sqrt(tmp - x2));
 		T ymax = T(0.5) * (sqrt(tmp + y2) + sqrt(tmp - y2));
-		T a = helper.In.x / xmax;
+		T a = helper.In.x / Zeps(xmax);
 		T b = SafeSqrt(1 - SQR(a));
 
 		helper.Out.x = m_Vx * atan2(a, b) * r;
    
-		a = helper.In.y / ymax;
+		a = helper.In.y / Zeps(ymax);
 		b = SafeSqrt(1 - SQR(a));
 
 		helper.Out.y = m_Vy * atan2(a, b) * r;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -5062,22 +5107,23 @@ public:
 		string vy = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t t = ((cos(vIn.x) + cos(vIn.y)) / " << mp << " + 1);\n"
+		   << "\t\treal_t t = Zeps((cos(vIn.x) + cos(vIn.y)) / " << mp << " + 1);\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / t;\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t x2 = 2 * vIn.x;\n"
 		   << "\t\treal_t y2 = 2 * vIn.y;\n"
 		   << "\t\treal_t xmax = 0.5 * (sqrt(tmp + x2) + sqrt(tmp - x2));\n"
 		   << "\t\treal_t ymax = 0.5 * (sqrt(tmp + y2) + sqrt(tmp - y2));\n"
-		   << "\t\treal_t a = vIn.x / xmax;\n"
+		   << "\t\treal_t a = vIn.x / Zeps(xmax);\n"
 		   << "\t\treal_t b = SafeSqrt(1 - SQR(a));\n"
 		   << "\n"
 		   << "\t\tvOut.x = " << vx << " * atan2(a, b) * r;\n"
 		   << "\n"
-		   << "\t\ta = vIn.y / ymax;\n"
+		   << "\t\ta = vIn.y / Zeps(ymax);\n"
 		   << "\t\tb = SafeSqrt(1 - SQR(a));\n"
 		   << "\n"
 		   << "\t\tvOut.y = " << vy << " * atan2(a, b) * r;\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -5098,7 +5144,7 @@ protected:
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X,  prefix + "blocky_x",  1));
 		m_Params.push_back(ParamWithName<T>(&m_Y,  prefix + "blocky_y",  1));
-		m_Params.push_back(ParamWithName<T>(&m_Mp, prefix + "blocky_mp", 4));
+		m_Params.push_back(ParamWithName<T>(&m_Mp, prefix + "blocky_mp", 4, REAL_NONZERO));
 		m_Params.push_back(ParamWithName<T>(true, &m_V,  prefix + "blocky_v"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Vx, prefix + "blocky_vx"));
 		m_Params.push_back(ParamWithName<T>(true, &m_Vy, prefix + "blocky_vy"));
@@ -5189,7 +5235,7 @@ MAKEPREPOSTPARVAR(Blocky, blocky, BLOCKY)
 //	virtual string OpenCLString()
 //	{
 //		ostringstream ss;
-//		int i = 0, varIndex = IndexInXform();
+//		int varIndex = IndexInXform();
 //
 //		ss << "\t{\n"
 //		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
@@ -5220,7 +5266,7 @@ MAKEPREPOSTPARVAR(Blocky, blocky, BLOCKY)
 //	virtual string OpenCLString()
 //	{
 //		ostringstream ss;
-//		int i = 0, varIndex = IndexInXform();
+//		int varIndex = IndexInXform();
 //
 //		ss << "\t{\n"
 //		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"

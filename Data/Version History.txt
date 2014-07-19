@@ -1,3 +1,23 @@
+0.4.0.5 Beta 07/18/2014
+--User Changes
+	Allow for vibrancy values > 1.
+	Add flatten and unflatten menu items.
+	Automatically flatten like Apophysis does.
+	Add plugin and new_linear tags to Xml to be compatible with Apophysis.
+	
+--Bug Fixes
+	Fix blur, blur3d, bubble, cropn, cross, curl, curl3d, epispiral, ho, julia3d, julia3dz, loonie, mirror_x, mirror_y, mirror_z, rotate_x, sinusoidal, spherical, spherical3d, stripes.
+	Unique filename on final render was completely broken.
+	Two severe OpenCL bugs. Random seeds were biased and fusing was being reset too often leading to results that differ from the CPU.
+	Subtle, but sometimes severe bug in the setup of the xaos weights.
+	Use properly defined epsilon by getting the value from std::numeric_limits, rather than hard coding 1e-6 or 1e-10.
+	Omit incorrect usage of epsilon everywhere. It should not be automatically added to denominators. Rather, it should only be used if the denominator is zero.
+	Force final render progress bars to 100 on completion. Sometimes they didn't seem to make it there.
+	Make variation name and params comparisons be case insensitive.
+	
+--Code Changes
+	Make ForEach and FindIf wrappers around std::for_each and std::find_if.
+
 0.4.0.1 Beta 07/06/2014
 --Bug Fixes
 	Fix name collision of mobius and Mobius. The former is treated as mobius_strip.

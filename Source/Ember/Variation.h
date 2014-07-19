@@ -1527,7 +1527,7 @@ public:
 				T vd = max(min(val, m_Max), m_Min);
 
 				if (IsNearZero(vd))
-					*m_Param = EPS6 * SignNz(vd);
+					*m_Param = EPS * SignNz(vd);
 				else
 					*m_Param = vd;
 
@@ -1667,9 +1667,9 @@ public:
 	{
 		bool b = false;
 
-		std::for_each(m_Params.begin() , m_Params.end() , [&](ParamWithName<T>& param)
+		ForEach(m_Params, [&](ParamWithName<T>& param)
 		{
-			if (!strcmp(param.Name().c_str(), name))
+			if (!_stricmp(param.Name().c_str(), name))
 				b = true;
 		});
 
@@ -1684,7 +1684,7 @@ public:
 	T* GetParam(const char* name)
 	{
 		for (size_t i = 0; i < m_Params.size(); i++)
-			if (!strcmp(m_Params[i].Name().c_str(), name))
+			if (!_stricmp(m_Params[i].Name().c_str(), name))
 				return m_Params[i].Param();
 
 		return NULL;
@@ -1698,7 +1698,7 @@ public:
 	T GetParamVal(const char* name) const
 	{
 		for (size_t i = 0; i < m_Params.size(); i++)
-			if (!strcmp(m_Params[i].Name().c_str(), name))
+			if (!_stricmp(m_Params[i].Name().c_str(), name))
 				return m_Params[i].ParamVal();
 
 		return 0;
@@ -1714,9 +1714,9 @@ public:
 	{
 		bool b = false;
 
-		std::for_each(m_Params.begin(), m_Params.end(), [&](ParamWithName<T>& param)
+		ForEach(m_Params, [&](ParamWithName<T>& param)
 		{
-			if (!strcmp(param.Name().c_str(), name))
+			if (!_stricmp(param.Name().c_str(), name))
 			{
 				param.Set(val);
 				b = true;
@@ -1756,7 +1756,7 @@ public:
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		Variation<T>::Random(rand);
-		std::for_each(m_Params.begin(), m_Params.end(), [&](ParamWithName<T>& param) { param.Set(rand.Frand11<T>()); });
+		ForEach(m_Params, [&](ParamWithName<T>& param) { param.Set(rand.Frand11<T>()); });
 		Precalc();
 	}
 
@@ -1765,10 +1765,29 @@ public:
 	/// </summary>
 	void Clear()
 	{
-		std::for_each(m_Params.begin(), m_Params.end(), [&](ParamWithName<T>& param) { *(param.Param()) = 0; });
+		ForEach(m_Params, [&](ParamWithName<T>& param) { *(param.Param()) = 0; });
 		Precalc();
 	}
 	
+	/// <summary>
+	/// Return a vector of all parameter names, optionally including precalcs.
+	/// </summary>
+	/// <param name="includePrecalcs">Whether to include the names of precalcs in the returned vector</param>
+	/// <returns>A vector of all parameter names</returns>
+	vector<string> ParamNames(bool includePrecalcs = false)
+	{
+		vector<string> vec;
+
+		vec.reserve(m_Params.size());
+		ForEach(m_Params, [&](const ParamWithName<T>& param)
+		{
+			if ((includePrecalcs && param.IsPrecalc()) || !param.IsPrecalc())
+				vec.push_back(param.Name());
+		});
+
+		return vec;
+	}
+
 	/// <summary>
 	/// Return the name, weight and parameters of the variation as a string.
 	/// </summary>
@@ -1778,7 +1797,7 @@ public:
 		ostringstream ss;
 
 		ss << Variation<T>::ToString() << endl;
-		std::for_each(m_Params.begin(), m_Params.end(), [&](const ParamWithName<T>& param) { ss << param.ToString() << endl; });
+		ForEach(m_Params, [&](const ParamWithName<T>& param) { ss << param.ToString() << endl; });
 
 		return ss.str();
 	}

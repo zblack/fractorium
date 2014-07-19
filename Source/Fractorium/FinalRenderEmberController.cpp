@@ -345,6 +345,9 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 		}
 
 		m_FinishedImageCount++;
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, int(100)));//Just to be safe.
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, int(100)));
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, int(100)));
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTotalProgress,   "setValue", Qt::QueuedConnection, Q_ARG(int, int(((float)m_FinishedImageCount / (float)m_ImageCount) * 100)));
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderImageCountLabel, "setText",  Qt::QueuedConnection, Q_ARG(QString, QString::number(m_FinishedImageCount) + " / " + QString::number(m_ImageCount)));
 

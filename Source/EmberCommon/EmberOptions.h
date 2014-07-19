@@ -302,7 +302,7 @@ public:
 		INITUINTOPTION(ThreadCount,    Eou(OPT_USE_ALL,     OPT_NTHREADS,         _T("--nthreads"),             0,                    SO_REQ_SEP, "\t--nthreads=<val>         The number of threads to use [default: use all available cores].\n"));
 		INITUINTOPTION(Strips,		   Eou(OPT_USE_RENDER,  OPT_STRIPS,           _T("--nstrips"),              1,                    SO_REQ_SEP, "\t--nstrips=<val>          The number of fractions to split a single render frame into. Useful for print size renders or low memory systems [default: 1].\n"));
 		INITUINTOPTION(BitsPerChannel, Eou(OPT_RENDER_ANIM, OPT_BPC,              _T("--bpc"),                  8,                    SO_REQ_SEP, "\t--bpc=<val>              Bits per channel. 8 or 16 for PNG, 8 for all others [default: 8].\n"));
-		INITUINTOPTION(SubBatchSize,   Eou(OPT_USE_ALL,     OPT_SBS,              _T("--sub_batch_size"),       10000,                SO_REQ_SEP, "\t--sub_batch_size=<val>   The chunk size that iterating will be broken into [default: 10000].\n"));
+		INITUINTOPTION(SubBatchSize,   Eou(OPT_USE_ALL,     OPT_SBS,              _T("--sub_batch_size"),       10240,                SO_REQ_SEP, "\t--sub_batch_size=<val>   The chunk size that iterating will be broken into [default: 10k].\n"));
 		INITUINTOPTION(Bits,           Eou(OPT_USE_ALL,     OPT_BITS,             _T("--bits"),                 33,                   SO_REQ_SEP, "\t--bits=<val>             Determines the types used for the histogram and accumulator [default: 33].\n"
 																																							  "\t\t\t\t\t32:  Histogram: float, Accumulator: float.\n"
 																																							  "\t\t\t\t\t33:  Histogram: float, Accumulator: float.\n"//This differs from the original which used an int hist for bits 33.
@@ -510,11 +510,11 @@ public:
 		CSimpleOpt::SOption endOption = SO_END_OF_OPTIONS;
 		entries.reserve(75);
 
-		std::for_each(m_BoolArgs.begin(),   m_BoolArgs.end(),   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		std::for_each(m_IntArgs.begin(),    m_IntArgs.end(),    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		std::for_each(m_UintArgs.begin(),   m_UintArgs.end(),   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		std::for_each(m_DoubleArgs.begin(), m_DoubleArgs.end(), [&](Eod* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		std::for_each(m_StringArgs.begin(), m_StringArgs.end(), [&](Eos* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
+		ForEach(m_BoolArgs,   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
+		ForEach(m_IntArgs,    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
+		ForEach(m_UintArgs,   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
+		ForEach(m_DoubleArgs, [&](Eod* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
+		ForEach(m_StringArgs, [&](Eos* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
 
 		entries.push_back(endOption);
 		return entries;
@@ -529,11 +529,11 @@ public:
 	{
 		ostringstream os;
 
-		std::for_each(m_BoolArgs.begin(),   m_BoolArgs.end(),   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		std::for_each(m_IntArgs.begin(),    m_IntArgs.end(),    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		std::for_each(m_UintArgs.begin(),   m_UintArgs.end(),   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		std::for_each(m_DoubleArgs.begin(), m_DoubleArgs.end(), [&](Eod* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		std::for_each(m_StringArgs.begin(), m_StringArgs.end(), [&](Eos* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
+		ForEach(m_BoolArgs,   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
+		ForEach(m_IntArgs,    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
+		ForEach(m_UintArgs,   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
+		ForEach(m_DoubleArgs, [&](Eod* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
+		ForEach(m_StringArgs, [&](Eos* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
 
 		return os.str();
 	}
@@ -548,11 +548,11 @@ public:
 		ostringstream os;
 
 		os << std::boolalpha;
-		std::for_each(m_BoolArgs.begin(),   m_BoolArgs.end(),   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		std::for_each(m_IntArgs.begin(),    m_IntArgs.end(),    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		std::for_each(m_UintArgs.begin(),   m_UintArgs.end(),   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		std::for_each(m_DoubleArgs.begin(), m_DoubleArgs.end(), [&](Eod* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		std::for_each(m_StringArgs.begin(), m_StringArgs.end(), [&](Eos* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
+		ForEach(m_BoolArgs,   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
+		ForEach(m_IntArgs,    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
+		ForEach(m_UintArgs,   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
+		ForEach(m_DoubleArgs, [&](Eod* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
+		ForEach(m_StringArgs, [&](Eos* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
 
 		return os.str();
 	}

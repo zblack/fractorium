@@ -493,7 +493,7 @@ public:
 			}
 			else if ((projBits & PROJBITS_PITCH) || (projBits & PROJBITS_YAW))
 			{
-				if (m_CamYaw != 0)
+				if (projBits & PROJBITS_YAW)
 					m_ProjFunc = &EmberNs::Ember<T>::ProjectPitchYaw;
 				else
 					m_ProjFunc = &EmberNs::Ember<T>::ProjectPitch;
@@ -515,7 +515,7 @@ public:
 	{
 		bool b = false;
 
-		std::for_each(m_Xforms.begin(), m_Xforms.end(), [&](Xform<T>& xform) { b |= xform.XaosPresent(); });//If at least one entry is not equal to 1, then xaos is present.
+		ForEach(m_Xforms, [&](Xform<T>& xform) { b |= xform.XaosPresent(); });//If at least one entry is not equal to 1, then xaos is present.
 
 		return b;
 	}
@@ -525,7 +525,7 @@ public:
 	/// </summary>
 	void ClearXaos()
 	{
-		std::for_each(m_Xforms.begin(), m_Xforms.end(), [&](Xform<T>& xform) { xform.ClearXaos(); });
+		ForEach(m_Xforms, [&](Xform<T>& xform) { xform.ClearXaos(); });
 	}
 
 	/// <summary>
@@ -556,7 +556,7 @@ public:
 	{
 		T weight = T(1) / m_Xforms.size();
 
-		std::for_each(m_Xforms.begin(), m_Xforms.end(), [&](Xform<T>& xform) { xform.m_Weight = weight; });
+		ForEach(m_Xforms, [&](Xform<T>& xform) { xform.m_Weight = weight; });
 	}
 
 	/// <summary>
@@ -571,8 +571,8 @@ public:
 		if (normalizedWeights.size() != m_Xforms.size())
 			normalizedWeights.resize(m_Xforms.size());
 
-		std::for_each(m_Xforms.begin(), m_Xforms.end(), [&](Xform<T>& xform) { norm += xform.m_Weight; });
-		std::for_each(normalizedWeights.begin(), normalizedWeights.end(), [&](T& weight) { weight = m_Xforms[i].m_Weight / norm; i++; });
+		ForEach(m_Xforms, [&](Xform<T>& xform) { norm += xform.m_Weight; });
+		ForEach(normalizedWeights, [&](T& weight) { weight = m_Xforms[i].m_Weight / norm; i++; });
 	}
 
 	/// <summary>
@@ -586,7 +586,7 @@ public:
 		unsigned int i = 0, xformIndex = 0, totalVarCount = m_FinalXform.TotalVariationCount();
 
 		variations.clear();
-		std::for_each(m_Xforms.begin(), m_Xforms.end(), [&](const Xform<T>& xform) { totalVarCount += xform.TotalVariationCount(); });
+		ForEach(m_Xforms, [&](const Xform<T>& xform) { totalVarCount += xform.TotalVariationCount(); });
 		variations.reserve(totalVarCount);
 
 		while (Xform<T>* xform = GetTotalXform(xformIndex++))
@@ -600,17 +600,50 @@ public:
 				{
 					string tempVarBaseName = tempVar->BaseName();
 
-					if ((std::find_if(variations.begin(), variations.end(), [&] (const Variation<T>* var) -> bool { return tempVar->VariationId() == var->VariationId(); }) == variations.end()) &&
-						(std::find_if(variations.begin(), variations.end(), [&] (const Variation<T>* var) -> bool { return tempVarBaseName == var->BaseName(); }) == variations.end()))
+					if (!FindIf(variations, [&] (const Variation<T>* var) -> bool { return tempVar->VariationId() == var->VariationId(); }) &&
+						!FindIf(variations, [&] (const Variation<T>* var) -> bool { return tempVarBaseName == var->BaseName(); }))
 						variations.push_back(tempVar);
 				}
 				else
 				{
-					if (std::find_if(variations.begin(), variations.end(), [&] (const Variation<T>* var) -> bool { return tempVar->VariationId() == var->VariationId(); }) == variations.end())
+					if (!FindIf(variations, [&] (const Variation<T>* var) -> bool { return tempVar->VariationId() == var->VariationId(); }))
 						variations.push_back(tempVar);
 				}
 			}
 		}
+	}
+
+	/// <summary>
+	/// Flatten all xforms by adding a flatten variation if none is present, and if any of the
+	/// variations or parameters in the vector are present.
+	/// </summary>
+	/// <param name="names">Vector of variation and parameter names</param>
+	/// <returns>True if flatten was added to any of the xforms, false if it already was present or if none of the specified variations or parameters were present.</returns>
+	bool Flatten(vector<string>& names)
+	{
+		bool flattened = false;
+
+		ForEach(m_Xforms, [&](Xform<T>& xform) { flattened |= xform.Flatten(names); });
+
+		return flattened;
+	}
+
+	/// <summary>
+	/// Flatten all xforms by adding a flatten variation in each if not already present.
+	/// </summary>
+	/// <returns>True if flatten was removed, false if it wasn't present.</returns>
+	bool Unflatten()
+	{
+		bool unflattened = false;
+
+		ForEach(m_Xforms, [&](Xform<T>& xform)
+		{
+			unflattened |= xform.DeleteVariationById(VAR_PRE_FLATTEN);
+			unflattened |= xform.DeleteVariationById(VAR_FLATTEN);
+			unflattened |= xform.DeleteVariationById(VAR_POST_FLATTEN);
+		});
+
+		return unflattened;
 	}
 
 	/// <summary>
@@ -1086,7 +1119,7 @@ public:
 
 	void ProjectZPerspective(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T zr = 1 - m_CamPerspective * (point.m_Z - m_CamZPos);
+		T zr = Zeps(1 - m_CamPerspective * (point.m_Z - m_CamZPos));
 
 		point.m_X /= zr;
 		point.m_Y /= zr;
@@ -1097,7 +1130,7 @@ public:
 	{
 		T z  = point.m_Z - m_CamZPos;
 		T y  = m_CamMat[1][1] * point.m_Y + m_CamMat[2][1] * z;
-		T zr = 1 - m_CamPerspective * (m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z);
+		T zr = Zeps(1 - m_CamPerspective * (m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z));
 
 		point.m_X /= zr;
 		point.m_Y  = y / zr;
@@ -1113,7 +1146,7 @@ public:
 		z = point.m_Z - m_CamZPos;
 		y = m_CamMat[1][1] * point.m_Y + m_CamMat[2][1] * z;
 		z = m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z;
-		zr = 1 - m_CamPerspective * z;
+		zr = Zeps(1 - m_CamPerspective * z);
 
 		sincos(t, &dsin, &dcos);
 
@@ -1134,7 +1167,7 @@ public:
 		
 		z = m_CamMat[0][2] * point.m_X + m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z;
 		
-		T zr = 1 - m_CamPerspective * z;
+		T zr = Zeps(1 - m_CamPerspective * z);
 		T dr = rand.Frand01<T>() * m_BlurCoef * z;
 
 		sincos(t, &dsin, &dcos);
@@ -1149,7 +1182,7 @@ public:
 		T z = point.m_Z - m_CamZPos;
 		T x = m_CamMat[0][0] * point.m_X + m_CamMat[1][0] * point.m_Y;
 		T y = m_CamMat[0][1] * point.m_X + m_CamMat[1][1] * point.m_Y + m_CamMat[2][1] * z;
-		T zr = 1 - m_CamPerspective * (m_CamMat[0][2] * point.m_X + m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z);
+		T zr = Zeps(1 - m_CamPerspective * (m_CamMat[0][2] * point.m_X + m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z));
 
 		point.m_X = x / zr;
 		point.m_Y = y / zr;

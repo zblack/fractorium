@@ -99,7 +99,7 @@ public:
 		int n = Floor<T>(T(0.5) * helper.In.y / m_Sc);
 		T x = helper.In.x - (m * 2 + 1) * m_Sc;
 		T y = helper.In.y - (n * 2 + 1) * m_Sc;
-		T u = Hypot(x, y);
+		T u = Zeps(Hypot(x, y));
 		T v = (T(0.3) + T(0.7) * DiscreteNoise2(m + 10, n + 3)) * m_Sc;
 		T z1 = DiscreteNoise2(int(m + m_Seed), n);
 
@@ -139,6 +139,7 @@ public:
 
 		helper.Out.x = m_Weight * (x + (m * 2 + 1) * m_Sc);
 		helper.Out.y = m_Weight * (y + (n * 2 + 1) * m_Sc);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 	
 	virtual string OpenCLString()
@@ -161,7 +162,7 @@ public:
 		   << "\t\tint n = (int)floor(0.5 * vIn.y / " << sc << ");\n"
 		   << "\t\treal_t x = vIn.x - (m * 2 + 1) * " << sc << ";\n"
 		   << "\t\treal_t y = vIn.y - (n * 2 + 1) * " << sc << ";\n"
-		   << "\t\treal_t u = Hypot(x, y);\n"
+		   << "\t\treal_t u = Zeps(Hypot(x, y));\n"
 		   << "\t\treal_t v = (0.3 + 0.7 * CircleLinearDiscreteNoise2(m + 10, n + 3)) * " << sc << ";\n"
 		   << "\t\treal_t z1 = CircleLinearDiscreteNoise2((int)(m + " << seed << "), n);\n"
 		   << "\n"
@@ -201,6 +202,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (x + (m * 2 + 1) * " << sc << ");\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (y + (n * 2 + 1) * " << sc << ");\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -227,7 +229,7 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Sc,      prefix + "CircleLinear_Sc", 1));
+		m_Params.push_back(ParamWithName<T>(&m_Sc,      prefix + "CircleLinear_Sc", 1, REAL_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_K,       prefix + "CircleLinear_K", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_Dens1,   prefix + "CircleLinear_Dens1", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_Dens2,   prefix + "CircleLinear_Dens2", T(0.5)));
@@ -295,6 +297,7 @@ public:
 
 		helper.Out.x = m_Weight * (x + (m * 2 + 1) * m_Sc);
 		helper.Out.y = m_Weight * (y + (n * 2 + 1) * m_Sc);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 	
 	virtual string OpenCLString()
@@ -330,6 +333,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (x + (m * 2 + 1) * " << sc << ");\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (y + (n * 2 + 1) * " << sc << ");\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -356,7 +360,7 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Sc,   prefix + "CircleRand_Sc", 1));
+		m_Params.push_back(ParamWithName<T>(&m_Sc,   prefix + "CircleRand_Sc", 1, REAL_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_Dens, prefix + "CircleRand_Dens", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_X,    prefix + "CircleRand_X", 10));
 		m_Params.push_back(ParamWithName<T>(&m_Y,    prefix + "CircleRand_Y", 10));
@@ -421,6 +425,7 @@ public:
 
 		helper.Out.x = m_Weight * ux;
 		helper.Out.y = m_Weight * uy;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 	
 	virtual string OpenCLString()
@@ -459,6 +464,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * ux;\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * uy;\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -516,7 +522,7 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Sc,   prefix + "CircleTrans1_Sc", 1));
+		m_Params.push_back(ParamWithName<T>(&m_Sc,   prefix + "CircleTrans1_Sc", 1, REAL_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_Dens, prefix + "CircleTrans1_Dens", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_X,    prefix + "CircleTrans1_X", 10));
 		m_Params.push_back(ParamWithName<T>(&m_Y,    prefix + "CircleTrans1_Y", 10));
@@ -1034,7 +1040,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t expx = exp(vIn.x) * 0.5;\n"
@@ -1070,10 +1076,6 @@ public:
 		T uu = SQR(helper.In.x);
 		T vv = SQR(helper.In.y);
 		T ww = SQR(helper.In.z);
-		T alpha    = (vv + uu + EPS6);
-		T beta     = (uu + ww + EPS6);
-		T delta    = (vv + ww + EPS6);
-		T epsilon  = (vv + uu + ww + EPS6);
 		T atOmegaX = atan2(vv, ww);
 		T atOmegaY = atan2(uu, ww);
 		T atOmegaZ = atan2(vv, uu);
@@ -1083,9 +1085,9 @@ public:
 		T cv = cos(helper.In.y);
 		T cucv = cu * cv;
 		T sucv = su * cv;
-		T x = pow(ClampGte<T>(cucv, EPS6), m_XPow) + (cucv * m_XPow) + (T(0.25) * atOmegaX);//Must clamp first argument to pow, because negative values will return NaN.
-		T y = pow(ClampGte<T>(sucv, EPS6), m_YPow) + (sucv * m_YPow) + (T(0.25) * atOmegaY);//Original did not do this and would frequently return bad values.
-		T z = pow(ClampGte<T>(sv, EPS6),   m_ZPow) +  sv   * m_ZPow;
+		T x = pow(ClampGte<T>(cucv, EPS), m_XPow) + (cucv * m_XPow) + (T(0.25) * atOmegaX);//Must clamp first argument to pow, because negative values will return NaN.
+		T y = pow(ClampGte<T>(sucv, EPS), m_YPow) + (sucv * m_YPow) + (T(0.25) * atOmegaY);//Original did not do this and would frequently return bad values.
+		T z = pow(ClampGte<T>(sv, EPS),   m_ZPow) +  sv   * m_ZPow;
 
 		helper.Out.x = m_Weight * x;
 		helper.Out.y = m_Weight * y;
@@ -1106,10 +1108,6 @@ public:
 		   << "\t\treal_t uu = SQR(vIn.x);\n"
 		   << "\t\treal_t vv = SQR(vIn.y);\n"
 		   << "\t\treal_t ww = SQR(vIn.z);\n"
-		   << "\t\treal_t alpha    = (vv + uu + EPS6);\n"
-		   << "\t\treal_t beta     = (uu + ww + EPS6);\n"
-		   << "\t\treal_t delta    = (vv + ww + EPS6);\n"
-		   << "\t\treal_t epsilon  = (vv + uu + ww + EPS6);\n"
 		   << "\t\treal_t atOmegaX = atan2(vv, ww);\n"
 		   << "\t\treal_t atOmegaY = atan2(uu, ww);\n"
 		   << "\t\treal_t atOmegaZ = atan2(vv, uu);\n"
@@ -1119,9 +1117,9 @@ public:
 		   << "\t\treal_t cv = cos(vIn.y);\n"
 		   << "\t\treal_t cucv = cu * cv;\n"
 		   << "\t\treal_t sucv = su * cv;\n"
-		   << "\t\treal_t x = pow(ClampGte(cucv, EPS6), " << xpow << ") + (cucv * " << xpow << ") + (0.25 * atOmegaX);\n"
-		   << "\t\treal_t y = pow(ClampGte(sucv, EPS6), " << ypow << ") + (sucv * " << ypow << ") + (0.25 * atOmegaY);\n"
-		   << "\t\treal_t z = pow(ClampGte(sv, EPS6), "   << zpow << ") + sv * "    << zpow << ";\n"
+		   << "\t\treal_t x = pow(ClampGte(cucv, EPS), " << xpow << ") + (cucv * " << xpow << ") + (0.25 * atOmegaX);\n"
+		   << "\t\treal_t y = pow(ClampGte(sucv, EPS), " << ypow << ") + (sucv * " << ypow << ") + (0.25 * atOmegaY);\n"
+		   << "\t\treal_t z = pow(ClampGte(sv, EPS), "   << zpow << ") + sv * "    << zpow << ";\n"
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * x;\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * y;\n"
@@ -1431,6 +1429,7 @@ public:
 		helper.Out.y = helper.In.y * r * m_Y;
 		helper.Out.x += (1 - (m_Twist * SQR(helper.In.x)) + helper.In.y) * m_Weight;//The += is intentional.
 		helper.Out.y += m_Tilt * helper.In.x * m_Weight;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -1452,6 +1451,7 @@ public:
 		   << "\t\tvOut.y = vIn.y * r * " << y << ";\n"
 		   << "\t\tvOut.x += (1 - (" << twist << " * SQR(vIn.x)) + vIn.y) * xform->m_VariationWeights[" << varIndex << "];\n"
 		   << "\t\tvOut.y += " << tilt << " * vIn.x * xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1740,7 +1740,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * sin(vIn.x);\n"
@@ -1800,7 +1800,7 @@ public:
 	
 	virtual void Precalc()
 	{
-		m_InvWeight = 1 / (m_Weight + EPS6);
+		m_InvWeight = 1 / Zeps(m_Weight);
 	}
 
 protected:
@@ -1836,10 +1836,12 @@ public:
 		const int ypos = helper.In.y < 0;
 		const T xrng = helper.In.x / m_XDistance;
 		const T yrng = helper.In.y / m_YDistance;
-	
+
 		helper.Out.x = m_Xw * ((xrng - (int)xrng) * m_XWidth + (int)xrng + (T(0.5) - xpos) * m_1mX);
 		helper.Out.y = m_Yw * ((yrng - (int)yrng) * m_YWidth + (int)yrng + (T(0.5) - ypos) * m_1mY);
 		helper.Out.z = m_Weight * helper.In.z;
+		//outPoint.m_X = 0;
+		//outPoint.m_Y = 0;
 	}
 	
 	virtual string OpenCLString()
@@ -1968,6 +1970,7 @@ public:
 
 		helper.Out.x += helper.In.x * m_Px;
 		helper.Out.y += helper.In.y * m_Py;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 	
 	virtual string OpenCLString()
@@ -1976,10 +1979,10 @@ public:
 		int i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
-		string x     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		string y    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		string px     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		string py    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
+		string x  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
+		string y  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
+		string px = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
+		string py = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
 		   << "\t\treal_t b = xform->m_VariationWeights[" << varIndex << "] / (precalcSumSquares * 0.25 + 1);\n"
@@ -2028,6 +2031,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x += vIn.x * " << px << ";\n"
 		   << "\t\tvOut.y += vIn.y * " << py << ";\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -2073,12 +2077,13 @@ public:
 
 		helper.Out.x = m_Weight * r * cos(a);
 		helper.Out.y = m_Weight * r * sin(a);
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t a = M_PI / (precalcSqrtSumSquares + 1);\n"
@@ -2089,6 +2094,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * r * cos(a);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * r * sin(a);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -2227,7 +2233,7 @@ protected:
 		string prefix = Prefix();
 		
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Scatter, prefix + "falloff_scatter", 1, REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_Scatter, prefix + "falloff_scatter", 1, REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_MinDist, prefix + "falloff_mindist", T(0.5), REAL, 0, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_MulX,    prefix + "falloff_mul_x", 1, REAL, 0, 1));
 		m_Params.push_back(ParamWithName<T>(&m_MulY,    prefix + "falloff_mul_y", 1, REAL, 0, 1));
@@ -2350,7 +2356,6 @@ public:
 		string rMax    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-
 		   << "\t\tconst real_t randx = MwcNextNeg1Pos1(mwc);\n"
 		   << "\t\tconst real_t randy = MwcNextNeg1Pos1(mwc);\n"
 		   << "\t\tconst real_t randz = MwcNextNeg1Pos1(mwc);\n"
@@ -2424,7 +2429,7 @@ protected:
 		string prefix = Prefix();
 		
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Scatter, prefix + "falloff2_scatter", 1, REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_Scatter, prefix + "falloff2_scatter", 1, REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_MinDist, prefix + "falloff2_mindist", T(0.5), REAL, 0, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_MulX,    prefix + "falloff2_mul_x", 1, REAL, 0, 1));
 		m_Params.push_back(ParamWithName<T>(&m_MulY,    prefix + "falloff2_mul_y", 1, REAL, 0, 1));
@@ -2528,7 +2533,7 @@ public:
 			break;
 		case 2://Log.
 			{
-				const T coeff = m_RMax <= EPS6 ? dist : dist + m_Alpha * (LogMap(dist) - dist);
+				const T coeff = m_RMax <= EPS ? dist : dist + m_Alpha * (LogMap(dist) - dist);
 
 				helper.Out.x = helper.In.x + LogMap(m_MulX) * LogScale(random.x) * coeff,
 				helper.Out.y = helper.In.y + LogMap(m_MulY) * LogScale(random.y) * coeff,
@@ -2623,7 +2628,7 @@ public:
 		    << "\t\t	break;\n"
 		    << "\t\tcase 2:\n"
 		    << "\t\t	{\n"
-		    << "\t\t		real_t coeff = " << rMax << " <= EPS6 ? dist : dist + " << alpha << " * (LogMap(dist) - dist);\n"
+		    << "\t\t		real_t coeff = " << rMax << " <= EPS ? dist : dist + " << alpha << " * (LogMap(dist) - dist);\n"
 		    << "\n"
 		    << "\t\t		vOut.x = vIn.x + LogMap(" << mulX << ") * LogScale(randx) * coeff,\n"
 		    << "\t\t		vOut.y = vIn.y + LogMap(" << mulY << ") * LogScale(randy) * coeff,\n"
@@ -2650,7 +2655,7 @@ protected:
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_BlurType,       prefix + "falloff3_blur_type", 0, INTEGER, 0, 3));
 		m_Params.push_back(ParamWithName<T>(&m_BlurShape,      prefix + "falloff3_blur_shape", 0, INTEGER, 0, 1));
-		m_Params.push_back(ParamWithName<T>(&m_BlurStrength,   prefix + "falloff3_blur_strength", 1, REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_BlurStrength,   prefix + "falloff3_blur_strength", 1, REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_MinDistance,    prefix + "falloff3_min_distance", T(0.5), REAL, 0, TMAX));
 		m_Params.push_back(ParamWithName<T>(&m_InvertDistance, prefix + "falloff3_invert_distance", 0, INTEGER, 0, 1));
 		m_Params.push_back(ParamWithName<T>(&m_MulX,           prefix + "falloff3_mul_x", 1, REAL, 0, 1));
@@ -2729,6 +2734,7 @@ public:
 		InverseTrilinear(alpha, beta, x, y, rand);
 		helper.Out.x = m_Weight * x;
 		helper.Out.y = m_Weight * y;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 	
 	virtual string OpenCLString()
@@ -2850,6 +2856,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * x;\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * y;\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();

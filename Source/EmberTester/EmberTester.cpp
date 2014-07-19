@@ -1028,7 +1028,7 @@ bool TestVarAssignVals()
 {
 	bool success = true;
 	VariationList<float> vlf;
-	vector<string> xout, yout;
+	vector<string> xout, yout, zout;
 
 	xout.push_back("vOut.x =");
 	xout.push_back("vOut.x +=");
@@ -1041,6 +1041,12 @@ bool TestVarAssignVals()
 	yout.push_back("vOut.y -=");
 	yout.push_back("vOut.y *=");
 	yout.push_back("vOut.y /=");
+	
+	zout.push_back("vOut.z =");
+	zout.push_back("vOut.z +=");
+	zout.push_back("vOut.z -=");
+	zout.push_back("vOut.z *=");
+	zout.push_back("vOut.z /=");
 
 	for (size_t i = 0; i < vlf.Size(); i++)
 	{
@@ -1055,6 +1061,12 @@ bool TestVarAssignVals()
 		if (!SearchVar(var, yout, false))
 		{
 			cout << "Variation " << var->Name() << " did not set its y output point. If unused, at least pass through or set to 0." << endl;
+			success = false;
+		}
+
+		if (!SearchVar(var, zout, false))
+		{
+			cout << "Variation " << var->Name() << " did not set its z output point. If unused, at least pass through or set to 0." << endl;
 			success = false;
 		}
 	}
@@ -1278,7 +1290,7 @@ void TestVarTime()
 	}
 
 	std::sort(times.begin(), times.end(), &SortPairByTime);
-	//std::for_each(times.begin(), times.end(), [&](pair<string, double>& p) { cout << p.first << "\t" << p.second << "" << endl; });
+	//ForEach(times, [&](pair<string, double>& p) { cout << p.first << "\t" << p.second << "" << endl; });
 }
 
 template <typename T>
@@ -1384,13 +1396,13 @@ void TestVarsSimilar()
 				if (parVar)
 				{
 					for (unsigned int v = 0; v < parVar->ParamCount(); v++)
-						parVar->SetParamVal(v, iter);
+						parVar->SetParamVal(v, (T)iter);
 				}
 
 				if (parVarComp)
 				{
 					for (unsigned int v = 0; v < parVarComp->ParamCount(); v++)
-						parVarComp->SetParamVal(v, iter);
+						parVarComp->SetParamVal(v, (T)iter);
 				}
 
 				//For debugging.
@@ -1400,13 +1412,13 @@ void TestVarsSimilar()
 				}
 
 				helper.Out = v4T(0);
-				var->m_Weight = iter + 1;
+				var->m_Weight = T(iter + 1);
 				var->Precalc();
 				var->Func(helper, p, rand);
 				v4T varOut = helper.Out;
 
 				helper.Out = v4T(0);
-				varComp->m_Weight = iter + 1;
+				varComp->m_Weight = T(iter + 1);
 				varComp->Precalc();
 				varComp->Func(helper, pComp, rand);
 				v4T varCompOut = helper.Out;
@@ -1437,6 +1449,7 @@ void TestVarsSimilar()
 	//std::sort(times.begin(), times.end(), &SortPairByTime);
 }
 
+#ifdef TEST_CL
 template <typename T>
 void TestCpuGpuResults()
 {
@@ -1537,9 +1550,179 @@ void TestCpuGpuResults()
 	cout << "Skipped " << skipped << endl;
 }
 
+template <typename T>
+void TestGpuVectorRead()
+{
+	T minx = TMAX, miny = TMAX, minz = TMAX, mincolorx = TMAX;
+	T maxx = TLOW, maxy = TLOW, maxz = TLOW, maxcolorx = TLOW;
+	double sumx = 0, avgx = 0;
+	double sumy = 0, avgy = 0;
+	double sumz = 0, avgz = 0;
+	double sumcolorx = 0, avgcolorx = 0;
+	Timing t;
+	VariationList<T> vlf;
+	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
+	vector<PointCL<T>> points;
+	RendererCL<T> renderer;
+
+	if (!renderer.Init(1, 0, false, 0))
+		return;
+
+	points.resize(renderer.TotalIterKernelCount());
+
+	Variation<T>* var = vlf.GetVariation(VAR_LINEAR);
+
+	bool newAlloc = false;
+	Point<T> p, p2;
+	Ember<T> ember;
+	Xform<T> xform;
+	Variation<T>* varCopy = var->Copy();
+
+	p.m_X = rand.Frand<T>(-5, 5);
+	p.m_Y = rand.Frand<T>(-5, 5);
+	p.m_Z = rand.Frand<T>(-5, 5);
+	p.m_ColorX = rand.Frand01<T>();
+	p.m_VizAdjusted = rand.Frand01<T>();
+
+	varCopy->Random(rand);
+	xform.AddVariation(varCopy);
+	ember.AddXform(xform);
+	ember.CacheXforms();
+	renderer.SetEmber(ember);
+	renderer.CreateSpatialFilter(newAlloc);
+	renderer.CreateDEFilter(newAlloc);
+	renderer.ComputeBounds();
+	renderer.ComputeCamera();
+	renderer.AssignIterator();
+
+	if (!renderer.Alloc())
+		return;
+
+	unsigned int i, iters = renderer.IterCountPerKernel() * renderer.TotalIterKernelCount();//Make each thread in each block run at least once.
+	renderer.Iterate(iters, 0, 1);
+	renderer.ReadPoints(points);
+
+	cout << __FUNCTION__ << ": GPU point test value results:" << endl;
+
+	for (i = 0; i < points.size(); i++)
+	{
+		cout << "point[" << i << "].m_X = " << points[i].m_X << endl;
+		cout << "point[" << i << "].m_Y = " << points[i].m_Y << endl;
+		cout << "point[" << i << "].m_Z = " << points[i].m_Z << endl;
+		cout << "point[" << i << "].m_ColorX = " << points[i].m_ColorX << endl << endl;
+
+		minx = min<T>(points[i].m_X, minx);
+		miny = min<T>(points[i].m_Y, miny);
+		minz = min<T>(points[i].m_Z, minz);
+		mincolorx = min<T>(points[i].m_ColorX, mincolorx);
+
+		maxx = max<T>(points[i].m_X, maxx);
+		maxy = max<T>(points[i].m_Y, maxy);
+		maxz = max<T>(points[i].m_Z, maxz);
+		maxcolorx = max<T>(points[i].m_ColorX, maxcolorx);
+
+		sumx += points[i].m_X;
+		sumy += points[i].m_Y;
+		sumz += points[i].m_Z;
+		sumcolorx += points[i].m_ColorX;
+	}
+
+	avgx = sumx / i;
+	avgy = sumy / i;
+	avgz = sumz / i;
+	avgcolorx = sumcolorx / i;
+
+	cout << "avgx = " << avgx << endl;
+	cout << "avgy = " << avgy << endl;
+	cout << "avgz = " << avgz << endl;
+	cout << "avgcolorx = " << avgcolorx << endl;
+
+	cout << "minx = " << minx << endl;
+	cout << "miny = " << miny << endl;
+	cout << "minz = " << minz << endl;
+	cout << "mincolorx = " << mincolorx << endl << endl;
+
+	cout << "maxx = " << maxx << endl;
+	cout << "maxy = " << maxy << endl;
+	cout << "maxz = " << maxz << endl;
+	cout << "maxcolorx = " << maxcolorx << endl << endl << endl;
+}
+#endif
+
+template <typename T>
+void TestRandomAccess(size_t vsize, size_t ipp, bool cache)
+{
+	size_t iters = vsize * ipp;
+	vector<v4T> vec;
+	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
+
+	vec.resize(vsize);
+	v4T* vdata = vec.data();
+
+	if (cache)
+	{
+		for (size_t i = 0; i < iters; i++)
+		{
+			v4T v4(rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+			int index = rand.Rand((ISAAC_INT)vsize);
+			v4T v42 = vdata[index];
+
+			v4.x = log(v4.x);
+			v4.y = sqrt(v4.y);
+			v4.z = sin(v4.z);
+			v4.w = cos(v4.w);
+			v4 += T(1.234);
+			v4 *= T(55.55);
+			v4 /= T(0.0045);
+
+			vdata[index] = v4 + v42;
+		}
+	}
+	else
+	{
+		for (size_t i = 0; i < iters; i++)
+		{
+			v4T v4(rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+			int index = rand.Rand((ISAAC_INT)vsize);
+
+			v4.x = log(v4.x);
+			v4.y = sqrt(v4.y);
+			v4.z = sin(v4.z);
+			v4.w = cos(v4.w);
+			v4 += T(1.234);
+			v4 *= T(55.55);
+			v4 /= T(0.0045);
+
+			vdata[index] += v4;
+		}
+	}
+}
+
+template <typename T>
+void TestCross(T x, T y, T weight)
+{
+	T s = x * x - y * y;
+	T r = weight * sqrt(1 / (s * s + EPS));
+	T outX = x * r;
+	T outY = y * r;
+
+	cout << "First way, outX, outY == " << outX << ", " << outY << endl;
+
+	r = fabs((x - y) * (x + y) + EPS);
+		
+	if (r < 0)
+		r = -r;
+
+	r = weight / r;
+	outX = x * r;
+	outY = y * r;
+	cout << "Second way, outX, outY == " << outX << ", " << outY << endl;
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	Timing t(4);
+	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
 
 	//cout << pow(-1, 5.1) << endl;
 
@@ -1560,9 +1743,40 @@ int _tmain(int argc, _TCHAR* argv[])
 	cout << preLinV->BaseName() << endl;
 	cout << postLinV->BaseName() << endl;*/
 
-	//auto_ptr<PreFarblurVariation<float>> preFarblurV(new PreFarblurVariation<float>());
+	//float num = 1;
+	//float denom = 4294967296.0f;
+	//float frac = num / denom;
+	//
+	//cout << "num, denom, frac = " << num << ", " << denom << ", " << frac << endl;
 
+	//TestGpuVectorRead<double>();
+	//TestGpuVectorRead<float>();
+	//return 0;
+	//auto_ptr<PreFarblurVariation<float>> preFarblurV(new PreFarblurVariation<float>());
+	//size_t vsize = 1024 * 1024;
+	//
+	//t.Tic();
+	//TestRandomAccess<float>(vsize, 10, true);
+	//t.Toc("TestRandomAccess<float>(true)");
+	//
+	//t.Tic();
+	//TestRandomAccess<float>(vsize, 10, false);
+	//t.Toc("TestRandomAccess<float>(false)");
+	//
+	//t.Tic();
+	//TestRandomAccess<double>(vsize, 10, true);
+	//t.Toc("TestRandomAccess<double>(true)");
+	//
+	//t.Tic();
+	//TestRandomAccess<double>(vsize, 10, false);
+	//t.Toc("TestRandomAccess<double>(false)");
+	//TestCross<double>(rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5));
+	//TestCross<double>(rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5));
+	//TestCross<double>(rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5));
+	//TestCross<double>(rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5));
+	//TestCross<double>(rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5), rand.Frand<double>(-5, 5));
 	//MakeTestAllVarsRegPrePostComboFile("testallvarsout.flame");
+	//return 0;
 
 	//std::complex<double> cd, cd2;
 
@@ -1611,58 +1825,60 @@ int _tmain(int argc, _TCHAR* argv[])
 	TestVarCopy<double, float>();
 	t.Toc("TestVarCopy<double, float>()");
 #endif
-	//t.Tic();
-	//TestVarRegPrePost();
-	//t.Toc("TestVarRegPrePost()");
-	//
-	//t.Tic();
-	//TestParVars();
-	//t.Toc("TestParVars()");
-	//
-	//t.Tic();
-	//TestVarPrePostNames();
-	//t.Toc("TestVarPrePostNames()");
-	//
-	//t.Tic();
-	//TestVarPrecalcUsedCL();
-	//t.Toc("TestVarPrecalcUsedCL()");
-	//
-	//t.Tic();
-	//TestVarAssignTypes();
-	//t.Toc("TestVarAssignTypes()");
-	//
-	//t.Tic();
-	//TestVarAssignVals();
-	//t.Toc("TestVarAssignVals()");
-	//
-	//t.Tic();
-	//TestConstants();
-	//t.Toc("TestConstants()");
-	//
-	//t.Tic();
-	//TestXformsInOutPoints();
-	//t.Toc("TestXformsInOutPoints()");
-	//
-	//t.Tic();
-	//TestVarTime<float>();
-	//t.Toc("TestVarTime()");
-	//
-	//t.Tic();
-	//TestOperations<float>();
-	//t.Toc("TestMod()");
+	t.Tic();
+	TestVarRegPrePost();
+	t.Toc("TestVarRegPrePost()");
+	
+	t.Tic();
+	TestParVars();
+	t.Toc("TestParVars()");
+	
+	t.Tic();
+	TestVarPrePostNames();
+	t.Toc("TestVarPrePostNames()");
+	
+	t.Tic();
+	TestVarPrecalcUsedCL();
+	t.Toc("TestVarPrecalcUsedCL()");
+	
+	t.Tic();
+	TestVarAssignTypes();
+	t.Toc("TestVarAssignTypes()");
+	
+	t.Tic();
+	TestVarAssignVals();
+	t.Toc("TestVarAssignVals()");
+	
+	t.Tic();
+	TestConstants();
+	t.Toc("TestConstants()");
+	
+	t.Tic();
+	TestXformsInOutPoints();
+	t.Toc("TestXformsInOutPoints()");
+	
+	t.Tic();
+	TestVarTime<float>();
+	t.Toc("TestVarTime()");
+	
+	t.Tic();
+	TestOperations<float>();
+	t.Toc("TestOperations()");
 
 	//t.Tic();
 	//TestVarsSimilar<float>();
 	//t.Toc("TestVarsSimilar()");
 
-	/**/t.Tic();
-	TestCpuGpuResults<float>();
-	t.Toc("TestCpuGpuResults<float>()");
+#ifdef TEST_CL
+	//t.Tic();
+	//TestCpuGpuResults<float>();
+	//t.Toc("TestCpuGpuResults<float>()");
 	
 #ifdef DO_DOUBLE
-	t.Tic();
-	TestCpuGpuResults<double>();
-	t.Toc("TestCpuGpuResults<double>()");
+	//t.Tic();
+	//TestCpuGpuResults<double>();
+	//t.Toc("TestCpuGpuResults<double>()");
+#endif
 #endif
 
 	//PrintAllVars();

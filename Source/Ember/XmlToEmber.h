@@ -75,6 +75,7 @@ public:
 
 		if (!m_Init)
 		{
+			m_BadParamNames.reserve(100);
 			m_BadParamNames.push_back(pair<string, string>("swtin_distort",   "stwin_distort"));//stwin.
 			m_BadParamNames.push_back(pair<string, string>("pow_numerator",   "pow_block_numerator"));//pow_block.
 			m_BadParamNames.push_back(pair<string, string>("pow_denominator", "pow_block_denominator"));
@@ -130,9 +131,111 @@ public:
 			m_BadParamNames.push_back(pair<string, string>("mobius_rect_y",   "mobius_strip_rect_y"));
 			m_BadParamNames.push_back(pair<string, string>("mobius_rotate_x", "mobius_strip_rotate_x"));
 			m_BadParamNames.push_back(pair<string, string>("mobius_rotate_y", "mobius_strip_rotate_y"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps2_cellsize",    "bwraps_cellsize"));//bwraps2.
+			m_BadParamNames.push_back(pair<string, string>("bwraps2_space",       "bwraps_space"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps2_gain",        "bwraps_gain"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps2_inner_twist", "bwraps_inner_twist"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps2_outer_twist", "bwraps_outer_twist"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps7_cellsize",    "bwraps_cellsize"));//bwraps7.
+			m_BadParamNames.push_back(pair<string, string>("bwraps7_space",       "bwraps_space"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps7_gain",        "bwraps_gain"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps7_inner_twist", "bwraps_inner_twist"));
+			m_BadParamNames.push_back(pair<string, string>("bwraps7_outer_twist", "bwraps_outer_twist"));
+			m_BadParamNames.push_back(pair<string, string>("pre_bwraps2_cellsize",    "pre_bwraps_cellsize"));
+			m_BadParamNames.push_back(pair<string, string>("pre_bwraps2_space",       "pre_bwraps_space"));
+			m_BadParamNames.push_back(pair<string, string>("pre_bwraps2_gain",        "pre_bwraps_gain"));
+			m_BadParamNames.push_back(pair<string, string>("pre_bwraps2_inner_twist", "pre_bwraps_inner_twist"));
+			m_BadParamNames.push_back(pair<string, string>("pre_bwraps2_outer_twist", "pre_bwraps_outer_twist"));
+			m_BadParamNames.push_back(pair<string, string>("post_bwraps2_cellsize",    "post_bwraps_cellsize"));
+			m_BadParamNames.push_back(pair<string, string>("post_bwraps2_space",       "post_bwraps_space"));
+			m_BadParamNames.push_back(pair<string, string>("post_bwraps2_gain",        "post_bwraps_gain"));
+			m_BadParamNames.push_back(pair<string, string>("post_bwraps2_inner_twist", "post_bwraps_inner_twist"));
+			m_BadParamNames.push_back(pair<string, string>("post_bwraps2_outer_twist", "post_bwraps_outer_twist"));
 
-			m_BadVariationNames.push_back(pair<string, string>("post_dcztransl", "post_dc_ztransl"));//dc_ztransl.
-			m_BadVariationNames.push_back(pair<string, string>("mobius", "mobius_strip"));//mobius_strip, case sensitive to not clash with Mobius.
+			m_FlattenNames.reserve(24);
+			m_FlattenNames.push_back("linear3D");
+			m_FlattenNames.push_back("bubble");
+			m_FlattenNames.push_back("cylinder");
+			m_FlattenNames.push_back("zblur");
+			m_FlattenNames.push_back("blur3D");
+			m_FlattenNames.push_back("pre_ztranslate");
+			m_FlattenNames.push_back("pre_rotate_x");
+			m_FlattenNames.push_back("pre_rotate_y");
+			m_FlattenNames.push_back("ztranslate");
+			m_FlattenNames.push_back("zcone");
+			m_FlattenNames.push_back("post_rotate_x");
+			m_FlattenNames.push_back("post_rotate_y");
+			m_FlattenNames.push_back("julia3D");
+			m_FlattenNames.push_back("julia3Dz");
+			m_FlattenNames.push_back("curl3D_cz");
+			m_FlattenNames.push_back("hemisphere");
+			m_FlattenNames.push_back("bwraps");
+			m_FlattenNames.push_back("bwraps2");
+			m_FlattenNames.push_back("falloff2");
+			m_FlattenNames.push_back("crop");
+			m_FlattenNames.push_back("pre_falloff2");
+			m_FlattenNames.push_back("pre_crop");
+			m_FlattenNames.push_back("post_falloff2");
+			m_FlattenNames.push_back("post_crop");
+
+			//This is a vector of the param names as they are in the legacy, badly named flam3/Apophysis code.
+			vector<string> badParams;
+
+			badParams.reserve(6);
+
+			badParams.push_back("bwraps7_cellsize");
+			badParams.push_back("bwraps7_space");
+			badParams.push_back("bwraps7_gain");
+			badParams.push_back("bwraps7_inner_twist");
+			badParams.push_back("bwraps7_outer_twist");
+			m_BadVariationNames.push_back(make_pair(make_pair(string("bwraps7"), string("bwraps")), badParams));//bwraps7 is the same as bwraps.
+			badParams.clear();
+
+			badParams.push_back("bwraps2_cellsize");
+			badParams.push_back("bwraps2_space");
+			badParams.push_back("bwraps2_gain");
+			badParams.push_back("bwraps2_inner_twist");
+			badParams.push_back("bwraps2_outer_twist");
+			m_BadVariationNames.push_back(make_pair(make_pair(string("bwraps2"), string("bwraps")), badParams));//bwraps2 is the same as bwraps.
+			badParams.clear();
+
+			badParams.push_back("pre_bwraps2_cellsize");
+			badParams.push_back("pre_bwraps2_space");
+			badParams.push_back("pre_bwraps2_gain");
+			badParams.push_back("pre_bwraps2_inner_twist");
+			badParams.push_back("pre_bwraps2_outer_twist");
+			m_BadVariationNames.push_back(make_pair(make_pair(string("pre_bwraps2"), string("pre_bwraps")), badParams));
+			badParams.clear();
+
+			badParams.push_back("post_bwraps2_cellsize");
+			badParams.push_back("post_bwraps2_space");
+			badParams.push_back("post_bwraps2_gain");
+			badParams.push_back("post_bwraps2_inner_twist");
+			badParams.push_back("post_bwraps2_outer_twist");
+			m_BadVariationNames.push_back(make_pair(make_pair(string("post_bwraps2"), string("post_bwraps")), badParams));
+			badParams.clear();
+
+			badParams.push_back("mobius_radius");
+			badParams.push_back("mobius_width");
+			badParams.push_back("mobius_rect_x");
+			badParams.push_back("mobius_rect_y");
+			badParams.push_back("mobius_rotate_x");
+			badParams.push_back("mobius_rotate_y");
+			m_BadVariationNames.push_back(make_pair(make_pair(string("mobius"),	string("mobius_strip")), badParams));//mobius_strip clashes with Mobius.
+			badParams.clear();
+
+			badParams.push_back("post_dcztransl_x0");
+			badParams.push_back("post_dcztransl_x1");
+			badParams.push_back("post_dcztransl_factor");
+			badParams.push_back("post_dcztransl_overwrite");
+			badParams.push_back("post_dcztransl_clamp");
+			m_BadVariationNames.push_back(make_pair(make_pair(string("post_dcztransl"), string("post_dc_ztransl")), badParams));
+			badParams.clear();
+
+			m_BadVariationNames.push_back(make_pair(make_pair(string("pre_blur"),    string("pre_gaussian_blur")), badParams));
+			m_BadVariationNames.push_back(make_pair(make_pair(string("pre_spin_z"),  string("pre_rotate_z")),      badParams));
+			m_BadVariationNames.push_back(make_pair(make_pair(string("post_spin_z"), string("post_rotate_z")),     badParams));
+
 			m_Init = true;
 		}
 	}
@@ -360,6 +463,8 @@ public:
 		return string(ch);
 	}
 
+	static vector<string> m_FlattenNames;
+
 private:
 	/// <summary>
 	/// Scan the file for ember nodes, and parse them out into the vector of embers.
@@ -425,6 +530,7 @@ private:
 	bool ParseEmberElement(xmlNode* emberNode, Ember<T>& currentEmber)
 	{
 		bool b = true;
+		unsigned int newLinear = 0;
 		char* attStr;
 		const char* loc = __FUNCTION__;
 		int soloXform = -1;
@@ -475,36 +581,37 @@ private:
 			else if (ParseAndAssignInt(curAtt->name, attStr, "oversample",       currentEmber.m_Supersample    , b)) { }
 			else if (ParseAndAssignInt(curAtt->name, attStr, "supersample",      currentEmber.m_Supersample    , b)) { }
 			else if (ParseAndAssignInt(curAtt->name, attStr, "temporal_samples", currentEmber.m_TemporalSamples, b)) { }
-			else if (ParseAndAssignInt(curAtt->name, attStr, "soloxform", soloXform                            , b)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "soloxform",		 soloXform                     , b)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "new_linear",		 newLinear					   , b)) { }
 
 			//Parse more complicated reads that have multiple possible values.
 			else if (!Compare(curAtt->name, "interpolation"))
 			{
-				if (!strcmp("linear", attStr))
+				if (!_stricmp("linear", attStr))
 					currentEmber.m_Interp = EMBER_INTERP_LINEAR;
-				else if (!strcmp("smooth", attStr))
+				else if (!_stricmp("smooth", attStr))
 					currentEmber.m_Interp = EMBER_INTERP_SMOOTH;
 				else
 					m_ErrorReport.push_back(string(loc) + " : Unrecognized interpolation type " + string(attStr));
 			}
 			else if (!Compare(curAtt->name, "palette_interpolation"))
 			{
-				if (!strcmp("hsv", attStr))
+				if (!_stricmp("hsv", attStr))
 					currentEmber.m_PaletteInterp = INTERP_HSV;
-				else if (!strcmp("sweep", attStr))
+				else if (!_stricmp("sweep", attStr))
 					currentEmber.m_PaletteInterp = INTERP_SWEEP;
 				else
 					m_ErrorReport.push_back(string(loc) + " : Unrecognized palette interpolation type " + string(attStr));
 			}
 			else if (!Compare(curAtt->name, "interpolation_space") || !Compare(curAtt->name, "interpolation_type"))
 			{
-				if (!strcmp("linear", attStr))
+				if (!_stricmp("linear", attStr))
 					currentEmber.m_AffineInterp = INTERP_LINEAR;
-				else if (!strcmp("log", attStr))
+				else if (!_stricmp("log", attStr))
 					currentEmber.m_AffineInterp = INTERP_LOG;
-				else if (!strcmp("old", attStr))
+				else if (!_stricmp("old", attStr))
 					currentEmber.m_AffineInterp = INTERP_COMPAT;
-				else if (!strcmp("older", attStr))
+				else if (!_stricmp("older", attStr))
 					currentEmber.m_AffineInterp = INTERP_OLDER;
 				else
 					m_ErrorReport.push_back(string(loc) + " : Unrecognized interpolation type " + string(attStr));
@@ -551,9 +658,9 @@ private:
 			}
 			else if (!Compare(curAtt->name, "palette_mode"))
 			{
-				if (!strcmp("step", attStr))
+				if (!_stricmp("step", attStr))
 					currentEmber.m_PaletteMode = PALETTE_STEP;
-				else if (!strcmp("linear", attStr))
+				else if (!_stricmp("linear", attStr))
 					currentEmber.m_PaletteMode = PALETTE_LINEAR;
 				else
 				{
@@ -750,9 +857,9 @@ private:
 					{
 						newFormat = true;
 					
-						if (!strcmp(attStr, "RGB"))
+						if (!_stricmp(attStr, "RGB"))
 							numBytes = 3;
-						else if (!strcmp(attStr, "RGBA"))
+						else if (!_stricmp(attStr, "RGBA"))
 							numBytes = 4;
 						else
 						{
@@ -898,6 +1005,9 @@ private:
 			}
 		}
 
+		//if (!newLinear)
+		//	currentEmber.Flatten(m_FlattenNames);
+
 		for (i = 0; i < currentEmber.XformCount(); i++)
 			if (soloXform >= 0 && i != soloXform)
 				currentEmber.GetXform(i)->m_Opacity = 0;//Will calc the cached adjusted viz value later.
@@ -963,11 +1073,11 @@ private:
 			}
 			else if (!Compare(curAtt->name, "motion_function"))
 			{
-				if (!strcmp("sin", attStr))
+				if (!_stricmp("sin", attStr))
 					xform.m_MotionFunc = MOTION_SIN;
-				else if (!strcmp("triangle", attStr))
+				else if (!_stricmp("triangle", attStr))
 					xform.m_MotionFunc = MOTION_TRIANGLE;
-				else if (!strcmp("hill", attStr))
+				else if (!_stricmp("hill", attStr))
 					xform.m_MotionFunc = MOTION_HILL;
 				else
 				{
@@ -1013,7 +1123,7 @@ private:
 				{
 					m_ErrorReport.push_back(string(loc) + " : Motion element cannot have a plotmode attribute");
 				}
-				else if (!strcmp("off", attStr))
+				else if (!_stricmp("off", attStr))
 					xform.m_Opacity = 0;
 			}
 			else if (!Compare(curAtt->name, "coefs"))
@@ -1048,7 +1158,7 @@ private:
 			}
 			else
 			{
-				string s = GetCorrectedName(m_BadVariationNames, (const char*)curAtt->name);
+				string s = GetCorrectedVariationName(m_BadVariationNames, curAtt);
 				const char* name = s.c_str();
 
 				if (Variation<T>* var = m_VariationList.GetVariation(s))
@@ -1130,7 +1240,7 @@ private:
 			{
 				for (curAtt = attPtr; curAtt; curAtt = curAtt->next)
 				{
-					string s = GetCorrectedName(m_BadParamNames, (const char*)curAtt->name);
+					string s = GetCorrectedParamName(m_BadParamNames, (const char*)curAtt->name);
 					const char* name = s.c_str();
 
 					if (parVar->ContainsParam(name))
@@ -1160,15 +1270,70 @@ private:
 	/// Some Apophysis plugins use an inconsistent naming scheme for the parametric variation variables.
 	/// This function identifies and converts them to Ember's consistent naming convention.
 	/// </summary>
-	/// <param name="ember">The name of the variable found in the Xml</param>
+	/// <param name="vec">The vector of corrected names to search</param>
+	/// <param name="att">The current Xml node to check</param>
 	/// <returns>The corrected name if one was found, else the passed in name.</returns>
-	static string GetCorrectedName(vector<pair<string, string>>& vec, const char* name)
+	static string GetCorrectedParamName(vector<pair<string, string>>& vec, const char* name)
 	{
 		for (size_t i = 0; i < vec.size(); i++)
-			if (!strcmp(vec[i].first.c_str(), name))//Case sensitive is intentional.
+		{
+			if (!_stricmp(vec[i].first.c_str(), name))
 				return vec[i].second;
+		}
 
 		return name;
+	}
+
+	/// <summary>
+	/// Some Apophysis plugins use an inconsistent naming scheme for variation names.
+	/// This function identifies and converts them to Ember's consistent naming convention.
+	/// It uses some additional intelligence to ensure the variation is the expected one,
+	/// by examining the rest of the xform for the existence of parameter names.
+	/// </summary>
+	/// <param name="vec">The vector of corrected names to search</param>
+	/// <param name="att">The current Xml node to check</param>
+	/// <returns>The corrected name if one was found, else the passed in name.</returns>
+	static string GetCorrectedVariationName(vector<pair<pair<string, string>, vector<string>>>& vec, xmlAttrPtr att)
+	{
+		for (size_t i = 0; i < vec.size(); i++)
+		{
+			if (!_stricmp(vec[i].first.first.c_str(), (const char*)att->name))//Do case insensitive here.
+			{
+				if (!vec[i].second.empty())
+				{
+					for (size_t j = 0; j < vec[i].second.size(); j++)
+					{
+						if (XmlContainsTag(att, vec[i].second[j].c_str()))
+							return vec[i].first.second;
+					}
+				}
+				else
+				{
+					return vec[i].first.second;
+				}
+			}
+		}
+
+		return string((const char*)att->name);
+	}
+
+	/// <summary>
+	/// Determine if an Xml node contains a given tag.
+	/// </summary>
+	/// <param name="att">The Xml node to search</param>
+	/// <param name="name">The node name to search for</param>
+	/// <returns>True if name was found, else false.</returns>
+	static bool XmlContainsTag(xmlAttrPtr att, const char* name)
+	{
+		xmlAttrPtr temp = att;
+
+		do
+		{
+			if (!_stricmp(name, (const char*)temp->name))
+				return true;
+		} while (temp = temp->next);
+
+		return false;
 	}
 
 	/// <summary>
@@ -1331,10 +1496,12 @@ private:
 	bool ParseAndAssignInt(const xmlChar* name, char* attStr, char* str, int& val, bool& b)
 	{
 		bool ret = false;
+		T fval = 0;
 
 		if (!Compare(name, str))
 		{
-			b &= Atoi(attStr, val);
+			b &= Atof(attStr, fval);
+			val = (int)fval;
 			ret = true;//Means the strcmp() was right, but doesn't necessarily mean the conversion went ok.
 		}
 
@@ -1343,7 +1510,7 @@ private:
 
 	static bool m_Init;
 	static vector<pair<string, string>> m_BadParamNames;
-	static vector<pair<string, string>> m_BadVariationNames;
+	static vector<pair<pair<string, string>, vector<string>>> m_BadVariationNames;
 	VariationList<T> m_VariationList;//The variation list used to make copies of variations to populate the embers with.
 	PaletteList<T> m_PaletteList;
 };

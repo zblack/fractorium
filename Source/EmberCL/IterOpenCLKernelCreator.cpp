@@ -52,7 +52,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 
 	xformFuncs << "\n" << parVarDefines << endl;
 	ember.GetPresentVariations(variations);
-	std::for_each(variations.begin(), variations.end(), [&](Variation<T>* var) { if (var) xformFuncs << var->OpenCLFuncsString(); });
+	ForEach(variations, [&](Variation<T>* var) { if (var) xformFuncs << var->OpenCLFuncsString(); });
 
 	for (i = 0; i < totalXformCount; i++)
 	{
@@ -99,7 +99,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		if (needPrecalcAtanYX)
 			xformFuncs << "\treal_t precalcAtanyx;\n";
 
-		xformFuncs << "\treal_t tempColor = outPoint->m_ColorX = xform->m_ColorSpeedCache + (xform->m_OneMinusColorCache * inPoint->m_ColorX);\n";
+		xformFuncs << "\treal_t tempColor = outPoint->m_ColorX = xform->m_ColorSpeedCache + (xform->m_OneMinusColorCache * inPoint->m_ColorX);\n\n";
 
 		if (xform->PreVariationCount() + xform->VariationCount() == 0)
 		{
@@ -145,8 +145,8 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 
 				if (xform->NeedPrecalcAngles())
 				{
-					xformFuncs << "\tprecalcSina = transX / precalcSqrtSumSquares;\n";
-					xformFuncs << "\tprecalcCosa = transY / precalcSqrtSumSquares;\n";
+					xformFuncs << "\tprecalcSina = transX / Zeps(precalcSqrtSumSquares);\n";
+					xformFuncs << "\tprecalcCosa = transY / Zeps(precalcSqrtSumSquares);\n";
 				}
 
 				if (xform->NeedPrecalcAtanXY())
@@ -268,9 +268,9 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"	__local Point swap[NTHREADS];\n"
 		"	__local uint xfsel[NWARPS];\n"
 		"\n"
-		"	unsigned int pointsIndex = INDEX_IN_GRID_2D;\n"
-		"	mwc.x = (pointsIndex + 1 * seed) & 0x7FFFFFFF;\n"
-		"	mwc.y = ((BLOCK_ID_X + 1) + (pointsIndex + 1) * seed) & 0x7FFFFFFF;\n"
+		"	uint pointsIndex = INDEX_IN_GRID_2D;\n"
+		"	mwc.x = (pointsIndex + 1 * seed);\n"
+		"	mwc.y = ((BLOCK_ID_X + 1) * (pointsIndex + 1) * seed);\n"
 		"	iPaletteCoord.y = 0;\n"
 		"\n"
 		"	if (fuseCount > 0)\n"
@@ -308,14 +308,18 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"\n"
 		"		do\n"
 		"		{\n";
+
+		//If xaos is present, the cuburn method is effectively ceased. Every thread will be picking a random xform.
 		if (ember.XaosPresent())
 		{
 			os <<
-		"			secondPoint.m_LastXfUsed = xformDistributions[xfsel[THREAD_ID_Y] + (" << CHOOSE_XFORM_GRAIN << " * (firstPoint.m_LastXfUsed + 1u))];\n\n";
+		"			secondPoint.m_LastXfUsed = xformDistributions[MwcNext(&mwc) % " << CHOOSE_XFORM_GRAIN << " + (" << CHOOSE_XFORM_GRAIN << " * (firstPoint.m_LastXfUsed + 1u))];\n\n";
+		//"			secondPoint.m_LastXfUsed = xformDistributions[xfsel[THREAD_ID_Y] + (" << CHOOSE_XFORM_GRAIN << " * (firstPoint.m_LastXfUsed + 1u))];\n\n";//Partial cuburn hybrid.
 		}
 		else
 		{
 			os <<
+		//"			secondPoint.m_LastXfUsed = xformDistributions[MwcNext(&mwc) % " << CHOOSE_XFORM_GRAIN << "];\n\n";//For testing, using straight rand flam4/fractron style instead of cuburn.
 		"			secondPoint.m_LastXfUsed = xformDistributions[xfsel[THREAD_ID_Y]];\n\n";
 		}
 
@@ -391,12 +395,15 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		
 		if (ember.UseFinalXform())
 		{
+			unsigned int finalIndex = ember.TotalXformCount() - 1;
+
 			//CPU takes an extra step here to preserve the opacity of the randomly selected xform, rather than the final xform's opacity.
 			//The same thing takes place here automatically because secondPoint.m_LastXfUsed is used below to retrieve the opacity when accumulating.
 			os <<
-		"		if ((ember->m_Xforms[ember->m_FinalXformIndex].m_Opacity == 1) || (MwcNext01(&mwc) < ember->m_Xforms[ember->m_FinalXformIndex].m_Opacity))\n"
+		"		if ((ember->m_Xforms[" << finalIndex << "].m_Opacity == 1) || (MwcNext01(&mwc) < ember->m_Xforms[" << finalIndex << "].m_Opacity))\n"
 		"		{\n"
-		"			Xform" << (ember.TotalXformCount() - 1) << "(&(ember->m_Xforms[ember->m_FinalXformIndex]), parVars, &secondPoint, &tempPoint, &mwc);\n"
+		"			tempPoint.m_LastXfUsed = secondPoint.m_LastXfUsed;\n"
+		"			Xform" << finalIndex << "(&(ember->m_Xforms[" << finalIndex << "]), parVars, &secondPoint, &tempPoint, &mwc);\n"
 		"			secondPoint = tempPoint;\n"
 		"		}\n"
 		"\n";
@@ -511,7 +518,14 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		//At this point, iterating for this round is done, so write the final points back out
 		//to the global points buffer to be used as inputs for the next round. This preserves point trajectory
 		//between kernel calls.
+#ifdef TEST_CL_BUFFERS//Use this to populate with test values and read back in EmberTester.
+		"	points[pointsIndex].m_X = MwcNextNeg1Pos1(&mwc);\n"
+		"	points[pointsIndex].m_Y = MwcNextNeg1Pos1(&mwc);\n"
+		"	points[pointsIndex].m_Z = MwcNextNeg1Pos1(&mwc);\n"
+		"	points[pointsIndex].m_ColorX = MwcNextNeg1Pos1(&mwc);\n"
+#else
 		"	points[pointsIndex] = firstPoint;\n"
+#endif
 		"	barrier(CLK_GLOBAL_MEM_FENCE);\n"
 		"}\n";
 
@@ -562,7 +576,6 @@ void IterOpenCLKernelCreator<T>::ParVarIndexDefines(Ember<T>& ember, pair<string
 {
 	unsigned int i, j, k, size = 0, xformCount = ember.TotalXformCount();
 	Xform<T>* xform;
-	ParametricVariation<T>* parVar;
 	ostringstream os;
 
 	if (doVals)
@@ -576,7 +589,7 @@ void IterOpenCLKernelCreator<T>::ParVarIndexDefines(Ember<T>& ember, pair<string
 
 			for (j = 0; j < varCount; j++)
 			{
-				if (parVar = dynamic_cast<ParametricVariation<T>*>(xform->GetVariation(j)))
+				if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(xform->GetVariation(j)))
 				{
 					for (k = 0; k < parVar->ParamCount(); k++)
 					{
@@ -711,7 +724,7 @@ string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 	"\n"
 	"		z = ember->m_C02 * secondPoint.m_X + ember->m_C12 * secondPoint.m_Y + ember->m_C22 * z;\n"
 	"\n"
-	"		real_t zr = 1 - ember->m_CamPerspective * z;\n"
+	"		real_t zr = Zeps(1 - ember->m_CamPerspective * z);\n"
 	"		real_t dr = MwcNext01(&mwc) * ember->m_BlurCoef * z;\n"
 	"\n"
 	"		dsin = sin(t);\n"
@@ -731,7 +744,7 @@ string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 	"		z = secondPoint.m_Z - ember->m_CamZPos;\n"
 	"		y = ember->m_C11 * secondPoint.m_Y + ember->m_C21 * z;\n"
 	"		z = ember->m_C12 * secondPoint.m_Y + ember->m_C22 * z;\n"
-	"		zr = 1 - ember->m_CamPerspective * z;\n"
+	"		zr = Zeps(1 - ember->m_CamPerspective * z);\n"
 	"\n"
 	"		dsin = sin(t);\n"
 	"		dcos = cos(t);\n"
@@ -751,7 +764,7 @@ string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 	"		real_t z  = secondPoint.m_Z - ember->m_CamZPos;\n"
 	"		real_t x  = ember->m_C00 * secondPoint.m_X + ember->m_C10 * secondPoint.m_Y;\n"
 	"		real_t y  = ember->m_C01 * secondPoint.m_X + ember->m_C11 * secondPoint.m_Y + ember->m_C21 * z;\n"
-	"		real_t zr = 1 - ember->m_CamPerspective * (ember->m_C02 * secondPoint.m_X + ember->m_C12 * secondPoint.m_Y + ember->m_C22 * z);\n"
+	"		real_t zr = Zeps(1 - ember->m_CamPerspective * (ember->m_C02 * secondPoint.m_X + ember->m_C12 * secondPoint.m_Y + ember->m_C22 * z));\n"
 	"\n"
 	"		secondPoint.m_X = x / zr;\n"
 	"		secondPoint.m_Y = y / zr;\n"
@@ -762,7 +775,7 @@ string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 				os <<
 	"		real_t z  = secondPoint.m_Z - ember->m_CamZPos;\n"
 	"		real_t y  = ember->m_C11 * secondPoint.m_Y + ember->m_C21 * z;\n"
-	"		real_t zr = 1 - ember->m_CamPerspective * (ember->m_C12 * secondPoint.m_Y + ember->m_C22 * z);\n"
+	"		real_t zr = Zeps(1 - ember->m_CamPerspective * (ember->m_C12 * secondPoint.m_Y + ember->m_C22 * z));\n"
 	"\n"
 	"		secondPoint.m_X /= zr;\n"
 	"		secondPoint.m_Y  = y / zr;\n"
@@ -772,7 +785,7 @@ string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 		else
 		{
 			os <<
-	"		real_t zr = 1 - ember->m_CamPerspective * (secondPoint.m_Z - ember->m_CamZPos);\n"
+	"		real_t zr = Zeps(1 - ember->m_CamPerspective * (secondPoint.m_Z - ember->m_CamZPos));\n"
 	"\n"
 	"		secondPoint.m_X /= zr;\n"
 	"		secondPoint.m_Y /= zr;\n"

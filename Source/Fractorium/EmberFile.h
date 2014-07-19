@@ -117,12 +117,13 @@ public:
 		int counter = 2;
 		QString newPath;
 		QFileInfo original(filename);
+		QString path = original.absolutePath() + QDir::separator();
 		QString base = original.completeBaseName();
 		QString extension = original.suffix();
 		
 		do
 		{
-			newPath = base + "_" + QString::number(counter++) + "." + extension;		
+			newPath = path + base + "_" + QString::number(counter++) + "." + extension;		
 		}
 		while (QFile::exists(newPath));
 		

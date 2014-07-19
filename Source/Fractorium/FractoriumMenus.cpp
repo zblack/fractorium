@@ -31,6 +31,8 @@ void Fractorium::InitMenusUI()
 	connect(ui.ActionAddRotationalSymmetry, SIGNAL(triggered(bool)), this, SLOT(OnActionAddRotationalSymmetry(bool)), Qt::QueuedConnection);
 	connect(ui.ActionAddBothSymmetry,		SIGNAL(triggered(bool)), this, SLOT(OnActionAddBothSymmetry(bool)),		  Qt::QueuedConnection);
 	connect(ui.ActionClearFlame,			SIGNAL(triggered(bool)), this, SLOT(OnActionClearFlame(bool)),			  Qt::QueuedConnection);
+	connect(ui.ActionFlatten,			    SIGNAL(triggered(bool)), this, SLOT(OnActionFlatten(bool)),			      Qt::QueuedConnection);
+	connect(ui.ActionUnflatten,			    SIGNAL(triggered(bool)), this, SLOT(OnActionUnflatten(bool)),			  Qt::QueuedConnection);
 	connect(ui.ActionStopRenderingPreviews,	SIGNAL(triggered(bool)), this, SLOT(OnActionStopRenderingPreviews(bool)), Qt::QueuedConnection);
 	connect(ui.ActionRenderPreviews,		SIGNAL(triggered(bool)), this, SLOT(OnActionRenderPreviews(bool)),		  Qt::QueuedConnection);
 	connect(ui.ActionFinalRender,			SIGNAL(triggered(bool)), this, SLOT(OnActionFinalRender(bool)),			  Qt::QueuedConnection);
@@ -658,6 +660,22 @@ void FractoriumEmberController<T>::AddBothSymmetry()
 }
 
 void Fractorium::OnActionAddBothSymmetry(bool checked) { m_Controller->AddBothSymmetry(); }
+
+/// <summary>
+/// Adds a FlattenVariation to every xform in the current ember.
+/// Resets the rendering process.
+/// </summary>
+template <typename T>
+void FractoriumEmberController<T>::Flatten() { UpdateCurrentXform([&] (Xform<T>* xform) { m_Ember.Flatten(XmlToEmber<T>::m_FlattenNames); FillVariationTreeWithXform(xform); }); }
+void Fractorium::OnActionFlatten(bool checked) { m_Controller->Flatten(); }
+	
+/// <summary>
+/// Removes pre/reg/post FlattenVariation from every xform in the current ember.
+/// Resets the rendering process.
+/// </summary>
+template <typename T>
+void FractoriumEmberController<T>::Unflatten() { UpdateCurrentXform([&] (Xform<T>* xform) { m_Ember.Unflatten(); FillVariationTreeWithXform(xform); }); }
+void Fractorium::OnActionUnflatten(bool checked) { m_Controller->Unflatten(); }
 
 /// <summary>
 /// Delete all but one xform in the current ember.

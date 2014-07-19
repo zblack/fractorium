@@ -128,6 +128,7 @@ public:
 	{
 		unsigned int i, j;
 		ostringstream os;
+		vector<Variation<T>*> variations;
 
 		os << "<flame version=\"EMBER-" << EmberVersion() << "\" time=\"" << ember.m_Time << "\"";
 
@@ -194,6 +195,15 @@ public:
 		if (!extraAttributes.empty())
 			os << " " << extraAttributes;
 
+		os << " plugins=\"";
+		ember.GetPresentVariations(variations, false);
+
+		if (!variations.empty())
+			ForEach(variations, [&] (Variation<T>* var) { os << var->Name() << (var != variations.back() ? " " : "\""); });
+		else
+			os << "\"";
+
+		os << " new_linear=\"1\"";
 		os << ">\n";
 
 		//This is a grey area, what to do about symmetry to avoid duplicating the symmetry xforms when reading back?//TODO//BUG.
@@ -455,7 +465,7 @@ private:
 			//os << "color=\"" << xform.m_ColorX << " " << xform.m_ColorY << "\" ";
 			os << "var_color=\"" << xform.m_DirectColor << "\" ";
 			os << "color_speed=\"" << xform.m_ColorSpeed << "\" ";
-			os << "symmetry=\"" << xform.m_ColorSpeed << "\" ";//Legacy support.
+			//os << "symmetry=\"" << fabs(xform.m_ColorSpeed - 1) * 2 << "\" ";//Legacy support.
 
 			string s = xform.m_Name;
 

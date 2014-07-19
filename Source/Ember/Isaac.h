@@ -92,7 +92,11 @@ public:
 	/// <returns>The next random integer</returns>
 	inline T Rand()
 	{
+#ifdef ISAAC_FLAM3_DEBUG
+		return (!m_Rc.randcnt-- ? (Isaac(&m_Rc), m_Rc.randcnt=N-1, m_Rc.randrsl[m_Rc.randcnt]) : m_Rc.randrsl[m_Rc.randcnt]);
+#else
 		return (m_Rc.randcnt++ == N ? (Isaac(&m_Rc), m_Rc.randcnt=0, m_Rc.randrsl[m_Rc.randcnt]) : m_Rc.randrsl[m_Rc.randcnt]);
+#endif
 	}
 
 	/// <summary>
@@ -126,7 +130,11 @@ public:
 	template<typename floatType>
 	inline floatType Frand01()
 	{
+#ifdef ISAAC_FLAM3_DEBUG
+		return (Rand() & 0xfffffff) / (floatType)0xfffffff;
+#else
 		return Frand<floatType>(floatType(0), floatType(1));
+#endif
 	}
 
 	/// <summary>
@@ -137,7 +145,11 @@ public:
 	template<typename floatType>
 	inline floatType Frand11()
 	{
+#ifdef ISAAC_FLAM3_DEBUG
+		return ((Rand() & 0xfffffff) - 0x7ffffff) / (floatType)0x7ffffff;
+#else
 		return Frand<floatType>(floatType(-1), floatType(1));
+#endif
 	}
 
 	/// <summary>
@@ -233,7 +245,7 @@ public:
 		}
    
 		Isaac(ctx);      //Fill in the first set of results.
-		ctx->randcnt = 0;//Prepare to use the first set of results.
+		ctx->randcnt = N;//TODO//0;//Prepare to use the first set of results.
 	}
 
 	/// <summary>
@@ -257,6 +269,7 @@ public:
 				m_Rc.randrsl[i] = s[i];
 		}
 
+#ifndef ISAAC_FLAM3_DEBUG
 		if (a == 0 && b == 0 && c == 0)
 		{
 			m_Rc.randa = (T)time(0);
@@ -264,6 +277,7 @@ public:
 			m_Rc.randc = (T)time(0) * (T)time(0) * (T)time(0);
 		}
 		else
+#endif
 		{
 			m_Rc.randa = a;
 			m_Rc.randb = b;

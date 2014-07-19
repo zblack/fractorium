@@ -35,21 +35,24 @@ static string ConstantDefinesString(bool doublePrecision)
 		   << "typedef long intPrec;\n"
 		   << "typedef ulong atomi;\n"
 		   << "typedef double real_t;\n"
-		   << "typedef double4 real4;\n";
+		   << "typedef double4 real4;\n"
+		   << "#define EPS (DBL_EPSILON)\n"
+		   ;
 	}
 	else
 	{
 		os << "typedef int intPrec;\n"
 			  "typedef unsigned int atomi;\n"
 			  "typedef float real_t;\n"
-			  "typedef float4 real4;\n";
+			  "typedef float4 real4;\n"
+			  "#define EPS (FLT_EPSILON)\n"
+			  ;
 	}
 
 	os <<
 		"typedef          long int int64;\n"
 		"typedef unsigned long int uint64;\n"
 		"\n"
-		"#define EPS ((1e-10))\n"//May need to change this, it might not be enough in some cases. Maybe try 1e-9 if things look funny when close to zero.
 		"#define EPS6 ((1e-6))\n"
 		"\n"
 		"//The number of threads per block used in the iteration function. Don't change\n"
@@ -122,7 +125,7 @@ struct ALIGN PointCL
 	T m_Y;
 	T m_Z;
 	T m_ColorX;
-	T m_LastXfUsed;
+	unsigned int m_LastXfUsed;
 };
 
 /// <summary>
@@ -188,7 +191,6 @@ static const char* XformCLStructString =
 template <typename T>
 struct ALIGN EmberCL
 {
-	unsigned int m_FinalXformIndex;
 	XformCL<T> m_Xforms[MAX_CL_XFORM];
 	T m_CamZPos;
 	T m_CamPerspective;
@@ -207,7 +209,6 @@ struct ALIGN EmberCL
 static const char* EmberCLStructString =
 "typedef struct __attribute__ " ALIGN_CL " _EmberCL\n"
 "{\n"
-"	uint m_FinalXformIndex;\n"
 "	XformCL m_Xforms[" MAX_CL_XFORM_STRING "];\n"
 "	real_t m_CamZPos;\n"
 "	real_t m_CamPerspective;\n"

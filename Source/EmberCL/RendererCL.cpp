@@ -40,6 +40,7 @@ RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool share
 	//based on the cuburn model of each kernel launch containing
 	//256 threads. 32 wide by 8 high. Everything done in the OpenCL
 	//iteraion kernel depends on these dimensions.
+	m_IterCountPerKernel = 256;
 	m_IterBlockWidth = 32;
 	m_IterBlockHeight = 8;
 	m_IterBlocksWide = 64;
@@ -125,6 +126,7 @@ bool RendererCL<T>::Init(unsigned int platform, unsigned int device, bool shared
 /// OpenCL property accessors, getters only.
 /// </summary>
 
+template <typename T> unsigned int RendererCL<T>::IterCountPerKernel()   { return m_IterCountPerKernel;                 }
 template <typename T> unsigned int RendererCL<T>::IterBlocksWide()       { return m_IterBlocksWide;                     }
 template <typename T> unsigned int RendererCL<T>::IterBlocksHigh()       { return m_IterBlocksHigh;                     }
 template <typename T> unsigned int RendererCL<T>::IterBlockWidth()       { return m_IterBlockWidth;                     }
@@ -322,7 +324,7 @@ void RendererCL<T>::ClearErrorReport()
 template <typename T>
 unsigned int RendererCL<T>::SubBatchSize() const
 {
-	return m_IterBlocksWide * m_IterBlocksHigh * 256 * 256;
+	return m_IterBlocksWide * m_IterBlocksHigh * SQR(m_IterCountPerKernel);
 }
 
 /// <summary>
@@ -614,7 +616,7 @@ EmberStats RendererCL<T>::Iterate(unsigned __int64 iterCount, unsigned int pass,
 
 	if (b)
 	{
-		if (m_ProcessState == ITER_STARTED)
+		if (m_Stats.m_Iters == 0)//Only reset the call count on the beginning of a new render. Do not reset on KEEP_ITERATING.
 			m_Calls = 0;
 
 		b = RunIter(iterCount, pass, temporalSample, stats.m_Iters);
@@ -684,9 +686,10 @@ bool RendererCL<T>::RunIter(unsigned __int64 iterCount, unsigned int pass, unsig
 	Timing t;//, t2(4);
 	bool b = false;
 	unsigned int fuse, argIndex;
-	unsigned int iterCountPerKernel = 256;
+	unsigned int iterCountPerKernel = m_IterCountPerKernel;
 	unsigned int iterCountPerBlock = iterCountPerKernel * m_IterBlockWidth * m_IterBlockHeight;
 	unsigned int seed;
+	unsigned int fuseFreq = m_SubBatchSize / m_IterCountPerKernel;
 	unsigned __int64 itersRemaining, localIterCount = 0;
 	int kernelIndex = m_Wrapper.FindKernelIndex(m_IterOpenCLKernelCreator.IterEntryPoint());
 	double percent, etaMs;
@@ -707,7 +710,7 @@ bool RendererCL<T>::RunIter(unsigned __int64 iterCount, unsigned int pass, unsig
 		if (!m_Wrapper.AddAndWriteBuffer(m_DistBufferName,     (void*)XformDistributions(), XformDistributionsSize())) { m_ErrorReport.push_back(loc); return false; }//Will be resized for xaos.
 		if (!m_Wrapper.WriteBuffer      (m_CarToRasBufferName, (void*)&m_CarToRasCL,        sizeof(m_CarToRasCL)))     { m_ErrorReport.push_back(loc); return false; }
 		
-		if (!m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, 256, 1, 0, m_Dmap.m_Entries.data())) { m_ErrorReport.push_back(loc); return false; }
+		if (!m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, m_Dmap.m_Entries.size(), 1, 0, m_Dmap.m_Entries.data())) { m_ErrorReport.push_back(loc); return false; }
 		
 		//If animating, treat each temporal sample as a newly started render for fusing purposes.
 		if (temporalSample > 0)
@@ -718,11 +721,12 @@ bool RendererCL<T>::RunIter(unsigned __int64 iterCount, unsigned int pass, unsig
 			argIndex = 0;
 			seed = m_Rand[0].Rand();
 #ifdef TEST_CL
-			fuse = false;
+			fuse = 0;
 #else
-			fuse = ((m_Calls % 4) == 0 ? 100 : 0);
-#endif
 			//fuse = 100;
+			fuse = ((m_Calls % fuseFreq) == 0 ? (EarlyClip() ? 100u : 15u) : 0u);
+			//fuse = ((m_Calls % 4) == 0 ? 100u : 0u);
+#endif
 			itersRemaining = iterCount - itersRan;
 			unsigned int gridW = (unsigned int)min(ceil((double)itersRemaining / (double)iterCountPerBlock), (double)IterBlocksWide());
 			unsigned int gridH = (unsigned int)min(ceil((double)itersRemaining / ((double)gridW * iterCountPerBlock)), (double)IterBlocksHigh());
@@ -736,17 +740,17 @@ bool RendererCL<T>::RunIter(unsigned __int64 iterCount, unsigned int pass, unsig
 				iterCountThisLaunch = iterCountPerKernel * (gridW * gridH * m_IterBlockWidth * m_IterBlockHeight);
 			}
 
-			if (!m_Wrapper.SetArg      (kernelIndex, argIndex, iterCountPerKernel))   { m_ErrorReport.push_back(loc); return false; } argIndex++;//Number of iters for each thread to run.
-			if (!m_Wrapper.SetArg      (kernelIndex, argIndex, fuse))                 { m_ErrorReport.push_back(loc); return false; } argIndex++;//Number of iters to fuse.
-			if (!m_Wrapper.SetArg      (kernelIndex, argIndex, seed))                 { m_ErrorReport.push_back(loc); return false; } argIndex++;//Seed.
-			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_EmberBufferName))    { m_ErrorReport.push_back(loc); return false; } argIndex++;//Flame.
-			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_ParVarsBufferName))  { m_ErrorReport.push_back(loc); return false; } argIndex++;//Parametric variation parameters.
-			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_DistBufferName))     { m_ErrorReport.push_back(loc); return false; } argIndex++;//Xform distributions.
-			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_CarToRasBufferName)) { m_ErrorReport.push_back(loc); return false; } argIndex++;//Coordinate converter.
-			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_HistBufferName))     { m_ErrorReport.push_back(loc); return false; } argIndex++;//Histogram.
-			if (!m_Wrapper.SetArg	   (kernelIndex, argIndex, SuperSize()))		  { m_ErrorReport.push_back(loc); return false; } argIndex++;//Histogram size.
-			if (!m_Wrapper.SetImageArg (kernelIndex, argIndex, false, "Palette"))     { m_ErrorReport.push_back(loc); return false; } argIndex++;//Palette.
-			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_PointsBufferName))   { m_ErrorReport.push_back(loc); return false; } argIndex++;//Random start points.
+			if (!m_Wrapper.SetArg      (kernelIndex, argIndex++, iterCountPerKernel))   { m_ErrorReport.push_back(loc); return false; }//Number of iters for each thread to run.
+			if (!m_Wrapper.SetArg      (kernelIndex, argIndex++, fuse))                 { m_ErrorReport.push_back(loc); return false; }//Number of iters to fuse.
+			if (!m_Wrapper.SetArg      (kernelIndex, argIndex++, seed))                 { m_ErrorReport.push_back(loc); return false; }//Seed.
+			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_EmberBufferName))    { m_ErrorReport.push_back(loc); return false; }//Flame.
+			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_ParVarsBufferName))  { m_ErrorReport.push_back(loc); return false; }//Parametric variation parameters.
+			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_DistBufferName))     { m_ErrorReport.push_back(loc); return false; }//Xform distributions.
+			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_CarToRasBufferName)) { m_ErrorReport.push_back(loc); return false; }//Coordinate converter.
+			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_HistBufferName))     { m_ErrorReport.push_back(loc); return false; }//Histogram.
+			if (!m_Wrapper.SetArg	   (kernelIndex, argIndex++, SuperSize()))		    { m_ErrorReport.push_back(loc); return false; }//Histogram size.
+			if (!m_Wrapper.SetImageArg (kernelIndex, argIndex++, false, "Palette"))     { m_ErrorReport.push_back(loc); return false; }//Palette.
+			if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_PointsBufferName))   { m_ErrorReport.push_back(loc); return false; }//Random start points.
 			
 			if (!m_Wrapper.RunKernel(kernelIndex,
 									 gridW * IterBlockWidth(),//Total grid dims.
@@ -837,9 +841,9 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 		
 		if (!m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, (void*)&m_DensityFilterCL, sizeof(m_DensityFilterCL))) { m_ErrorReport.push_back(loc); return RENDER_ERROR; }
 
-		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_HistBufferName))           { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Histogram.
-		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_AccumBufferName))          { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Accumulator.
-		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_DEFilterParamsBufferName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//DensityFilterCL.
+		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_HistBufferName))           { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Histogram.
+		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_AccumBufferName))          { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Accumulator.
+		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_DEFilterParamsBufferName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//DensityFilterCL.
 
 		//t.Tic();
 		if (!m_Wrapper.RunKernel(kernelIndex, gridW, gridH, 1, blockW, blockH, 1)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; }
@@ -981,8 +985,8 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 				gridH = m_SpatialFilterCL.m_SuperRasH;
 				OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
 
-				if (!m_Wrapper.SetBufferArg(gammaCorrectKernelIndex, argIndex, m_AccumBufferName))               { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Accumulator.
-				if (!m_Wrapper.SetBufferArg(gammaCorrectKernelIndex, argIndex, m_SpatialFilterParamsBufferName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//SpatialFilterCL.
+				if (!m_Wrapper.SetBufferArg(gammaCorrectKernelIndex, argIndex++, m_AccumBufferName))               { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Accumulator.
+				if (!m_Wrapper.SetBufferArg(gammaCorrectKernelIndex, argIndex++, m_SpatialFilterParamsBufferName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//SpatialFilterCL.
 				
 				if (!m_Wrapper.RunKernel(gammaCorrectKernelIndex, gridW, gridH, 1, blockW, blockH, 1))           { m_ErrorReport.push_back(loc); return RENDER_ERROR; }
 			}
@@ -1000,12 +1004,12 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 		gridH = m_SpatialFilterCL.m_FinalRasH;
 		OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
 
-		if (!m_Wrapper.SetBufferArg(accumKernelIndex, argIndex, m_AccumBufferName))                   { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Accumulator.
-		if (!m_Wrapper.SetImageArg(accumKernelIndex, argIndex, m_Wrapper.Shared(), m_FinalImageName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Final image.
-		if (!m_Wrapper.SetBufferArg(accumKernelIndex, argIndex, m_SpatialFilterParamsBufferName))     { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//SpatialFilterCL.
-		if (!m_Wrapper.SetBufferArg(accumKernelIndex, argIndex, m_SpatialFilterCoefsBufferName))      { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Filter coefs.
-		if (!m_Wrapper.SetArg(accumKernelIndex, argIndex, alphaBase))                                 { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Alpha base.
-		if (!m_Wrapper.SetArg(accumKernelIndex, argIndex, alphaScale))                                { m_ErrorReport.push_back(loc); return RENDER_ERROR; } argIndex++;//Alpha scale.
+		if (!m_Wrapper.SetBufferArg(accumKernelIndex, argIndex++, m_AccumBufferName))                    { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Accumulator.
+		if (!m_Wrapper.SetImageArg(accumKernelIndex,  argIndex++, m_Wrapper.Shared(), m_FinalImageName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Final image.
+		if (!m_Wrapper.SetBufferArg(accumKernelIndex, argIndex++, m_SpatialFilterParamsBufferName))      { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//SpatialFilterCL.
+		if (!m_Wrapper.SetBufferArg(accumKernelIndex, argIndex++, m_SpatialFilterCoefsBufferName))       { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Filter coefs.
+		if (!m_Wrapper.SetArg	   (accumKernelIndex, argIndex++, alphaBase))                            { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Alpha base.
+		if (!m_Wrapper.SetArg	   (accumKernelIndex, argIndex++, alphaScale))                           { m_ErrorReport.push_back(loc); return RENDER_ERROR; }//Alpha scale.
 
 		if (m_Wrapper.Shared())
 			if (!m_Wrapper.EnqueueAcquireGLObjects(m_FinalImageName)) { m_ErrorReport.push_back(loc); return RENDER_ERROR; }
@@ -1050,9 +1054,9 @@ bool RendererCL<T>::ClearBuffer(string bufferName, unsigned int width, unsigned 
 
 		OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
 
-		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex, bufferName))            { m_ErrorReport.push_back(loc); return false; } argIndex++;//Buffer of unsigned char.
-		if (!m_Wrapper.SetArg      (kernelIndex, argIndex, width * elementSize))   { m_ErrorReport.push_back(loc); return false; } argIndex++;//Width.
-		if (!m_Wrapper.SetArg      (kernelIndex, argIndex, height))                { m_ErrorReport.push_back(loc); return false; } argIndex++;//Height.
+		if (!m_Wrapper.SetBufferArg(kernelIndex, argIndex++, bufferName))          { m_ErrorReport.push_back(loc); return false; }//Buffer of unsigned char.
+		if (!m_Wrapper.SetArg      (kernelIndex, argIndex++, width * elementSize)) { m_ErrorReport.push_back(loc); return false; }//Width.
+		if (!m_Wrapper.SetArg      (kernelIndex, argIndex++, height))              { m_ErrorReport.push_back(loc); return false; }//Height.
 		if (!m_Wrapper.RunKernel(kernelIndex, gridW, gridH, 1, blockW, blockH, 1)) { m_ErrorReport.push_back(loc); return false; }
 		
 		return true;
@@ -1281,7 +1285,6 @@ EmberCL<T> RendererCL<T>::ConvertEmber(Ember<T>& ember)
 	emberCL.m_CamPitch		  = ember.m_CamPitch;
 	emberCL.m_CamDepthBlur	  = ember.m_CamDepthBlur;
 	emberCL.m_BlurCoef		  = ember.BlurCoef();
-	emberCL.m_FinalXformIndex = ember.UseFinalXform() ? ember.TotalXformCount() - 1 : -1;
 
 	for (unsigned int i = 0; i < ember.TotalXformCount() && i < MAX_CL_XFORM; i++)//Copy the relevant values for each xform, capped at the max.
 	{

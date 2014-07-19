@@ -91,6 +91,8 @@ public:
 	virtual void AddReflectiveSymmetry() { }//Tools.
 	virtual void AddRotationalSymmetry() { }
 	virtual void AddBothSymmetry() { }
+	virtual void Flatten() { }
+	virtual void Unflatten() { }
 	virtual void ClearFlame() { }
 
 	//Toolbar.
@@ -298,6 +300,8 @@ public:
 	virtual void AddReflectiveSymmetry();
 	virtual void AddRotationalSymmetry();
 	virtual void AddBothSymmetry();
+	virtual void Flatten();
+	virtual void Unflatten();
 	virtual void ClearFlame();
 
 	//Toolbar.

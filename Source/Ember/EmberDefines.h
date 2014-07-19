@@ -25,9 +25,9 @@ namespace EmberNs
 	extern void sincos(double x, double *s, double *c);
 #endif
 
-#define EMBER_VERSION "0.4.0.4"
+#define EMBER_VERSION "0.4.0.5"
 #define EPS6 T(1e-6)
-#define EPS T(1e-10)//Apoplugin.h uses -20, but -10 seems to work fine.
+#define EPS std::numeric_limits<T>::epsilon()//Apoplugin.h uses -20, but it's more mathematically correct to do it this way.
 #define ISAAC_SIZE 4
 #define MEMALIGN 32
 #define DE_THRESH 100
@@ -61,6 +61,7 @@ namespace EmberNs
 #endif
 
 #define DO_DOUBLE 1//Comment this out for shorter build times during development. Always uncomment for release.
+//#define ISAAC_FLAM3_DEBUG 1//This is almost never needed, but is very useful when troubleshooting difficult bugs. Enable it to do a side by side comparison with flam3.
 
 #define v2T  glm::detail::tvec2<T, glm::defaultp>
 #define v3T  glm::detail::tvec3<T, glm::defaultp>

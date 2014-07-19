@@ -157,7 +157,7 @@ bool EmberRender(EmberOptions& opt)
 		if (opt.Verbose() && embers.size() > 1)
 			cout << "\nFlame = " << i + 1 << "/" << embers.size() << endl;
 		else
-			cout << endl;
+			VerbosePrint(endl);
 
 		embers[i].m_TemporalSamples = 1;//Force temporal samples to 1 for render.
 		embers[i].m_Quality *= T(opt.QualityScale());

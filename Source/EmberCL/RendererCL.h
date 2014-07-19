@@ -38,6 +38,7 @@ public:
 
 	//Ordinary member functions for OpenCL specific tasks.
 	bool Init(unsigned int platform, unsigned int device, bool shared, GLuint outputTexID);
+	inline unsigned int IterCountPerKernel();
 	inline unsigned int IterBlocksWide();
 	inline unsigned int IterBlocksHigh();
 	inline unsigned int IterBlockWidth();
@@ -106,6 +107,7 @@ private:
 	bool m_Init;
 	bool m_NVidia;
 	bool m_DoublePrecision;
+	unsigned int m_IterCountPerKernel;
 	unsigned int m_IterBlocksWide, m_IterBlockWidth;
 	unsigned int m_IterBlocksHigh, m_IterBlockHeight;
 	unsigned int m_MaxDEBlockSizeW;

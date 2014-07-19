@@ -392,8 +392,9 @@ auto_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalR
 	bool PaletteList<T>::m_Init = false; \
 	vector<Palette<T>> PaletteList<T>::m_Palettes = vector<Palette<T>>(); \
 	bool XmlToEmber<T>::m_Init = false; \
+	vector<string> XmlToEmber<T>::m_FlattenNames = vector<string>(); \
 	vector<pair<string, string>> XmlToEmber<T>::m_BadParamNames = vector<pair<string, string>>(); \
-	vector<pair<string, string>> XmlToEmber<T>::m_BadVariationNames = vector<pair<string, string>>();
+	vector<pair<pair<string, string>, vector<string>>> XmlToEmber<T>::m_BadVariationNames = vector<pair<pair<string, string>, vector<string>>>();
 
 EXPORT_SINGLE_TYPE_EMBER(float)
 

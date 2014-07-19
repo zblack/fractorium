@@ -80,7 +80,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
@@ -109,7 +109,7 @@ public:
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T r2 = pow(helper.m_PrecalcSumSquares, m_Power * T(0.5)) * m_Weight;
-		T ran = (helper.m_PrecalcAtanyx / (m_Denominator + EPS6) + (m_Root * M_2PI * Floor<T>(rand.Frand01<T>() * m_Denominator) / (m_Denominator + EPS))) * m_Numerator;
+		T ran = (helper.m_PrecalcAtanyx / Zeps(m_Denominator) + (m_Root * M_2PI * Floor<T>(rand.Frand01<T>() * m_Denominator) / Zeps(m_Denominator))) * m_Numerator;
 
 		helper.Out.x = r2 * cos(ran);
 		helper.Out.y = r2 * sin(ran);
@@ -131,7 +131,7 @@ public:
 		
 		ss << "\t{\n"
 		   << "\t\treal_t r2 = pow(precalcSumSquares, " << power << " * 0.5) * xform->m_VariationWeights[" << varIndex << "];\n"
-		   << "\t\treal_t ran = (precalcAtanyx / (" << denominator << " + EPS6) + (" << root << " * M_2PI * floor(MwcNext01(mwc) * " << denominator << ") / (" << denominator << " + EPS))) * " << numerator << ";\n"
+		   << "\t\treal_t ran = (precalcAtanyx / Zeps(" << denominator << ") + (" << root << " * M_2PI * floor(MwcNext01(mwc) * " << denominator << ") / Zeps(" << denominator << "))) * " << numerator << ";\n"
 		   << "\n"
 		   << "\t\tvOut.x = r2 * cos(ran);\n"
 		   << "\t\tvOut.y = r2 * sin(ran);\n"
@@ -143,7 +143,7 @@ public:
 
 	virtual void Precalc()
 	{
-		m_Power = m_Numerator / (m_Denominator * m_Correctn * (1 / m_Correctd) + EPS6);
+		m_Power = m_Numerator / Zeps(m_Denominator * m_Correctn * (1 / m_Correctd));
 	}
 
 protected:
@@ -185,7 +185,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T u = sqrt(ClampGte0<T>((m_A + EPS6) * SQR(helper.In.x) + (m_B + EPS6) * SQR(helper.In.y)));//Original did not clamp.
+		T u = sqrt(ClampGte0<T>(Zeps(m_A) * SQR(helper.In.x) + Zeps(m_B) * SQR(helper.In.y)));//Original did not clamp.
 
 		helper.Out.x = cos(u) * tan(helper.In.x) * m_Weight;
 		helper.Out.y = sin(u) * tan(helper.In.y) * m_Weight;
@@ -202,7 +202,7 @@ public:
 		string b = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t u = sqrt(ClampGte((" << a << " + EPS6) * SQR(vIn.x) + (" << b << " + EPS6) * SQR(vIn.y), 0.0));\n"
+		   << "\t\treal_t u = sqrt(ClampGte(Zeps(" << a << ") * SQR(vIn.x) + Zeps(" << b << ") * SQR(vIn.y), 0.0));\n"
 		   << "\n"
 		   << "\t\tvOut.x = cos(u) * tan(vIn.x) * xform->m_VariationWeights[" << varIndex << "];\n"
 		   << "\t\tvOut.y = sin(u) * tan(vIn.y) * xform->m_VariationWeights[" << varIndex << "];\n"
@@ -248,7 +248,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x - ((SQR(vIn.x) * vIn.x) / 3)) + vIn.x * SQR(vIn.y);\n"
@@ -1087,7 +1087,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t rad = sqrt(MwcNext01(mwc));\n"
@@ -1261,7 +1261,7 @@ public:
 		bool mode = m_Power > 0;
 
 		m_WorkPower = mode ? m_Power : -m_Power;
-		ClampLteRef<T>(m_WorkPower, 2);
+		ClampGteRef<T>(m_WorkPower, 2);
 		m_Alpha = M_2PI / m_WorkPower;
 	}
 
@@ -1490,7 +1490,7 @@ public:
 		T z = helper.In.z / m_AbsN;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares + SQR(z), m_Cn);
 		T tmp = r * helper.m_PrecalcSqrtSumSquares;
-		T ang = helper.m_PrecalcAtanyx + M_2PI * rand.Rand((unsigned int)m_AbsN);
+		T ang = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((unsigned int)m_AbsN)) / m_N;
 
 		helper.Out.x = tmp * cos(ang);
 		helper.Out.y = tmp * sin(ang);
@@ -1511,7 +1511,7 @@ public:
 		   << "\t\treal_t z = vIn.z / " << absn << ";\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] * pow(precalcSumSquares + SQR(z), " << cn << ");\n"
 		   << "\t\treal_t tmp = r * precalcSqrtSumSquares;\n"
-		   << "\t\treal_t ang = precalcAtanyx + M_2PI * MwcNextRange(mwc, (uint)" << absn << ");\n"
+		   << "\t\treal_t ang = (precalcAtanyx + M_2PI * MwcNextRange(mwc, (uint)" << absn << ")) / " << n << ";\n"
 		   << "\n"
 		   << "\t\tvOut.x = tmp * cos(ang);\n"
 		   << "\t\tvOut.y = tmp * sin(ang);\n"
@@ -1569,7 +1569,7 @@ public:
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
-		T temp = helper.m_PrecalcAtanyx + M_2PI * rand.Rand((unsigned int)m_AbsN);
+		T temp = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((unsigned int)m_AbsN)) / m_N;
 
 		helper.Out.x = r * cos(temp);
 		helper.Out.y = r * sin(temp);
@@ -1588,7 +1588,7 @@ public:
 		
 		ss << "\t{\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] * pow(precalcSumSquares, " << cn << ");\n"
-		   << "\t\treal_t temp = precalcAtanyx + M_2PI * MwcNextRange(mwc, (uint)" << absn << ");\n"
+		   << "\t\treal_t temp = (precalcAtanyx + M_2PI * MwcNextRange(mwc, (uint)" << absn << ")) / " << n << ";\n"
 		   << "\n"
 		   << "\t\tvOut.x = r * cos(temp);\n"
 		   << "\t\tvOut.y = r * sin(temp);\n"
@@ -1647,6 +1647,7 @@ public:
 	{
 		helper.Out.x = SignNz<T>(helper.In.x) * pow(fabs(helper.In.x), m_PowX) * m_Weight;
 		helper.Out.y = SignNz<T>(helper.In.y) * pow(fabs(helper.In.y), m_PowY) * m_Weight;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -1659,8 +1660,9 @@ public:
 		string powy = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\tvOut.x = (real_t)(vIn.x < 0 ? -1 : 1) * pow(fabs(vIn.x), " << powx << ") * xform->m_VariationWeights[" << varIndex << "];\n"
-		   << "\t\tvOut.y = (real_t)(vIn.y < 0 ? -1 : 1) * pow(fabs(vIn.y), " << powy << ") * xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t\tvOut.x = SignNz(vIn.x) * pow(fabs(vIn.x), " << powx << ") * xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t\tvOut.y = SignNz(vIn.y) * pow(fabs(vIn.y), " << powy << ") * xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1754,10 +1756,11 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T r = m_Weight / (helper.m_PrecalcSumSquares + EPS6);
+		T r = m_Weight / Zeps(helper.m_PrecalcSumSquares);
 
 		helper.Out.x = helper.In.x * r * m_X;
 		helper.Out.y = helper.In.y * r * m_Y;
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
 	virtual string OpenCLString()
@@ -1770,10 +1773,11 @@ public:
 		string y = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / (precalcSumSquares + EPS6);\n"
+		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / Zeps(precalcSumSquares);\n"
 		   << "\n"
 		   << "\t\tvOut.x = vIn.x * r * " << x << ";\n"
 		   << "\t\tvOut.y = vIn.y * r * " << y << ";\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1810,7 +1814,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T r = m_Weight / (helper.m_PrecalcSumSquares + SQR(helper.In.z) + EPS6);
+		T r = m_Weight / Zeps(helper.m_PrecalcSumSquares + SQR(helper.In.z));
 
 		helper.Out.x = helper.In.x * r * m_X;
 		helper.Out.y = helper.In.y * r * m_Y;
@@ -1828,7 +1832,7 @@ public:
 		string z = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / (precalcSumSquares + SQR(vIn.z) + EPS6);\n"
+		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] / Zeps(precalcSumSquares + SQR(vIn.z));\n"
 		   << "\n"
 		   << "\t\tvOut.x = vIn.x * r * " << x << ";\n"
 		   << "\t\tvOut.y = vIn.y * r * " << y << ";\n"
@@ -1968,7 +1972,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t sinX = sin(vIn.x);\n"
@@ -2010,7 +2014,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t e = 1 / precalcSumSquares + SQR(M_2_PI);\n"
@@ -2084,7 +2088,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t inZ, otherZ, tempTz, tempPz;\n"
@@ -2158,25 +2162,27 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T c1 = SQR(helper.In.x);
-		T c2 = SQR(helper.In.y);
+		T d = Zeps(helper.m_PrecalcSumSquares);
+		T c1 = Zeps(SQR(helper.In.x));
+		T c2 = Zeps(SQR(helper.In.y));
 
-		helper.Out.x = m_Weight * ((1 / helper.m_PrecalcSumSquares + EPS6) * cos(c1 + EPS6) * sin(c2 + EPS6));
-		helper.Out.y = m_Weight * ((1 / helper.m_PrecalcSumSquares + EPS6) * sin(c1 + EPS6) * sin(c2 + EPS6));
+		helper.Out.x = m_Weight * ((1 / d) * cos(c1) * sin(c2));
+		helper.Out.y = m_Weight * ((1 / d) * sin(c1) * sin(c2));
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
-		   << "\t\treal_t c1 = SQR(vIn.x);\n"
-		   << "\t\treal_t c2 = SQR(vIn.y);\n"
+		   << "\t\treal_t d = Zeps(precalcSumSquares);\n"
+		   << "\t\treal_t c1 = Zeps(SQR(vIn.x));\n"
+		   << "\t\treal_t c2 = Zeps(SQR(vIn.y));\n"
 		   << "\n"
-		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * ((1.0 / precalcSumSquares + EPS6) * cos(c1 + EPS6) * sin(c2 + EPS6));\n"
-		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * ((1.0 / precalcSumSquares + EPS6) * sin(c1 + EPS6) * sin(c2 + EPS6));\n"
+		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * ((1.0 / d) * cos(c1) * sin(c2));\n"
+		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * ((1.0 / d) * sin(c1) * sin(c2));\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\t}\n";
 
@@ -2236,7 +2242,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t a = precalcAtanyx;\n"
@@ -2295,7 +2301,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T dx, dy, r = m_Weight / (helper.m_PrecalcSumSquares + EPS6);
+		T dx, dy, r = m_Weight / (helper.m_PrecalcSumSquares + EPS);
 		int isXY = int(LRint(helper.In.x * m_InvSize) + LRint(helper.In.y * m_InvSize));
 
 		if (isXY % 2)
@@ -2327,7 +2333,7 @@ public:
 		string invSize = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalc.
 		
 		ss << "\t{\n"
-		   << "\t\treal_t dx, dy, r = xform->m_VariationWeights[" << varIndex << "] / (precalcSumSquares + EPS6);\n"
+		   << "\t\treal_t dx, dy, r = xform->m_VariationWeights[" << varIndex << "] / (precalcSumSquares + EPS);\n"
 		   << "\t\tint isXY = LRint(vIn.x * " << invSize << ") + LRint(vIn.y * " << invSize << ");\n"
 		   << "\n"
 		   << "\t\tif (isXY % 2)\n"
@@ -2351,7 +2357,7 @@ public:
 
 	virtual void Precalc()
 	{
-		m_InvSize = 1 / (m_Size + EPS6);
+		m_InvSize = 1 / (m_Size + EPS);
 	}
 
 protected:
@@ -2481,7 +2487,7 @@ public:
 		T uIm = m_Re_A * helper.In.y + m_Im_A * helper.In.x + m_Im_B;
 		T vRe = m_Re_C * helper.In.x - m_Im_C * helper.In.y + m_Re_D;
 		T vIm = m_Re_C * helper.In.y + m_Im_C * helper.In.x + m_Im_D;
-		T vDenom = vRe * vRe + vIm * vIm;
+		T vDenom = Zeps(SQR(vRe) + SQR(vIm));
 
 		helper.Out.x = m_Weight * (uRe * vRe + uIm * vIm) / vDenom;
 		helper.Out.y = m_Weight * (uIm * vRe - uRe * vIm) / vDenom;
@@ -2508,7 +2514,7 @@ public:
 		   << "\t\treal_t uIm = " << reA << " * vIn.y + " << imA << " * vIn.x + " << imB << ";\n"
 		   << "\t\treal_t vRe = " << reC << " * vIn.x - " << imC << " * vIn.y + " << reD << ";\n"
 		   << "\t\treal_t vIm = " << reC << " * vIn.y + " << imC << " * vIn.x + " << imD << ";\n"
-		   << "\t\treal_t vDenom = vRe * vRe + vIm * vIm;\n"
+		   << "\t\treal_t vDenom = Zeps(vRe * vRe + vIm * vIm);\n"
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (uRe * vRe + uIm * vIm) / vDenom;\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (uIm * vRe - uRe * vIm) / vDenom;\n"
@@ -3069,7 +3075,7 @@ protected:
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Even, prefix + "target_even", 0, REAL_CYCLIC, 0, M_2PI));
 		m_Params.push_back(ParamWithName<T>(&m_Odd,  prefix + "target_odd",  0, REAL_CYCLIC, 0, M_2PI));
-		m_Params.push_back(ParamWithName<T>(&m_Size, prefix + "target_size", 1, REAL, EPS6, TMAX));
+		m_Params.push_back(ParamWithName<T>(&m_Size, prefix + "target_size", 1, REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(true, &m_SizeDiv2, prefix + "target_size_2"));//Precalc.
 	}
 
@@ -3259,9 +3265,7 @@ public:
 
 	virtual void Precalc()
 	{
-		if (m_Num == 0)
-			m_Num = EPS6;
-
+		m_Num = Zeps(m_Num);
 		m_KnPi = m_Num * T(M_1_PI);
 		m_PiKn = T(M_PI) / m_Num;
 		m_Ka = T(M_PI) * m_A;
@@ -3380,7 +3384,7 @@ public:
 		T tau = T(0.5) * (log(Sqr(helper.In.x + 1) + SQR(helper.In.y)) - log(Sqr(helper.In.x - 1) + SQR(helper.In.y)));
 		T sigma = T(M_PI) - atan2(helper.In.y, helper.In.x + 1) - atan2(helper.In.y, 1 - helper.In.x);
 		
-		sigma += tau * m_Out + m_In / tau;
+		sigma = sigma + tau * m_Out + m_In / tau;
 
 		T temp = cosh(tau) - cos(sigma);
 
@@ -3402,7 +3406,7 @@ public:
 		   << "\t\treal_t tau = 0.5 * (log(Sqr(vIn.x + 1.0) + SQR(vIn.y)) - log(Sqr(vIn.x - 1.0) + SQR(vIn.y)));\n"
 		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + 1.0) - atan2(vIn.y, 1.0 - vIn.x);\n"
 		   << "\n"
-		   << "\t\tsigma += tau * " << out << " + " << in << " / tau;\n"
+		   << "\t\tsigma = sigma + tau * " << out << " + " << in << " / tau;\n"
 		   << "\n"
 		   << "\t\treal_t temp = cosh(tau) - cos(sigma);\n"
 		   << "\n"
@@ -3448,7 +3452,7 @@ public:
 		T tau = T(0.5) * (log(Sqr(helper.In.x + 1) + SQR(helper.In.y)) - log(Sqr(helper.In.x - 1) + SQR(helper.In.y))) / m_Power + m_Move;	
 		T sigma = T(M_PI) - atan2(helper.In.y, helper.In.x + 1) - atan2(helper.In.y, 1 - helper.In.x) + m_Rotate;
 		
-		sigma /= m_Power + M_2PI / m_Power * Floor<T>(rand.Frand01<T>() * m_Power);
+		sigma = sigma / m_Power + M_2PI / m_Power * Floor<T>(rand.Frand01<T>() * m_Power);
 
 		if (helper.In.x >= 0)
 			tau += m_Split;
@@ -3477,7 +3481,7 @@ public:
 		   << "\t\treal_t tau = 0.5 * (log(Sqr(vIn.x + 1.0) + SQR(vIn.y)) - log(Sqr(vIn.x - 1.0) + SQR(vIn.y))) / " << power << " + " << move << ";\n"
 		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + 1.0) - atan2(vIn.y, 1.0 - vIn.x) + " << rotate << ";\n"
 		   << "\n"
-		   << "\t\tsigma /= " << power << " + M_2PI / " << power << " * floor(MwcNext01(mwc) * " << power << ");\n"
+		   << "\t\tsigma = sigma / " << power << " + M_2PI / " << power << " * floor(MwcNext01(mwc) * " << power << ");\n"
 		   << "\n"
 		   << "\t\tif (vIn.x >= 0)\n"
 		   << "\t\t	tau += " << split << ";\n"
@@ -3804,7 +3808,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"

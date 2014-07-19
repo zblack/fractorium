@@ -16,6 +16,12 @@ int main(int argc, char *argv[])
 	QMessageBox::critical(QApplication::desktop(), "Error", "Fractorium cannot be run in test mode, undefine TEST_CL first.");
 	return 1;
 #endif
+
+#ifdef ISAAC_FLAM3_DEBUG
+	QMessageBox::critical(QApplication::desktop(), "Error", "Fractorium cannot be run in test mode, undefine ISAAC_FLAM3_DEBUG first.");
+	return 1;
+#endif
+
 	//Required for large allocs, else GPU memory usage will be severely limited to small sizes.
 	//This must be done in the application and not in the EmberCL DLL.
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");

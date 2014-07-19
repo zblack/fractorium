@@ -579,7 +579,6 @@ Global
 		{C8096C47-E358-438C-A520-146D46B0637D}.Release|Mixed Platforms.Build.0 = Release|x86
 		{C8096C47-E358-438C-A520-146D46B0637D}.Release|Win32.ActiveCfg = Release|x86
 		{C8096C47-E358-438C-A520-146D46B0637D}.Release|x64.ActiveCfg = Release|x64
-		{C8096C47-E358-438C-A520-146D46B0637D}.Release|x64.Build.0 = Release|x64
 		{C8096C47-E358-438C-A520-146D46B0637D}.Release|x86.ActiveCfg = Release|x86
 		{C8096C47-E358-438C-A520-146D46B0637D}.Release|x86.Build.0 = Release|x86
 		{C8096C47-E358-438C-A520-146D46B0637D}.Release-MT|Mixed Platforms.ActiveCfg = Release|x86

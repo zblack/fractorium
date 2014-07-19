@@ -80,7 +80,7 @@ public:
 	/// <returns>True if success, else false.</returns>
 	bool InitDistributions(Ember<T>& ember)
 	{
-		unsigned int i, j = 0;
+		unsigned int i;
 		unsigned int distribCount = ember.XaosPresent() ? (unsigned int)ember.XformCount() + 1 : 1;
 		const Xform<T>* xforms = ember.Xforms();
 
@@ -101,10 +101,6 @@ public:
 					 
 				if (distrib > 0)
 					d *= xforms[distrib - 1].Xaos(i);
-		 
-				//Original returned false if any xform had 0 density, it's allowed here
-				//because it can be useful when experimenting to test the effects of removing an
-				//xform by setting its probability to 0.
 
 				totalDensity += d;
 			}
@@ -114,29 +110,55 @@ public:
 			//only the first xform will get used.
 
 			//Calculate how much of a fraction of a the total density each element represents.
-			T densityPerElement = totalDensity / CHOOSE_XFORM_GRAIN;
-			j = 0;
+			unsigned int j = 0;
+			T tempDensity = 0, currentDensityLimit = 0, densityPerElement = totalDensity / CHOOSE_XFORM_GRAIN;
 
 			//Assign xform indices in order to each element of m_XformDistributions.
 			//The number of elements assigned a given index is proportional to that xform's
 			//density relative to the sum of all densities.
 			for (i = 0; i < ember.XformCount(); i++)
 			{
-				T tempDensity = 0;
-				T currentDensityLimit = xforms[i].m_Weight;
-
+				T temp = xforms[i].m_Weight;
+			
 				if (distrib > 0)
-					currentDensityLimit *= xforms[distrib - 1].Xaos(i);
-
+					temp *= xforms[distrib - 1].Xaos(i);
+			
+				currentDensityLimit += temp;
+			
 				//Populate points corresponding to this xform's weight/density.
 				//Also check that j is within the bounds of the distribution array just to be safe in the case of a rounding error.
-				while (tempDensity <= currentDensityLimit && j < CHOOSE_XFORM_GRAIN)
+				while (tempDensity < currentDensityLimit && j < CHOOSE_XFORM_GRAIN)
 				{
+					//printf("offset = %d, xform = %d, running sum = %f\n", j, i, tempDensity);
 					m_XformDistributions[(distrib * CHOOSE_XFORM_GRAIN) + j] = i;
 					tempDensity += densityPerElement;
 					j++;
 				}
 			}
+
+			//Flam3 did this, which gives the same result.
+			//T t = xforms[0].m_Weight;
+			//
+			//if (distrib > 0)
+			//	t *= xforms[distrib - 1].Xaos(0);
+			//
+			//T r = 0;
+			//
+			//for (i = 0; i < CHOOSE_XFORM_GRAIN; i++)
+			//{
+			//	while (r >= t)
+			//	{
+			//		j++;
+			//
+			//		if (distrib > 0)
+			//			t += xforms[j].m_Weight * xforms[distrib - 1].Xaos(j);
+			//		else
+			//			t += xforms[j].m_Weight;
+			//	}
+			//
+			//	m_XformDistributions[(distrib * CHOOSE_XFORM_GRAIN) + i] = j;
+			//	r += densityPerElement;
+			//}
 		}
 
 		return true;
@@ -204,6 +226,10 @@ protected:
 
 			ember.NonConstFinalXform()->Apply(&tempPoint, sample, rand);
 			sample->m_VizAdjusted = tempVizAdjusted;
+		}
+		else
+		{
+			*sample = tempPoint;
 		}
 	}
 
@@ -462,8 +488,8 @@ public:
 					lastXformUsed = xformIndex + 1;//Store the last used transform.
 				}
 
-				ember.Proj(p1, rand);
 				samples[0] = p1;
+				ember.Proj(samples[0], rand);
 
 				for (i = 1; i < count; i++)//Real loop.
 				{

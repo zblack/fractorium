@@ -114,6 +114,7 @@ public:
 	
 		helper.Out.x = m_Weight * (m_Xform->m_Affine.A() * x + m_Xform->m_Affine.B() * y + m_Xform->m_Affine.E()); 
 		helper.Out.y = m_Weight * (m_Xform->m_Affine.C() * x + m_Xform->m_Affine.D() * y + m_Xform->m_Affine.F());
+		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 		outPoint.m_ColorX = fmod(fabs(outPoint.m_ColorX * T(0.5) * (1 + h) + x0_xor_y0 * (1 - h) * T(0.5)), T(1.0));
 	}
 	
@@ -136,6 +137,7 @@ public:
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (xform->m_A * x + xform->m_B * y + xform->m_E);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (xform->m_C * x + xform->m_D * y + xform->m_F);\n"
+		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
 		   << "\t\toutPoint->m_ColorX = fmod(fabs(outPoint->m_ColorX * 0.5 * (1 + h) + x0_xor_y0 * (1 - h) * 0.5), 1.0);\n"
 		   << "\t}\n";
 
@@ -548,7 +550,7 @@ public:
 	virtual string OpenCLString()
 	{
 		ostringstream ss;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t x = LRint(vIn.x);\n"
@@ -1001,7 +1003,7 @@ public:
 	{
 		m_X0_ = m_X0 < m_X1 ? m_X0 : m_X1;
 		m_X1_ = m_X0 > m_X1 ? m_X0 : m_X1;
-		m_X1_m_x0 = m_X1_ - m_X0_ == 0 ? EPS6 : m_X1_ - m_X0_;
+		m_X1_m_x0 = Zeps(m_X1_ - m_X0_);
 	}
 
 protected:

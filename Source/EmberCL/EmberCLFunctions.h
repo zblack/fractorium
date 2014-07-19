@@ -168,8 +168,8 @@ static const char* RandFunctionString =
 	"\n"
 	"inline real_t MwcNextNeg1Pos1(uint2* s)\n"
 	"{\n"
-	"	real_t f = (real_t)MwcNext(s) / UINT_MAX;\n"
-	"	return -1.0 + (f * (1.0 - (-1.0)));\n"
+	"	real_t f = (real_t)MwcNext(s) / (real_t)UINT_MAX;\n"
+	"	return -1.0 + (f * 2.0);\n"
 	"}\n"
 	"\n";
 
@@ -266,7 +266,7 @@ static const char* InlineMathFunctionsString =
 	"\n"
 	"inline real_t Zeps(real_t x)\n"
 	"{\n"
-	"	return x == 0.0 ? EPS6 : x;\n"
+	"	return x == 0.0 ? EPS : x;\n"
 	"}\n"
 	"\n"
 	"inline real_t Lerp(real_t a, real_t b, real_t p)\n"

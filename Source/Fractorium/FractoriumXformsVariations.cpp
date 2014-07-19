@@ -55,6 +55,7 @@ void FractoriumEmberController<T>::SetupVariationTree()
 		spinBox->DoubleClickZero(1);
 		spinBox->DoubleClickNonZero(0);
 		spinBox->SmallStep(0.001);
+		spinBox->setDecimals(4);
 		tree->setItemWidget(item, 1, spinBox);
 		m_Fractorium->connect(spinBox, SIGNAL(valueChanged(double)), SLOT(OnVariationSpinBoxValueChanged(double)), Qt::QueuedConnection);
 
@@ -84,6 +85,10 @@ void FractoriumEmberController<T>::SetupVariationTree()
 						varSpinBox->setSingleStep(1);
 						varSpinBox->Step(1);
 						varSpinBox->SmallStep(1);
+					}
+					else
+					{
+						varSpinBox->setDecimals(4);
 					}
 
 					tree->setItemWidget(paramWidget, 1, varSpinBox);
@@ -138,7 +143,7 @@ void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)
 	{
 		Variation<T>* var = sender->GetVariation();//The variation attached to the sender, for reference only.
 		ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var);//The parametric cast of that variation.
-		Variation<T>* xformVar = xform->GetVariationByName(var->Name());//The corresponding variation in the currently selected xform.
+		Variation<T>* xformVar = xform->GetVariationById(var->VariationId());//The corresponding variation in the currently selected xform.
 		QList<QTreeWidgetItem*> items = tree->findItems(QString::fromStdString(var->Name()), Qt::MatchExactly);
 		bool isParam = parVar && sender->IsParam();
 
@@ -222,6 +227,8 @@ void FractoriumEmberController<T>::FillVariationTreeWithXform(Xform<T>* xform)
 {
 	QTreeWidget* tree = m_Fractorium->ui.VariationsTree;
 
+	tree->blockSignals(true);
+
 	for (unsigned int i = 0; i < tree->topLevelItemCount(); i++)
 	{
 		QTreeWidgetItem* item = tree->topLevelItem(i);
@@ -263,6 +270,7 @@ void FractoriumEmberController<T>::FillVariationTreeWithXform(Xform<T>* xform)
 		}
 	}
 
+	tree->blockSignals(false);
 	m_Fractorium->OnTreeHeaderSectionClicked(m_Fractorium->m_VarSortMode);
 }
 
