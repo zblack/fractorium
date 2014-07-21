@@ -17,6 +17,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 
 	int row = 0, spinHeight = 20;
 	unsigned int i;
+	double dmax = numeric_limits<double>::max();
 	QTableWidget* table = ui.FinalRenderGeometryTable;
 	QTableWidgetItem* item = NULL;
 
@@ -34,15 +35,15 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	connect(ui.FinalRenderScaleWidthRadioButton,   SIGNAL(toggled(bool)),			 this, SLOT(OnScaleRadioButtonChanged(bool)),			 Qt::QueuedConnection);
 	connect(ui.FinalRenderScaleHeightRadioButton,  SIGNAL(toggled(bool)),			 this, SLOT(OnScaleRadioButtonChanged(bool)),			 Qt::QueuedConnection);
 
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_WidthSpin,		   spinHeight, 10, 100000, 50, SIGNAL(valueChanged(int)), SLOT(OnWidthChanged(int)),		   true, 1980);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_HeightSpin,		   spinHeight, 10, 100000, 50, SIGNAL(valueChanged(int)), SLOT(OnHeightChanged(int)),		   true, 1080);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_QualitySpin,		   spinHeight,  1, 200000, 50, SIGNAL(valueChanged(int)), SLOT(OnQualityChanged(int)),		   true, 1000);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_TemporalSamplesSpin, spinHeight,  1,   5000, 50, SIGNAL(valueChanged(int)), SLOT(OnTemporalSamplesChanged(int)), true, 1000);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_SupersampleSpin,	   spinHeight,	1,		4,  1, SIGNAL(valueChanged(int)), SLOT(OnSupersampleChanged(int)),	   true,    2);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_WidthSpin,		    spinHeight, 10, 100000, 50, SIGNAL(valueChanged(int)),    SLOT(OnWidthChanged(int)),		   true, 1980);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_HeightSpin,		    spinHeight, 10, 100000, 50, SIGNAL(valueChanged(int)),    SLOT(OnHeightChanged(int)),		   true, 1080);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_QualitySpin,		    spinHeight,  1,   dmax, 50, SIGNAL(valueChanged(double)), SLOT(OnQualityChanged(double)),	   true, 1000);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_TemporalSamplesSpin, spinHeight,  1,   5000, 50, SIGNAL(valueChanged(int)),    SLOT(OnTemporalSamplesChanged(int)), true, 1000);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_SupersampleSpin,	    spinHeight,	 1,		 4,  1, SIGNAL(valueChanged(int)),    SLOT(OnSupersampleChanged(int)),	   true,    2);
 
 	row++;//Memory usage.
 
-	TwoButtonWidget* tbw = new TwoButtonWidget("...", "Open", 22, 40, 24, table);
+	TwoButtonWidget* tbw = new TwoButtonWidget("...", "Open", 22, 40, 22, table);
 	table->setCellWidget(row, 1, tbw);
 	table->item(row++, 1)->setTextAlignment(Qt::AlignRight | Qt::AlignVCenter);
 	connect(tbw->m_Button1, SIGNAL(clicked(bool)), this, SLOT(OnFileButtonClicked(bool)),		Qt::QueuedConnection);
@@ -134,7 +135,7 @@ unsigned int FractoriumFinalRenderDialog::DeviceIndex() { return ui.FinalRenderD
 unsigned int FractoriumFinalRenderDialog::ThreadCount() { return ui.FinalRenderThreadCountSpin->value(); }
 unsigned int FractoriumFinalRenderDialog::Width() { return m_WidthSpin->value(); }
 unsigned int FractoriumFinalRenderDialog::Height() { return m_HeightSpin->value(); }
-unsigned int FractoriumFinalRenderDialog::Quality() { return m_QualitySpin->value(); }
+double FractoriumFinalRenderDialog::Quality() { return m_QualitySpin->value(); }
 unsigned int FractoriumFinalRenderDialog::TemporalSamples() { return m_TemporalSamplesSpin->value(); }
 unsigned int FractoriumFinalRenderDialog::Supersample() { return m_SupersampleSpin->value(); }
 
@@ -338,7 +339,7 @@ void FractoriumFinalRenderDialog::OnHeightChanged(int d)
 /// The quality spinner was changed, recompute required memory.
 /// </summary>
 /// <param name="d">Ignored</param>
-void FractoriumFinalRenderDialog::OnQualityChanged(int d)
+void FractoriumFinalRenderDialog::OnQualityChanged(double d)
 {
 	SetMemory();
 }

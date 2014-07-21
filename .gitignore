@@ -17,7 +17,6 @@
 *.res
 *.ipch
 *.bsc
-Builds/MSVC/VS2010/GeneratedFiles/Release/moc_AboutDialog.cpp
 *.exe
 *.xml
 *.ilk
@@ -27,3 +26,5 @@ Builds/MSVC/VS2010/GeneratedFiles/Release/moc_AboutDialog.cpp
 *.msi
 *.idb
 *.flam3
+*moc_*
+*GeneratedFiles*

@@ -8,6 +8,7 @@ void Fractorium::InitParamsUI()
 {
 	int row = 0;
 	int spinHeight = 20;
+	double dmax = numeric_limits<double>::max();
 	vector<string> comboVals;
 	QTableWidget* table = ui.ColorTable;
 
@@ -84,10 +85,10 @@ void Fractorium::InitParamsUI()
 	//Iteration.
 	row = 0;
 	table = ui.IterationTable;
-	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_PassesSpin,          spinHeight, 1,      3,  1, SIGNAL(valueChanged(int)),	 SLOT(OnPassesChanged(int)),		  true,    1,  1,  1);
-	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_TemporalSamplesSpin, spinHeight, 1,   5000, 50, SIGNAL(valueChanged(int)),	 SLOT(OnTemporalSamplesChanged(int)), true, 1000);
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_QualitySpin,			spinHeight, 1, 200000, 50, SIGNAL(valueChanged(double)), SLOT(OnQualityChanged(double)),	  true,   10, 10, 10);
-	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_SupersampleSpin,		spinHeight, 1,      4,  1, SIGNAL(valueChanged(int)),	 SLOT(OnSupersampleChanged(int)),	  true,    1,  1,  1);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_PassesSpin,          spinHeight, 1,    3,  1, SIGNAL(valueChanged(int)),	   SLOT(OnPassesChanged(int)),		    true,    1,  1,  1);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_TemporalSamplesSpin, spinHeight, 1, 5000, 50, SIGNAL(valueChanged(int)),	   SLOT(OnTemporalSamplesChanged(int)), true, 1000);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_QualitySpin,			spinHeight, 1, dmax, 50, SIGNAL(valueChanged(double)), SLOT(OnQualityChanged(double)),	    true,   10, 10, 10);
+	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_SupersampleSpin,		spinHeight, 1,    4,  1, SIGNAL(valueChanged(int)),	   SLOT(OnSupersampleChanged(int)),	    true,    1,  1,  1);
 
 	comboVals.clear();
 	comboVals.push_back("Step");

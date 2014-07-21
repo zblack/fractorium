@@ -64,7 +64,7 @@ public:
 	unsigned int ThreadCount();
 	unsigned int Width();
 	unsigned int Height();
-	unsigned int Quality();
+	double Quality();
 	unsigned int TemporalSamples();
 	unsigned int Supersample();
 	FinalRenderGuiState State();
@@ -81,7 +81,7 @@ public Q_SLOTS:
 	void OnScaleRadioButtonChanged(bool checked);
 	void OnWidthChanged(int d);
 	void OnHeightChanged(int d);
-	void OnQualityChanged(int d);
+	void OnQualityChanged(double d);
 	void OnTemporalSamplesChanged(int d);
 	void OnSupersampleChanged(int d);
 	void OnFileButtonClicked(bool checked);
@@ -101,7 +101,7 @@ private:
 	Timing m_RenderTimer;
 	SpinBox* m_WidthSpin;
 	SpinBox* m_HeightSpin;
-	SpinBox* m_QualitySpin;
+	DoubleSpinBox* m_QualitySpin;
 	SpinBox* m_TemporalSamplesSpin;
 	SpinBox* m_SupersampleSpin;
 	QLineEdit* m_PrefixEdit;

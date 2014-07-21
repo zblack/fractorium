@@ -38,7 +38,7 @@ struct FinalRenderGuiState
 	unsigned int m_ThreadCount;
 	unsigned int m_Width;
 	unsigned int m_Height;
-	unsigned int m_Quality;
+	double m_Quality;
 	unsigned int m_TemporalSamples;
 	unsigned int m_Supersample;
 };
