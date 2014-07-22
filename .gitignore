@@ -28,3 +28,5 @@
 *.flam3
 *moc_*
 *GeneratedFiles*
+*.unsuccessfulbuild
+*\Obj\*

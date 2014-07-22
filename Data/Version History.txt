@@ -1,3 +1,7 @@
+0.4.0.6 Beta 07/22/2014
+--User Changes
+	Place certain areas of the UI on scroll panels so they are not obscured on low resolution monitors.
+
 0.4.0.5 Beta 07/18/2014
 --User Changes
 	Allow for vibrancy values > 1.

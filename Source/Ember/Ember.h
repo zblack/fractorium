@@ -1095,6 +1095,10 @@ public:
 		std::sort(m_Xforms.end() - result, m_Xforms.end(), &Interpolater<T>::CompareXforms);
 	}
 
+	/// <summary>
+	/// Return a uint with bits set to indicate which kind of projection should be done.
+	/// </summary>
+	/// <param name="onlyScaleIfNewIsSmaller">A uint with bits set for each kind of projection that is needed</param>
 	unsigned int ProjBits()
 	{
 		unsigned int val = 0;
@@ -1108,15 +1112,30 @@ public:
 		return val;
 	}
 
+	/// <summary>
+	/// Call the appropriate projection function via function pointer.
+	/// </summary>
+	/// <param name="point">The point to project</param>
+	/// <param name="rand">The Isaac object to pass to the projection functions</param>
 	inline void Proj(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		(this->*m_ProjFunc)(point, rand);
 	}
 
+	/// <summary>
+	/// Placeholder to do nothing.
+	/// </summary>
+	/// <param name="point">Unused</param>
+	/// <param name="rand">Unused</param>
 	void ProjectNone(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 	}
 
+	/// <summary>
+	/// Project when only z is set, and not pitch, yaw, projection or depth blur.
+	/// </summary>
+	/// <param name="point">The point to project</param>
+	/// <param name="rand">Unused</param>
 	void ProjectZPerspective(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T zr = Zeps(1 - m_CamPerspective * (point.m_Z - m_CamZPos));
@@ -1126,6 +1145,11 @@ public:
 		point.m_Z -= m_CamZPos;
 	}
 
+	/// <summary>
+	/// Project when pitch, and optionally z and perspective are set, but not depth blur or yaw.
+	/// </summary>
+	/// <param name="point">The point to project</param>
+	/// <param name="rand">Unused</param>
 	void ProjectPitch(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T z  = point.m_Z - m_CamZPos;
@@ -1137,6 +1161,11 @@ public:
 		point.m_Z -= m_CamZPos;
 	}
 
+	/// <summary>
+	/// Project when depth blur, and optionally pitch, perspective and z are set, but not yaw.
+	/// </summary>
+	/// <param name="point">The point to project</param>
+	/// <param name="rand">Used for blurring</param>
 	void ProjectPitchDepthBlur(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T y, z, zr;
@@ -1157,6 +1186,11 @@ public:
 		point.m_Z -= m_CamZPos;
 	}
 
+	/// <summary>
+	/// Project when depth blur, yaw and optionally pitch are set, but not perspective and z.
+	/// </summary>
+	/// <param name="point">The point to project</param>
+	/// <param name="rand">Used for blurring</param>
 	void ProjectPitchYawDepthBlur(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T dsin, dcos;
@@ -1177,6 +1211,11 @@ public:
 		point.m_Z -= m_CamZPos;
 	}
 
+	/// <summary>
+	/// Project when yaw and optionally pitch, z, and perspective are set, but not depth blur.
+	/// </summary>
+	/// <param name="point">The point to project</param>
+	/// <param name="rand">Unused</param>
 	void ProjectPitchYaw(Point<T>& point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T z = point.m_Z - m_CamZPos;
@@ -1573,11 +1612,12 @@ public:
 
 private:
 	/// <summary>
-	/// Interps the t.
+	/// Interpolation function that takes the address of a member variable of type T as a template parameter.
+	/// This is an alternative to using macros.
 	/// </summary>
-	/// <param name="embers">The embers.</param>
-	/// <param name="coefs">The coefs.</param>
-	/// <param name="size">The size.</param>
+	/// <param name="embers">The list of embers to interpolate</param>
+	/// <param name="coefs">The list of coefficients to interpolate</param>
+	/// <param name="size">The size of the lists, both must match.</param>
 	template <T Ember<T>::*m>
 	void InterpT(Ember<T>* embers, vector<T>& coefs, size_t size)
 	{
@@ -1587,6 +1627,12 @@ private:
 			this->*m += coefs[k] * embers[k].*m;
 	}
 
+	/// <summary>
+	/// Interpolation function that takes the address of a member variable of any type as a template parameter.
+	/// </summary>
+	/// <param name="embers">The list of embers to interpolate</param>
+	/// <param name="coefs">The list of coefficients to interpolate</param>
+	/// <param name="size">The size of the lists, both must match.</param>
 	template <typename M, M Ember<T>::*m>
 	void InterpX(Ember<T>* embers, vector<T>& coefs, size_t size)
 	{
@@ -1596,6 +1642,12 @@ private:
 			this->*m += coefs[k] * embers[k].*m;
 	}
 
+	/// <summary>
+	/// Interpolation function that takes the address of a member variable of type integer as a template parameter.
+	/// </summary>
+	/// <param name="embers">The list of embers to interpolate</param>
+	/// <param name="coefs">The list of coefficients to interpolate</param>
+	/// <param name="size">The size of the lists, both must match.</param>
 	template <unsigned int Ember<T>::*m>
 	void InterpI(Ember<T>* embers, vector<T>& coefs, size_t size)
 	{
@@ -1607,6 +1659,15 @@ private:
 		this->*m = (int)Rint(t);
 	}
 
+	/// <summary>
+	/// Interpolation function that takes the address of an xform member variable of type T as a template parameter.
+	/// This is an alternative to using macros.
+	/// </summary>
+	/// <param name="xform">A pointer to a list of xforms to interpolate</param>
+	/// <param name="i">The xform index to interpolate</param>
+	/// <param name="embers">The list of embers to interpolate</param>
+	/// <param name="coefs">The list of coefficients to interpolate</param>
+	/// <param name="size">The size of the lists, both must match.</param>
 	template <T Xform<T>::*m>
 	void InterpXform(Xform<T>* xform, unsigned int i, Ember<T>* embers, vector<T>& coefs, size_t size)
 	{
