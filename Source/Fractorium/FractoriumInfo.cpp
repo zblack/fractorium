@@ -12,8 +12,8 @@ void Fractorium::UpdateHistogramBounds()
 	{
 		sprintf_s(m_ULString, 32, "UL: %3.3f, %3.3f",  r->LowerLeftX(),  r->UpperRightY());//These bounds include gutter padding.
 		sprintf_s(m_URString, 32, "UR: %3.3f, %3.3f", -r->LowerLeftX(),  r->UpperRightY());
-		sprintf_s(m_LRString, 32, "LR: %3.3f, %3.3f", -r->LowerLeftX(), -r->UpperRightY());
-		sprintf_s(m_LLString, 32, "LL: %3.3f, %3.3f",  r->LowerLeftX(), -r->UpperRightY());
+		sprintf_s(m_LRString, 32, "LR: %3.3f, %3.3f", -r->LowerLeftX(),  r->LowerLeftY());
+		sprintf_s(m_LLString, 32, "LL: %3.3f, %3.3f",  r->LowerLeftX(),  r->LowerLeftY());
 		sprintf_s(m_WString,  16,  "W: %4d"			,  r->SuperRasW());
 		sprintf_s(m_HString,  16,  "H: %4d"			,  r->SuperRasH());
 

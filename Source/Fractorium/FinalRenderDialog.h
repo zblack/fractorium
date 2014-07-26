@@ -45,6 +45,7 @@ class FractoriumFinalRenderDialog : public QDialog
 public:
 	FractoriumFinalRenderDialog(FractoriumSettings* settings, QWidget* parent, Qt::WindowFlags f = 0);
 	bool EarlyClip();
+	bool YAxisUp();
 	bool Transparency();
 	bool OpenCL();
 	bool Double();
@@ -72,6 +73,7 @@ public:
 public Q_SLOTS:
 	void MoveCursorToEnd();
 	void OnEarlyClipCheckBoxStateChanged(int state);
+	void OnYAxisUpCheckBoxStateChanged(int state);
 	void OnTransparencyCheckBoxStateChanged(int state);
 	void OnOpenCLCheckBoxStateChanged(int state);
 	void OnDoublePrecisionCheckBoxStateChanged(int state);

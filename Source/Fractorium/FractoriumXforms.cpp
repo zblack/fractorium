@@ -201,6 +201,7 @@ void FractoriumEmberController<T>::AddFinalXform()
 		xform.AddVariation(new LinearVariation<T>());//Just a placeholder so other parts of the code don't see it as being empty.
 		m_Ember.SetFinalXform(xform);
 		combo->addItem("Final");
+		combo->setItemIcon(combo->count() - 1, m_Fractorium->m_FinalXformComboIcon);
 		combo->setCurrentIndex(combo->count() - 1);//Set index to the last item.
 		UpdateRender();
 	}
@@ -325,17 +326,23 @@ bool FractoriumEmberController<T>::IsFinal(Xform<T>* xform)
 /// </summary>
 void Fractorium::FillXforms()
 {
-	int spinHeight = 20;
+	int i = 0, spinHeight = 20;
 	QComboBox* combo = ui.CurrentXformCombo;
 
 	combo->blockSignals(true);
 	combo->clear();
 	
-	for (int i = 0; i < m_Controller->XformCount(); i++)
+	for (i = 0; i < m_Controller->XformCount(); i++)
+	{
 		combo->addItem(QString::number(i + 1));
+		combo->setItemIcon(i, m_XformComboIcons[i % XFORM_COLOR_COUNT]);
+	}
 	
 	if (m_Controller->UseFinalXform())
+	{
 		combo->addItem("Final");
+		combo->setItemIcon(i, m_FinalXformComboIcon);
+	}
 
 	combo->blockSignals(false);
 	combo->setCurrentIndex(0);

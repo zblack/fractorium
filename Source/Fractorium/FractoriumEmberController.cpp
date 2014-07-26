@@ -80,6 +80,8 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 	m_PreviewRenderer->Callback(NULL);
 	m_PreviewRenderer->NumChannels(4);
 	m_PreviewRenderer->ReclaimOnResize(true);
+	m_PreviewRenderer->EarlyClip(m_Fractorium->m_Settings->EarlyClip());
+	m_PreviewRenderer->YAxisUp(m_Fractorium->m_Settings->YAxisUp());
 	m_PreviewRenderer->SetEmber(m_Ember);//Give it an initial ember, will be updated many times later.
 	//m_PreviewRenderer->ThreadCount(1);//For debugging.
 

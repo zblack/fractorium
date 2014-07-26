@@ -313,6 +313,7 @@ struct ALIGN SpatialFilterCL
 	unsigned int m_BytesPerChannel;
 	unsigned int m_DensityFilterOffset;
 	unsigned int m_Transparency;
+	unsigned int m_YAxisUp;
 	T m_Vibrancy;
 	T m_HighlightPower;
 	T m_Gamma;
@@ -337,6 +338,7 @@ static const char* SpatialFilterCLStructString =
 "	uint m_BytesPerChannel;\n"
 "	uint m_DensityFilterOffset;\n"
 "	uint m_Transparency;\n"
+"	uint m_YAxisUp;\n"
 "	real_t m_Vibrancy;\n"
 "	real_t m_HighlightPower;\n"
 "	real_t m_Gamma;\n"

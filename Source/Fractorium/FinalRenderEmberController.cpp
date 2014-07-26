@@ -116,6 +116,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			QApplication::processEvents();
 
 		m_PreviewRenderer->EarlyClip(m_FinalRender->EarlyClip());
+		m_PreviewRenderer->YAxisUp(m_FinalRender->YAxisUp());
 		m_PreviewRenderer->Transparency(m_FinalRender->Transparency());
 		m_PreviewRenderer->SetEmber(m_PreviewEmber);
 
@@ -158,6 +159,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "setText", Qt::QueuedConnection, Q_ARG(QString, "Begin rendering..."));
 		m_Renderer->EarlyClip(m_GuiState.m_EarlyClip);
+		m_Renderer->YAxisUp(m_GuiState.m_YAxisUp);
 		m_Renderer->ThreadCount(m_GuiState.m_ThreadCount);
 		m_Renderer->Transparency(m_GuiState.m_Transparency);
 
@@ -312,6 +314,7 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 
 		//Save whatever options were specified on the GUI to the settings.
 		m_Settings->FinalEarlyClip(m_GuiState.m_EarlyClip);
+		m_Settings->FinalYAxisUp(m_GuiState.m_YAxisUp);
 		m_Settings->FinalTransparency(m_GuiState.m_Transparency);
 		m_Settings->FinalOpenCL(m_GuiState.m_OpenCL);
 		m_Settings->FinalDouble(m_GuiState.m_Double);
@@ -463,6 +466,7 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 		m_Renderer->NumChannels(channels);
 		m_Renderer->ReclaimOnResize(false);
 		m_Renderer->EarlyClip(m_FinalRender->EarlyClip());
+		m_Renderer->YAxisUp(m_FinalRender->YAxisUp());
 		m_Renderer->ThreadCount(m_FinalRender->ThreadCount());
 		m_Renderer->Transparency(m_FinalRender->Transparency());
 	}

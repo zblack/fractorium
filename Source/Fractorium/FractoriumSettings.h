@@ -7,9 +7,11 @@
 /// </summary>
 
 #define EARLYCLIP            "render/earlyclip"
+#define YAXISUP				 "render/yaxisup"
 #define TRANSPARENCY         "render/transparency"
 #define OPENCL               "render/opencl"
 #define DOUBLEPRECISION		 "render/dp64"
+#define SHOWALLXFORMS	     "render/dragshowallxforms"
 #define PLATFORMINDEX        "render/platformindex"
 #define DEVICEINDEX          "render/deviceindex"
 #define THREADCOUNT          "render/threadcount"
@@ -19,6 +21,7 @@
 #define OPENCLSUBBATCH	     "render/openclsubbatch"
 
 #define FINALEARLYCLIP       "finalrender/earlyclip"
+#define FINALYAXISUP         "finalrender/finalyaxisup"
 #define FINALTRANSPARENCY    "finalrender/transparency"
 #define FINALOPENCL          "finalrender/opencl"
 #define FINALDOUBLEPRECISION "finalrender/dp64"
@@ -69,6 +72,9 @@ public:
 
 	bool EarlyClip();
 	void EarlyClip(bool b);
+	
+	bool YAxisUp();
+	void YAxisUp(bool b);
 
 	bool Transparency();
 	void Transparency(bool b);
@@ -78,6 +84,9 @@ public:
 		
 	bool Double();
 	void Double(bool b);
+
+	bool ShowAllXforms();
+	void ShowAllXforms(bool b);
 
 	unsigned int PlatformIndex();
 	void PlatformIndex(unsigned int b);
@@ -102,6 +111,9 @@ public:
 	
 	bool FinalEarlyClip();
 	void FinalEarlyClip(bool b);
+	
+	bool FinalYAxisUp();
+	void FinalYAxisUp(bool b);
 
 	bool FinalTransparency();
 	void FinalTransparency(bool b);

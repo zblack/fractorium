@@ -10,8 +10,8 @@
 Fractorium::Fractorium(QWidget* parent)
 	: QMainWindow(parent)
 {
-	int spinHeight = 20;
-	size_t i, j;
+	int spinHeight = 20, iconSize = 9;
+	size_t i = 0;
 	Timing t;
 	ui.setupUi(this);
 	qRegisterMetaType<QVector<int>>("QVector<int>");//For previews.
@@ -34,6 +34,37 @@ Fractorium::Fractorium(QWidget* parent)
 	m_OptionsDialog->setSizeGripEnabled(false);
 	connect(m_ColorDialog, SIGNAL(colorSelected(const QColor&)), this, SLOT(OnColorSelected(const QColor&)), Qt::QueuedConnection);
 
+	m_XformComboColors[i++] = QColor(0XFF, 0X00, 0X00);
+	m_XformComboColors[i++] = QColor(0XCC, 0XCC, 0X00);
+	m_XformComboColors[i++] = QColor(0X00, 0XCC, 0X00);
+	m_XformComboColors[i++] = QColor(0X00, 0XCC, 0XCC);
+	m_XformComboColors[i++] = QColor(0X40, 0X40, 0XFF);
+
+	m_XformComboColors[i++] = QColor(0XCC, 0X00, 0XCC);
+	m_XformComboColors[i++] = QColor(0XCC, 0X80, 0X00);
+	m_XformComboColors[i++] = QColor(0X80, 0X00, 0X4F);
+	m_XformComboColors[i++] = QColor(0X80, 0X80, 0X22);
+	m_XformComboColors[i++] = QColor(0X60, 0X80, 0X60);
+
+	m_XformComboColors[i++] = QColor(0X50, 0X80, 0X80);
+	m_XformComboColors[i++] = QColor(0X4F, 0X4F, 0X80);
+	m_XformComboColors[i++] = QColor(0X80, 0X50, 0X80);
+	m_XformComboColors[i++] = QColor(0X80, 0X60, 0X22);
+	m_FinalXformComboColor  = QColor(0x7F, 0x7F, 0x7F);
+	
+	for (i = 0; i < XFORM_COLOR_COUNT; i++)
+	{
+		QPixmap pixmap(iconSize, iconSize);
+
+		pixmap.fill(m_XformComboColors[i]);
+		m_XformComboIcons[i] = QIcon(pixmap);
+	}
+
+	QPixmap pixmap(iconSize, iconSize);
+
+	pixmap.fill(m_FinalXformComboColor);
+	m_FinalXformComboIcon = QIcon(pixmap);
+	   
 	InitToolbarUI();
 	InitParamsUI();
 	InitXformsUI();

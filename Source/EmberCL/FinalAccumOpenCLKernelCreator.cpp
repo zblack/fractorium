@@ -65,7 +65,7 @@ template <typename T> string FinalAccumOpenCLKernelCreator<T>::FinalAccumLateCli
 template <typename T>
 string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionEntryPoint(unsigned int channels, bool transparency)
 {
-	bool alphaCalc = (channels > 3 && transparency);
+	bool alphaCalc = ((channels > 3) && transparency);
 	return alphaCalc ? m_GammaCorrectionWithAlphaCalcEntryPoint : m_GammaCorrectionWithoutAlphaCalcEntryPoint;
 }
 
@@ -78,7 +78,7 @@ string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionEntryPoint(unsigned int 
 template <typename T>
 string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionKernel(unsigned int channels, bool transparency)
 {
-	bool alphaCalc = (channels > 3 && transparency);
+	bool alphaCalc = ((channels > 3) && transparency);
 	return alphaCalc ? m_GammaCorrectionWithAlphaCalcKernel : m_GammaCorrectionWithoutAlphaCalcKernel;
 }
 
@@ -94,7 +94,7 @@ string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionKernel(unsigned int chan
 template <typename T>
 string FinalAccumOpenCLKernelCreator<T>::FinalAccumEntryPoint(bool earlyClip, unsigned int channels, bool transparency, T& alphaBase, T& alphaScale)
 {
-	bool alphaCalc = (channels > 3 && transparency);
+	bool alphaCalc = ((channels > 3) && transparency);
 	bool alphaAccum = channels > 3;
 
 	if (alphaAccum)
@@ -241,10 +241,9 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 		"\n"
 		"	unsigned int accumX = spatialFilter->m_DensityFilterOffset + (GLOBAL_ID_X * spatialFilter->m_Supersample);\n"
 		"	unsigned int accumY = spatialFilter->m_DensityFilterOffset + (GLOBAL_ID_Y * spatialFilter->m_Supersample);\n"
-
 		"	int2 finalCoord;\n"
 		"	finalCoord.x = GLOBAL_ID_X;\n"
-		"	finalCoord.y = GLOBAL_ID_Y;\n"
+		"	finalCoord.y = (int)((spatialFilter->m_YAxisUp == 1) ? ((spatialFilter->m_FinalRasH - GLOBAL_ID_Y) - 1) : GLOBAL_ID_Y);\n"
 		"	float4floats finalColor;\n"
 		"	real_t alpha, ls;\n"
 		"	int ii, jj;\n"

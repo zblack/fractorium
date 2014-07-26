@@ -275,6 +275,7 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 {
 	QueryVMP();//Resolves to float or double specialization function depending on T.
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
+	bool dragging = m_DragState == DragDragging;
 
 	//Draw grid if control key is pressed.
 	if ((m_DragModifier & DragModControl) == DragModControl)
@@ -282,27 +283,21 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 		m_GL->glLineWidth(1.0f);
 		m_GL->DrawGrid();
 	}
+
 	//When dragging, only draw the selected xform's affine and hide all others.
-	if (m_DragState == DragDragging)
+	if (!m_Fractorium->m_Settings->ShowAllXforms() && dragging)
 	{
 		if (m_SelectedXform)
 			DrawAffine(m_SelectedXform, m_AffineType == AffinePre, true);
-
-		m_GL->glPointSize(6.0f);//Draw large yellow dot on select or drag.
-		m_GL->glBegin(GL_POINTS);
-		m_GL->glColor4f(1.0f, 1.0f, 0.5f, 1.0f);
-		m_GL->glVertex2f(m_DragHandlePos.x, m_DragHandlePos.y);
-		m_GL->glEnd();
-		m_GL->glPointSize(1.0f);//Restore point size.
 	}
-	else//Not dragging, just hovering/mouse move.
+	else//Show all while dragging, or not dragging just hovering/mouse move.
 	{
 		if (pre && m_Fractorium->DrawAllPre())//Draw all pre affine if specified.
 		{
 			for (unsigned int i = 0; i < ember->TotalXformCount(); i++)
 			{
 				Xform<T>* xform = ember->GetTotalXform(i);
-				bool selected = m_HoverXform == xform;
+				bool selected = dragging ? (m_SelectedXform == xform) : (m_HoverXform == xform);
 
 				DrawAffine(xform, true, selected);
 			}
@@ -317,7 +312,7 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 			for (unsigned int i = 0; i < ember->TotalXformCount(); i++)
 			{
 				Xform<T>* xform = ember->GetTotalXform(i);
-				bool selected = m_HoverXform == xform;
+				bool selected = dragging ? (m_SelectedXform == xform) : (m_HoverXform == xform);
 
 				DrawAffine(xform, false, selected);
 			}
@@ -326,17 +321,25 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 		{
 			DrawAffine(m_HoverXform, false, true);
 		}
+	}
 
-		//Draw large turquoise dot on hover if they are hovering over the selected xform.
-		if (m_HoverType != HoverNone && m_HoverXform == m_SelectedXform)
-		{
-			m_GL->glPointSize(6.0f);
-			m_GL->glBegin(GL_POINTS);
-			m_GL->glColor4f(0.5f, 1.0f, 1.0f, 1.0f);
-			m_GL->glVertex2f(m_HoverHandlePos.x, m_HoverHandlePos.y);
-			m_GL->glEnd();
-			m_GL->glPointSize(1.0f);
-		}
+	if (dragging)//Draw large yellow dot on select or drag.
+	{
+		m_GL->glPointSize(6.0f);
+		m_GL->glBegin(GL_POINTS);
+		m_GL->glColor4f(1.0f, 1.0f, 0.5f, 1.0f);
+		m_GL->glVertex2f(m_DragHandlePos.x, m_DragHandlePos.y);
+		m_GL->glEnd();
+		m_GL->glPointSize(1.0f);//Restore point size.
+	}
+	else if (m_HoverType != HoverNone && m_HoverXform == m_SelectedXform)//Draw large turquoise dot on hover if they are hovering over the selected xform.
+	{
+		m_GL->glPointSize(6.0f);
+		m_GL->glBegin(GL_POINTS);
+		m_GL->glColor4f(0.5f, 1.0f, 1.0f, 1.0f);
+		m_GL->glVertex2f(m_HoverHandlePos.x, m_HoverHandlePos.y);
+		m_GL->glEnd();
+		m_GL->glPointSize(1.0f);
 	}
 }
 
@@ -473,6 +476,13 @@ void GLEmberController<T>::MousePress(QMouseEvent* e)
 				
 				//The user has selected an xform by clicking on it, so update the main GUI by selecting this xform in the combo box.
 				m_Fractorium->CurrentXform(xformIndex);
+
+				//Update selected xform dot.
+				bool pre = m_Fractorium->ui.PreAffineGroupBox->isChecked();
+				bool post = m_Fractorium->ui.PostAffineGroupBox->isChecked();
+
+				DrawAffines(pre, post);
+				m_GL->update();
 			}
 			else//Nothing was selected.
 			{
@@ -937,6 +947,7 @@ void GLEmberController<T>::DrawAffine(Xform<T>* xform, bool pre, bool selected)
 {
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
 	bool final = ember->IsFinalXform(xform);
+	int index = ember->GetXformIndex(xform);
 	size_t size = ember->m_Palette.m_Entries.size();
 	v4T color = ember->m_Palette.m_Entries[Clamp<T>(xform->m_ColorX * size, 0, size - 1)];
 	Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
@@ -950,10 +961,10 @@ void GLEmberController<T>::DrawAffine(Xform<T>* xform, bool pre, bool selected)
 	m_GL->glLoadIdentity();
 	MultMatrix(mat);
 	m_GL->glLineWidth(3.0f);//One 3px wide, colored black, except green on x axis for post affine.
-	m_GL->DrawAffineHelper(selected, pre, final, true);
+	m_GL->DrawAffineHelper(index, selected, pre, final, true);
 
 	m_GL->glLineWidth(1.0f);//Again 1px wide, colored white, to give a white middle with black outline effect.
-	m_GL->DrawAffineHelper(selected, pre, final, false);
+	m_GL->DrawAffineHelper(index, selected, pre, final, false);
 
 	m_GL->glPointSize(5.0f);//Three black points, one in the center and two on the circle. Drawn big 5px first to give a black outline.
 	m_GL->glBegin(GL_POINTS);
@@ -984,25 +995,27 @@ void GLEmberController<T>::DrawAffine(Xform<T>* xform, bool pre, bool selected)
 /// Draw the axes, and optionally the surrounding circle
 /// of an affine transform.
 /// </summary>
+/// <param name="index"></param>
 /// <param name="selected">True if selected (draw enclosing circle), else false (only draw axes).</param>
-void GLWidget::DrawAffineHelper(bool selected, bool pre, bool final, bool background)
+/// <param name="pre"></param>
+/// <param name="final"></param>
+/// <param name="background"></param>
+void GLWidget::DrawAffineHelper(int index, bool selected, bool pre, bool final, bool background)
 {
 	float px = 1.0f;
 	float py = 0.0f;
+	QColor col = final ? m_Fractorium->m_FinalXformComboColor : m_Fractorium->m_XformComboColors[index % XFORM_COLOR_COUNT];
 
 	glBegin(GL_LINES);
 
 	//Circle part.
 	if (!background)
 	{
-		if (pre)
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//Draw pre affine transform with white.
-		else
-			glColor4f(0.0f, 0.75f, 0.0f, 1.0f);//Draw post affine transform with green.
+		glColor4f(col.redF(), col.greenF(), col.blueF(), 1.0f);//Draw pre affine transform with white.
 	}
 	else
 	{
-		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
+		glColor4f(0.0f, 0.0f, 0.0f, 1.0f);//Draw pre affine transform outline with white.
 	}
 
 	if (selected)
@@ -1023,19 +1036,17 @@ void GLWidget::DrawAffineHelper(bool selected, bool pre, bool final, bool backgr
 	//Lines from center to circle.
 	if (!background)
 	{
-		if (final)
-			glColor4f(1.0f, 0.0f, 0.0f, 1.0f);//Draw final xforms with red.
-		else
-			glColor4f(1.0f, 1.0f, 1.0f, 1.0f);//Draw normal xforms with white.
+		glColor4f(col.redF(), col.greenF(), col.blueF(), 1.0f);
 	}
 	else
 	{
-		if (!pre)
-			glColor4f(0.0f, 0.75f, 0.0f, 1.0f);//Draw post affine transform with green outline.
+		if (pre)
+			glColor4f(0.0f, 0.0f, 0.0f, 1.0f);//Draw pre affine transform outline with white.
+		else
+			glColor4f(0.0f, 0.75f, 0.0f, 1.0f);//Draw post affine transform outline with green.
 	}
 
 	//The lines from the center to the circle.
-
 	glVertex2f(0.0f, 0.0f);//X axis.
 	glVertex2f(1.0f, 0.0f);
 	

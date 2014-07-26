@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>286</width>
-    <height>388</height>
+    <width>300</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,14 +18,14 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>286</width>
-    <height>388</height>
+    <width>300</width>
+    <height>411</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>286</width>
-    <height>388</height>
+    <width>300</width>
+    <height>411</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
     <number>6</number>
    </property>
    <property name="rightMargin">
-    <number>6</number>
+    <number>4</number>
    </property>
    <property name="bottomMargin">
     <number>6</number>
@@ -94,7 +94,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QCheckBox" name="TransparencyCheckBox">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use transparency in the final image.&lt;/p&gt;&lt;p&gt;This will not make a difference in the editor, but will when saving as .png and opening in other programs.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -104,23 +104,13 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="OpenCLCheckBox">
-         <property name="toolTip">
-          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use OpenCL to render if your video card supports it.&lt;/p&gt;&lt;p&gt;This is highly recommended as it will give fluid, real-time interactive editing.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Use OpenCL</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
+       <item row="5" column="0" colspan="2">
         <widget class="QComboBox" name="PlatformCombo"/>
        </item>
-       <item row="5" column="0" colspan="2">
+       <item row="6" column="0" colspan="2">
         <widget class="QComboBox" name="DeviceCombo"/>
        </item>
-       <item row="6" column="0">
+       <item row="7" column="0">
         <widget class="QSpinBox" name="ThreadCountSpin">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number of threads to use with CPU rendering.&lt;/p&gt;&lt;p&gt;Decrease for more responsive editing, increase for better performance.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -136,7 +126,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="10" column="0">
         <widget class="QGroupBox" name="InteraciveCpuFilteringGroupBox">
          <property name="title">
           <string>CPU Filtering</string>
@@ -183,7 +173,7 @@
          </layout>
         </widget>
        </item>
-       <item row="10" column="0">
+       <item row="11" column="0">
         <widget class="QGroupBox" name="InteraciveGpuFilteringGroupBox">
          <property name="title">
           <string>OpenCL Filtering</string>
@@ -227,7 +217,7 @@
          </layout>
         </widget>
        </item>
-       <item row="7" column="0">
+       <item row="8" column="0">
         <widget class="QSpinBox" name="CpuSubBatchSpin">
          <property name="toolTip">
           <string>The number of 10,000 iteration chunks ran per thread on the CPU
@@ -244,7 +234,7 @@ in interactive mode for each mouse movement</string>
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="9" column="0">
         <widget class="QSpinBox" name="OpenCLSubBatchSpin">
          <property name="toolTip">
           <string>The number of ~8M iteration chunks ran using OpenCL
@@ -261,13 +251,43 @@ in interactive mode for each mouse movement</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="YAxisUpCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: Positive Y direction is up.&lt;/p&gt;&lt;p&gt;Unchecked: Positive Y direction is down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Positive Y Up</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QCheckBox" name="OpenCLCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use OpenCL to render if your video card supports it.&lt;/p&gt;&lt;p&gt;This is highly recommended as it will give fluid, real-time interactive editing.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Use OpenCL</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
         <widget class="QCheckBox" name="DoublePrecisionCheckBox">
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: use 64-bit double precision numbers (slower, but better image quality).&lt;/p&gt;&lt;p&gt;Unchecked: use 32-bit single precision numbers (faster, but worse image quality).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="text">
           <string>Use Double Precision</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QCheckBox" name="ShowAllXformsCheckBox">
+         <property name="toolTip">
+          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: show all xforms while dragging.&lt;/p&gt;&lt;p&gt;Unchecked: only show current xform while dragging.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         </property>
+         <property name="text">
+          <string>Show All Xforms</string>
          </property>
         </widget>
        </item>

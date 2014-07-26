@@ -25,6 +25,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	m_Settings = settings;
 	ui.FinalRenderThreadCountSpin->setRange(1, Timing::ProcessorCount());
 	connect(ui.FinalRenderEarlyClipCheckBox,	   SIGNAL(stateChanged(int)),		 this, SLOT(OnEarlyClipCheckBoxStateChanged(int)),		 Qt::QueuedConnection);
+	connect(ui.FinalRenderYAxisUpCheckBox,	       SIGNAL(stateChanged(int)),		 this, SLOT(OnYAxisUpCheckBoxStateChanged(int)),		 Qt::QueuedConnection);
 	connect(ui.FinalRenderTransparencyCheckBox,	   SIGNAL(stateChanged(int)),		 this, SLOT(OnTransparencyCheckBoxStateChanged(int)),	 Qt::QueuedConnection);
 	connect(ui.FinalRenderOpenCLCheckBox,		   SIGNAL(stateChanged(int)),		 this, SLOT(OnOpenCLCheckBoxStateChanged(int)),		     Qt::QueuedConnection);
 	connect(ui.FinalRenderDoublePrecisionCheckBox, SIGNAL(stateChanged(int)),		 this, SLOT(OnDoublePrecisionCheckBoxStateChanged(int)), Qt::QueuedConnection);
@@ -87,6 +88,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	}
 
 	ui.FinalRenderEarlyClipCheckBox->setChecked(      m_Settings->FinalEarlyClip());
+	ui.FinalRenderYAxisUpCheckBox->setChecked(        m_Settings->FinalYAxisUp());
 	ui.FinalRenderTransparencyCheckBox->setChecked(   m_Settings->FinalTransparency());
 	ui.FinalRenderDoublePrecisionCheckBox->setChecked(m_Settings->FinalDouble());
 	ui.FinalRenderSaveXmlCheckBox->setChecked(		  m_Settings->FinalSaveXml());
@@ -111,6 +113,12 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	//Explicitly call these to enable/disable the appropriate controls.
 	OnOpenCLCheckBoxStateChanged(ui.FinalRenderOpenCLCheckBox->isChecked());
 	OnDoAllCheckBoxStateChanged(ui.FinalRenderDoAllCheckBox->isChecked());
+
+	QSize s = size();
+	int desktopHeight = qApp->desktop()->availableGeometry().height();
+
+	s.setHeight(min(s.height(), (int)((double)desktopHeight * 0.90)));
+	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, qApp->desktop()->availableGeometry()));
 }
 
 /// <summary>
@@ -118,6 +126,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 /// </summary>
 
 bool FractoriumFinalRenderDialog::EarlyClip() { return ui.FinalRenderEarlyClipCheckBox->isChecked(); }
+bool FractoriumFinalRenderDialog::YAxisUp() { return ui.FinalRenderYAxisUpCheckBox->isChecked(); }
 bool FractoriumFinalRenderDialog::Transparency() { return ui.FinalRenderTransparencyCheckBox->isChecked(); }
 bool FractoriumFinalRenderDialog::OpenCL() { return ui.FinalRenderOpenCLCheckBox->isChecked(); }
 bool FractoriumFinalRenderDialog::Double() { return ui.FinalRenderDoublePrecisionCheckBox->isChecked(); }
@@ -149,6 +158,7 @@ FinalRenderGuiState FractoriumFinalRenderDialog::State()
 	FinalRenderGuiState state;
 
 	state.m_EarlyClip = EarlyClip();
+	state.m_YAxisUp = YAxisUp();
 	state.m_Transparency = Transparency();
 	state.m_OpenCL = OpenCL();
 	state.m_Double = Double();
@@ -219,6 +229,15 @@ void FractoriumFinalRenderDialog::MoveCursorToEnd()
 /// </summary>
 /// <param name="index">True to early clip, else don't.</param>
 void FractoriumFinalRenderDialog::OnEarlyClipCheckBoxStateChanged(int state)
+{
+	SetMemory();
+}
+
+/// <summary>
+/// Whether the positive Y axis of the final output image is up.
+/// </summary>
+/// <param name="yup">True if the positive y axis is up, else false.</param>
+void FractoriumFinalRenderDialog::OnYAxisUpCheckBoxStateChanged(int state)
 {
 	SetMemory();
 }

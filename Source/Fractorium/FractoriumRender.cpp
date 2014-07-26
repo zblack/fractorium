@@ -478,6 +478,7 @@ bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsi
 		m_Renderer->ReclaimOnResize(true);
 		m_Renderer->SetEmber(m_Ember);//Give it an initial ember, will be updated many times later.
 		m_Renderer->EarlyClip(s->EarlyClip());
+		m_Renderer->YAxisUp(s->YAxisUp());
 		m_Renderer->ThreadCount(s->ThreadCount());
 		m_Renderer->Transparency(s->Transparency());
 		
@@ -485,6 +486,15 @@ bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsi
 			m_Renderer->InteractiveFilter(s->CpuDEFilter() ? FILTER_DE : FILTER_LOG);
 		else
 			m_Renderer->InteractiveFilter(s->OpenCLDEFilter() ? FILTER_DE : FILTER_LOG);
+
+		if ((m_Renderer->EarlyClip() != m_PreviewRenderer->EarlyClip()) ||
+			(m_Renderer->YAxisUp() != m_PreviewRenderer->YAxisUp()))
+		{
+			StopPreviewRender();
+			m_PreviewRenderer->EarlyClip(m_Renderer->EarlyClip());
+			m_PreviewRenderer->YAxisUp(m_Renderer->YAxisUp());
+			RenderPreviews();
+		}
 
 		m_FailedRenders = 0;
 		m_RenderElapsedTimer.Tic();

@@ -62,7 +62,7 @@ private:
 	void SetViewport();
 	void DrawGrid();
 	void DrawUnitSquare();
-	void DrawAffineHelper(bool selected, bool pre, bool final, bool background);
+	void DrawAffineHelper(int index, bool selected, bool pre, bool final, bool background);
 	GLEmberControllerBase* GLController();
 
 	bool m_Init;

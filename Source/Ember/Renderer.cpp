@@ -13,6 +13,7 @@ Renderer<T, bucketT>::Renderer()
 	m_Abort = false;
 	m_LockAccum = false;
 	m_EarlyClip = false;
+	m_YAxisUp = false;
 	m_InsertPalette = false;
 	m_ReclaimOnResize = false;
 	m_SubBatchSize = 1024 * 10;
@@ -1451,7 +1452,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 	parallel_for((unsigned int)0, FinalRasH(), [&] (unsigned int j)
 	{
 		Color<bucketT> newBucket;
-		int pixelsRowStart = j * FinalRowSize();//Pull out of inner loop for optimization.
+		int pixelsRowStart = (m_YAxisUp ? ((FinalRasH() - j) - 1) : j) * FinalRowSize();//Pull out of inner loop for optimization.
 		unsigned int y = m_DensityFilterOffset + (j * Supersample());//Start at the beginning row of each super sample block.
 		unsigned short* p16;
 
@@ -1753,6 +1754,24 @@ template <typename T, typename bucketT>
 void Renderer<T, bucketT>::EarlyClip(bool earlyClip)
 {
 	ChangeVal([&] { m_EarlyClip = earlyClip; }, FILTER_AND_ACCUM);
+}
+
+/// <summary>
+/// Get whether the positive Y coordinate of the final output image is up.
+/// Default: false.
+/// </summary>
+/// <returns>True if up, else false.</returns>
+template <typename T, typename bucketT>
+bool Renderer<T, bucketT>::YAxisUp() const { return m_YAxisUp; }
+
+/// <summary>
+/// Set whether the positive Y axis of the final output image is up.
+/// </summary>
+/// <param name="yup">True if the positive y axis is up, else false.</param>
+template <typename T, typename bucketT>
+void Renderer<T, bucketT>::YAxisUp(bool yup)
+{
+	ChangeVal([&] { m_YAxisUp = yup; }, ACCUM_ONLY);
 }
 
 /// <summary>

@@ -117,6 +117,7 @@ public slots:
 	void OnActionFinalRender(bool checked);
 	void OnFinalRenderClose(int result);
 	void OnActionOptions(bool checked);
+
 	void OnActionAbout(bool checked);//Help.
 
 	//Toolbar.
@@ -388,6 +389,8 @@ private:
 	char m_HString[16];
 	char m_DEString[16];
 	char m_CoordinateString[128];
+	QColor m_XformComboColors[XFORM_COLOR_COUNT], m_FinalXformComboColor;
+	QIcon m_XformComboIcons[XFORM_COLOR_COUNT], m_FinalXformComboIcon;
 
 	int m_FontSize;
 	int m_VarSortMode;

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>801</height>
+    <height>813</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -61,7 +61,7 @@
         <x>0</x>
         <y>0</y>
         <width>507</width>
-        <height>789</height>
+        <height>801</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -82,77 +82,7 @@
        </property>
        <item>
         <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="FinalRenderDoAllCheckBox">
-           <property name="toolTip">
-            <string>Render all open flames instead of just the current one</string>
-           </property>
-           <property name="text">
-            <string>Render All</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="FinalRenderDoSequenceCheckBox">
-           <property name="toolTip">
-            <string>Use temporal samples value to achieve motion blur effect between flames</string>
-           </property>
-           <property name="text">
-            <string>Render as Animation Sequence</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="FinalRenderDoublePrecisionCheckBox">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: use 64-bit double precision numbers (slower, but better image quality).&lt;/p&gt;&lt;p&gt;Unchecked: use 32-bit single precision numbers (faster, but worse image quality).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Use Double Precision</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QCheckBox" name="FinalRenderOpenCLCheckBox">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use OpenCL to render if your video card supports it.&lt;/p&gt;&lt;p&gt;This is highly recommended as it will dramatically speed up render time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Use OpenCL</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QCheckBox" name="FinalRenderEarlyClipCheckBox">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: clip colors and gamma correct after density filtering.&lt;/p&gt;&lt;p&gt;Unchecked: do it after spatial filtering.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Early Clip</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="FinalRenderSaveXmlCheckBox">
-           <property name="toolTip">
-            <string>Save an Xml parameter file for each flame rendered</string>
-           </property>
-           <property name="text">
-            <string>Save Xml</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QCheckBox" name="FinalRenderTransparencyCheckBox">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use transparency in the final image.&lt;/p&gt;&lt;p&gt;Only supported for Png format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Transparency</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
+         <item row="5" column="0">
           <widget class="QGroupBox" name="FinalRenderScaleGroupBox">
            <property name="minimumSize">
             <size>
@@ -212,7 +142,7 @@
            </layout>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QGroupBox" name="FinalRenderExtensionGroupBox">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -283,6 +213,26 @@
            </layout>
           </widget>
          </item>
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="FinalRenderEarlyClipCheckBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: clip colors and gamma correct after density filtering.&lt;/p&gt;&lt;p&gt;Unchecked: do it after spatial filtering.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Early Clip</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="FinalRenderSaveXmlCheckBox">
+           <property name="toolTip">
+            <string>Save an Xml parameter file for each flame rendered</string>
+           </property>
+           <property name="text">
+            <string>Save Xml</string>
+           </property>
+          </widget>
+         </item>
          <item row="3" column="1">
           <widget class="QCheckBox" name="FinalRenderKeepAspectCheckBox">
            <property name="toolTip">
@@ -293,6 +243,66 @@
            </property>
            <property name="checked">
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="FinalRenderDoSequenceCheckBox">
+           <property name="toolTip">
+            <string>Use temporal samples value to achieve motion blur effect between flames</string>
+           </property>
+           <property name="text">
+            <string>Render as Animation Sequence</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="FinalRenderDoAllCheckBox">
+           <property name="toolTip">
+            <string>Render all open flames instead of just the current one</string>
+           </property>
+           <property name="text">
+            <string>Render All</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="FinalRenderYAxisUpCheckBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: Positive Y direction is up.&lt;/p&gt;&lt;p&gt;Unchecked: Positive Y direction is down.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Positive Y Up</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QCheckBox" name="FinalRenderDoublePrecisionCheckBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: use 64-bit double precision numbers (slower, but better image quality).&lt;/p&gt;&lt;p&gt;Unchecked: use 32-bit single precision numbers (faster, but worse image quality).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Use Double Precision</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QCheckBox" name="FinalRenderOpenCLCheckBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use OpenCL to render if your video card supports it.&lt;/p&gt;&lt;p&gt;This is highly recommended as it will dramatically speed up render time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Use OpenCL</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="FinalRenderTransparencyCheckBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Use transparency in the final image.&lt;/p&gt;&lt;p&gt;Only supported for Png format.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Transparency</string>
            </property>
           </widget>
          </item>

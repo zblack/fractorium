@@ -54,7 +54,7 @@ void FractoriumSettings::EnsureDefaults()
 		FinalThreadCount(Timing::ProcessorCount());
 
 	if (CpuSubBatch() < 1)
-		CpuSubBatch(10);
+		CpuSubBatch(1);
 
 	if (OpenCLSubBatch() < 1)
 		OpenCLSubBatch(1);
@@ -99,15 +99,21 @@ void FractoriumSettings::EnsureDefaults()
 
 bool FractoriumSettings::EarlyClip()                          { return value(EARLYCLIP).toBool();            }
 void FractoriumSettings::EarlyClip(bool b)                    { setValue(EARLYCLIP, b);                      }
-															  
+
+bool FractoriumSettings::YAxisUp()							  { return value(YAXISUP).toBool();				 }
+void FractoriumSettings::YAxisUp(bool b)					  { setValue(YAXISUP, b);						 }
+
 bool FractoriumSettings::Transparency()                       { return value(TRANSPARENCY).toBool();         }
 void FractoriumSettings::Transparency(bool b)                 { setValue(TRANSPARENCY, b);                   }
+
+bool FractoriumSettings::OpenCL()                             { return value(OPENCL).toBool();               }
+void FractoriumSettings::OpenCL(bool b)                       { setValue(OPENCL, b);                         }
 
 bool FractoriumSettings::Double()							  { return value(DOUBLEPRECISION).toBool();		 }
 void FractoriumSettings::Double(bool b)						  { setValue(DOUBLEPRECISION, b);				 }
 
-bool FractoriumSettings::OpenCL()                             { return value(OPENCL).toBool();               }
-void FractoriumSettings::OpenCL(bool b)                       { setValue(OPENCL, b);                         }
+bool FractoriumSettings::ShowAllXforms()					  { return value(SHOWALLXFORMS).toBool();		 }
+void FractoriumSettings::ShowAllXforms(bool b)				  { setValue(SHOWALLXFORMS, b);					 }
 
 unsigned int FractoriumSettings::PlatformIndex()              { return value(PLATFORMINDEX).toUInt();        }
 void FractoriumSettings::PlatformIndex(unsigned int i)        { setValue(PLATFORMINDEX, i);                  }
@@ -136,7 +142,10 @@ void FractoriumSettings::OpenCLSubBatch(unsigned int b)		  { setValue(OPENCLSUBB
 
 bool FractoriumSettings::FinalEarlyClip()                     { return value(FINALEARLYCLIP).toBool();       }
 void FractoriumSettings::FinalEarlyClip(bool b)               { setValue(FINALEARLYCLIP, b);                 }
-															  
+
+bool FractoriumSettings::FinalYAxisUp()						  { return value(FINALYAXISUP).toBool();		 }
+void FractoriumSettings::FinalYAxisUp(bool b)				  { setValue(FINALYAXISUP, b);					 }
+
 bool FractoriumSettings::FinalTransparency()                  { return value(FINALTRANSPARENCY).toBool();    }
 void FractoriumSettings::FinalTransparency(bool b)            { setValue(FINALTRANSPARENCY, b);              }
 															  

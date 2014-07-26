@@ -1250,6 +1250,7 @@ SpatialFilterCL<T> RendererCL<T>::ConvertSpatialFilter()
 	filterCL.m_BytesPerChannel = BytesPerChannel();
 	filterCL.m_DensityFilterOffset = DensityFilterOffset();
 	filterCL.m_Transparency = Transparency();
+	filterCL.m_YAxisUp = (unsigned int)m_YAxisUp;
 	filterCL.m_Vibrancy = vibrancy;
 	filterCL.m_HighlightPower = HighlightPower();
 	filterCL.m_Gamma = g;

@@ -39,6 +39,8 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 
+#define XFORM_COLOR_COUNT 14
+
 using namespace std;
 using namespace EmberNs;
 using namespace EmberCLns;

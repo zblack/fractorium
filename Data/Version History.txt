@@ -1,3 +1,16 @@
+0.4.0.7 Beta 07/26/2014
+--User Changes
+	Color code xforms like Apo does.
+	Change other aspects of xform color drawing.
+	Add option to invert the Y axis to both the options final render dialogs.
+	Coordinate Y axis setting with preview renders.
+	Add option to show all xforms when dragging. Previously, only the current one was shown.
+	Make final render dialog appear in the middle of the screen.
+	Immediately draw yellow selection dot on mouse down.
+
+--Bug Fixes
+	Resize final render dialog vertically if it's taller than the 90% of the desktop area.
+
 0.4.0.6 Beta 07/22/2014
 --User Changes
 	Place certain areas of the UI on scroll panels so they are not obscured on low resolution monitors.

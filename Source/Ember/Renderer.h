@@ -111,6 +111,8 @@ public:
 	virtual void ReclaimOnResize(bool reclaimOnResize) { }
 	virtual bool EarlyClip() const { return false; }
 	virtual void EarlyClip(bool earlyClip) { }
+	virtual bool YAxisUp() const { return false; }
+	virtual void YAxisUp(bool yup) { }
 	virtual void ThreadCount(unsigned int threads, const char* seedString = NULL) { }
 	virtual void Transparency(bool transparency) { }
 	virtual void InteractiveFilter(eInteractiveFilter filter) { }
@@ -220,6 +222,9 @@ public:
 
 	virtual bool EarlyClip() const;
 	virtual void EarlyClip(bool earlyClip);
+
+	virtual bool YAxisUp() const;
+	virtual void YAxisUp(bool yup);
 
 	inline bool InsertPalette() const;
 	void InsertPalette(bool insertPalette);
@@ -335,6 +340,7 @@ private:
 
 protected:
 	bool m_EarlyClip;
+	bool m_YAxisUp;
 	bool m_Transparency;
 	unsigned int m_SuperRasW;
 	unsigned int m_SuperRasH;

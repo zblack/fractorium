@@ -20,6 +20,7 @@ class FractoriumFinalRenderDialog;
 struct FinalRenderGuiState
 {
 	bool m_EarlyClip;
+	bool m_YAxisUp;
 	bool m_AlphaChannel;
 	bool m_Transparency;
 	bool m_OpenCL;

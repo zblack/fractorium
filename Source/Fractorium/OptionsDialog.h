@@ -34,10 +34,12 @@ public slots:
 
 private:
 	bool EarlyClip();
+	bool YAxisUp();
 	bool AlphaChannel();
 	bool Transparency();
 	bool OpenCL();
 	bool Double();
+	bool ShowAllXforms();
 	unsigned int PlatformIndex();
 	unsigned int DeviceIndex();
 	unsigned int ThreadCount();
