@@ -2117,12 +2117,12 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		const T ax = rand.Frand11<T>();
-		const T ay = rand.Frand11<T>();
-		const T az = rand.Frand11<T>();
+		const T ax = rand.Frand<T>(T(-0.5), T(0.5));
+		const T ay = rand.Frand<T>(T(-0.5), T(0.5));
+		const T az = rand.Frand<T>(T(-0.5), T(0.5));
 		const T r = sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
-		const T rc = ((m_Invert != 0 ? min<T>(1 - r, 0) : min<T>(r, 0)) - m_MinDist) * m_InternalScatter;
-		const T rs = min<T>(rc, 0);
+		const T rc = ((m_Invert != 0 ? max<T>(1 - r, 0) : max<T>(r, 0)) - m_MinDist) * m_InternalScatter;//Original called a macro named min, which internally performed max.
+		const T rs = max<T>(rc, 0);
 
 		T sigma, phi, rad, sigmas, sigmac, phis, phic;
 		T scale, denom;
@@ -2178,12 +2178,12 @@ public:
 		string internalScatter = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\tconst real_t ax = MwcNextNeg1Pos1(mwc);\n"
-		   << "\t\tconst real_t ay = MwcNextNeg1Pos1(mwc);\n"
-		   << "\t\tconst real_t az = MwcNextNeg1Pos1(mwc);\n"
+		   << "\t\tconst real_t ax = MwcNext0505(mwc);\n"
+		   << "\t\tconst real_t ay = MwcNext0505(mwc);\n"
+		   << "\t\tconst real_t az = MwcNext0505(mwc);\n"
 		   << "\t\tconst real_t r = sqrt(Sqr(vIn.x - " << x0 << ") + Sqr(vIn.y - " << y0 << ") + Sqr(vIn.z - " << z0 << "));\n"
-		   << "\t\tconst real_t rc = ((" << invert << " != 0 ? min(1 - r, 0.0) : min(r, 0.0)) - " << minDist << ") * " << internalScatter << ";\n"
-		   << "\t\tconst real_t rs = min(rc, 0.0);\n"
+		   << "\t\tconst real_t rc = ((" << invert << " != 0 ? max(1 - r, 0.0) : max(r, 0.0)) - " << minDist << ") * " << internalScatter << ";\n"
+		   << "\t\tconst real_t rs = max(rc, 0.0);\n"
 		   << "\n"
 		   << "\t\treal_t sigma, phi, rad, sigmas, sigmac, phis, phic;\n"
 		   << "\t\treal_t scale, denom;\n"
@@ -2278,10 +2278,10 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		const v4T random(rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		const v4T random(rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)));
 		const T distA = sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
-		const T distB = m_Invert != 0 ? min<T>(1 - distA, 0) : min<T>(distA, 0);
-		const T dist = min<T>((distB - m_MinDist) * m_RMax, 0);
+		const T distB = m_Invert != 0 ? max<T>(1 - distA, 0) : max<T>(distA, 0);//Original called a macro named min, which internally performed max.
+		const T dist = max<T>((distB - m_MinDist) * m_RMax, 0);
 
 		switch ((int)m_Type)
 		{
@@ -2356,13 +2356,13 @@ public:
 		string rMax    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\tconst real_t randx = MwcNextNeg1Pos1(mwc);\n"
-		   << "\t\tconst real_t randy = MwcNextNeg1Pos1(mwc);\n"
-		   << "\t\tconst real_t randz = MwcNextNeg1Pos1(mwc);\n"
-		   << "\t\tconst real_t randc = MwcNextNeg1Pos1(mwc);\n"
+		   << "\t\tconst real_t randx = MwcNext0505(mwc);\n"
+		   << "\t\tconst real_t randy = MwcNext0505(mwc);\n"
+		   << "\t\tconst real_t randz = MwcNext0505(mwc);\n"
+		   << "\t\tconst real_t randc = MwcNext0505(mwc);\n"
 		   << "\t\tconst real_t distA = sqrt(Sqr(vIn.x - " << x0 << ") + Sqr(vIn.y - " << y0 << ") + Sqr(vIn.z - " << z0 << "));\n"
-		   << "\t\tconst real_t distB = " << invert << " != 0 ? min(1 - distA, 0.0) : min(distA, 0.0);\n"
-		   << "\t\tconst real_t dist = min((distB - " << minDist << ") * " << rMax<< ", 0.0);\n"
+		   << "\t\tconst real_t distB = " << invert << " != 0 ? max(1 - distA, 0.0) : max(distA, 0.0);\n"
+		   << "\t\tconst real_t dist = max((distB - " << minDist << ") * " << rMax<< ", 0.0);\n"
 		   << "\n"
 		   << "\t\tswitch ((int)" << type << ")\n"
 		   << "\t\t{\n"
@@ -2474,7 +2474,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		const v4T random(rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		const v4T random(rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)));
 		T radius;
 
 		switch ((int)m_BlurShape)
@@ -2483,11 +2483,11 @@ public:
 				radius = sqrt(Sqr(helper.In.x - m_CenterX) + Sqr(helper.In.y - m_CenterY) + Sqr(helper.In.z - m_CenterZ));
 				break;
 			case 1://Square.
-				radius = min(fabs(helper.In.x - m_CenterX), min(fabs(helper.In.y - m_CenterY), (fabs(helper.In.z - m_CenterZ))));
+				radius = max(fabs(helper.In.x - m_CenterX), max(fabs(helper.In.y - m_CenterY), (fabs(helper.In.z - m_CenterZ))));//Original called a macro named min, which internally performed max.
 				break;
 		}
 
-		const T dist = min<T>(((m_InvertDistance != 0 ? min<T>(1 - radius, 0) : min<T>(radius, 0)) - m_MinDistance) * m_RMax, 0);
+		const T dist = max<T>(((m_InvertDistance != 0 ? max<T>(1 - radius, 0) : max<T>(radius, 0)) - m_MinDistance) * m_RMax, 0);
 
 		switch ((int)m_BlurType)
 		{
@@ -2566,10 +2566,10 @@ public:
 		string rMax         = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		    << "\t\tconst real_t randx = MwcNextNeg1Pos1(mwc);\n"
-		    << "\t\tconst real_t randy = MwcNextNeg1Pos1(mwc);\n"
-		    << "\t\tconst real_t randz = MwcNextNeg1Pos1(mwc);\n"
-		    << "\t\tconst real_t randc = MwcNextNeg1Pos1(mwc);\n"
+		    << "\t\tconst real_t randx = MwcNext0505(mwc);\n"
+		    << "\t\tconst real_t randy = MwcNext0505(mwc);\n"
+		    << "\t\tconst real_t randz = MwcNext0505(mwc);\n"
+		    << "\t\tconst real_t randc = MwcNext0505(mwc);\n"
 		    << "\t\treal_t radius;\n"
 		    << "\n"
 		    << "\t\tswitch ((int)" << blurShape << ")\n"
@@ -2578,11 +2578,11 @@ public:
 		    << "\t\t		radius = sqrt(Sqr(vIn.x - " << centerX << ") + Sqr(vIn.y - " << centerY << ") + Sqr(vIn.z - " << centerZ << "));\n"
 		    << "\t\t		break;\n"
 		    << "\t\t	case 1:\n"
-		    << "\t\t		radius = min(fabs(vIn.x - " << centerX << "), min(fabs(vIn.y - " << centerY << "), (fabs(vIn.z - " << centerZ << "))));\n"
+		    << "\t\t		radius = max(fabs(vIn.x - " << centerX << "), max(fabs(vIn.y - " << centerY << "), (fabs(vIn.z - " << centerZ << "))));\n"
 		    << "\t\t		break;\n"
 		    << "\t\t}\n"
 		    << "\n"
-		    << "\t\tconst real_t dist = min(((" << invertDist << " != 0 ? min(1 - radius, 0.0) : min(radius, 0.0)) - " << minDist << ") * " << rMax << ", 0.0);\n"
+		    << "\t\tconst real_t dist = max(((" << invertDist << " != 0 ? max(1 - radius, 0.0) : max(radius, 0.0)) - " << minDist << ") * " << rMax << ", 0.0);\n"
 		    << "\n"
 		    << "\t\tswitch ((int)" << blurType << ")\n"
 		    << "\t\t{\n"

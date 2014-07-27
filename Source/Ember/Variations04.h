@@ -4211,14 +4211,17 @@ public:
 			}
 		}
 
-		helper.Out.x = 0;//Needed because of possible sum below.
-		helper.Out.y = 0;
 		r = fabs(r0 - T(0.5)) * m_OneOverRmax;
 
 		if (r < 1)
 		{
 			helper.Out.x = m_Size * (x + Floor<T>(helper.In.x));
 			helper.Out.y = m_Size * (y + Floor<T>(helper.In.y));
+		}
+		else
+		{
+			helper.Out.x = 0;//Needed because of possible sum below.
+			helper.Out.y = 0;
 		}
 	
 		r = fabs(r1 - T(0.5)) * m_OneOverRmax;
@@ -4346,14 +4349,17 @@ public:
 		   << "\t\t	}\n"
 		   << "\t\t}\n"
 		   << "\n"
-		   << "\t\tvOut.x = 0;\n"
-		   << "\t\tvOut.y = 0;\n"
 		   << "\t\tr = fabs(r0 - 0.5) * " << oneOverRmax << ";\n"
 		   << "\n"
 		   << "\t\tif (r < 1)\n"
 		   << "\t\t{\n"
 		   << "\t\t	vOut.x = " << size << " * (x + floor(vIn.x));\n"
 		   << "\t\t	vOut.y = " << size << " * (y + floor(vIn.y));\n"
+		   << "\t\t}\n"
+		   << "\t\telse\n"
+		   << "\t\t{\n"
+		   << "\t\t	vOut.x = 0.0;\n"
+		   << "\t\t	vOut.y = 0.0;\n"
 		   << "\t\t}\n"
 		   << "\n"
 		   << "\t\tr = fabs(r1 - 0.5) * " << oneOverRmax << ";\n"

@@ -25,7 +25,7 @@ void Fractorium::InitParamsUI()
 	//Color.
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_BrightnessSpin,	   spinHeight, 0.05,  100,    1,  SIGNAL(valueChanged(double)), SLOT(OnBrightnessChanged(double)),	   true,  4.0,  4.0,  4.0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_GammaSpin,		   spinHeight,    1, 9999,  0.5,  SIGNAL(valueChanged(double)), SLOT(OnGammaChanged(double)),          true,  4.0,  4.0,  4.0);
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_GammaThresholdSpin, spinHeight,    0,   10, 0.01, SIGNAL(valueChanged(double)), SLOT(OnGammaThresholdChanged(double)),  true,  0.1,  0.1,  0.0);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_GammaThresholdSpin, spinHeight,    0,   10, 0.01,  SIGNAL(valueChanged(double)), SLOT(OnGammaThresholdChanged(double)),  true,  0.1,  0.1,  0.0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_VibrancySpin,	   spinHeight,    0,   30, 0.01,  SIGNAL(valueChanged(double)), SLOT(OnVibrancyChanged(double)),       true,  1.0,  1.0,  0.0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_HighlightSpin,	   spinHeight, -1.0,  2.0,	0.1,  SIGNAL(valueChanged(double)), SLOT(OnHighlightPowerChanged(double)), true, -1.0, -1.0, -1.0);
 
@@ -47,10 +47,10 @@ void Fractorium::InitParamsUI()
 	table = ui.GeometryTable;
 	SetupSpinner<SpinBox, int>		   (table, this, row, 1, m_WidthSpin,       spinHeight,    10,  100000,     50, SIGNAL(valueChanged(int)),    SLOT(OnWidthChanged(int)));
 	SetupSpinner<SpinBox, int>		   (table, this, row, 1, m_HeightSpin,      spinHeight,    10,  100000,     50, SIGNAL(valueChanged(int)),    SLOT(OnHeightChanged(int)));
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_CenterXSpin,     spinHeight,   -10,      10,   0.05, SIGNAL(valueChanged(double)), SLOT(OnCenterXChanged(double)),     true,	  0,   0,	0);
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_CenterYSpin,     spinHeight,   -10,      10,   0.05, SIGNAL(valueChanged(double)), SLOT(OnCenterYChanged(double)),     true,	  0,   0,	0);
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_ScaleSpin,       spinHeight,    10,    5000,     20, SIGNAL(valueChanged(double)), SLOT(OnScaleChanged(double)),	      true, 240, 240, 240);
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_ZoomSpin,        spinHeight,     0,       5,    0.2, SIGNAL(valueChanged(double)), SLOT(OnZoomChanged(double)),	      true,	  0,   0,	0);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_CenterXSpin,     spinHeight, -dmax,    dmax,   0.05, SIGNAL(valueChanged(double)), SLOT(OnCenterXChanged(double)),     true,	  0,   0,	0);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_CenterYSpin,     spinHeight, -dmax,    dmax,   0.05, SIGNAL(valueChanged(double)), SLOT(OnCenterYChanged(double)),     true,	  0,   0,	0);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_ScaleSpin,       spinHeight,    10,    dmax,     20, SIGNAL(valueChanged(double)), SLOT(OnScaleChanged(double)),	      true, 240, 240, 240);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_ZoomSpin,        spinHeight,     0,     100,    0.2, SIGNAL(valueChanged(double)), SLOT(OnZoomChanged(double)),	      true,	  0,   0,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_RotateSpin,      spinHeight,  -180,     180,     10, SIGNAL(valueChanged(double)), SLOT(OnRotateChanged(double)),      true,	  0,   0,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_ZPosSpin,        spinHeight, -1000,    1000,      1, SIGNAL(valueChanged(double)), SLOT(OnZPosChanged(double)),        true,	  0,   1,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_PerspectiveSpin, spinHeight,  -500,     500,   0.01, SIGNAL(valueChanged(double)), SLOT(OnPerspectiveChanged(double)), true,	  0,   1,	0);

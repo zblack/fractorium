@@ -1719,13 +1719,28 @@ void TestCross(T x, T y, T weight)
 	cout << "Second way, outX, outY == " << outX << ", " << outY << endl;
 }
 
+double RandD(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+{
+	return ((((rand.Rand()^(rand.Rand()<<15))&0xfffffff)*3.72529e-09)-0.5);
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
+	int i;
 	Timing t(4);
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
 
 	//cout << pow(-1, 5.1) << endl;
 
+	/*for (i = 0; i < 2500000000; i++)
+	{
+		double d = fabs(RandD(rand));
+
+		if (d >= 0.5)
+			cout << d << endl;
+	}
+
+	return 0;*/
 	//cout << "sizeof(Ember<float>): " << sizeof(Ember<float>) << endl;
 	//cout << "sizeof(Ember<double>): " << sizeof(Ember<double>) << endl;
 	//

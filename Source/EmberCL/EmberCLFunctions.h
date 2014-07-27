@@ -171,6 +171,12 @@ static const char* RandFunctionString =
 	"	real_t f = (real_t)MwcNext(s) / (real_t)UINT_MAX;\n"
 	"	return -1.0 + (f * 2.0);\n"
 	"}\n"
+	"\n"
+	"inline real_t MwcNext0505(uint2* s)\n"
+	"{\n"
+	"	real_t f = (real_t)MwcNext(s) / (real_t)UINT_MAX;\n"
+	"	return -0.5 + f;\n"
+	"}\n"
 	"\n";
 
 /// <summary>
