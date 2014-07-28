@@ -424,7 +424,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T x, y, z, alpha = m_Radius / helper.m_PrecalcSqrtSumSquares;
+		T x, y, z;
 
 		if (helper.m_PrecalcSqrtSumSquares < m_Radius)//Object generation.
 		{  
@@ -434,6 +434,8 @@ public:
 		}
 		else
 		{
+			T alpha = fabs(m_Radius / Zeps(helper.m_PrecalcSqrtSumSquares));//Original did not fabs().
+
 			if (rand.Frand01<T>() > m_Contrast * pow(alpha, m_Pow))
 			{
 				x = helper.In.x;
@@ -479,7 +481,7 @@ public:
 		string y1        = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t x, y, z, alpha = " << radius << " / precalcSqrtSumSquares;\n"
+		   << "\t\treal_t x, y, z;\n"
 		   << "\n"
 		   << "\t\tif (precalcSqrtSumSquares < " << radius << ")\n"
 		   << "\t\t{\n"
@@ -489,6 +491,8 @@ public:
 		   << "\t\t}\n"
 		   << "\t\telse\n"
 		   << "\t\t{\n"
+		   << "\t\t	real_t alpha = fabs(" << radius << " / Zeps(precalcSqrtSumSquares));\n"
+		   << "\n"
 		   << "\t\t	if (MwcNext01(mwc) > " << contrast << " * pow(alpha, " << pow << "))\n"
 		   << "\t\t	{\n"
 		   << "\t\t		x = vIn.x;\n"
@@ -602,7 +606,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T x, y, alpha = m_Radius / helper.m_PrecalcSqrtSumSquares;
+		T x, y;
 
 		if (helper.m_PrecalcSqrtSumSquares < m_Radius)
 		{
@@ -612,6 +616,8 @@ public:
 		}
 		else
 		{
+			T alpha = fabs(m_Radius / Zeps(helper.m_PrecalcSqrtSumSquares));//Original did not fabs().
+
 			if (rand.Frand01<T>() > m_Contrast * pow(alpha, m_Pow))
 			{
 				helper.Out.x = m_Weight * helper.In.x;
@@ -645,7 +651,7 @@ public:
 		string delta     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t x, y, alpha = " << radius << " / precalcSqrtSumSquares;\n"
+		   << "\t\treal_t x, y;\n"
 		   << "\n"
 		   << "\t\tif (precalcSqrtSumSquares < " << radius << ")\n"
 		   << "\t\t{\n"
@@ -655,6 +661,8 @@ public:
 		   << "\t\t}\n"
 		   << "\t\telse\n"
 		   << "\t\t{\n"
+		   << "\t\t	real_t alpha = fabs(" << radius << " / Zeps(precalcSqrtSumSquares));\n"
+		   << "\n"
 		   << "\t\t	if (MwcNext01(mwc) > " << contrast << " * pow(alpha, " << pow << "))\n"
 		   << "\t\t	{\n"
 		   << "\t\t		vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
@@ -692,9 +700,9 @@ public:
 	virtual void Precalc()
 	{
 		m_Pow = fabs(m_Pow);
-		m_Phi10 = M_2PI * m_Phi1;
-		m_Phi20 = M_2PI * m_Phi2;
-		m_Gamma = m_Thickness * (2 * m_Radius + m_Thickness) / (m_Radius + m_Thickness);
+		m_Phi10 = T(M_PI) * m_Phi1 / 180;
+		m_Phi20 = T(M_PI) * m_Phi2 / 180;
+		m_Gamma = m_Thickness * (2 * m_Radius + m_Thickness) / Zeps(m_Radius + m_Thickness);
 		m_Delta = m_Phi20 - m_Phi10;
 	}
 
@@ -756,7 +764,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T x, y, alpha = m_Radius / helper.m_PrecalcSqrtSumSquares;
+		T x, y;
 
 		if (helper.m_PrecalcSqrtSumSquares < m_Radius1)
 		{     
@@ -766,6 +774,8 @@ public:
 		}
 		else
 		{
+			T alpha = fabs(m_Radius / Zeps(helper.m_PrecalcSqrtSumSquares));//Original did not fabs().
+
 			if (rand.Frand01<T>() > m_Contrast * pow(alpha, m_Pow))
 			{
 				helper.Out.x = m_Weight * helper.In.x;
@@ -797,7 +807,7 @@ public:
 		string gamma      = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 				
 		ss << "\t{\n"
-		   << "\t\treal_t x, y, alpha = " << radius << " / precalcSqrtSumSquares;\n"
+		   << "\t\treal_t x, y;\n"
 		   << "\n"
 		   << "\t\tif (precalcSqrtSumSquares < " << radius1 << ")\n"
 		   << "\t\t{\n"
@@ -807,6 +817,8 @@ public:
 		   << "\t\t}\n"
 		   << "\t\telse\n"
 		   << "\t\t{\n"
+		   << "\t\t real_t alpha = fabs(" << radius << " / Zeps(precalcSqrtSumSquares));\n"
+		   << "\n"
 		   << "\t\t	if (MwcNext01(mwc) > " << contrast << " * pow(alpha, " << pow << "))\n"
 		   << "\t\t	{\n"
 		   << "\t\t		vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
@@ -849,8 +861,8 @@ public:
 	virtual void Precalc()
 	{
 		m_Radius1 = m_Radius + m_Thickness;
-		m_Radius2 = SQR(m_Radius) / m_Radius1;
-		m_Gamma = m_Radius1 / (m_Radius1 + m_Radius2);
+		m_Radius2 = SQR(m_Radius) / Zeps(m_Radius1);
+		m_Gamma = m_Radius1 / Zeps(m_Radius1 + m_Radius2);
 	}
 
 protected:
@@ -1045,18 +1057,13 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
-	{
-		ClampGte0Ref<T>(m_Power);
-	}
-
 protected:
 	void Init()
 	{
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Power, prefix + "sineblur_power", 1));
+		m_Params.push_back(ParamWithName<T>(&m_Power, prefix + "sineblur_power", 1, REAL, 0));
 	}
 
 private:

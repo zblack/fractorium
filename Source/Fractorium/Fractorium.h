@@ -260,6 +260,7 @@ private:
 	void InitXformsXaosUI();
 	void InitPaletteUI();
 	void InitLibraryUI();
+	void SetTabOrders();
 
 	//Embers.
 	bool HaveFinal();
@@ -444,6 +445,20 @@ static void SetupSpinner(QTableWidget* table, const QObject* receiver, int& row,
 
 	if (incRow)
 		row++;
+}
+
+/// <summary>
+/// Wrapper around QWidget::setTabOrder() to return the second widget.
+/// This makes it easy to chain multiple calls without having to retype
+/// all of them if the order changes or if a new widget is inserted.
+/// </summary>
+/// <param name="parent">The parent widget that w1 and w2 belong to</param>
+/// <param name="w1">The widget to come first in the tab order</param>
+/// <param name="w2">The widget to come second in the tab order</param>
+static QWidget* SetTabOrder(QWidget* parent, QWidget* w1, QWidget* w2)
+{
+	parent->setTabOrder(w1, w2);
+	return w2;
 }
 
 //template void Fractorium::SetupSpinner<SpinBox, int>         (QTableWidget* table, const QObject* receiver, int& row, int col, SpinBox*& spinBox, int height, int min, int max, int step, const char* signal, const char* slot, bool incRow, int val, int doubleClickZero, int doubleClickNonZero);

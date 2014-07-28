@@ -201,6 +201,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
 				{
 					m_Renderer->Reset();//Have to manually set this since the ember is not set each time through.
+					m_PureIterTime = 0;
 					m_RenderTimer.Tic();//Toc() is called in the progress function.
 
 					if (m_Renderer->Run(m_FinalImage, i) != RENDER_OK)
@@ -223,6 +224,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
 				{
 					m_Renderer->SetEmber(m_EmberFile.m_Embers[i]);
+					m_PureIterTime = 0;
 					m_RenderTimer.Tic();//Toc() is called in the progress function.
 
 					if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
@@ -240,6 +242,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			ResetProgress();
 			m_Ember.m_TemporalSamples = 1;
 			m_Renderer->SetEmber(m_Ember);
+			m_PureIterTime = 0;
 			m_RenderTimer.Tic();//Toc() is called in the progress function.
 
 			if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
@@ -288,22 +291,29 @@ template <typename T>
 int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs)
 {
 	static int count = 0;
+	int intFract = (int)fraction;
 
 	if (stage == 0)
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, int(fraction)));
+	{
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
+
+		if (intFract == 100)
+			m_PureIterTime = m_RenderTimer.Toc();
+	}
 	else if (stage == 1)
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, int(fraction)));
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
 	else if (stage == 2)
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, int(fraction)));
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
 
 	//Finished, so take special action.
-	if (stage == 2 && (int)fraction == 100)
+	if (stage == 2 && intFract == 100)
 	{
 		string renderTimeString = m_RenderTimer.Format(m_RenderTimer.Toc()), totalTimeString;
 		QString status, filename = m_GuiState.m_Path;
 		QFileInfo original(filename);
 		EmberStats stats = m_Renderer->Stats();
 		QString iters = QLocale(QLocale::English).toString(stats.m_Iters);
+		QString itersPerSec = QLocale(QLocale::English).toString(int(stats.m_Iters / (m_PureIterTime / 1000.0)));
 
 		if (m_GuiState.m_DoAll && m_EmberFile.m_Embers.size() > 1)
 			filename = original.absolutePath() + QDir::separator() + m_GuiState.m_Prefix + QString::fromStdString(m_EmberFile.m_Embers[m_FinishedImageCount].m_Name) + m_GuiState.m_Suffix + "." + m_GuiState.m_DoAllExt;
@@ -348,9 +358,9 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 		}
 
 		m_FinishedImageCount++;
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, int(100)));//Just to be safe.
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, int(100)));
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, int(100)));
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));//Just to be safe.
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
+		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTotalProgress,   "setValue", Qt::QueuedConnection, Q_ARG(int, int(((float)m_FinishedImageCount / (float)m_ImageCount) * 100)));
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderImageCountLabel, "setText",  Qt::QueuedConnection, Q_ARG(QString, QString::number(m_FinishedImageCount) + " / " + QString::number(m_ImageCount)));
 
@@ -358,7 +368,7 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, status));
 
 		totalTimeString = m_TotalTimer.Format(m_TotalTimer.Toc());
-		status = "Total render time: " + QString::fromStdString(totalTimeString) + "\nTotal iters: " + iters + "\n";
+		status = "Total render time: " + QString::fromStdString(totalTimeString) + "\nTotal iters: " + iters + "\nIters/second: " + itersPerSec + "\n";
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, status));
 		QMetaObject::invokeMethod(m_FinalRender, "MoveCursorToEnd", Qt::QueuedConnection);
 

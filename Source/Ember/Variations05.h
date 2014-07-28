@@ -1085,9 +1085,9 @@ public:
 		T cv = cos(helper.In.y);
 		T cucv = cu * cv;
 		T sucv = su * cv;
-		T x = pow(ClampGte<T>(cucv, EPS), m_XPow) + (cucv * m_XPow) + (T(0.25) * atOmegaX);//Must clamp first argument to pow, because negative values will return NaN.
-		T y = pow(ClampGte<T>(sucv, EPS), m_YPow) + (sucv * m_YPow) + (T(0.25) * atOmegaY);//Original did not do this and would frequently return bad values.
-		T z = pow(ClampGte<T>(sv, EPS),   m_ZPow) +  sv   * m_ZPow;
+		T x = pow(fabs(cucv), m_XPow) + (cucv * m_XPow) + (T(0.25) * atOmegaX);//Must fabs first argument to pow, because negative values will return NaN.
+		T y = pow(fabs(sucv), m_YPow) + (sucv * m_YPow) + (T(0.25) * atOmegaY);//Original did not do this and would frequently return bad values.
+		T z = pow(fabs(sv),   m_ZPow) +  sv   * m_ZPow;
 
 		helper.Out.x = m_Weight * x;
 		helper.Out.y = m_Weight * y;
@@ -1117,9 +1117,9 @@ public:
 		   << "\t\treal_t cv = cos(vIn.y);\n"
 		   << "\t\treal_t cucv = cu * cv;\n"
 		   << "\t\treal_t sucv = su * cv;\n"
-		   << "\t\treal_t x = pow(ClampGte(cucv, EPS), " << xpow << ") + (cucv * " << xpow << ") + (0.25 * atOmegaX);\n"
-		   << "\t\treal_t y = pow(ClampGte(sucv, EPS), " << ypow << ") + (sucv * " << ypow << ") + (0.25 * atOmegaY);\n"
-		   << "\t\treal_t z = pow(ClampGte(sv, EPS), "   << zpow << ") + sv * "    << zpow << ";\n"
+		   << "\t\treal_t x = pow(fabs(cucv), " << xpow << ") + (cucv * " << xpow << ") + (0.25 * atOmegaX);\n"
+		   << "\t\treal_t y = pow(fabs(sucv), " << ypow << ") + (sucv * " << ypow << ") + (0.25 * atOmegaY);\n"
+		   << "\t\treal_t z = pow(fabs(sv), "   << zpow << ") + sv * "    << zpow << ";\n"
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * x;\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * y;\n"
@@ -2151,8 +2151,8 @@ public:
 			case 2://Box.
 				scale = Clamp<T>(rs, 0, T(0.9)) + T(0.1);
 				denom = 1 / scale;
-				helper.Out.x = m_Weight * Lerp<T>(helper.In.x, floor(helper.In.x * denom) + scale * ax, m_MulX * rs) + m_MulX * pow(ax, m_BoxPow) * rs * denom;
-				helper.Out.y = m_Weight * Lerp<T>(helper.In.y, floor(helper.In.y * denom) + scale * ay, m_MulY * rs) + m_MulY * pow(ay, m_BoxPow) * rs * denom;
+				helper.Out.x = m_Weight * Lerp<T>(helper.In.x, floor(helper.In.x * denom) + scale * ax, m_MulX * rs) + m_MulX * pow(ax, m_BoxPow) * rs * denom;//m_BoxPow should be an integer value held in T,
+				helper.Out.y = m_Weight * Lerp<T>(helper.In.y, floor(helper.In.y * denom) + scale * ay, m_MulY * rs) + m_MulY * pow(ay, m_BoxPow) * rs * denom;//so fabs() shouldn't be necessary.
 				helper.Out.z = m_Weight * Lerp<T>(helper.In.z, floor(helper.In.z * denom) + scale * az, m_MulZ * rs) + m_MulZ * pow(az, m_BoxPow) * rs * denom;
 				break;
 		}

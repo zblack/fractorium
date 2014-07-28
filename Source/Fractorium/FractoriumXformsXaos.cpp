@@ -136,7 +136,7 @@ void Fractorium::OnXaosFromToToggled(bool checked)
 void Fractorium::FillXaosTable()
 {
 	int spinHeight = 20;
-
+	QWidget* w;
 	ui.XaosTable->setRowCount(m_Controller->XformCount());//This will grow or shrink the number of rows and call the destructor for previous DoubleSpinBoxes.
 
 	for (int i = 0; i < m_Controller->XformCount(); i++)
@@ -150,7 +150,16 @@ void Fractorium::FillXaosTable()
 		ui.XaosTable->setItem(i, 0, xformNameItem);
 		ui.XaosTable->setCellWidget(i, 1, spinBox);
 		connect(spinBox, SIGNAL(valueChanged(double)), this, SLOT(OnXaosChanged(double)), Qt::QueuedConnection);
+
+		if (i > 0)
+			w = SetTabOrder(this, w, spinBox);
+		else
+			w = spinBox;
 	}
+
+	w = SetTabOrder(this, w, ui.XaosToRadio);
+	w = SetTabOrder(this, w, ui.XaosFromRadio);
+	w = SetTabOrder(this, w, ui.ClearXaosButton);
 }
 
 /// <summary>

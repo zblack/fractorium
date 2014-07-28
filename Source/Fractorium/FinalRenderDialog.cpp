@@ -119,6 +119,38 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 
 	s.setHeight(min(s.height(), (int)((double)desktopHeight * 0.90)));
 	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, qApp->desktop()->availableGeometry()));
+
+	QWidget* w = SetTabOrder(this, ui.FinalRenderEarlyClipCheckBox, ui.FinalRenderYAxisUpCheckBox);
+
+	w = SetTabOrder(this, w, ui.FinalRenderTransparencyCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderOpenCLCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderDoublePrecisionCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderSaveXmlCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderDoAllCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderDoSequenceCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderKeepAspectCheckBox);
+	w = SetTabOrder(this, w, ui.FinalRenderScaleNoneRadioButton);
+	w = SetTabOrder(this, w, ui.FinalRenderScaleWidthRadioButton);
+	w = SetTabOrder(this, w, ui.FinalRenderScaleHeightRadioButton);
+	w = SetTabOrder(this, w, ui.FinalRenderJpgRadioButton);
+	w = SetTabOrder(this, w, ui.FinalRenderPngRadioButton);
+	w = SetTabOrder(this, w, ui.FinalRenderPlatformCombo);
+	w = SetTabOrder(this, w, ui.FinalRenderDeviceCombo);
+	w = SetTabOrder(this, w, ui.FinalRenderThreadCountSpin);
+	w = SetTabOrder(this, w, m_WidthSpin);
+	w = SetTabOrder(this, w, m_HeightSpin);
+	w = SetTabOrder(this, w, m_QualitySpin);
+	w = SetTabOrder(this, w, m_TemporalSamplesSpin);
+	w = SetTabOrder(this, w, m_SupersampleSpin);
+	w = SetTabOrder(this, w, tbw);
+	w = SetTabOrder(this, w, tbw->m_Button1);
+	w = SetTabOrder(this, w, tbw->m_Button2);
+	w = SetTabOrder(this, w, m_PrefixEdit);
+	w = SetTabOrder(this, w, m_SuffixEdit);
+	w = SetTabOrder(this, w, ui.FinalRenderTextOutput);
+	w = SetTabOrder(this, w, ui.StartRenderButton);
+	w = SetTabOrder(this, w, ui.StopRenderButton);
+	w = SetTabOrder(this, w, ui.CloseButton);
 }
 
 /// <summary>

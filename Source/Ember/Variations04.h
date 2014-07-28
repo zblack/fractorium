@@ -1231,7 +1231,7 @@ public:
 	{
 		T jun = Zeps(fabs(m_N));
 
-		T a = (atan2(helper.In.y, pow(helper.In.x, m_Sep)) + M_2PI * Floor<T>(rand.Frand01<T>() * m_AbsN)) / jun;
+		T a = (atan2(helper.In.y, pow(fabs(helper.In.x), m_Sep)) + M_2PI * Floor<T>(rand.Frand01<T>() * m_AbsN)) / jun;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn * m_A);
 
 		helper.Out.x = r * cos(a) + m_B;
@@ -1255,7 +1255,7 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t jun = Zeps(fabs(" << n << "));\n"
 		   << "\n"
-		   << "\t\treal_t a = (atan2(vIn.y, pow(vIn.x, " << sep << ")) + M_2PI * floor(MwcNext01(mwc) * " << absN << ")) / jun;\n"
+		   << "\t\treal_t a = (atan2(vIn.y, pow(fabs(vIn.x), " << sep << ")) + M_2PI * floor(MwcNext01(mwc) * " << absN << ")) / jun;\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] * pow(precalcSumSquares, " << cn << " * " << a << ");\n"
 		   << "\n"
 		   << "\t\tvOut.x = r * cos(a) + " << b << ";\n"
@@ -1709,8 +1709,8 @@ public:
 
 		pr1 = m_An2_1 * pow(fabs(mcosr), m_N2_1) + m_Bn3_1 * pow(fabs(msinr), m_N3_1);
 		pr2 = m_An2_2 * pow(fabs(mcosp), m_N2_2) + m_Bn3_2 * pow(fabs(msinp), m_N3_2);
-		r1 = pow(pr1, m_N1_1) + m_Spiral * rho1;
-		r2 = pow(pr2, m_N1_2);
+		r1 = pow(fabs(pr1), m_N1_1) + m_Spiral * rho1;
+		r2 = pow(fabs(pr2), m_N1_2);
 	
 		if ((int)m_Toroidmap == 1)
 		{
@@ -1784,8 +1784,8 @@ public:
 		   << "\n"
 		   << "\t\tpr1 = " << an2_1 << " * pow(fabs(mcosr), " << n2_1 << ") + " << bn3_1 << " * pow(fabs(msinr), " << n3_1 << ");\n"
 		   << "\t\tpr2 = " << an2_2 << " * pow(fabs(mcosp), " << n2_2 << ") + " << bn3_2 << " * pow(fabs(msinp), " << n3_2 << ");\n"
-		   << "\t\tr1 = pow(pr1, " << n1_1 << ") + " << spiral << " * rho1;\n"
-		   << "\t\tr2 = pow(pr2, " << n1_2 << ");\n"
+		   << "\t\tr1 = pow(fabs(pr1), " << n1_1 << ") + " << spiral << " * rho1;\n"
+		   << "\t\tr2 = pow(fabs(pr2), " << n1_2 << ");\n"
 		   << "\n"
 		   << "\t\tif ((int)" << toroid << " == 1)\n"
 		   << "\t\t{\n"
@@ -3083,12 +3083,12 @@ public:
 		return
 			"real_t Interference2Sine(real_t a, real_t b, real_t c, real_t p, real_t x)\n"
 			"{\n"
-			"	return a * pow(ClampGte(sin(b * x + c), EPS), p);\n"
+			"	return a * pow(fabs(sin(b * x + c)), p);\n"
 			"}\n"
 			"\n"
 			"real_t Interference2Tri(real_t a, real_t b, real_t c, real_t p, real_t x)\n"
 			"{\n"
-			"	return a * 2 * pow(ClampGte(asin(cos(b * x + c - M_PI_2)), EPS) * M_1_PI, p);\n"
+			"	return a * 2 * pow(fabs(asin(cos(b * x + c - M_PI_2))) * M_1_PI, p);\n"
 			"}\n"
 			"\n"
 			"real_t Interference2Squ(real_t a, real_t b, real_t c, real_t p, real_t x)\n"
@@ -3119,12 +3119,12 @@ protected:
 private:
 	inline static T Sine(T a, T b, T c, T p, T x)
 	{
-		return a * pow(ClampGte<T>(sin(b * x + c), EPS), p);//Original did not clamp.
+		return a * pow(fabs(sin(b * x + c)), p);//Original did not fabs().
 	}
 
 	inline static T Tri(T a, T b, T c, T p, T x)
 	{
-		return a * 2 * pow(ClampGte<T>(asin(cos(b * x + c - T(M_PI_2))), EPS) * T(M_1_PI), p);//Original did not clamp.
+		return a * 2 * pow(fabs(asin(cos(b * x + c - T(M_PI_2)))) * T(M_1_PI), p);//Original did not fabs().
 	}
 
 	inline static T Squ(T a, T b, T c, T p, T x)

@@ -477,12 +477,14 @@ void GLEmberController<T>::MousePress(QMouseEvent* e)
 				//The user has selected an xform by clicking on it, so update the main GUI by selecting this xform in the combo box.
 				m_Fractorium->CurrentXform(xformIndex);
 
-				//Update selected xform dot.
-				bool pre = m_Fractorium->ui.PreAffineGroupBox->isChecked();
-				bool post = m_Fractorium->ui.PostAffineGroupBox->isChecked();
-
-				DrawAffines(pre, post);
-				m_GL->update();
+				//Draw large yellow dot on select or drag.
+				m_GL->glPointSize(6.0f);
+				m_GL->glBegin(GL_POINTS);
+				m_GL->glColor4f(1.0f, 1.0f, 0.5f, 1.0f);
+				m_GL->glVertex2f(m_DragHandlePos.x, m_DragHandlePos.y);
+				m_GL->glEnd();
+				m_GL->glPointSize(1.0f);//Restore point size.
+				m_GL->repaint();
 			}
 			else//Nothing was selected.
 			{

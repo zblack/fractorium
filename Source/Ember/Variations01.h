@@ -3473,7 +3473,7 @@ public:
 	{
 		T wx = m_Weight * T(1.3029400317411197908970256609023);//This precision came from the original.
 		T y2 = helper.In.y * 2;
-		T r = wx * sqrt(fabs(helper.In.y * helper.In.x) / Zeps(helper.In.x * helper.In.x + y2 * y2));
+		T r = wx * sqrt(fabs(helper.In.y * helper.In.x) / Zeps(SQR(helper.In.x) + SQR(y2)));
    
 		helper.Out.x = r * helper.In.x;
 		helper.Out.y = r * y2;
@@ -3488,7 +3488,7 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t wx = xform->m_VariationWeights[" << varIndex << "] * 1.3029400317411197908970256609023;\n"
 		   << "\t\treal_t y2 = vIn.y * 2.0;\n"
-		   << "\t\treal_t r = wx * sqrt(fabs(vIn.y * vIn.x) / Zeps(vIn.x * vIn.x + y2 * y2));\n"
+		   << "\t\treal_t r = wx * sqrt(fabs(vIn.y * vIn.x) / Zeps(SQR(vIn.x) + SQR(y2)));\n"
 		   << "\n"
 		   << "\t\tvOut.x = r * vIn.x;\n"
 		   << "\t\tvOut.y = r * y2;\n"

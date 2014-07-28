@@ -1,3 +1,17 @@
+0.4.0.9 Beta 07/27/2014
+--User Changes
+	Properly set tab order on all controls.
+	Calculate and report iters/second in the final render dialog.
+	Immediately draw yellow dot on xform mouse down on previously unselected xform.
+
+--Bug Fixes
+	Fix GlynnSim1, GlynnSim2, GlynnSim3 and juliaNab by ensuring the first argument to pow() is >= 0.
+	Ensure OpenCL platform and device combo boxes in the final render dialog expand as needed.
+
+--Code Changes
+	Make VariationTreeSpinbox take its parent VariationTreeWidgetItem as a constructor argument. This makes SetupVariationTree() and VariationSpinBoxValueChanged() more efficient.
+	Make Interference2 and ho use fabs().
+
 0.4.0.8 Beta 07/26/2014
 --Bug Fixes
 	Fix falloff, falloff2, falloff3.

@@ -46,6 +46,12 @@ private:
 };
 
 /// <summary>
+/// VariationTreeWidgetItem and VariationTreeDoubleSpinBox need each other, but each can't include the other.
+/// So VariationTreeWidgetItem includes this file, and use a forward declaration here.
+/// </summary>
+template <typename T> class VariationTreeWidgetItem;
+
+/// <summary>
 /// Derivation for the double spin boxes that are in the
 /// variations tree.
 /// </summary>
@@ -57,13 +63,15 @@ public:
 	/// Constructor that passes agruments to the base and assigns the m_Param and m_Variation members.
 	/// </summary>
 	/// <param name="parent">The parent widget</param>
+	/// <param name="widgetItem">The widget item this spinner is contained in</param>
 	/// <param name="var">The variation this spinner is for</param>
 	/// <param name="param">The name of the parameter this is for</param>
 	/// <param name="height">The height of the spin box. Default: 16.</param>
 	/// <param name="step">The step used to increment/decrement the spin box when using the mouse wheel. Default: 0.05.</param>
-	explicit VariationTreeDoubleSpinBox(QWidget* parent, Variation<T>* var, string param, int height = 16, double step = 0.05)
+	explicit VariationTreeDoubleSpinBox(QWidget* parent, VariationTreeWidgetItem<T>* widgetItem, Variation<T>* var, string param, int height = 16, double step = 0.05)
 		: DoubleSpinBox(parent, height, step)
 	{
+		m_WidgetItem = widgetItem;
 		m_Param = param;
 		m_Variation = var;
 		setDecimals(3);
@@ -73,8 +81,10 @@ public:
 	bool IsParam() { return !m_Param.empty(); }
 	string ParamName() { return m_Param; }
 	Variation<T>* GetVariation() { return m_Variation; }
+	VariationTreeWidgetItem<T>* WidgetItem() { return m_WidgetItem; }
 
 private:
 	string m_Param;
 	Variation<T>* m_Variation;
+	VariationTreeWidgetItem<T>* m_WidgetItem;
 };

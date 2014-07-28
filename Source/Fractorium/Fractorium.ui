@@ -340,7 +340,7 @@
         <enum>QTabWidget::Triangular</enum>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>true</bool>
@@ -403,6 +403,9 @@
              </property>
              <item row="1" column="0">
               <widget class="QTreeWidget" name="LibraryTree">
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
                </property>
@@ -525,6 +528,9 @@
                  <height>22</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::Panel</enum>
                </property>
@@ -602,6 +608,9 @@
                  <width>16777215</width>
                  <height>22</height>
                 </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
                </property>
                <property name="frameShape">
                 <enum>QFrame::Panel</enum>
@@ -688,7 +697,7 @@
                 <enum>Qt::NoFocus</enum>
                </property>
                <property name="acceptDrops">
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="frameShape">
                 <enum>QFrame::Panel</enum>
@@ -704,6 +713,9 @@
                </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
                </property>
                <property name="alternatingRowColors">
                 <bool>false</bool>
@@ -923,6 +935,9 @@
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
+               </property>
                <property name="alternatingRowColors">
                 <bool>false</bool>
                </property>
@@ -1105,6 +1120,9 @@
                  <height>22</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::Panel</enum>
                </property>
@@ -1182,6 +1200,9 @@
                  <width>16777215</width>
                  <height>22</height>
                 </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::NoFocus</enum>
                </property>
                <property name="frameShape">
                 <enum>QFrame::Panel</enum>
@@ -1275,6 +1296,9 @@
                </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
                </property>
                <property name="alternatingRowColors">
                 <bool>false</bool>
@@ -1519,6 +1543,9 @@
                </property>
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
+               </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
                </property>
                <property name="alternatingRowColors">
                 <bool>false</bool>
@@ -1899,7 +1926,7 @@
             </font>
            </property>
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="autoFillBackground">
             <bool>false</bool>
@@ -1921,6 +1948,9 @@
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::DoubleClicked|QAbstractItemView::SelectedClicked</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
            </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>
@@ -2312,6 +2342,9 @@ SpinBox
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
+               </property>
                <property name="showDropIndicator" stdset="0">
                 <bool>false</bool>
                </property>
@@ -2498,6 +2531,9 @@ SpinBox
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
+               </property>
                <property name="selectionMode">
                 <enum>QAbstractItemView::NoSelection</enum>
                </property>
@@ -2600,6 +2636,9 @@ SpinBox
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
+               </property>
                <property name="selectionMode">
                 <enum>QAbstractItemView::NoSelection</enum>
                </property>
@@ -2674,6 +2713,9 @@ SpinBox
                  <height>16</height>
                 </size>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
                <property name="maximum">
                 <number>255</number>
                </property>
@@ -2739,8 +2781,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>118</width>
-                  <height>597</height>
+                  <width>238</width>
+                  <height>752</height>
                  </rect>
                 </property>
                 <property name="palette">
@@ -2881,6 +2923,9 @@ SpinBox
                       </property>
                       <property name="editTriggers">
                        <set>QAbstractItemView::NoEditTriggers</set>
+                      </property>
+                      <property name="tabKeyNavigation">
+                       <bool>false</bool>
                       </property>
                       <property name="selectionMode">
                        <enum>QAbstractItemView::NoSelection</enum>
@@ -3482,6 +3527,9 @@ SpinBox
                       </property>
                       <property name="editTriggers">
                        <set>QAbstractItemView::NoEditTriggers</set>
+                      </property>
+                      <property name="tabKeyNavigation">
+                       <bool>false</bool>
                       </property>
                       <property name="selectionMode">
                        <enum>QAbstractItemView::NoSelection</enum>
@@ -4352,6 +4400,9 @@ SpinBox
                <property name="editTriggers">
                 <set>QAbstractItemView::NoEditTriggers</set>
                </property>
+               <property name="tabKeyNavigation">
+                <bool>false</bool>
+               </property>
                <property name="showDropIndicator" stdset="0">
                 <bool>false</bool>
                </property>
@@ -4569,6 +4620,9 @@ SpinBox
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
            </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
+           </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>
            </property>
@@ -4661,7 +4715,7 @@ SpinBox
          <item row="2" column="0">
           <widget class="QTableWidget" name="PaletteListTable">
            <property name="focusPolicy">
-            <enum>Qt::NoFocus</enum>
+            <enum>Qt::StrongFocus</enum>
            </property>
            <property name="frameShape">
             <enum>QFrame::Panel</enum>
@@ -4677,6 +4731,9 @@ SpinBox
            </property>
            <property name="editTriggers">
             <set>QAbstractItemView::NoEditTriggers</set>
+           </property>
+           <property name="tabKeyNavigation">
+            <bool>false</bool>
            </property>
            <property name="selectionMode">
             <enum>QAbstractItemView::NoSelection</enum>
@@ -4943,6 +5000,9 @@ SpinBox
                  <width>16777215</width>
                  <height>250</height>
                 </size>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
                </property>
                <property name="autoFillBackground">
                 <bool>false</bool>
@@ -5250,6 +5310,9 @@ SpinBox
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
+               </property>
                <property name="title">
                 <string>Rendering</string>
                </property>
@@ -5271,8 +5334,17 @@ SpinBox
                 </property>
                 <item>
                  <widget class="QTextEdit" name="InfoRenderingTextEdit">
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
+                  <property name="tabChangesFocus">
+                   <bool>true</bool>
+                  </property>
                   <property name="readOnly">
                    <bool>true</bool>
+                  </property>
+                  <property name="textInteractionFlags">
+                   <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                   </property>
                  </widget>
                 </item>
@@ -5286,6 +5358,9 @@ SpinBox
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="focusPolicy">
+                <enum>Qt::StrongFocus</enum>
                </property>
                <property name="title">
                 <string>File Opening</string>
@@ -5308,6 +5383,9 @@ SpinBox
                 </property>
                 <item>
                  <widget class="QTextEdit" name="InfoFileOpeningTextEdit">
+                  <property name="focusPolicy">
+                   <enum>Qt::StrongFocus</enum>
+                  </property>
                   <property name="readOnly">
                    <bool>true</bool>
                   </property>
@@ -5644,6 +5722,86 @@ SpinBox
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>DockWidget</tabstop>
+  <tabstop>SaveCurrentAsXmlButton</tabstop>
+  <tabstop>SaveEntireFileAsXmlButton</tabstop>
+  <tabstop>SaveCurrentToOpenedFileButton</tabstop>
+  <tabstop>ParamsTabWidget</tabstop>
+  <tabstop>LibraryTree</tabstop>
+  <tabstop>scrollArea</tabstop>
+  <tabstop>CurrentXformCombo</tabstop>
+  <tabstop>AddXformButton</tabstop>
+  <tabstop>DuplicateXformButton</tabstop>
+  <tabstop>ClearXformButton</tabstop>
+  <tabstop>DeleteXformButton</tabstop>
+  <tabstop>AddFinalXformButton</tabstop>
+  <tabstop>XformWeightNameTable</tabstop>
+  <tabstop>XformsTabWidget</tabstop>
+  <tabstop>XformColorIndexTable</tabstop>
+  <tabstop>XformColorScroll</tabstop>
+  <tabstop>XformColorValuesTable</tabstop>
+  <tabstop>SoloXformCheckBox</tabstop>
+  <tabstop>scrollArea_3</tabstop>
+  <tabstop>PreAffineTable</tabstop>
+  <tabstop>PreFlipVerticalButton</tabstop>
+  <tabstop>PreResetButton</tabstop>
+  <tabstop>PreFlipHorizontalButton</tabstop>
+  <tabstop>PreRotate90CcButton</tabstop>
+  <tabstop>PreRotateCcButton</tabstop>
+  <tabstop>PreRotateCombo</tabstop>
+  <tabstop>PreRotateCButton</tabstop>
+  <tabstop>PreRotate90CButton</tabstop>
+  <tabstop>PreMoveUpButton</tabstop>
+  <tabstop>PreMoveDownButton</tabstop>
+  <tabstop>PreMoveCombo</tabstop>
+  <tabstop>PreMoveLeftButton</tabstop>
+  <tabstop>PreMoveRightButton</tabstop>
+  <tabstop>PreScaleUpButton</tabstop>
+  <tabstop>PreScaleCombo</tabstop>
+  <tabstop>PreScaleDownButton</tabstop>
+  <tabstop>ShowPreAffineCurrentRadio</tabstop>
+  <tabstop>ShowPreAffineAllRadio</tabstop>
+  <tabstop>PostAffineGroupBox</tabstop>
+  <tabstop>PostAffineTable</tabstop>
+  <tabstop>PostFlipVerticalButton</tabstop>
+  <tabstop>PostResetButton</tabstop>
+  <tabstop>PostFlipHorizontalButton</tabstop>
+  <tabstop>PostRotate90CcButton</tabstop>
+  <tabstop>PostRotateCcButton</tabstop>
+  <tabstop>PostRotateCombo</tabstop>
+  <tabstop>PostRotateCButton</tabstop>
+  <tabstop>PostRotate90CButton</tabstop>
+  <tabstop>PostMoveUpButton</tabstop>
+  <tabstop>PostMoveDownButton</tabstop>
+  <tabstop>PostMoveCombo</tabstop>
+  <tabstop>PostMoveLeftButton</tabstop>
+  <tabstop>PostMoveRightButton</tabstop>
+  <tabstop>PostScaleUpButton</tabstop>
+  <tabstop>PostScaleCombo</tabstop>
+  <tabstop>PostScaleDownButton</tabstop>
+  <tabstop>ShowPostAffineCurrentRadio</tabstop>
+  <tabstop>ShowPostAffineAllRadio</tabstop>
+  <tabstop>LocalPivotRadio</tabstop>
+  <tabstop>WorldPivotRadio</tabstop>
+  <tabstop>VariationsFilterLineEdit</tabstop>
+  <tabstop>VariationsFilterClearButton</tabstop>
+  <tabstop>VariationsTree</tabstop>
+  <tabstop>XaosTable</tabstop>
+  <tabstop>PaletteAdjustTable</tabstop>
+  <tabstop>PaletteListTable</tabstop>
+  <tabstop>scrollArea_5</tabstop>
+  <tabstop>InfoFileOpeningGroupBox</tabstop>
+  <tabstop>InfoFileOpeningTextEdit</tabstop>
+  <tabstop>InfoRenderingGroupBox</tabstop>
+  <tabstop>InfoRenderingTextEdit</tabstop>
+  <tabstop>PreAffineGroupBox</tabstop>
+  <tabstop>scrollArea_4</tabstop>
+  <tabstop>ClearXaosButton</tabstop>
+  <tabstop>InfoBoundsGroupBox</tabstop>
+  <tabstop>XaosFromRadio</tabstop>
+  <tabstop>XaosToRadio</tabstop>
+ </tabstops>
  <resources>
   <include location="Fractorium.qrc"/>
  </resources>

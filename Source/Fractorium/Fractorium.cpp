@@ -144,6 +144,8 @@ Fractorium::Fractorium(QWidget* parent)
 	ui.GLDisplay->SetMainWindow(this);
 	SetCoordinateStatus(0, 0, 0, 0);
 
+	SetTabOrders();
+
 	//At this point, everything has been setup except the renderer. Shortly after
 	//this constructor exits, GLWidget::initializeGL() will create the initial flock and start the rendering timer
 	//which executes whenever the program is idle. Upon starting the timer, the renderer
@@ -525,6 +527,134 @@ QString Fractorium::SetupSaveFolderDialog()
 		filename = m_FolderDialog->selectedFiles().value(0);
 
 	return filename;
+}
+
+/// <summary>
+/// Explicitly set the tab orders for the entire program.
+/// Qt has a facility to do this, but it fails when using custom widgets in
+/// tables, so it must be done manually here.
+/// This list must be kept in sync with any UI changes.
+/// </summary>
+void Fractorium::SetTabOrders()
+{
+	QWidget* w = SetTabOrder(this, ui.ColorTable, m_BrightnessSpin);//Flame.
+	
+	w = SetTabOrder(this, w, m_GammaSpin);
+	w = SetTabOrder(this, w, m_GammaThresholdSpin);
+	w = SetTabOrder(this, w, m_VibrancySpin);
+	w = SetTabOrder(this, w, m_HighlightSpin);
+	w = SetTabOrder(this, w, m_BackgroundColorButton);
+	w = SetTabOrder(this, w, m_PaletteModeCombo);
+	
+	w = SetTabOrder(this, w, m_CenterXSpin);
+	w = SetTabOrder(this, w, m_CenterYSpin);
+	w = SetTabOrder(this, w, m_ScaleSpin);
+	w = SetTabOrder(this, w, m_ZoomSpin);
+	w = SetTabOrder(this, w, m_RotateSpin);
+	w = SetTabOrder(this, w, m_ZPosSpin);
+	w = SetTabOrder(this, w, m_PerspectiveSpin);
+	w = SetTabOrder(this, w, m_PitchSpin);
+	w = SetTabOrder(this, w, m_YawSpin);
+	w = SetTabOrder(this, w, m_DepthBlurSpin);
+	
+	w = SetTabOrder(this, w, m_SpatialFilterWidthSpin);
+	w = SetTabOrder(this, w, m_SpatialFilterTypeCombo);
+	w = SetTabOrder(this, w, m_TemporalFilterTypeCombo);
+	w = SetTabOrder(this, w, m_DEFilterMinRadiusSpin);
+	w = SetTabOrder(this, w, m_DEFilterMaxRadiusSpin);
+	w = SetTabOrder(this, w, m_DECurveSpin);
+	
+	w = SetTabOrder(this, w, m_PassesSpin);
+	w = SetTabOrder(this, w, m_TemporalSamplesSpin);
+	w = SetTabOrder(this, w, m_QualitySpin);
+	w = SetTabOrder(this, w, m_SupersampleSpin);
+	w = SetTabOrder(this, w, m_AffineInterpTypeCombo);
+	w = SetTabOrder(this, w, m_InterpTypeCombo);
+	
+	w = SetTabOrder(this, ui.CurrentXformCombo, ui.AddXformButton);//Xforms.
+	w = SetTabOrder(this, w, ui.DuplicateXformButton);
+	w = SetTabOrder(this, w, ui.ClearXformButton);
+	w = SetTabOrder(this, w, ui.DeleteXformButton);
+	w = SetTabOrder(this, w, ui.AddFinalXformButton);
+	w = SetTabOrder(this, w, m_XformWeightSpin);
+	w = SetTabOrder(this, w, m_XformWeightSpinnerButtonWidget->m_Button);
+
+	w = SetTabOrder(this, m_XformColorIndexSpin, ui.XformColorScroll);//Xforms color.
+	w = SetTabOrder(this, w, m_XformColorSpeedSpin);
+	w = SetTabOrder(this, w, m_XformOpacitySpin);
+	w = SetTabOrder(this, w, m_XformDirectColorSpin);
+	w = SetTabOrder(this, w, ui.SoloXformCheckBox);
+
+	w = SetTabOrder(this, ui.PreAffineGroupBox, m_PreX1Spin);//Xforms affine.
+	w = SetTabOrder(this, w, m_PreX2Spin);
+	w = SetTabOrder(this, w, m_PreY1Spin);
+	w = SetTabOrder(this, w, m_PreY2Spin);
+	w = SetTabOrder(this, w, m_PreO1Spin);
+	w = SetTabOrder(this, w, m_PreO2Spin);
+	w = SetTabOrder(this, w, ui.PreFlipVerticalButton);
+	w = SetTabOrder(this, w, ui.PreResetButton);
+	w = SetTabOrder(this, w, ui.PreFlipHorizontalButton);
+	w = SetTabOrder(this, w, ui.PreRotate90CcButton);
+	w = SetTabOrder(this, w, ui.PreRotateCcButton);
+	w = SetTabOrder(this, w, ui.PreRotateCombo);
+	w = SetTabOrder(this, w, ui.PreRotateCButton);
+	w = SetTabOrder(this, w, ui.PreRotate90CButton);
+	w = SetTabOrder(this, w, ui.PreMoveUpButton);
+	w = SetTabOrder(this, w, ui.PreMoveDownButton);
+	w = SetTabOrder(this, w, ui.PreMoveCombo);
+	w = SetTabOrder(this, w, ui.PreMoveLeftButton);
+	w = SetTabOrder(this, w, ui.PreMoveRightButton);
+	w = SetTabOrder(this, w, ui.PreScaleUpButton);
+	w = SetTabOrder(this, w, ui.PreScaleCombo);
+	w = SetTabOrder(this, w, ui.PreScaleDownButton);
+	w = SetTabOrder(this, w, ui.ShowPreAffineCurrentRadio);
+	w = SetTabOrder(this, w, ui.ShowPreAffineAllRadio);
+	w = SetTabOrder(this, w, ui.PostAffineGroupBox);
+	w = SetTabOrder(this, w, m_PostX1Spin);
+	w = SetTabOrder(this, w, m_PostX2Spin);
+	w = SetTabOrder(this, w, m_PostY1Spin);
+	w = SetTabOrder(this, w, m_PostY2Spin);
+	w = SetTabOrder(this, w, m_PostO1Spin);
+	w = SetTabOrder(this, w, m_PostO2Spin);
+	w = SetTabOrder(this, w, ui.PostFlipVerticalButton);
+	w = SetTabOrder(this, w, ui.PostResetButton);
+	w = SetTabOrder(this, w, ui.PostFlipHorizontalButton);
+	w = SetTabOrder(this, w, ui.PostRotate90CcButton);
+	w = SetTabOrder(this, w, ui.PostRotateCcButton);
+	w = SetTabOrder(this, w, ui.PostRotateCombo);
+	w = SetTabOrder(this, w, ui.PostRotateCButton);
+	w = SetTabOrder(this, w, ui.PostRotate90CButton);
+	w = SetTabOrder(this, w, ui.PostMoveUpButton);
+	w = SetTabOrder(this, w, ui.PostMoveDownButton);
+	w = SetTabOrder(this, w, ui.PostMoveCombo);
+	w = SetTabOrder(this, w, ui.PostMoveLeftButton);
+	w = SetTabOrder(this, w, ui.PostMoveRightButton);
+	w = SetTabOrder(this, w, ui.PostScaleUpButton);
+	w = SetTabOrder(this, w, ui.PostScaleCombo);
+	w = SetTabOrder(this, w, ui.PostScaleDownButton);
+	w = SetTabOrder(this, w, ui.ShowPostAffineCurrentRadio);
+	w = SetTabOrder(this, w, ui.ShowPostAffineAllRadio);
+	w = SetTabOrder(this, w, ui.LocalPivotRadio);
+	w = SetTabOrder(this, w, ui.WorldPivotRadio);
+
+	w = SetTabOrder(this, ui.VariationsFilterLineEdit, ui.VariationsFilterClearButton);//Xforms variation.
+	w = SetTabOrder(this, w, ui.VariationsTree);
+	
+	//Xforms xaos is done dynamically every time.
+
+	w = SetTabOrder(this, m_PaletteHueSpin, m_PaletteContrastSpin);//Palette.
+	w = SetTabOrder(this, w, m_PaletteSaturationSpin);
+	w = SetTabOrder(this, w, m_PaletteBlurSpin);
+	w = SetTabOrder(this, w, m_PaletteBrightnessSpin);
+	w = SetTabOrder(this, w, m_PaletteFrequencySpin);
+	w = SetTabOrder(this, w, ui.PaletteListTable);
+
+	w = SetTabOrder(this, ui.InfoBoundsGroupBox, ui.InfoBoundsFrame);//Info.
+	w = SetTabOrder(this, w, ui.InfoBoundsTable);
+	w = SetTabOrder(this, w, ui.InfoFileOpeningGroupBox);
+	w = SetTabOrder(this, w, ui.InfoFileOpeningTextEdit);
+	w = SetTabOrder(this, w, ui.InfoRenderingGroupBox);
+	w = SetTabOrder(this, w, ui.InfoRenderingTextEdit);
 }
 
 /// <summary>

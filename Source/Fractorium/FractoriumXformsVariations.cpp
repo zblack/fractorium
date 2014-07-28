@@ -44,8 +44,8 @@ void FractoriumEmberController<T>::SetupVariationTree()
 		ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var);
 
 		//First add the variation, with a spinner for its weight.
-		VariationTreeWidgetItem<T>* item = new VariationTreeWidgetItem<T>(tree);
-		VariationTreeDoubleSpinBox<T>* spinBox = new VariationTreeDoubleSpinBox<T>(tree, parVar ? parVar : var, "");
+		VariationTreeWidgetItem<T>* item = new VariationTreeWidgetItem<T>(var->VariationId(), tree);
+		VariationTreeDoubleSpinBox<T>* spinBox = new VariationTreeDoubleSpinBox<T>(tree, item, parVar ? parVar : var, "");
 
 		item->setText(0, QString::fromStdString(var->Name()));
 		item->setSizeHint(0, hint0);
@@ -68,8 +68,8 @@ void FractoriumEmberController<T>::SetupVariationTree()
 			{
 				if (!params[j].IsPrecalc())
 				{
-					VariationTreeWidgetItem<T>* paramWidget = new VariationTreeWidgetItem<T>(item);
-					VariationTreeDoubleSpinBox<T>* varSpinBox = new VariationTreeDoubleSpinBox<T>(tree, parVar, params[j].Name());
+					VariationTreeWidgetItem<T>* paramWidget = new VariationTreeWidgetItem<T>(var->VariationId(), item);
+					VariationTreeDoubleSpinBox<T>* varSpinBox = new VariationTreeDoubleSpinBox<T>(tree, paramWidget, parVar, params[j].Name());
 
 					paramWidget->setText(0, params[j].Name().c_str());
 					paramWidget->setSizeHint(0, hint0);
@@ -144,7 +144,7 @@ void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)
 		Variation<T>* var = sender->GetVariation();//The variation attached to the sender, for reference only.
 		ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var);//The parametric cast of that variation.
 		Variation<T>* xformVar = xform->GetVariationById(var->VariationId());//The corresponding variation in the currently selected xform.
-		QList<QTreeWidgetItem*> items = tree->findItems(QString::fromStdString(var->Name()), Qt::MatchExactly);
+		VariationTreeWidgetItem<T>* widgetItem = sender->WidgetItem();
 		bool isParam = parVar && sender->IsParam();
 
 		if (isParam)
@@ -167,7 +167,7 @@ void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)
 				if (xformVar)
 					xform->DeleteVariationById(var->VariationId());
 
-				items[0]->setBackgroundColor(0, QColor(255, 255, 255));//Ensure background is always white if weight goes to zero.
+				widgetItem->setBackgroundColor(0, QColor(255, 255, 255));//Ensure background is always white if weight goes to zero.
 			}
 			else
 			{
@@ -183,7 +183,7 @@ void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)
 
 					newVar->m_Weight = d;
 					xform->AddVariation(newVar);
-					items[0]->setBackgroundColor(0, QColor(200, 200, 200));//Set background to gray when a variation has non-zero weight in this xform.
+					widgetItem->setBackgroundColor(0, QColor(200, 200, 200));//Set background to gray when a variation has non-zero weight in this xform.
 
 					//If they've added a new parametric variation, then grab the values currently in the spinners
 					//for the child parameters and assign them to the newly added variation.
@@ -191,19 +191,16 @@ void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)
 					{
 						ParametricVariation<T>* newParVar = dynamic_cast<ParametricVariation<T>*>(newVar);
 					
-						if (!items.empty())//Get the tree widget for the parent variation.
+						for (int i = 0; i < widgetItem->childCount(); i++)//Iterate through all of the children, which will be the params.
 						{
-							for (int i = 0; i < items[0]->childCount(); i++)//Iterate through all of the children, which will be the params.
+							QTreeWidgetItem* childItem = widgetItem->child(i);//Get the child.
+							QWidget* itemWidget = tree->itemWidget(childItem, 1);//Get the widget for the child.
+
+							if (VariationTreeDoubleSpinBox<T>* spinBox = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget))//Cast the widget to the VariationTreeDoubleSpinBox type.
 							{
-								QTreeWidgetItem* childItem = items[0]->child(i);//Get the child.
-								QWidget* itemWidget = tree->itemWidget(childItem, 1);//Get the widget for the child.
+								string s = childItem->text(0).toStdString();//Use the name of the child, and the value of the spinner widget to assign the param.
 
-								if (VariationTreeDoubleSpinBox<T>* spinBox = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget))//Cast the widget to the VariationTreeDoubleSpinBox type.
-								{
-									string s = childItem->text(0).toStdString();//Use the name of the child, and the value of the spinner widget to assign the param.
-
-									newParVar->SetParamVal(s.c_str(), spinBox->value());
-								}
+								newParVar->SetParamVal(s.c_str(), spinBox->value());
 							}
 						}
 					}
@@ -231,14 +228,12 @@ void FractoriumEmberController<T>::FillVariationTreeWithXform(Xform<T>* xform)
 
 	for (unsigned int i = 0; i < tree->topLevelItemCount(); i++)
 	{
-		QTreeWidgetItem* item = tree->topLevelItem(i);
-		string varName = item->text(0).toStdString();
-		Variation<T>* var = xform->GetVariationByName(varName);//See if this variation in the tree was contained in the xform.
+		VariationTreeWidgetItem<T>* item = dynamic_cast<VariationTreeWidgetItem<T>*>(tree->topLevelItem(i));
+		Variation<T>* var = xform->GetVariationById(item->Id());//See if this variation in the tree was contained in the xform.
 		ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var);//Attempt cast to parametric variation for later.
-		ParametricVariation<T>* origParVar = dynamic_cast<ParametricVariation<T>*>(m_VariationList.GetVariation(varName));
-		QWidget* itemWidget = tree->itemWidget(item, 1);//Get the widget for the item.
+		ParametricVariation<T>* origParVar = dynamic_cast<ParametricVariation<T>*>(m_VariationList.GetVariation(item->Id()));
 
-		if (VariationTreeDoubleSpinBox<T>* spinBox = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget))//Cast the widget to the VariationTreeDoubleSpinBox type.
+		if (VariationTreeDoubleSpinBox<T>* spinBox = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(tree->itemWidget(item, 1)))//Get the widget for the item, and cast the widget to the VariationTreeDoubleSpinBox type.
 		{
 			spinBox->SetValueStealth(var ? var->m_Weight : 0);//If the variation was present, set the spin box to its weight, else zero.
 			item->setBackgroundColor(0, var ? QColor(200, 200, 200) : QColor(255, 255, 255));//Ensure background is always white if the value goes to zero, else gray if var present.

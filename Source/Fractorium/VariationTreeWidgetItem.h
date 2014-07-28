@@ -21,10 +21,12 @@ public:
 	/// Constructor that takes a pointer to a QTreeWidget as the parent
 	/// and passes it to the base.
 	/// </summary>
+	/// <param name="id">The ID of the variation this widget will represent</param>
 	/// <param name="parent">The parent widget</param>
-	VariationTreeWidgetItem(QTreeWidget* parent = 0)
+	VariationTreeWidgetItem(eVariationId id, QTreeWidget* parent = 0)
 		: QTreeWidgetItem(parent)
 	{
+		m_Id = id;
 	}
 
 	/// <summary>
@@ -32,13 +34,16 @@ public:
 	/// and passes it to the base.
 	/// This is used for making sub items for parametric variation parameters.
 	/// </summary>
+	/// <param name="id">The ID of the variation this widget will represent</param>
 	/// <param name="parent">The parent widget</param>
-	VariationTreeWidgetItem(QTreeWidgetItem* parent = 0)
+	VariationTreeWidgetItem(eVariationId id, QTreeWidgetItem* parent = 0)
 		: QTreeWidgetItem(parent)
 	{
+		m_Id = id;
 	}
 
 	virtual ~VariationTreeWidgetItem() { }
+	eVariationId Id() { return m_Id; }
 
 private:
 	/// <summary>
@@ -86,4 +91,6 @@ private:
 		
 		return false;
 	}
+
+	eVariationId m_Id;
 };

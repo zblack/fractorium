@@ -52,6 +52,9 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="focusPolicy">
+      <enum>Qt::NoFocus</enum>
+     </property>
      <property name="tabShape">
       <enum>QTabWidget::Triangular</enum>
      </property>
@@ -728,6 +731,26 @@ in interactive mode for each mouse movement</string>
    <header>TableWidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>EarlyClipCheckBox</tabstop>
+  <tabstop>YAxisUpCheckBox</tabstop>
+  <tabstop>TransparencyCheckBox</tabstop>
+  <tabstop>OpenCLCheckBox</tabstop>
+  <tabstop>DoublePrecisionCheckBox</tabstop>
+  <tabstop>ShowAllXformsCheckBox</tabstop>
+  <tabstop>PlatformCombo</tabstop>
+  <tabstop>DeviceCombo</tabstop>
+  <tabstop>ThreadCountSpin</tabstop>
+  <tabstop>CpuSubBatchSpin</tabstop>
+  <tabstop>OpenCLSubBatchSpin</tabstop>
+  <tabstop>CpuFilteringLogRadioButton</tabstop>
+  <tabstop>CpuFilteringDERadioButton</tabstop>
+  <tabstop>OpenCLFilteringLogRadioButton</tabstop>
+  <tabstop>OpenCLFilteringDERadioButton</tabstop>
+  <tabstop>OptionsXmlSavingTable</tabstop>
+  <tabstop>OptionsIdentityTable</tabstop>
+  <tabstop>OptionsButtonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
