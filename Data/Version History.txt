@@ -1,3 +1,7 @@
+0.4.0.9 Beta 07/29/2014
+--Bug Fixes
+	Final render dialog didn't create the renderer properly on first run when more than one platform was present.
+
 0.4.0.9 Beta 07/27/2014
 --User Changes
 	Properly set tab order on all controls.
