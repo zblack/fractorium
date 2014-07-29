@@ -37,3 +37,4 @@ Builds/MSVC/VS2010/Obj/EmberGenome/x64/Debug/EmberGenome_manifest.rc
 Builds/MSVC/VS2010/Obj/EmberAnimate/x64/Debug/EmberAnimate_manifest.rc
 Builds/MSVC/VS2010/Obj/Ember/x64/Debug/Ember_manifest.rc
 Bin/x64/Release/testallvarsout.flame
+Data/~$Bench.xlsx

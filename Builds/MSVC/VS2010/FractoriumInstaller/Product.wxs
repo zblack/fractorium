@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <?define ProductVersion="0.4.0.9" ?>
+  <?define ProductVersion="0.4.1.0" ?>
   <?define ProductName="Fractorium Beta $(var.ProductVersion) ($(var.GpuType))" ?>
   <?define UpgradeCode="{4714cd15-bfba-44f6-8059-9e1466ebfa6e}"?>
   <?define Manufacturer="Fractorium"?>
@@ -13,7 +13,7 @@
   <!--
   Change this for every release.
   -->
-  <?define ProductCode="{FCD71232-4553-4224-9328-A1B039A5A773}"?>
+  <?define ProductCode="{11E92742-0C6F-4FBB-9F24-5B94984AFCC9}"?>
   
   <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
     <Package

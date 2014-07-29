@@ -436,17 +436,12 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 
 	CancelRender();
 
-	if (m_Renderer.get() &&
-		m_Renderer->Ok() &&
-		m_Renderer->RendererType() == renderType &&
-		m_Platform == platform &&
-		m_Device == device &&
-		m_Shared == shared)
-	{
-		return ok;
-	}
-
-	if (!m_Renderer.get() || (m_Renderer->RendererType() != renderType))
+	if (!m_Renderer.get() ||
+		!m_Renderer->Ok() ||
+		m_Renderer->RendererType() != renderType ||
+		m_Platform != platform ||
+		m_Device != device ||
+		m_Shared != shared)
 	{
 		EmberReport emberReport;
 		vector<string> errorReport;
