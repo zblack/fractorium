@@ -49,7 +49,7 @@ RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool share
 	m_PaletteFormat.image_channel_order = CL_RGBA;
 	m_PaletteFormat.image_channel_data_type = CL_FLOAT;
 	m_FinalFormat.image_channel_order = CL_RGBA;
-	m_FinalFormat.image_channel_data_type = CL_UNORM_INT8;//Change if this ever supports 2BPP outputs for PNG.
+	m_FinalFormat.image_channel_data_type = CL_UNORM_INT8;//Change if this ever supports 2BPC outputs for PNG.
 
 	Init(platform, device, shared, outputTexID);//Init OpenCL upon construction and create programs that will not change.
 }

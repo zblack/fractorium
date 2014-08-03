@@ -143,9 +143,12 @@ public:
 
 		for (unsigned int i = 0; i < ember.XformCount(); i++)
 		{
-			Xform<T> xform = *ember.GetXform(i);//Will call assignment operator to convert between types T and U.
+			if (Xform<U>* p = ember.GetXform(i))
+			{
+				Xform<T> xform = *p;//Will call assignment operator to convert between types T and U.
 
-			AddXform(xform);
+				AddXform(xform);
+			}
 		}
 
 		Xform<T> finalXform = *ember.FinalXform();//Will call assignment operator to convert between types T and U.

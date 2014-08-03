@@ -23,7 +23,7 @@ public:
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
 		T r = helper.m_PrecalcSumSquares;
-		T r4_1 = r / 4 + 1;
+		T r4_1 = Zeps(r / 4 + 1);
 		r4_1 = m_Weight / r4_1;
 
 		helper.Out.x = r4_1 * helper.In.x;
@@ -49,7 +49,7 @@ public:
 
 		ss << "\t{\n"
 		   << "\t\treal_t r = precalcSumSquares;\n"
-		   << "\t\treal_t r4_1 = r / 4 + 1;\n"
+		   << "\t\treal_t r4_1 = Zeps(r / 4 + 1);\n"
 		   << "\t\tr4_1 = xform->m_VariationWeights[" << varIndex << "] / r4_1;\n"
 		   << "\n"
 		   << "\t\tvOut.x = r4_1 * vIn.x;\n"

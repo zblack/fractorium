@@ -171,9 +171,12 @@ public:
 		for (unsigned int i = 0; i < xform.TotalVariationCount(); i++)
 		{
 			Variation<T>* var = NULL;
-
-			xform.GetVariation(i)->Copy(var);//Will convert from type U to type T.
-			AddVariation(var);//Will internally call SetPrecalcFlags().
+			
+			if (Variation<U>* varOrig = xform.GetVariation(i))
+			{
+				varOrig->Copy(var);//Will convert from type U to type T.
+				AddVariation(var);//Will internally call SetPrecalcFlags().
+			}
 		}
 
 		if (TotalVariationCount() == 0)

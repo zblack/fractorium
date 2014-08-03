@@ -1,4 +1,15 @@
-0.4.0.9 Beta 07/29/2014
+0.4.1.1 Beta 08/03/2014
+--Bug Fixes
+	Spatial filter would not be correctly recreated on subsequent runs of differing supersample values during final render.
+	Fix DCBubble, Funnel, SphericalN, 
+	Wrong logic with some usage of DO_DOUBLE. Only relevant for testing.
+
+--Code Changes
+	Make density, spatial and temporal filters preserve the values they were created with. This helps in determining when a new instance is needed.
+	Better NULL checks when copying embers and xforms.
+	Rename members in FractoriumEmberControllerBase.h to omit duplicating the members declared in the base.
+	
+0.4.1.0 Beta 07/29/2014
 --Bug Fixes
 	Final render dialog didn't create the renderer properly on first run when more than one platform was present.
 

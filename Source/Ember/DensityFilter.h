@@ -312,6 +312,7 @@ public:
 	inline T MinRad() const { return m_MinRad; }
 	inline T MaxRad() const { return m_MaxRad; }
 	inline T Curve() const { return m_Curve; }
+	inline unsigned int Supersample() const { return m_Supersample; }
 	inline unsigned int KernelSize() const { return m_KernelSize; }
 	inline unsigned int MaxFilterIndex() const { return m_MaxFilterIndex; }
 	inline unsigned int MaxFilteredCounts() const { return m_MaxFilteredCounts; }

@@ -263,12 +263,12 @@ bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 	newAlloc = false;
 
 	//Use intelligent testing so it isn't created every time a new ember is passed in.
-	if ((m_TemporalFilter.get() == NULL) ||
-		(m_Ember.m_Passes != m_LastEmber.m_Passes) ||
-		(m_Ember.m_TemporalSamples != m_LastEmber.m_TemporalSamples) ||
+	if ((!m_TemporalFilter.get()) ||
+		(m_Ember.m_Passes != m_TemporalFilter->Passes()) ||
+		(m_Ember.m_TemporalSamples != m_TemporalFilter->TemporalSamples()) ||
 		(m_Ember.m_TemporalFilterType != m_TemporalFilter->FilterType()) ||
-		(m_Ember.m_TemporalFilterWidth != m_LastEmber.m_TemporalFilterWidth) ||
-		(m_Ember.m_TemporalFilterExp != m_LastEmber.m_TemporalFilterExp))
+		(m_Ember.m_TemporalFilterWidth != m_TemporalFilter->FilterWidth()) ||
+		(m_Ember.m_TemporalFilterExp != m_TemporalFilter->FilterExp()))
 	{
 		m_TemporalFilter = auto_ptr<TemporalFilter<T>>(
 							TemporalFilterCreator<T>::Create(m_Ember.m_TemporalFilterType, m_Ember.m_Passes, m_Ember.m_TemporalSamples, m_Ember.m_TemporalFilterWidth, m_Ember.m_TemporalFilterExp));
@@ -296,10 +296,10 @@ bool Renderer<T, bucketT>::PrepFinalAccumVector(vector<unsigned char>& pixels)
 	if (m_ReclaimOnResize)
 	{
 		if (pixels.size() != size)
+		{
 			pixels.resize(size);
-		
-		if (m_ReclaimOnResize)
 			pixels.shrink_to_fit();
+		}
 	}
 	else
 	{
@@ -850,11 +850,11 @@ bool Renderer<T, bucketT>::CreateDEFilter(bool& newAlloc)
 	if (m_Ember.m_MaxRadDE > 0)
 	{
 		//Use intelligent testing so it isn't created every time a new ember is passed in.
-		if ((m_DensityFilter.get() == NULL) ||
+		if ((!m_DensityFilter.get()) ||
 			(m_Ember.m_MinRadDE != m_DensityFilter->MinRad()) ||
 			(m_Ember.m_MaxRadDE != m_DensityFilter->MaxRad()) ||
 			(m_Ember.m_CurveDE != m_DensityFilter->Curve()) ||
-			(m_Ember.m_Supersample != m_LastEmber.m_Supersample))
+			(m_Ember.m_Supersample != m_DensityFilter->Supersample()))
 		{
 			m_DensityFilter = auto_ptr<DensityFilter<T>>(new DensityFilter<T>(m_Ember.m_MinRadDE, m_Ember.m_MaxRadDE, m_Ember.m_CurveDE, m_Ember.m_Supersample));
 			newAlloc = true;
@@ -889,10 +889,10 @@ bool Renderer<T, bucketT>::CreateSpatialFilter(bool& newAlloc)
 	newAlloc = false;
 
 	//Use intelligent testing so it isn't created every time a new ember is passed in.
-	if ((m_SpatialFilter.get() == NULL) ||
+	if ((!m_SpatialFilter.get()) ||
 		(m_Ember.m_SpatialFilterType != m_SpatialFilter->FilterType()) ||
 		(m_Ember.m_SpatialFilterRadius != m_SpatialFilter->FilterRadius()) ||
-		(m_Ember.m_Supersample != m_LastEmber.m_Supersample) ||
+		(m_Ember.m_Supersample != m_SpatialFilter->Supersample()) ||
 		(m_PixelAspectRatio != m_SpatialFilter->PixelAspectRatio()))
 	{
 		m_SpatialFilter = auto_ptr<SpatialFilter<T>>(
@@ -1007,7 +1007,7 @@ void Renderer<T, bucketT>::ThreadCount(unsigned int threads, const char* seedStr
 #ifdef ISAAC_FLAM3_DEBUG
 				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(0, 0, 0, seeds);
 #else
-				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(newSize, newSize * newSize, newSize * newSize * newSize, seeds);
+				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(newSize, newSize * 2, newSize * 3, seeds);
 #endif
 				m_Rand.push_back(isaac);
 

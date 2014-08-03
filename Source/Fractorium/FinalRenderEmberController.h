@@ -61,10 +61,9 @@ public:
 	virtual unsigned __int64 SyncAndComputeMemory() { return 0; }
 	virtual QString Name() const { return ""; }
 	virtual void ResetProgress(bool total = true) { }
+	virtual void SetOriginalEmber(Ember<float>& ember) { }
 #ifdef DO_DOUBLE
 	virtual void SetOriginalEmber(Ember<double>& ember) { }
-#else
-	virtual void SetOriginalEmber(Ember<float>& ember) { }
 #endif
 	virtual double OriginalAspect() { return 1; }
 
@@ -79,10 +78,9 @@ protected:
 	double m_PureIterTime;
 
 	QFuture<void> m_Result;
-	QFuture<void> m_PreviewResult;
-	std::function<void (void)> m_RenderFunc;
-	std::function<void (void)> m_PreviewRenderFunc;
-	vector<unsigned char> m_PreviewFinalImage;
+	QFuture<void> m_FinalPreviewResult;
+	std::function<void (void)> m_FinalRenderFunc;
+	std::function<void (void)> m_FinalPreviewRenderFunc;
 	
 	FractoriumSettings* m_Settings;
 	FractoriumFinalRenderDialog* m_FinalRender;
@@ -108,14 +106,13 @@ public:
 	virtual void CopyEmber(Ember<float>& ember);
 	virtual void SetEmberFile(const EmberFile<float>& emberFile);
 	virtual void CopyEmberFile(EmberFile<float>& emberFile);
+	virtual void SetOriginalEmber(Ember<float>& ember);
 #ifdef DO_DOUBLE
 	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false);
 	virtual void CopyEmber(Ember<double>& ember);
 	virtual void SetEmberFile(const EmberFile<double>& emberFile);
 	virtual void CopyEmberFile(EmberFile<double>& emberFile);
 	virtual void SetOriginalEmber(Ember<double>& ember);
-#else
-	virtual void SetOriginalEmber(Ember<float>& ember);
 #endif
 	virtual double OriginalAspect();
 	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs);
@@ -135,7 +132,7 @@ protected:
 	Ember<T> m_PreviewEmber;
 	EmberFile<T> m_EmberFile;
 	EmberToXml<T> m_XmlWriter;
-	auto_ptr<EmberNs::Renderer<T, T>> m_PreviewRenderer;
+	auto_ptr<EmberNs::Renderer<T, T>> m_FinalPreviewRenderer;
 };
 
 template class FinalRenderEmberController<float>;

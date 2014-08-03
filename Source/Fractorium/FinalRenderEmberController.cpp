@@ -83,16 +83,16 @@ template<typename T>
 FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderDialog* finalRender)
 	: FinalRenderEmberControllerBase(finalRender)
 {
-	m_PreviewRenderer = auto_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
-	m_PreviewRenderer->Callback(NULL);
-	m_PreviewRenderer->NumChannels(4);
-	m_PreviewRenderer->ReclaimOnResize(true);
+	m_FinalPreviewRenderer = auto_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
+	m_FinalPreviewRenderer->Callback(NULL);
+	m_FinalPreviewRenderer->NumChannels(4);
+	m_FinalPreviewRenderer->ReclaimOnResize(true);
 
-	m_PreviewRenderFunc = [&]()
+	m_FinalPreviewRenderFunc = [&]()
 	{
 		m_PreviewCs.Enter();//Thread prep.
 		m_PreviewRun = true;
-		m_PreviewRenderer->Abort();
+		m_FinalPreviewRenderer->Abort();
 
 		QLabel* widget = m_FinalRender->ui.FinalRenderPreviewLabel;
 		unsigned int maxDim = 100u;
@@ -106,21 +106,20 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 
 		m_PreviewEmber = m_Ember;		
 		m_PreviewEmber.m_Quality = 100;
-		m_PreviewEmber.m_Supersample = 1;
 		m_PreviewEmber.m_TemporalSamples = 1;
 		m_PreviewEmber.m_FinalRasW = min(maxDim, unsigned int(scalePercentage * m_Ember.m_FinalRasW));
 		m_PreviewEmber.m_FinalRasH = min(maxDim, unsigned int(scalePercentage * m_Ember.m_FinalRasH));
 		m_PreviewEmber.m_PixelsPerUnit = scalePercentage * m_Ember.m_PixelsPerUnit;
 
-		while (!m_PreviewRenderer->Aborted() || m_PreviewRenderer->InRender())
+		while (!m_FinalPreviewRenderer->Aborted() || m_FinalPreviewRenderer->InRender())
 			QApplication::processEvents();
 
-		m_PreviewRenderer->EarlyClip(m_FinalRender->EarlyClip());
-		m_PreviewRenderer->YAxisUp(m_FinalRender->YAxisUp());
-		m_PreviewRenderer->Transparency(m_FinalRender->Transparency());
-		m_PreviewRenderer->SetEmber(m_PreviewEmber);
+		m_FinalPreviewRenderer->EarlyClip(m_FinalRender->EarlyClip());
+		m_FinalPreviewRenderer->YAxisUp(m_FinalRender->YAxisUp());
+		m_FinalPreviewRenderer->Transparency(m_FinalRender->Transparency());
+		m_FinalPreviewRenderer->SetEmber(m_PreviewEmber);
 
-		if (m_PreviewRenderer->Run(m_PreviewFinalImage) == RENDER_OK)
+		if (m_FinalPreviewRenderer->Run(m_PreviewFinalImage) == RENDER_OK)
 		{
 			QImage image(m_PreviewEmber.m_FinalRasW, m_PreviewEmber.m_FinalRasH, QImage::Format_RGBA8888);//The label wants RGBA.
 			memcpy(image.scanLine(0), m_PreviewFinalImage.data(), m_PreviewFinalImage.size() * sizeof(m_PreviewFinalImage[0]));//Memcpy the data in.
@@ -135,7 +134,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 	//The main rendering function which will be called in a Qt thread.
 	//A backup Xml is made before the rendering process starts just in case it crashes before finishing.
 	//If it finishes successfully, delete the backup file.
-	m_RenderFunc = [&]()
+	m_FinalRenderFunc = [&]()
 	{
 		size_t i;
 
@@ -243,6 +242,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			m_Ember.m_TemporalSamples = 1;
 			m_Renderer->SetEmber(m_Ember);
 			m_PureIterTime = 0;
+			memset(m_FinalImage.data(), 0, m_FinalImage.size() * sizeof(m_FinalImage[0]));
 			m_RenderTimer.Tic();//Toc() is called in the progress function.
 
 			if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
@@ -266,6 +266,7 @@ template <typename T> void FinalRenderEmberController<T>::SetEmber(const Ember<f
 template <typename T> void FinalRenderEmberController<T>::CopyEmber(Ember<float>& ember) { ember = m_Ember; }
 template <typename T> void FinalRenderEmberController<T>::SetEmberFile(const EmberFile<float>& emberFile) { m_EmberFile = emberFile; }
 template <typename T> void FinalRenderEmberController<T>::CopyEmberFile(EmberFile<float>& emberFile) { emberFile = m_EmberFile; }
+template <typename T> void FinalRenderEmberController<T>::SetOriginalEmber(Ember<float>& ember) { m_OriginalEmber = ember; }
 template <typename T> double FinalRenderEmberController<T>::OriginalAspect() { return double(m_OriginalEmber.m_OrigFinalRasW) / m_OriginalEmber.m_OrigFinalRasH; }
 #ifdef DO_DOUBLE
 template <typename T> void FinalRenderEmberController<T>::SetEmber(const Ember<double>& ember, bool verbatim) { m_Ember = ember; }
@@ -273,8 +274,6 @@ template <typename T> void FinalRenderEmberController<T>::CopyEmber(Ember<double
 template <typename T> void FinalRenderEmberController<T>::SetEmberFile(const EmberFile<double>& emberFile) { m_EmberFile = emberFile; }
 template <typename T> void FinalRenderEmberController<T>::CopyEmberFile(EmberFile<double>& emberFile) { emberFile = m_EmberFile; }
 template <typename T> void FinalRenderEmberController<T>::SetOriginalEmber(Ember<double>& ember) { m_OriginalEmber = ember; }
-#else
-template <typename T> void FinalRenderEmberController<T>::SetOriginalEmber(Ember<float>& ember) { m_OriginalEmber = ember; }
 #endif
 
 /// <summary>
@@ -313,7 +312,7 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 		QFileInfo original(filename);
 		EmberStats stats = m_Renderer->Stats();
 		QString iters = QLocale(QLocale::English).toString(stats.m_Iters);
-		QString itersPerSec = QLocale(QLocale::English).toString(int(stats.m_Iters / (m_PureIterTime / 1000.0)));
+		QString itersPerSec = QLocale(QLocale::English).toString(unsigned __int64(stats.m_Iters / (m_PureIterTime / 1000.0)));
 
 		if (m_GuiState.m_DoAll && m_EmberFile.m_Embers.size() > 1)
 			filename = original.absolutePath() + QDir::separator() + m_GuiState.m_Prefix + QString::fromStdString(m_EmberFile.m_Embers[m_FinishedImageCount].m_Name) + m_GuiState.m_Suffix + "." + m_GuiState.m_DoAllExt;
@@ -409,7 +408,7 @@ bool FinalRenderEmberController<T>::Render()
 		//parallel iteration loops inside of the CPU renderer to finish. The result is that
 		//the renderer ends up using ThreadCount - 1 to iterate, instead of ThreadCount.
 		//By using a Qt thread here, and tbb inside the renderer, all cores can be maxed out.
-		m_Result = QtConcurrent::run(m_RenderFunc);
+		m_Result = QtConcurrent::run(m_FinalRenderFunc);
 		m_Settings->sync();
 		return true;
 	}
@@ -469,7 +468,7 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 
 		m_Renderer->Callback(this);
 		m_Renderer->NumChannels(channels);
-		m_Renderer->ReclaimOnResize(false);
+		m_Renderer->ReclaimOnResize(true);
 		m_Renderer->EarlyClip(m_FinalRender->EarlyClip());
 		m_Renderer->YAxisUp(m_FinalRender->YAxisUp());
 		m_Renderer->ThreadCount(m_FinalRender->ThreadCount());
@@ -506,9 +505,9 @@ unsigned __int64 FinalRenderEmberController<T>::SyncAndComputeMemory()
 		m_Renderer->NumChannels(channels);
 		m_Renderer->ComputeBounds();
 		CancelPreviewRender();
-		//m_PreviewResult = QtConcurrent::run(m_PreviewRenderFunc);
-		//while (!m_PreviewResult.isRunning()) { QApplication::processEvents(); }//Wait for it to start up.
-		m_PreviewRenderFunc();
+		//m_FinalPreviewResult = QtConcurrent::run(m_PreviewRenderFunc);
+		//while (!m_FinalPreviewResult.isRunning()) { QApplication::processEvents(); }//Wait for it to start up.
+		m_FinalPreviewRenderFunc();
 		return m_Renderer->MemoryRequired(true);
 	}
 
@@ -536,11 +535,11 @@ void FinalRenderEmberController<T>::ResetProgress(bool total)
 template <typename T>
 void FinalRenderEmberController<T>::CancelPreviewRender()
 {
-	m_PreviewRenderer->Abort();
+	m_FinalPreviewRenderer->Abort();
 
-	while (m_PreviewRenderer->InRender()) { QApplication::processEvents(); }
+	while (m_FinalPreviewRenderer->InRender()) { QApplication::processEvents(); }
 	while (m_PreviewRun) { QApplication::processEvents(); }
-	while (m_PreviewResult.isRunning()) { QApplication::processEvents(); }
+	while (m_FinalPreviewResult.isRunning()) { QApplication::processEvents(); }
 }
 
 /// <summary>

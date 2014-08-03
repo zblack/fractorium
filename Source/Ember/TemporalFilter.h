@@ -40,9 +40,13 @@ public:
 	{
 		unsigned int i, steps = passes * temporalSamples;
 
+		m_Passes = passes;
+		m_TemporalSamples = temporalSamples;
+		m_FilterWidth = filterWidth;
 		m_Deltas.resize(steps);
 		m_Filter.resize(steps);
 		m_FilterType = filterType;
+		m_FilterExp = 1;
 
 		if (steps == 1)
 		{
@@ -83,6 +87,10 @@ public:
 	{
 		if (this != &filter)
 		{
+			m_Passes = filter.m_Passes;
+			m_TemporalSamples = filter.m_TemporalSamples;
+			m_FilterWidth = filter.m_FilterWidth;
+			m_FilterExp = filter.m_FilterExp;
 			m_SumFilt = filter.m_SumFilt;
 			m_Deltas = filter.m_Deltas;
 			m_Filter = filter.m_Filter;
@@ -127,6 +135,10 @@ public:
 	/// Accessors.
 	/// </summary>
 	size_t Size() const { return m_Filter.size(); }
+	unsigned int Passes() const { return m_Passes; }
+	unsigned int TemporalSamples() const { return m_TemporalSamples; }
+	T FilterWidth() const { return m_FilterWidth; }
+	T FilterExp() const { return m_FilterExp; }
 	T SumFilt() const { return m_SumFilt; }
 	T* Deltas() { return &m_Deltas[0]; }
 	T* Filter() { return &m_Filter[0]; }
@@ -151,6 +163,10 @@ protected:
 	}
 
 	T m_SumFilt;//The sum of all filter values.
+	T m_FilterWidth;
+	T m_FilterExp;
+	unsigned int m_Passes;
+	unsigned int m_TemporalSamples;
 	vector<T> m_Deltas;//Delta vector.
 	vector<T> m_Filter;//Filter vector.
 	eTemporalFilterType m_FilterType;//The type of filter this is.
@@ -192,6 +208,7 @@ public:
 					maxFilt = m_Filter[i];
 			}
 
+			m_FilterExp = filterExp;
 			FinishFilter(maxFilt);
 		}
 	}

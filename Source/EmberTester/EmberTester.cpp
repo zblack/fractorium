@@ -1074,6 +1074,28 @@ bool TestVarAssignVals()
 	return success;
 }
 
+bool TestZepsFloor()
+{
+	bool success = true;
+	VariationList<float> vlf;
+	vector<string> zeps;
+
+	zeps.push_back("Zeps(floor");
+
+	for (size_t i = 0; i < vlf.Size(); i++)
+	{
+		Variation<float>* var = vlf.GetVariation(i);
+
+		if (SearchVar(var, zeps, false))
+		{
+			cout << "Variation " << var->Name() << " contains Zeps(floor()). This is fine for the GPU, but ensure the CPU uses Zeps<T>((T)Floor<T>())." << endl;
+			success = false;
+		}
+	}
+
+	return success;
+}
+
 bool TestConstants()
 {
 	bool success = true;
@@ -1863,6 +1885,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	t.Tic();
 	TestVarAssignVals();
 	t.Toc("TestVarAssignVals()");
+	
+	t.Tic();
+	TestZepsFloor();
+	t.Toc("TestZepsFloor()");
 	
 	t.Tic();
 	TestConstants();

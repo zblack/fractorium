@@ -20,7 +20,7 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T temp = 1 / cos(helper.In.y) + m_Effect * T(M_PI);
+		T temp = 1 / Zeps(cos(helper.In.y)) + m_Effect * T(M_PI);
 
 		helper.Out.x = m_Weight * (tanh(helper.In.x) * temp);
 		helper.Out.y = m_Weight * (tanh(helper.In.y) * temp);
@@ -36,7 +36,7 @@ public:
 		string effect = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t temp = 1 / cos(vIn.y) + " << effect << " * M_PI;\n"
+		   << "\t\treal_t temp = 1 / Zeps(cos(vIn.y)) + " << effect << " * M_PI;\n"
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (tanh(vIn.x) * temp);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (tanh(vIn.y) * temp);\n"
@@ -276,11 +276,9 @@ public:
 
 	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		T r = pow(helper.m_PrecalcSqrtSumSquares, m_Dist);
+		T r = Zeps(pow(helper.m_PrecalcSqrtSumSquares, m_Dist));
 		int n = Floor<T>(m_Power * rand.Frand01<T>());
-		T alpha = helper.m_PrecalcAtanyx + n * M_2PI / Floor<T>(m_Power);
-		//int n = (int)floor(m_Power * rand.Frand01<T>());
-		//T alpha = helper.m_PrecalcAtanyx + n * M_2PI / floor(m_Power);
+		T alpha = helper.m_PrecalcAtanyx + n * M_2PI / Zeps<T>((T)Floor<T>(m_Power));
 		T sina = sin(alpha);
 		T cosa = cos(alpha);
 	
@@ -299,9 +297,9 @@ public:
 		string dist  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		
 		ss << "\t{\n"
-		   << "\t\treal_t r = pow(precalcSqrtSumSquares, " << dist << ");\n"
+		   << "\t\treal_t r = Zeps(pow(precalcSqrtSumSquares, " << dist << "));\n"
 		   << "\t\tint n = floor(" << power << " * MwcNext01(mwc));\n"
-		   << "\t\treal_t alpha = precalcAtanyx + n * M_2PI / floor(" << power << ");\n"
+		   << "\t\treal_t alpha = precalcAtanyx + n * M_2PI / Zeps(floor(" << power << "));\n"
 		   << "\t\treal_t sina = sin(alpha);\n"
 		   << "\t\treal_t cosa = cos(alpha);\n"
 		   << "\n"
