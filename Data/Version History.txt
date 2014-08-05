@@ -3,6 +3,7 @@
 	Spatial filter would not be correctly recreated on subsequent runs of differing supersample values during final render.
 	Fix DCBubble, Funnel, SphericalN, 
 	Wrong logic with some usage of DO_DOUBLE. Only relevant for testing.
+	Use uint64 for iters/sec calculation on final render dialog. int was overflowing on extremely fast GPU renders.
 
 --Code Changes
 	Make density, spatial and temporal filters preserve the values they were created with. This helps in determining when a new instance is needed.
