@@ -200,7 +200,6 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
 				{
 					m_Renderer->Reset();//Have to manually set this since the ember is not set each time through.
-					m_PureIterTime = 0;
 					m_RenderTimer.Tic();//Toc() is called in the progress function.
 
 					if (m_Renderer->Run(m_FinalImage, i) != RENDER_OK)
@@ -223,7 +222,6 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
 				{
 					m_Renderer->SetEmber(m_EmberFile.m_Embers[i]);
-					m_PureIterTime = 0;
 					m_RenderTimer.Tic();//Toc() is called in the progress function.
 
 					if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
@@ -241,7 +239,6 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			ResetProgress();
 			m_Ember.m_TemporalSamples = 1;
 			m_Renderer->SetEmber(m_Ember);
-			m_PureIterTime = 0;
 			memset(m_FinalImage.data(), 0, m_FinalImage.size() * sizeof(m_FinalImage[0]));
 			m_RenderTimer.Tic();//Toc() is called in the progress function.
 
@@ -293,12 +290,7 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 	int intFract = (int)fraction;
 
 	if (stage == 0)
-	{
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
-
-		if (intFract == 100)
-			m_PureIterTime = m_RenderTimer.Toc();
-	}
 	else if (stage == 1)
 		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
 	else if (stage == 2)
@@ -312,7 +304,7 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 		QFileInfo original(filename);
 		EmberStats stats = m_Renderer->Stats();
 		QString iters = QLocale(QLocale::English).toString(stats.m_Iters);
-		QString itersPerSec = QLocale(QLocale::English).toString(unsigned __int64(stats.m_Iters / (m_PureIterTime / 1000.0)));
+		QString itersPerSec = QLocale(QLocale::English).toString(unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)));
 
 		if (m_GuiState.m_DoAll && m_EmberFile.m_Embers.size() > 1)
 			filename = original.absolutePath() + QDir::separator() + m_GuiState.m_Prefix + QString::fromStdString(m_EmberFile.m_Embers[m_FinishedImageCount].m_Name) + m_GuiState.m_Suffix + "." + m_GuiState.m_DoAllExt;

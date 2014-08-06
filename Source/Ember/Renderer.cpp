@@ -383,8 +383,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 		m_LastTemporalSample = 0;
 		m_LastIter = 0;
 		m_LastIterPercent = 0;
-		m_Stats.m_Iters = 0;
-		m_Stats.m_Badvals = 0;
+		m_Stats.Clear();
 		m_Gamma = 0;
 		m_Vibrancy = 0;//Accumulate these after each temporal sample.
 		m_VibGamCount = 0;
@@ -541,6 +540,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 			m_LastIter += stats.m_Iters;//Sum of iter count of all threads, reset each temporal sample.
 			m_Stats.m_Iters += stats.m_Iters;//Sum of iter count of all threads, cumulative from beginning to end.
 			m_Stats.m_Badvals += stats.m_Badvals;
+			m_Stats.m_IterMs += stats.m_IterMs;
 
 			//After each temporal sample, accumulate these.
 			//Allow for incremental rendering by only taking action if the iter loop for this temporal sample is completely done.
@@ -668,7 +668,7 @@ AccumOnly:
 
 		if (AccumulatorToFinalImage(finalImage, finalOffset) == RENDER_OK)
 		{
-			m_Stats.m_RenderSeconds = m_RenderTimer.Toc() / 1000.0;//Record total time from the very beginning to the very end, including all intermediate calls.
+			m_Stats.m_RenderMs = m_RenderTimer.Toc();//Record total time from the very beginning to the very end, including all intermediate calls.
 		
 			//Even though the ember changes throughought the inner loops because of interpolation, it's probably ok to assign here.
 			//This will hold the last interpolated value (even though spatial and temporal filters were created based off of one of the first interpolated values).
@@ -722,7 +722,7 @@ EmberImageComments Renderer<T, bucketT>::ImageComments(unsigned int printEditDep
 	comments.m_Badvals = ss.str(); ss.str("");
 	ss << m_Stats.m_Iters;
 	comments.m_NumIters = ss.str(); ss.str("");//Total iters.
-	ss << m_Stats.m_RenderSeconds;
+	ss << (m_Stats.m_RenderMs / 1000.0);
 	comments.m_Runtime = ss.str();//Number of seconds for iterating, accumulating and filtering.
 
 	return comments;
@@ -1570,6 +1570,7 @@ template <typename T, typename bucketT>
 EmberStats Renderer<T, bucketT>::Iterate(unsigned __int64 iterCount, unsigned int pass, unsigned int temporalSample)
 {
 	//Timing t2(4);
+	m_IterTimer.Tic();
 	unsigned int fuse = EarlyClip() ? 100 : 15;//EarlyClip was one way of detecting a later version of flam3, so it used 100 which is a better value.
 	unsigned __int64 totalItersPerThread = (unsigned __int64)ceil((double)iterCount / (double)m_ThreadsToUse);
 	double percent, etaMs;
@@ -1663,7 +1664,8 @@ EmberStats Renderer<T, bucketT>::Iterate(unsigned __int64 iterCount, unsigned in
 #endif
 
 	stats.m_Iters = std::accumulate(m_SubBatch.begin(), m_SubBatch.end(), 0ULL);//Sum of iter count of all threads.
-	stats.m_Badvals += std::accumulate(m_BadVals.begin(), m_BadVals.end(), 0ULL);
+	stats.m_Badvals = std::accumulate(m_BadVals.begin(), m_BadVals.end(), 0ULL);
+	stats.m_IterMs = m_IterTimer.Toc();
 	//t2.Toc(__FUNCTION__);
 	return stats;
 }

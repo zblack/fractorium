@@ -616,6 +616,8 @@ EmberStats RendererCL<T>::Iterate(unsigned __int64 iterCount, unsigned int pass,
 
 	if (b)
 	{
+		m_IterTimer.Tic();//Tic() here to avoid including build time in iter time measurement.
+
 		if (m_Stats.m_Iters == 0)//Only reset the call count on the beginning of a new render. Do not reset on KEEP_ITERATING.
 			m_Calls = 0;
 
@@ -623,6 +625,8 @@ EmberStats RendererCL<T>::Iterate(unsigned __int64 iterCount, unsigned int pass,
 
 		if (!b || stats.m_Iters == 0)//If no iters were executed, something went catastrophically wrong.
 			m_Abort = true;
+
+		stats.m_IterMs = m_IterTimer.Toc();
 	}
 	else
 	{

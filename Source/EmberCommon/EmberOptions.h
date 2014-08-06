@@ -39,6 +39,7 @@ enum eOptionIDs
 	//Boolean args.
 	OPT_OPENCL,
 	OPT_EARLYCLIP,
+	OPT_POS_Y_UP,
 	OPT_TRANSPARENCY,
 	OPT_NAME_ENABLE,
 	OPT_INT_PALETTE,
@@ -59,6 +60,7 @@ enum eOptionIDs
 	OPT_SEED,
 	OPT_NTHREADS,
 	OPT_STRIPS,
+	OPT_SUPERSAMPLE,
 	OPT_BITS,
 	OPT_BPC,
 	OPT_SBS,
@@ -278,9 +280,10 @@ public:
 		//Execution bools.																									
 		INITBOOLOPTION(EmberCL,        Eob(OPT_USE_ALL,     OPT_OPENCL,           _T("--opencl"),               false,                SO_NONE,    "\t--opencl                 Use OpenCL renderer (EmberCL) for rendering [default: false].\n"));
 		INITBOOLOPTION(EarlyClip,      Eob(OPT_USE_ALL,     OPT_EARLYCLIP,        _T("--earlyclip"),            false,                SO_NONE,    "\t--earlyclip              Perform clipping of RGB values before spatial filtering for better antialiasing and resizing [default: false].\n"));
-		INITBOOLOPTION(Transparency,   Eob(OPT_RENDER_ANIM, OPT_TRANSPARENCY,     _T("--transparency"),         false,                SO_NONE,    "\t--transparency           Include alpha channel in final output [default: false except for PNG].\n"));
+		INITBOOLOPTION(YAxisUp,        Eob(OPT_USE_ALL,     OPT_POS_Y_UP,         _T("--yaxisup"),              false,                SO_NONE,    "\t--yaxisup                Orient the image with the positive y axis pointing up [default: false].\n"));
+		INITBOOLOPTION(Transparency,   Eob(OPT_USE_ALL,     OPT_TRANSPARENCY,     _T("--transparency"),         false,                SO_NONE,    "\t--transparency           Include alpha channel in final output [default: false except for PNG].\n"));
 		INITBOOLOPTION(NameEnable,     Eob(OPT_USE_RENDER,  OPT_NAME_ENABLE,      _T("--name_enable"),          false,                SO_NONE,    "\t--name_enable            Use the name attribute contained in the xml as the output filename [default: false].\n"));
-		INITBOOLOPTION(IntPalette,     Eob(OPT_USE_ALL,     OPT_INT_PALETTE,      _T("--intpalette"),           false,                SO_NONE,    "\t--intpalette             Force palette RGB values to be integers [default: false (float)].\n"));
+		INITBOOLOPTION(IntPalette,     Eob(OPT_RENDER_ANIM, OPT_INT_PALETTE,      _T("--intpalette"),           false,                SO_NONE,    "\t--intpalette             Force palette RGB values to be integers [default: false (float)].\n"));
 		INITBOOLOPTION(HexPalette,     Eob(OPT_USE_ALL,     OPT_HEX_PALETTE,      _T("--hex_palette"),          true,                 SO_NONE,    "\t--hex_palette            Force palette RGB values to be hex [default: true].\n"));
 		INITBOOLOPTION(InsertPalette,  Eob(OPT_RENDER_ANIM, OPT_INSERT_PALETTE,   _T("--insert_palette"),       false,                SO_NONE,    "\t--insert_palette         Insert the palette into the image for debugging purposes [default: false].\n"));
 		INITBOOLOPTION(JpegComments,   Eob(OPT_RENDER_ANIM, OPT_JPEG_COMMENTS,    _T("--enable_jpeg_comments"), true,                 SO_NONE,    "\t--enable_jpeg_comments   Enables comments in the jpeg header [default: true].\n"));
@@ -296,11 +299,12 @@ public:
 		INITINTOPTION(Symmetry,        Eoi(OPT_USE_GENOME,  OPT_SYMMETRY,         _T("--symmetry"),             0,                    SO_REQ_SEP, "\t--symmetry=<val>         Set symmetry of result [default: 0].\n"));
 		INITINTOPTION(SheepGen,        Eoi(OPT_USE_GENOME,  OPT_SHEEP_GEN,        _T("--sheep_gen"),            -1,                   SO_REQ_SEP, "\t--sheep_gen=<val>        Sheep generation of this flame [default: -1].\n"));
 		INITINTOPTION(SheepId,         Eoi(OPT_USE_GENOME,  OPT_SHEEP_ID,         _T("--sheep_id"),             -1,                   SO_REQ_SEP, "\t--sheep_id=<val>         Sheep ID of this flame [default: -1].\n"));
-		INITUINTOPTION(Platform,       Eou(OPT_RENDER_ANIM, OPT_OPENCL_PLATFORM,  _T("--platform"),             0,                    SO_REQ_SEP, "\t--platform               The OpenCL platform index to use [default: 0].\n"));
-		INITUINTOPTION(Device,         Eou(OPT_RENDER_ANIM, OPT_OPENCL_DEVICE,    _T("--device"),               0,                    SO_REQ_SEP, "\t--device                 The OpenCL device index within the specified platform to use [default: 0].\n"));
+		INITUINTOPTION(Platform,       Eou(OPT_USE_ALL,     OPT_OPENCL_PLATFORM,  _T("--platform"),             0,                    SO_REQ_SEP, "\t--platform               The OpenCL platform index to use [default: 0].\n"));
+		INITUINTOPTION(Device,         Eou(OPT_USE_ALL,     OPT_OPENCL_DEVICE,    _T("--device"),               0,                    SO_REQ_SEP, "\t--device                 The OpenCL device index within the specified platform to use [default: 0].\n"));
 		INITUINTOPTION(Seed,           Eou(OPT_USE_ALL,     OPT_SEED,             _T("--seed"),                 0,                    SO_REQ_SEP, "\t--seed=<val>             Integer seed to use for the random number generator [default: random].\n"));
 		INITUINTOPTION(ThreadCount,    Eou(OPT_USE_ALL,     OPT_NTHREADS,         _T("--nthreads"),             0,                    SO_REQ_SEP, "\t--nthreads=<val>         The number of threads to use [default: use all available cores].\n"));
 		INITUINTOPTION(Strips,		   Eou(OPT_USE_RENDER,  OPT_STRIPS,           _T("--nstrips"),              1,                    SO_REQ_SEP, "\t--nstrips=<val>          The number of fractions to split a single render frame into. Useful for print size renders or low memory systems [default: 1].\n"));
+		INITUINTOPTION(Supersample,    Eou(OPT_RENDER_ANIM, OPT_SUPERSAMPLE,      _T("--supersample"),          0,                    SO_REQ_SEP, "\t--supersample=<val>      The supersample value used to override the one specified in the file [default: 0 (use value from file)].\n"));
 		INITUINTOPTION(BitsPerChannel, Eou(OPT_RENDER_ANIM, OPT_BPC,              _T("--bpc"),                  8,                    SO_REQ_SEP, "\t--bpc=<val>              Bits per channel. 8 or 16 for PNG, 8 for all others [default: 8].\n"));
 		INITUINTOPTION(SubBatchSize,   Eou(OPT_USE_ALL,     OPT_SBS,              _T("--sub_batch_size"),       10240,                SO_REQ_SEP, "\t--sub_batch_size=<val>   The chunk size that iterating will be broken into [default: 10k].\n"));
 		INITUINTOPTION(Bits,           Eou(OPT_USE_ALL,     OPT_BITS,             _T("--bits"),                 33,                   SO_REQ_SEP, "\t--bits=<val>             Determines the types used for the histogram and accumulator [default: 33].\n"
@@ -309,7 +313,7 @@ public:
 																																							  "\t\t\t\t\t64:  Histogram: double, Accumulator: double.\n"));
 
 		INITUINTOPTION(PrintEditDepth, Eou(OPT_USE_ALL,     OPT_PRINT_EDIT_DEPTH, _T("--print_edit_depth"),     0,                    SO_REQ_SEP, "\t--print_edit_depth=<val> Depth to truncate <edit> tag structure when converting a flame to xml. 0 prints all <edit> tags [default: 0].\n"));
-		INITUINTOPTION(JpegQuality,    Eou(OPT_USE_ALL,     OPT_JPEG,             _T("--jpeg"),                 95,                   SO_REQ_SEP, "\t--jpeg=<val>             Jpeg quality 0-100 for compression [default: 95].\n"));
+		INITUINTOPTION(JpegQuality,    Eou(OPT_RENDER_ANIM, OPT_JPEG,             _T("--jpeg"),                 95,                   SO_REQ_SEP, "\t--jpeg=<val>             Jpeg quality 0-100 for compression [default: 95].\n"));
 		INITUINTOPTION(FirstFrame,     Eou(OPT_USE_ANIMATE, OPT_BEGIN,            _T("--begin"),                UINT_MAX,             SO_REQ_SEP, "\t--begin=<val>            Time of first frame to render [default: first time specified in file].\n"));
 		INITUINTOPTION(LastFrame,      Eou(OPT_USE_ANIMATE, OPT_END,              _T("--end"),	                UINT_MAX,             SO_REQ_SEP, "\t--end=<val>              Time of last frame to render [default: last time specified in the input file].\n"));
 		INITUINTOPTION(Time,           Eou(OPT_ANIM_GENOME, OPT_TIME,             _T("--time"),                 0,                    SO_REQ_SEP, "\t--time=<val>             Time of first and last frame (ie do one frame).\n"));
@@ -322,10 +326,10 @@ public:
 		INITUINTOPTION(MaxXforms,      Eou(OPT_USE_GENOME,  OPT_MAX_XFORMS,       _T("--maxxforms"),            UINT_MAX,             SO_REQ_SEP, "\t--maxxforms=<val>        The maximum number of xforms allowed in the final output.\n"));
 
 		//Double.
-		INITDOUBLEOPTION(SizeScale,    Eod(OPT_USE_ALL,     OPT_SS,               _T("--ss"),                   1,                    SO_REQ_SEP, "\t--ss=<val>               Size scale. All dimensions are scaled by this amount [default: 1.0].\n"));
-		INITDOUBLEOPTION(QualityScale, Eod(OPT_USE_ALL,     OPT_QS,               _T("--qs"),                   1,                    SO_REQ_SEP, "\t--qs=<val>               Quality scale. All quality values are scaled by this amount [default: 1.0].\n"));
+		INITDOUBLEOPTION(SizeScale,    Eod(OPT_RENDER_ANIM, OPT_SS,               _T("--ss"),                   1,                    SO_REQ_SEP, "\t--ss=<val>               Size scale. All dimensions are scaled by this amount [default: 1.0].\n"));
+		INITDOUBLEOPTION(QualityScale, Eod(OPT_RENDER_ANIM, OPT_QS,               _T("--qs"),                   1,                    SO_REQ_SEP, "\t--qs=<val>               Quality scale. All quality values are scaled by this amount [default: 1.0].\n"));
 		INITDOUBLEOPTION(AspectRatio,  Eod(OPT_USE_ALL,     OPT_PIXEL_ASPECT,     _T("--pixel_aspect"),         1,                    SO_REQ_SEP, "\t--pixel_aspect=<val>     Aspect ratio of pixels (width over height), eg. 0.90909 for NTSC [default: 1.0].\n"));
-		INITDOUBLEOPTION(Stagger,      Eod(OPT_USE_ALL,     OPT_STAGGER,          _T("--stagger"),              0,                    SO_REQ_SEP, "\t--stagger=<val>          Affects simultaneity of xform interpolation during flame interpolation.\n"
+		INITDOUBLEOPTION(Stagger,      Eod(OPT_USE_GENOME,  OPT_STAGGER,          _T("--stagger"),              0,                    SO_REQ_SEP, "\t--stagger=<val>          Affects simultaneity of xform interpolation during flame interpolation.\n"
 																												 											  "\t                         Represents how 'separate' the xforms are interpolated. Set to 1 for each\n"
 																												 											  "\t                         xform to be interpolated individually, fractions control interpolation overlap [default: 0].\n"));
 		INITDOUBLEOPTION(AvgThresh,    Eod(OPT_USE_GENOME,  OPT_AVG_THRESH,       _T("--avg"),                  20.0,                 SO_REQ_SEP, "\t--avg=<val>              Minimum average pixel channel sum (r + g + b) threshold from 0 - 765. Ignored if sequence, inter or rotate were specified [default: 20].\n"));
@@ -338,10 +342,10 @@ public:
 
 		//String.
 		INITSTRINGOPTION(IsaacSeed,    Eos(OPT_USE_ALL,     OPT_ISAAC_SEED,       _T("--isaac_seed"),           "",                   SO_REQ_SEP, "\t--isaac_seed=<val>       Character-based seed for the random number generator [default: random].\n"));
-		INITSTRINGOPTION(Input,        Eos(OPT_USE_ALL,     OPT_IN,               _T("--in"),                   "",                   SO_REQ_SEP, "\t--in=<val>               Name of the input file.\n"));
-		INITSTRINGOPTION(Out,          Eos(OPT_USE_ALL,     OPT_OUT,              _T("--out"),                  "",                   SO_REQ_SEP, "\t--out=<val>              Name of a single output file. Not recommended when rendering more than one image.\n"));
-		INITSTRINGOPTION(Prefix,       Eos(OPT_USE_ALL,     OPT_PREFIX,           _T("--prefix"),               "",                   SO_REQ_SEP, "\t--prefix=<val>           Prefix to prepend to all output files.\n"));
-		INITSTRINGOPTION(Suffix,       Eos(OPT_USE_ALL,     OPT_SUFFIX,           _T("--suffix"),               "",                   SO_REQ_SEP, "\t--suffix=<val>           Suffix to append to all output files.\n"));
+		INITSTRINGOPTION(Input,        Eos(OPT_RENDER_ANIM, OPT_IN,               _T("--in"),                   "",                   SO_REQ_SEP, "\t--in=<val>               Name of the input file.\n"));
+		INITSTRINGOPTION(Out,          Eos(OPT_RENDER_ANIM, OPT_OUT,              _T("--out"),                  "",                   SO_REQ_SEP, "\t--out=<val>              Name of a single output file. Not recommended when rendering more than one image.\n"));
+		INITSTRINGOPTION(Prefix,       Eos(OPT_RENDER_ANIM, OPT_PREFIX,           _T("--prefix"),               "",                   SO_REQ_SEP, "\t--prefix=<val>           Prefix to prepend to all output files.\n"));
+		INITSTRINGOPTION(Suffix,       Eos(OPT_RENDER_ANIM, OPT_SUFFIX,           _T("--suffix"),               "",                   SO_REQ_SEP, "\t--suffix=<val>           Suffix to append to all output files.\n"));
 		INITSTRINGOPTION(Format,       Eos(OPT_RENDER_ANIM, OPT_FORMAT,           _T("--format"),               "png",                SO_REQ_SEP, "\t--format=<val>           Format of the output file. Valid values are: bmp, jpg, png, ppm [default: jpg].\n"));
 		INITSTRINGOPTION(PalettePath,  Eos(OPT_USE_ALL,     OPT_PALETTE_FILE,     _T("--flam3_palettes"),       "flam3-palettes.xml", SO_REQ_SEP, "\t--flam3_palettes=<val>   Path and name of the palette file [default: flam3-palettes.xml].\n"));
 		INITSTRINGOPTION(PaletteImage, Eos(OPT_USE_ALL,     OPT_PALETTE_IMAGE,    _T("--image"),                "",                   SO_REQ_SEP, "\t--image=<val>            Replace palette with png, jpg, or ppm image.\n"));
@@ -409,6 +413,7 @@ public:
 					PARSEBOOLOPTION(OPT_DUMP_OPENCL_INFO, OpenCLInfo);
 					PARSEBOOLOPTION(OPT_OPENCL, EmberCL);
 					PARSEBOOLOPTION(OPT_EARLYCLIP, EarlyClip);
+					PARSEBOOLOPTION(OPT_POS_Y_UP, YAxisUp);
 					PARSEBOOLOPTION(OPT_TRANSPARENCY, Transparency);
 					PARSEBOOLOPTION(OPT_NAME_ENABLE, NameEnable);
 					PARSEBOOLOPTION(OPT_INT_PALETTE, IntPalette);
@@ -431,6 +436,7 @@ public:
 					PARSEUINTOPTION(OPT_SEED, Seed);
 					PARSEUINTOPTION(OPT_NTHREADS, ThreadCount);
 					PARSEUINTOPTION(OPT_STRIPS, Strips);
+					PARSEUINTOPTION(OPT_SUPERSAMPLE, Supersample);
 					PARSEUINTOPTION(OPT_BITS, Bits);
 					PARSEUINTOPTION(OPT_BPC, BitsPerChannel);
 					PARSEUINTOPTION(OPT_SBS, SubBatchSize);
@@ -617,6 +623,7 @@ public:
 
 	EmberOptionEntry<bool> EmberCL;//Value bool.
 	EmberOptionEntry<bool> EarlyClip;
+	EmberOptionEntry<bool> YAxisUp;
 	EmberOptionEntry<bool> Transparency;
 	EmberOptionEntry<bool> NameEnable;
 	EmberOptionEntry<bool> IntPalette;
@@ -639,6 +646,7 @@ public:
 	EmberOptionEntry<unsigned int> Seed;
 	EmberOptionEntry<unsigned int> ThreadCount;
 	EmberOptionEntry<unsigned int> Strips;
+	EmberOptionEntry<unsigned int> Supersample;
 	EmberOptionEntry<unsigned int> BitsPerChannel;
 	EmberOptionEntry<unsigned int> SubBatchSize;
 	EmberOptionEntry<unsigned int> Bits;

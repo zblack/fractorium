@@ -101,8 +101,6 @@ bool EmberGenome(EmberOptions& opt)
 	{
 		if (opt.ThreadCount() != 0)
 			renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : NULL);
-
-		renderer->LockAccum(opt.LockAccum());
 	}
 	else
 	{
@@ -494,8 +492,11 @@ bool EmberGenome(EmberOptions& opt)
 
 	//Repeat.
 	renderer->EarlyClip(opt.EarlyClip());
+	renderer->YAxisUp(opt.YAxisUp());
+	renderer->LockAccum(opt.LockAccum());
 	renderer->SubBatchSize(opt.SubBatchSize());
 	renderer->PixelAspectRatio(T(opt.AspectRatio()));
+	renderer->Transparency(opt.Transparency());
 
 	if (opt.Repeat() == 0)
 	{

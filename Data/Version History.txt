@@ -1,3 +1,14 @@
+0.4.1.2 Beta 08/05/2014
+--User Changes
+	Add --yaxisup and --supersample options for command line programs.
+
+--Bug Fixes
+	Make certain options available only to the command line programs in which they make sense. Most were good, some were misplaced.
+
+--Code Changes
+	Include pure render time as part of stats.
+	Output iters/sec measurement in EmberRender and EmberAnimate.	
+
 0.4.1.1 Beta 08/03/2014
 --Bug Fixes
 	Spatial filter would not be correctly recreated on subsequent runs of differing supersample values during final render.

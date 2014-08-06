@@ -75,7 +75,6 @@ protected:
 	bool m_PreviewRun;
 	unsigned int m_ImageCount;
 	unsigned int m_FinishedImageCount;
-	double m_PureIterTime;
 
 	QFuture<void> m_Result;
 	QFuture<void> m_FinalPreviewResult;

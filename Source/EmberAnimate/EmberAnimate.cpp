@@ -183,6 +183,9 @@ bool EmberAnimate(EmberOptions& opt)
 		if (i > 0 && embers[i].m_Time <= embers[i - 1].m_Time)
 			unsorted = true;
  
+		if (opt.Supersample() > 0)
+			embers[i].m_Supersample = opt.Supersample();
+
 		embers[i].m_Quality *= T(opt.QualityScale());
 		embers[i].m_FinalRasW = (unsigned int)((T)embers[i].m_FinalRasW * opt.SizeScale());
 		embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH * opt.SizeScale());
@@ -244,6 +247,7 @@ bool EmberAnimate(EmberOptions& opt)
 	os.imbue(std::locale(""));
 	renderer->SetEmber(embers);
 	renderer->EarlyClip(opt.EarlyClip());
+	renderer->YAxisUp(opt.YAxisUp());
 	renderer->LockAccum(opt.LockAccum());
 	renderer->InsertPalette(opt.InsertPalette());
 	renderer->SubBatchSize(opt.SubBatchSize());
@@ -296,11 +300,13 @@ bool EmberAnimate(EmberOptions& opt)
 		comments = renderer->ImageComments(opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 		stats = renderer->Stats();
 		os.str("");
-		os << comments.m_NumIters << "/" << renderer->TotalIterCount() << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters/(double)renderer->TotalIterCount() * 100) << "%)";
+		os << comments.m_NumIters << " / " << renderer->TotalIterCount() << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters/(double)renderer->TotalIterCount() * 100) << "%)";
 
 		VerbosePrint("\nIters ran/requested: " + os.str());
 		VerbosePrint("Bad values: " << stats.m_Badvals);
-		VerbosePrint("Render time: " + t.Format(stats.m_RenderSeconds * 1000));
+		VerbosePrint("Render time: " + t.Format(stats.m_RenderMs));
+		VerbosePrint("Pure iter time: " + t.Format(stats.m_IterMs));
+		VerbosePrint("Iters/sec: " << unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
 		VerbosePrint("Writing " + filename);
 
 		if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)

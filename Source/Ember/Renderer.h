@@ -59,13 +59,19 @@ public:
 	/// </summary>
 	EmberStats()
 	{
+		Clear();
+	}
+
+	void Clear()
+	{
 		m_Iters = 0;
 		m_Badvals = 0;
-		m_RenderSeconds = 0;
+		m_IterMs = 0;
+		m_RenderMs = 0;
 	}
 
 	unsigned __int64 m_Iters, m_Badvals;
-	double m_RenderSeconds;
+	double m_IterMs, m_RenderMs;
 };
 
 /// <summary>
@@ -403,7 +409,7 @@ protected:
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> m_Rand;
 	tbb::task_group m_TaskGroup;
 	CriticalSection m_RenderingCs, m_AccumCs, m_FinalAccumCs, m_ResizeCs;
-	Timing m_RenderTimer, m_ProgressTimer;
+	Timing m_RenderTimer, m_IterTimer, m_ProgressTimer;
 	EmberToXml<T> m_EmberToXml;
 };
 
