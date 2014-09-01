@@ -109,13 +109,13 @@ public:
 	/// </summary>
 	/// <param name="vec">The vector of strings to add</param>
 	virtual void AddToReport(vector<string>& vec) { m_ErrorReport.insert(m_ErrorReport.end(), vec.begin(), vec.end()); }
-	
+
 	/// <summary>
 	/// Static function to dump a vector of strings passed in.
 	/// </summary>
 	/// <param name="errorReport">The vector of strings to dump</param>
 	static void StaticDumpErrorReport(vector<string>& errorReport) { cout << StaticErrorReportString(errorReport); }
-	
+
 	/// <summary>
 	/// Static function to return the entire error report passed in as a single string.
 	/// </summary>
@@ -126,7 +126,7 @@ public:
 		stringstream ss;
 
 		ForEach(errorReport, [&](string s) { ss << s << endl; });
-		
+
 		return ss.str();
 	}
 
@@ -713,7 +713,7 @@ static inline T NormalizeDeg360(T angle)
 /// </summary>
 /// <param name="str">The string to copy and make lower case</param>
 /// <returns>The lower case string</returns>
-static inline string ToLower(string& str)
+static inline string ToLower(const string& str)
 {
 	string lower;
 
@@ -751,7 +751,7 @@ static inline string Trim(string& str, char ch = ' ')
 	{
 		size_t firstChar = str.find_first_not_of(ch);
 		size_t lastChar = str.find_last_not_of(ch);
-		
+
 		if (firstChar == string::npos)
 			firstChar = 0;
 

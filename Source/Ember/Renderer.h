@@ -18,7 +18,7 @@ namespace EmberNs
 {
 /// <summary>
 /// Function pointers present a major restriction when dealing
-/// with member functions, and that is they can only point to 
+/// with member functions, and that is they can only point to
 /// static ones. So instead of a straight function pointer, use
 /// a callback class with a single virtual callback
 /// member function.
@@ -47,7 +47,7 @@ public:
 
 /// <summary>
 /// Render statistics for the number of iterations ran,
-/// number of bad values calculated during iteration, and 
+/// number of bad values calculated during iteration, and
 /// the total time for the entire render from the start of
 /// iteration to the end of final accumulation.
 /// </summary>
@@ -193,7 +193,7 @@ public:
 	virtual uint64_t MemoryRequired(bool includeFinal);
 
 	//Virtual functions to be overriden in derived renderers that use the GPU.
-	virtual unsigned __int64 MemoryAvailable();
+	virtual uint64_t MemoryAvailable();
 	virtual void Reset();
 	virtual bool Ok() const;
 	virtual bool CreateDEFilter(bool& newAlloc);
@@ -241,7 +241,7 @@ public:
 	inline bool Transparency() const;
 	virtual void Transparency(bool transparency);
 
-	inline unsigned int BytesPerChannel() const; 
+	inline unsigned int BytesPerChannel() const;
 	void BytesPerChannel(unsigned int bytesPerChannel);
 
 	inline T PixelAspectRatio() const;
@@ -249,7 +249,7 @@ public:
 
 	inline eInteractiveFilter InteractiveFilter() const;
 	virtual void InteractiveFilter(eInteractiveFilter filter);
-	
+
 	//Threading control.
 	virtual void EnterRender();
 	virtual void LeaveRender();
@@ -293,7 +293,7 @@ public:
 	inline SpatialFilter<T>*            GetSpatialFilter();
 	inline TemporalFilter<T>*           GetTemporalFilter();
 	virtual DensityFilter<T>*           GetDensityFilter();
-	
+
 	//Ember wrappers, getters only.
 	inline bool                 XaosPresent();
 	unsigned int 				FinalRasW()           const;
@@ -326,7 +326,7 @@ public:
 	inline bool                 UseFinalXform()       const;
 	inline const Palette<T>*    GetPalette()          const;
 	inline ePaletteMode         PaletteMode()         const;
-	
+
 	//Iterator wrappers.
 	const unsigned char* XformDistributions()			   const;
 	const unsigned int   XformDistributionsSize()		   const;
