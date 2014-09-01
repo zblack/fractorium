@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="Workspace">
+		<Project filename="./Ember.cbp" />
+		<Project filename="./EmberCL.cbp" />
+		<Project filename="./EmberGenome.cbp" />
+		<Project filename="./EmberAnimate.cbp" />
+		<Project filename="./EmberRender.cbp" />
+	</Workspace>
+</CodeBlocks_workspace_file>

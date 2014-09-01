@@ -26,24 +26,33 @@
 
 //Standard headers.
 #include <algorithm>
+#include <chrono>
 #include <complex>
+#include <cstdint>
 #include <fstream>
 #include <functional>
+#include <inttypes.h>
 #include <iostream>
 #include <iomanip>
 #include <limits>
 #include <malloc.h>
 #include <math.h>
+#include <memory>
 #include <numeric>
 #include <ostream>
 #include <sstream>
-#include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <thread>
 #include <time.h>
 #include <vector>
 
 //Third party headers.
-#include <libxml/parser.h>
+#ifdef _WIN32
+#include "libxml/parser.h"
+#else
+#include "libxml2/libxml/parser.h"
+#endif
 
 //Intel's Threading Building Blocks is what's used for all threading.
 #include "tbb/task_group.h"
@@ -60,3 +69,4 @@
 
 using namespace tbb;
 using namespace std;
+using namespace std::chrono;

@@ -1017,7 +1017,7 @@ public:
 		m_NeedPrecalcAngles = needPrecalcAngles;
 		m_NeedPrecalcAtanXY = needPrecalcAtanXY;
 		m_NeedPrecalcAtanYX = needPrecalcAtanYX;
-		
+
 		//Make absolutely sure that flag logic makes sense.
 		if (m_NeedPrecalcSqrtSumSquares)
 			m_NeedPrecalcSumSquares = true;
@@ -1027,7 +1027,7 @@ public:
 			m_NeedPrecalcSumSquares = true;
 			m_NeedPrecalcSqrtSumSquares = true;
 		}
-		
+
 		m_AssignType = ASSIGNTYPE_SET;
 		SetType();
 	}
@@ -1100,7 +1100,7 @@ public:
 	/// </summary>
 	/// <param name="iteratorHelper">The helper to read values from in the case of pre, and store precalc values to in both cases.</param>
 	/// <param name="point">The point to read values from in the case of post, ignored for pre.</param>
-	void Precalc(IteratorHelper<T>& iteratorHelper, Point<T>* point)
+	void PrecalcHelper(IteratorHelper<T>& iteratorHelper, Point<T>* point)
 	{
 		if (m_VarType == VARTYPE_PRE)
 		{
@@ -1122,7 +1122,7 @@ public:
 
 			if (m_NeedPrecalcAtanXY)
 				iteratorHelper.m_PrecalcAtanxy = atan2(iteratorHelper.m_TransX, iteratorHelper.m_TransY);
-		
+
 			if (m_NeedPrecalcAtanYX)
 				iteratorHelper.m_PrecalcAtanyx = atan2(iteratorHelper.m_TransY, iteratorHelper.m_TransX);
 		}
@@ -1146,7 +1146,7 @@ public:
 
 			if (m_NeedPrecalcAtanXY)
 				iteratorHelper.m_PrecalcAtanxy = atan2(point->m_X, point->m_Y);
-		
+
 			if (m_NeedPrecalcAtanYX)
 				iteratorHelper.m_PrecalcAtanyx = atan2(point->m_Y, point->m_X);
 		}
@@ -1180,7 +1180,7 @@ public:
 
 			if (m_NeedPrecalcAtanXY)
 				ss << "\tprecalcAtanxy = atan2(transX, transY);\n";
-		
+
 			if (m_NeedPrecalcAtanYX)
 				ss << "\tprecalcAtanyx = atan2(transY, transX);\n";
 		}
@@ -1204,7 +1204,7 @@ public:
 
 			if (m_NeedPrecalcAtanXY)
 				ss << "\tprecalcAtanxy = atan2(outPoint->m_X, outPoint->m_Y);\n";
-		
+
 			if (m_NeedPrecalcAtanYX)
 				ss << "\tprecalcAtanyx = atan2(outPoint->m_Y, outPoint->m_X);\n";
 		}
@@ -1266,7 +1266,7 @@ public:
 	/// <param name="outPoint">The point to store the result in</param>
 	/// <param name="rand">The random number generator to use.</param>
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) = 0;
-	
+
 	/// <summary>
 	/// Return a string which performs the equivalent calculation in Func(), but on the GPU in OpenCL.
 	/// Derived classes will implement this.
@@ -1296,7 +1296,7 @@ public:
 	{
 		m_Weight = rand.Frand11<T>();
 	}
-	
+
 	/// <summary>
 	/// Returns the string prefix to be used with params and the variation name.
 	/// </summary>
@@ -1405,7 +1405,7 @@ public:
 	{
 		Init(NULL, "", 0, REAL, TLOW, TMAX);
 	}
-	
+
 	/// <summary>
 	/// Constructor for a precalc param that takes arguments.
 	/// </summary>
@@ -1543,7 +1543,7 @@ public:
 			case INTEGER_NONZERO :
 			{
 				int vi = (int)max(min<T>((T)Floor<T>(val + T(0.5)), m_Max), m_Min);
-						
+
 				if (vi == 0)
 					vi = (int)SignNz<T>(val);
 
@@ -1605,6 +1605,8 @@ private:
 template <typename T>
 class EMBER_API ParametricVariation : public Variation<T>
 {
+using Variation<T>::Precalc;
+
 public:
 	/// <summary>
 	/// Constructor which takes arguments and just passes them to the base class.
@@ -1657,7 +1659,7 @@ public:
 		//to the addresses of its members and then assign values from var.
 		m_Params.reserve(5);
 	}
-	
+
 	/// <summary>
 	/// Determine whether the params vector contains a parameter with the specified name.
 	/// </summary>
@@ -1724,7 +1726,7 @@ public:
 		});
 
 		if (b)
-			Precalc();
+			this->Precalc();
 
 		return b;
 	}
@@ -1743,21 +1745,26 @@ public:
 			m_Params[index].Set(val);
 
 		if (b)
-			Precalc();
+			this->Precalc();
 
 		return b;
 	}
+
+	/// <summary>
+	/// Severe hack to get g++ to compile this.
+	/// </summary>
+	virtual void Precalc() override { }
 
 	/// <summary>
 	/// Place the parametric variation in a random state by setting all of the
 	/// non-precalc params to values between -1 and 1;
 	/// </summary>
 	/// <param name="rand">The rand.</param>
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		Variation<T>::Random(rand);
 		ForEach(m_Params, [&](ParamWithName<T>& param) { param.Set(rand.Frand11<T>()); });
-		Precalc();
+		this->Precalc();
 	}
 
 	/// <summary>
@@ -1766,9 +1773,9 @@ public:
 	void Clear()
 	{
 		ForEach(m_Params, [&](ParamWithName<T>& param) { *(param.Param()) = 0; });
-		Precalc();
+		this->Precalc();
 	}
-	
+
 	/// <summary>
 	/// Return a vector of all parameter names, optionally including precalcs.
 	/// </summary>
@@ -1825,7 +1832,7 @@ protected:
 				if (!m_Params[i].IsPrecalc())
 					m_Params[i].Set(T(params[i].ParamVal()));
 
-			Precalc();
+			this->Precalc();
 		}
 	}
 
@@ -1838,77 +1845,36 @@ protected:
 /// Defining assignment operators isn't really needed because Variations are always held as pointers.
 /// </summary>
 
-#ifdef DO_DOUBLE
-#define VARCOPY(name) \
-	public: \
-	name(const name<T>& var) \
-		: Variation<T>(var) \
-	{ \
-	} \
-	\
-	template <typename U> \
-	name(const name<U>& var) \
-		: Variation<T>(var) \
-	{ \
-	} \
-	\
-	virtual Variation<T>* Copy() \
-	{ \
-		return new name<T>(*this); \
-	} \
-	\
-	virtual void Copy(Variation<float>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<float>(*this); \
-	} \
-	\
-	virtual void Copy(Variation<double>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<double>(*this); \
-	}
+#define VARUSINGS \
+	using Variation<T>::m_Weight; \
+	using Variation<T>::m_Xform; \
+	using Variation<T>::m_VariationId; \
+	using Variation<T>::m_Name; \
+	using Variation<T>::m_VarType; \
+	using Variation<T>::m_AssignType; \
+	using Variation<T>::SetType; \
+	using Variation<T>::IndexInXform; \
+	using Variation<T>::XformIndexInEmber; \
+	using Variation<T>::Prefix;
 
-#define PREPOSTVARCOPY(name, base) \
-	name(const name<T>& var) \
-		: base<T>(var) \
-	{ \
-	} \
-	\
-	template <typename U> \
-	name(const name<U>& var) \
-		: base<T>(var) \
-	{ \
-	} \
-	\
-	virtual Variation<T>* Copy() \
-	{ \
-		return new name<T>(*this); \
-	} \
-	\
-	virtual void Copy(Variation<float>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<float>(*this); \
-	} \
-	\
-	virtual void Copy(Variation<double>*& var) const \
+	//using Variation<T>::Precalc; \
+
+#ifdef DO_DOUBLE
+#define VARCOPYDOUBLE(name) \
+	virtual void Copy(Variation<double>*& var) const override \
 	{ \
 		if (var != NULL) \
 			delete var; \
 		\
 		var = new name<double>(*this); \
-	}
+	} \
 
 #else
+#define VARCOPYDOUBLE(name)
+#endif // DO_DOUBLE
 
 #define VARCOPY(name) \
+	VARUSINGS \
 	public: \
 	name(const name<T>& var) \
 		: Variation<T>(var) \
@@ -1921,18 +1887,20 @@ protected:
 	{ \
 	} \
 	\
-	virtual Variation<T>* Copy() \
+	virtual Variation<T>* Copy() override \
 	{ \
 		return new name<T>(*this); \
 	} \
 	\
-	virtual void Copy(Variation<float>*& var) const \
+	virtual void Copy(Variation<float>*& var) const override \
 	{ \
 		if (var != NULL) \
 			delete var; \
 		\
 		var = new name<float>(*this); \
-	}
+	} \
+	\
+	VARCOPYDOUBLE(name) \
 
 #define PREPOSTVARCOPY(name, base) \
 	name(const name<T>& var) \
@@ -1946,19 +1914,20 @@ protected:
 	{ \
 	} \
 	\
-	virtual Variation<T>* Copy() \
+	virtual Variation<T>* Copy() override \
 	{ \
 		return new name<T>(*this); \
 	} \
 	\
-	virtual void Copy(Variation<float>*& var) const \
+	virtual void Copy(Variation<float>*& var) const override \
 	{ \
 		if (var != NULL) \
 			delete var; \
 		\
 		var = new name<float>(*this); \
-	}
-#endif
+	} \
+	\
+	VARCOPYDOUBLE(name) \
 
 /// <summary>
 /// Macro to create pre and post counterparts to a variation.
@@ -1970,6 +1939,7 @@ protected:
 	template <typename T> \
 	class EMBER_API Pre##varName##Variation : public varName##Variation<T> \
 	{ \
+	VARUSINGS \
 	public: \
 		Pre##varName##Variation(T weight = 1.0) : varName##Variation<T>(weight) \
 		{ \
@@ -1985,6 +1955,7 @@ protected:
 	template <typename T> \
 	class EMBER_API Post##varName##Variation : public varName##Variation<T> \
 	{ \
+	VARUSINGS \
 	public:\
 		Post##varName##Variation(T weight = 1.0) : varName##Variation<T>(weight) \
 		{ \
@@ -2006,9 +1977,15 @@ protected:
 /// Instead, every class must define it as a non-virtual function and explicitly call it in its constructor.
 /// </summary>
 
-#ifdef DO_DOUBLE
+#define PARVARUSINGS \
+	using ParametricVariation<T>::m_Params; \
+	using ParametricVariation<T>::CopyParamVals;
+
+	//using Variation<T>::Precalc; \
 
 #define PARVARCOPY(name) \
+	VARUSINGS \
+	PARVARUSINGS \
 	public: \
 	name(const name<T>& var) \
 		: ParametricVariation<T>(var) \
@@ -2025,12 +2002,12 @@ protected:
 		CopyParamVals(var.ParamsVec()); /* Copy values from var's vector and precalc. */ \
 	} \
 	\
-	virtual Variation<T>* Copy() \
+	virtual Variation<T>* Copy() override \
 	{ \
 		return new name<T>(*this); \
 	} \
 	\
-	virtual void Copy(Variation<float>*& var) const \
+	virtual void Copy(Variation<float>*& var) const override \
 	{ \
 		if (var != NULL) \
 			delete var; \
@@ -2038,13 +2015,7 @@ protected:
 		var = new name<float>(*this); \
 	} \
 	\
-	virtual void Copy(Variation<double>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<double>(*this); \
-	}
+	VARCOPYDOUBLE(name) \
 
 #define PREPOSTPARVARCOPY(name, base) \
 	name(const name<T>& var) \
@@ -2062,12 +2033,12 @@ protected:
 		CopyParamVals(var.ParamsVec()); /* Copy values from var's vector and precalc. */ \
 	} \
 	\
-	virtual Variation<T>* Copy() \
+	virtual Variation<T>* Copy() override \
 	{ \
 		return new name<T>(*this); \
 	} \
 	\
-	virtual void Copy(Variation<float>*& var) const \
+	virtual void Copy(Variation<float>*& var) const override \
 	{ \
 		if (var != NULL) \
 			delete var; \
@@ -2075,74 +2046,7 @@ protected:
 		var = new name<float>(*this); \
 	} \
 	\
-	virtual void Copy(Variation<double>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<double>(*this); \
-	}
-#else
-
-#define PARVARCOPY(name) \
-	public: \
-	name(const name<T>& var) \
-		: ParametricVariation<T>(var) \
-	{ \
-		Init(); /* Assign the addresses of the members to the vector. */ \
-		CopyParamVals(var.ParamsVec()); /* Copy values from var's vector and precalc. */ \
-	} \
-	\
-	template <typename U> \
-	name(const name<U>& var) \
-		: ParametricVariation<T>(var) \
-	{ \
-		Init(); /* Assign the addresses of the members to the vector. */ \
-		CopyParamVals(var.ParamsVec()); /* Copy values from var's vector and precalc. */ \
-	} \
-	\
-	virtual Variation<T>* Copy() \
-	{ \
-		return new name<T>(*this); \
-	} \
-	\
-	virtual void Copy(Variation<float>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<float>(*this); \
-	}
-
-#define PREPOSTPARVARCOPY(name, base) \
-	name(const name<T>& var) \
-		: base<T>(var) \
-	{ \
-		Init(); /* Assign the addresses of the members to the vector. */ \
-		CopyParamVals(var.ParamsVec()); /* Copy values from var's vector and precalc. */ \
-	} \
-	\
-	template <typename U> \
-	name(const name<U>& var) \
-		: base<T>(var) \
-	{ \
-		Init(); /* Assign the addresses of the members to the vector. */ \
-		CopyParamVals(var.ParamsVec()); /* Copy values from var's vector and precalc. */ \
-	} \
-	\
-	virtual Variation<T>* Copy() \
-	{ \
-		return new name<T>(*this); \
-	} \
-	\
-	virtual void Copy(Variation<float>*& var) const \
-	{ \
-		if (var != NULL) \
-			delete var; \
-		\
-		var = new name<float>(*this); \
-	}
-#endif
+	VARCOPYDOUBLE(name)
 
 /// <summary>
 /// Macro to create pre and post counterparts to a parametric variation.
@@ -2156,6 +2060,9 @@ protected:
 	template <typename T> \
 	class EMBER_API Pre##varName##Variation : public varName##Variation <T> \
 	{ \
+	VARUSINGS \
+	PARVARUSINGS \
+	using varName##Variation<T>::Init; \
 	public:\
 		Pre##varName##Variation(T weight = 1.0) : varName##Variation<T>(weight) \
 		{ \
@@ -2172,6 +2079,9 @@ protected:
 	template <typename T> \
 	class EMBER_API Post##varName##Variation : public varName##Variation<T> \
 	{ \
+	VARUSINGS \
+	PARVARUSINGS \
+	using varName##Variation<T>::Init; \
 	public:\
 		Post##varName##Variation(T weight = 1.0) : varName##Variation<T>(weight) \
 		{ \

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <?define ProductVersion="0.4.1.3" ?>
+  <?define ProductName="Fractorium Beta $(var.ProductVersion) ($(var.GpuType))" ?>
+  <?define UpgradeCode="{4714cd15-bfba-44f6-8059-9e1466ebfa6e}"?>
+  <?define Manufacturer="Fractorium"?>
+  
+  <!--
+  Original GUID,
+  <?define ProductCode="{703001af-6255-4671-9a69-571198b4c0dd}"?>
+  -->
+
+  <!--
+  Change this for every release.
+  -->
+  <?define ProductCode="{2EA7558B-E7F2-4138-8F19-AC019735D729}"?>
+  
+  <Product Id="$(var.ProductCode)" Name="$(var.ProductName)" Language="1033" Version="$(var.ProductVersion)" Manufacturer="$(var.Manufacturer)" UpgradeCode="$(var.UpgradeCode)">
+    <Package
+       Keywords="Installer"
+       Platform="x64"
+       Description="$(var.Manufacturer)"
+       Comments="$(var.Manufacturer)"
+       Manufacturer="$(var.Manufacturer)"
+       InstallScope="perUser"
+       InstallerVersion="400"
+       InstallPrivileges="limited"
+       Compressed="yes"
+       Languages="1033"
+       SummaryCodepage="1252"
+       />
+
+    <Upgrade Id="$(var.UpgradeCode)">
+      <UpgradeVersion Minimum="0.0.0"
+                      IncludeMinimum="no"
+                      OnlyDetect="no"
+                      Maximum="$(var.ProductVersion)"
+                      IncludeMaximum="no"
+                      Property="PREVIOUSFOUND" />
+    </Upgrade>
+
+    <InstallExecuteSequence>
+      <RemoveExistingProducts After="InstallInitialize"/>
+    </InstallExecuteSequence>
+        
+    <MediaTemplate EmbedCab="yes" />
+   
+    <Icon Id="AddRemoveProgramsIcon" SourceFile="$(var.SolutionDir)..\..\..\Source\Fractorium\Icons\Fractorium.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="AddRemoveProgramsIcon" />
+    <Feature Id="MainApplication" Title="Main Application" Level="1">
+      <ComponentGroupRef Id="ProductComponents" />
+      <ComponentGroupRef Id="PlatformComponents" />
+      <ComponentRef Id="FractoriumStartMenuShortcut"/>
+      <ComponentRef Id="FractoriumDesktopShortcut"/>
+    </Feature>
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SolutionDir)..\..\..\Data\gplv3.rtf" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.SolutionDir)..\..\..\Source\Fractorium\Icons\banner.bmp" /><!--493 x 58 pixels -->
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.SolutionDir)..\..\..\Source\Fractorium\Icons\dialog.bmp" /><!--493 × 312 pixels -->
+    
+    <Property Id="MSIUSEREALADMINDETECTION" Value="1" />
+    <Property Id="MSIFASTINSTALL" Value="1" />
+    
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
+    <UIRef Id="WixUI_InstallDir" />
+    <UIRef Id="WixUI_ErrorProgressText" />   
+  </Product>
+  
+  <Fragment>
+    <Directory Id="TARGETDIR" Name="SourceDir" >
+      <!-- Doing this requires admin access, so we don't do it.
+      <Directory Id="ProgramFiles64Folder" >
+        <Directory Id="INSTALLFOLDER" Name="Fractorium" >
+          <Directory Id="INSTALLFOLDERPLATFORMS" Name="platforms" />
+        </Directory>
+      </Directory>
+      -->
+
+      <!-- Doing this doesn't require admin access.
+      It reports a ton of errors, but oddly enough, an MSI is still created with the errors.
+      -->
+      <Directory Id="AppDataFolder" >
+        <Directory Id="INSTALLFOLDER" Name="Fractorium" >
+          <Directory Id="INSTALLFOLDERPLATFORMS" Name="platforms" />
+        </Directory>
+      </Directory>
+      
+      <!-- Shortcut folders-->
+      <Directory Id="ProgramMenuFolder" Name="Programs">
+        <Directory Id="ProgramMenuDirLevel1" Name="Fractorium" />
+      </Directory>
+      <Directory Id="DesktopFolder" Name="Desktop" />
+    </Directory>
+  </Fragment>
+
+  <Fragment>
+    <Component Id="FractoriumStartMenuShortcut" Directory="ProgramMenuDirLevel1" Guid="f1eaf3ba-9b61-48b6-8994-49ebc6b405aa">
+      <Shortcut Id="FractoriumStartMenuShortcut"
+           Directory="ProgramMenuDirLevel1"
+           Name="Fractorium"
+           Target="[INSTALLFOLDER]\Fractorium.exe"
+           WorkingDirectory="INSTALLFOLDER"
+           Icon="AddRemoveProgramsIcon"
+           />
+      <Condition>1</Condition>
+      <RemoveFolder Id="FractoriumStartMenuShortcut" On="uninstall" />
+      <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+    </Component>
+    <Component Id="FractoriumDesktopShortcut" Directory="DesktopFolder" Guid="b73ff21c-08ac-47ad-a510-b3ce90e43979">
+      <Shortcut Id="FractoriumDesktopShortcut"
+           Directory="DesktopFolder"
+           Name="Fractorium"
+           Target="[INSTALLFOLDER]\Fractorium.exe"
+           WorkingDirectory="INSTALLFOLDER"
+           Icon="AddRemoveProgramsIcon"
+           />
+      <RemoveFolder Id="FractoriumDesktopShortcut" On="uninstall" />
+      <Condition>1</Condition>
+      <RegistryValue Root='HKCU' Key='Software\[Manufacturer]\[ProductName]' Type='string' Value='' KeyPath='yes' />
+    </Component>
+  </Fragment>
+  
+  <Fragment>
+    <ComponentGroup Id="ProductComponents" Directory="INSTALLFOLDER">
+      <Component Id="Fractorium.exe" Guid="ccc04ca4-c747-4330-8cfd-bdd943b185c0">
+        <File Id="Fractorium.exe" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\$(var.Configuration)\Fractorium.exe" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64" />
+      </Component>
+      <Component Id="EmberRender.exe" Guid="12d49219-9269-495a-b8e4-3d33cb32d280">
+        <File Id="EmberRender.exe" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\$(var.Configuration)\EmberRender.exe" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64" />
+      </Component>
+      <Component Id="EmberAnimate.exe" Guid="ae362704-93a3-48dc-a13b-7c4eabd87ee1">
+        <File Id="EmberAnimate.exe" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\$(var.Configuration)\EmberAnimate.exe" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64" />
+      </Component>
+      <Component Id="EmberGenome.exe" Guid="7a93f079-216a-4d1c-9b02-8ca93a6a8daa">
+        <File Id="EmberGenome.exe" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\$(var.Configuration)\EmberGenome.exe" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64" />
+      </Component>
+      <Component Id="Ember.dll" Guid="c0f80dee-7a16-4d6a-b7ed-d6cd162154eb">
+        <File Id="Ember.dll" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\$(var.Configuration)\Ember.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="EmberCL.dll" Guid="21c0e372-c605-4e0d-9ba8-94e38949833b">
+        <File Id="EmberCL.dll" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\$(var.Configuration)\EmberCL.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="libpng16.dll" Guid="0a1605f8-e041-45a3-956b-10efdfa9da20">
+        <File Id="libpng16.dll" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\Release\libpng16.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="libxml2.dll" Guid="bb3aa687-7a3d-4d16-a27c-28529b472754">
+        <File Id="libxml2.dll" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\Release\libxml2.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="tbb.dll" Guid="ffa1b2ec-32d5-41aa-9380-fb04d8139103">
+        <File Id="tbb.dll" Source="$(var.SolutionDir)..\..\..\Bin\$(var.Platform)\Release\tbb.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="msvcp120.dll" Guid="8f1ffde7-c1bd-45fb-8bc8-26dde552eafd">
+        <File Id="msvcp120.dll" Source="$(var.ProjectDir)\msvcp120.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      <Component Id="msvcr120.dll" Guid="50c9bc27-c547-4a03-9f6c-cd416f449dd8">
+        <File Id="msvcr120.dll" Source="$(var.ProjectDir)\msvcr120.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      <Component Id="vccorlib120.dll" Guid="affe33e7-1e64-4bb0-a062-2b56f77459b4">
+        <File Id="vccorlib120.dll" Source="$(var.ProjectDir)\vccorlib120.dll" KeyPath="yes" Checksum="yes" />
+      </Component>
+      <Component Id="flam3palettes.xml" Guid="d3adb0bb-14ef-4923-99d9-a5784b7ef04e">
+        <File Id="flam3palettes.xml" Source="$(var.SolutionDir)..\..\..\Data\flam3-palettes.xml" KeyPath="yes" Checksum="yes" />
+      </Component>
+      <Component Id="VersionHistory.txt" Guid="8b031217-9e7d-4700-9ab8-2593a4e002b6">
+        <File Id="VersionHistory.txt" Source="$(var.SolutionDir)..\..\..\Data\Version History.txt" KeyPath="yes" Checksum="yes" />
+      </Component>
+      <Component Id="Qt5Core.dll" Guid="0198dd4b-9bbb-4ea2-86e3-6ea0f4f6ac51">
+        <File Id="Qt5Core.dll" Source="$(env.QTDIR)\bin\Qt5Core.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="Qt5Gui.dll" Guid="7f93dcc2-55db-4920-83d7-e06c23f7719a">
+        <File Id="Qt5Gui.dll" Source="$(env.QTDIR)\bin\Qt5Gui.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="Qt5OpenGL.dll" Guid="dad0a1ca-366c-4df8-aaa1-ae0de31f157a">
+        <File Id="Qt5OpenGL.dll" Source="$(env.QTDIR)\bin\Qt5OpenGL.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+      <Component Id="Qt5Widgets.dll" Guid="006bb2f1-7a38-426f-ba2c-5196d1d6c24d">
+        <File Id="Qt5Widgets.dll" Source="$(env.QTDIR)\bin\Qt5Widgets.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+  
+  <Fragment>
+    <ComponentGroup Id="PlatformComponents" Directory="INSTALLFOLDERPLATFORMS">
+      <Component Id="qwindows.dll" Guid="627b7f5a-8fa6-4c78-a6b7-81fcdd8fdd63">
+        <File Id="qwindows.dll" Source="$(env.QTDIR)\plugins\platforms\qwindows.dll" KeyPath="yes" Checksum="yes" ProcessorArchitecture="x64"/>
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

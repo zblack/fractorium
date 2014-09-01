@@ -153,7 +153,12 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 		if (f != NULL)
 		{
 			struct _stat statBuf;
+
+#ifdef _WIN32
 			int statResult = _fstat(f->_file, &statBuf);//Get data associated with file.
+#else
+			int statResult = _fstat(f->_fileno, &statBuf);//Get data associated with file.
+#endif
 
 			if (statResult == 0)//Check if statistics are valid.
 			{
@@ -166,7 +171,7 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 					if (bytesRead == statBuf.st_size)//Ensure the number of bytes read matched what was requested.
 					{
 						if (nullTerminate)//Optionally NULL terminate if they want to treat it as a string.
-							buf[buf.size() - 1] = NULL;
+							buf[buf.size() - 1] = 0;
 
 						b = true;//Success.
 					}
@@ -244,6 +249,26 @@ static void RgbaToRgb(vector<unsigned char>& rgba, vector<unsigned char>& rgb, u
 		rgb[j]	   = rgba[i];
 		rgb[j + 1] = rgba[i + 1];
 		rgb[j + 2] = rgba[i + 2];
+	}
+}
+
+/// <summary>
+/// System floor() extremely slow because it accounts for various error conditions.
+/// This is a much faster version that works on data that is not NaN.
+/// </summary>
+/// <param name="x">The value to return the floor of</param>
+/// <returns>The floored value</returns>
+template <typename T>
+static inline int Floor(T val)
+{
+	if (val >= 0)
+	{
+		return (int)val;
+	}
+	else
+	{
+		int i = (int)val;//Truncate.
+		return i - (i > val);//Convert trunc to floor.
 	}
 }
 
@@ -388,28 +413,8 @@ inline float LRint(float x)
 /// <returns>The rounded value</returns>
 inline double LRint(double x)
 {
-	__int64 temp = (x >= 0 ? (__int64)(x + 0.5) : (__int64)(x - 0.5));
+	int64_t temp = (x >= 0 ? (int64_t)(x + 0.5) : (int64_t)(x - 0.5));
 	return (double)temp;
-}
-
-/// <summary>
-/// System floor() extremely slow because it accounts for various error conditions.
-/// This is a much faster version that works on data that is not NaN.
-/// </summary>
-/// <param name="x">The value to return the floor of</param>
-/// <returns>The floored value</returns>
-template <typename T>
-static inline int Floor(T val)
-{
-	if (val >= 0)
-	{
-		return (int)val;
-	}
-	else
-	{
-		int i = (int)val;//Truncate.
-		return i - (i > val);//Convert trunc to floor.
-	}
 }
 
 /// <summary>
@@ -421,7 +426,7 @@ template <typename T>
 static inline T Round6(T r)
 {
 	r *= 1e6;
-	
+
 	if (r < 0)
 		r -= 1;
 
@@ -632,7 +637,7 @@ static inline T LogMap(T x)
 /// <param name="name">The name of the tag of the to inspect</param>
 /// <param name="val">The value compare against</param>
 /// <returns>True if the comparison matched, else false</returns>
-static inline bool Compare(const xmlChar* name, char* val)
+static inline bool Compare(const xmlChar* name, const char* val)
 {
 	return xmlStrcmp(name, XC val) != 0;
 }
@@ -722,7 +727,7 @@ static inline string ToLower(string& str)
 /// </summary>
 /// <param name="str">The string to copy and make upper case</param>
 /// <returns>The upper case string</returns>
-static inline string ToUpper(string& str)
+static inline string ToUpper(const string& str)
 {
 	string upper;
 
@@ -781,19 +786,29 @@ static T Arg(char* name, T def)
 /// <param name="def">The default value to return if the environment variable was not present</param>
 /// <returns>The value of the specified environment variable if found, else default</returns>
 template <>
-static int Arg<int>(char* name, int def)
+#ifdef _WIN32
+static
+#endif
+int Arg<int>(char* name, int def)
 {
 	char* ch;
 	int returnVal;
 	size_t len;
+#ifdef WIN32
 	errno_t err = _dupenv_s(&ch, &len, name);
+#else
+	int err = 1;
+	ch = getenv(name);
+#endif
 
 	if (err || !ch)
 		returnVal = def;
 	else
 		returnVal = atoi(ch);
 
+#ifdef WIN32
 	free(ch);
+#endif
 	return returnVal;
 }
 
@@ -804,7 +819,10 @@ static int Arg<int>(char* name, int def)
 /// <param name="def">The default value to return if the environment variable was not present</param>
 /// <returns>The value of the specified environment variable if found, else default</returns>
 template <>
-static unsigned int Arg<unsigned int>(char* name, unsigned int def)
+#ifdef _WIN32
+static
+#endif
+unsigned int Arg<unsigned int>(char* name, unsigned int def)
 {
 	return Arg<int>(name, (int)def);
 }
@@ -816,7 +834,10 @@ static unsigned int Arg<unsigned int>(char* name, unsigned int def)
 /// <param name="def">The default value to return if the environment variable was not present</param>
 /// <returns>The value of the specified environment variable if found, else default</returns>
 template <>
-static bool Arg<bool>(char* name, bool def)
+#ifdef _WIN32
+static
+#endif
+bool Arg<bool>(char* name, bool def)
 {
 	return (Arg<int>(name, -999) != -999) ? true : def;
 }
@@ -828,19 +849,29 @@ static bool Arg<bool>(char* name, bool def)
 /// <param name="def">The default value to return if the environment variable was not present</param>
 /// <returns>The value of the specified environment variable if found, else default</returns>
 template <>
-static double Arg<double>(char* name, double def)
+#ifdef _WIN32
+static
+#endif
+double Arg<double>(char* name, double def)
 {
 	char* ch;
 	double returnVal;
 	size_t len;
+#ifdef WIN32
 	errno_t err = _dupenv_s(&ch, &len, name);
+#else
+	int err = 1;
+	ch = getenv(name);
+#endif
 
 	if (err || !ch)
 		returnVal = def;
 	else
 		returnVal = atof(ch);
 
+#ifdef WIN32
 	free(ch);
+#endif
 	return returnVal;
 }
 
@@ -851,12 +882,20 @@ static double Arg<double>(char* name, double def)
 /// <param name="def">The default value to return if the environment variable was not present</param>
 /// <returns>The value of the specified environment variable if found, else default</returns>
 template <>
-static string Arg<string>(char* name, string def)
+#ifdef _WIN32
+static
+#endif
+string Arg<string>(char* name, string def)
 {
 	char* ch;
 	string returnVal;
 	size_t len;
+#ifdef WIN32
 	errno_t err = _dupenv_s(&ch, &len, name);
+#else
+	int err = 1;
+	ch = getenv(name);
+#endif
 
 	if (err || !ch)
 	{
@@ -866,7 +905,9 @@ static string Arg<string>(char* name, string def)
 	else
 		returnVal = string(ch);
 
+#ifdef WIN32
 	free(ch);
+#endif
 	return returnVal;
 }
 
@@ -905,7 +946,7 @@ unsigned int inline FindAndReplace(T& source, const T& find, const T& replace)
 /// <summary>
 /// Return a character pointer to a version string composed of the EMBER_OS and EMBER_VERSION values.
 /// </summary>
-static char* EmberVersion()
+static const char* EmberVersion()
 {
 	return EMBER_OS "-" EMBER_VERSION;
 }

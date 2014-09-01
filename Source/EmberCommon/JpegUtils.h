@@ -151,7 +151,7 @@ static bool WritePng(const char* filename, unsigned char* image, unsigned int wi
 
 		text[0].compression = PNG_TEXT_COMPRESSION_NONE;
 		text[0].key = "flam3_version";
-		text[0].text = EmberVersion();
+		text[0].text = (png_charp)EmberVersion();
 
 		text[1].compression = PNG_TEXT_COMPRESSION_NONE;
 		text[1].key = "flam3_nickname";

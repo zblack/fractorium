@@ -70,7 +70,7 @@ public:
 		m_RenderMs = 0;
 	}
 
-	unsigned __int64 m_Iters, m_Badvals;
+	uint64_t m_Iters, m_Badvals;
 	double m_IterMs, m_RenderMs;
 };
 
@@ -133,8 +133,8 @@ public:
 	virtual double LowerLeftY(bool gutter = true)  const { return 0; }
 	virtual double UpperRightX(bool gutter = true) const { return 0; }
 	virtual double UpperRightY(bool gutter = true) const { return 0; }
-	virtual unsigned __int64 MemoryRequired(bool includeFinal) { return 0; }
-	virtual unsigned __int64 MemoryAvailable() { return 0; }
+	virtual uint64_t MemoryRequired(bool includeFinal) { return 0; }
+	virtual uint64_t MemoryAvailable() { return 0; }
 	virtual bool PrepFinalAccumVector(vector<unsigned char>& pixels) { return false; }
 	virtual eProcessState  ProcessState()  const { return NONE; }
 	virtual eProcessAction ProcessAction() const { return NOTHING; }
@@ -190,7 +190,7 @@ public:
 	virtual bool PrepFinalAccumVector(vector<unsigned char>& pixels);
 	virtual eRenderStatus Run(vector<unsigned char>& finalImage, double time = 0, unsigned int subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0);
 	virtual EmberImageComments ImageComments(unsigned int printEditDepth = 0, bool intPalette = false, bool hexPalette = true);
-	virtual unsigned __int64 MemoryRequired(bool includeFinal);
+	virtual uint64_t MemoryRequired(bool includeFinal);
 
 	//Virtual functions to be overriden in derived renderers that use the GPU.
 	virtual unsigned __int64 MemoryAvailable();
@@ -200,7 +200,7 @@ public:
 	virtual bool CreateSpatialFilter(bool& newAlloc);
 	virtual unsigned int SubBatchSize() const;
 	virtual void SubBatchSize(unsigned int sbs);
-	virtual unsigned int NumChannels() const; 
+	virtual unsigned int NumChannels() const;
 	virtual void NumChannels(unsigned int numChannels);
 	virtual eRendererType RendererType() const;
 	virtual unsigned int ThreadCount() const;
@@ -216,7 +216,7 @@ protected:
 	virtual eRenderStatus GaussianDensityFilter();
 	virtual eRenderStatus AccumulatorToFinalImage(vector<unsigned char>& pixels, size_t finalOffset);
 	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset);
-	virtual EmberStats Iterate(unsigned __int64 iterCount, unsigned int pass, unsigned int temporalSample);
+	virtual EmberStats Iterate(uint64_t iterCount, unsigned int pass, unsigned int temporalSample);
 
 public:
 	//Accessors for render properties.
@@ -268,7 +268,7 @@ public:
 	inline unsigned int                 SuperSize()                     const;
 	virtual unsigned int                FinalBufferSize()               const;
 	inline unsigned int                 FinalRowSize()                  const;
-	inline unsigned int                 FinalDimensions()               const;
+	unsigned int                 		FinalDimensions()               const;
 	inline unsigned int                 PixelSize()                     const;
 	virtual unsigned int                GutterWidth()                   const;
 	inline unsigned int                 DensityFilterOffset()           const;
@@ -282,8 +282,8 @@ public:
 	virtual double                      UpperRightY(bool gutter = true) const;
 	inline T                            K1()                            const;
 	inline T                            K2()                            const;
-	inline unsigned __int64	            TotalIterCount()	            const;
-	inline unsigned __int64	            ItersPerTemporalSample()        const;
+	inline uint64_t             		TotalIterCount()	            const;
+	inline uint64_t	            		ItersPerTemporalSample()        const;
 	virtual eProcessState               ProcessState()			        const;
 	virtual eProcessAction              ProcessAction()			        const;
 	virtual EmberStats                  Stats() 				        const;
@@ -295,9 +295,9 @@ public:
 	virtual DensityFilter<T>*           GetDensityFilter();
 	
 	//Ember wrappers, getters only.
-	inline bool                 XaosPresent();     
-	virtual inline unsigned int FinalRasW()           const;
-	virtual inline unsigned int FinalRasH()           const;
+	inline bool                 XaosPresent();
+	unsigned int 				FinalRasW()           const;
+	unsigned int 				FinalRasH()           const;
 	inline unsigned int         Supersample()         const;
 	inline unsigned int         Passes()              const;
 	inline unsigned int         TemporalSamples()     const;
@@ -382,7 +382,7 @@ protected:
 	unsigned int m_VibGamCount;
 	unsigned int m_LastPass;
 	unsigned int m_LastTemporalSample;
-	unsigned __int64 m_LastIter;
+	uint64_t m_LastIter;
 	double m_LastIterPercent;
 	eProcessAction m_ProcessAction;
 	eProcessState m_ProcessState;
@@ -404,8 +404,8 @@ protected:
 	auto_ptr<TemporalFilter<T>> m_TemporalFilter;
 	auto_ptr<DensityFilter<T>> m_DensityFilter;
 	vector<vector<Point<T>>> m_Samples;
-	vector<unsigned __int64> m_SubBatch;
-	vector<unsigned __int64> m_BadVals;
+	vector<uint64_t> m_SubBatch;
+	vector<uint64_t> m_BadVals;
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> m_Rand;
 	tbb::task_group m_TaskGroup;
 	CriticalSection m_RenderingCs, m_AccumCs, m_FinalAccumCs, m_ResizeCs;

@@ -1,0 +1,450 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Fractorium" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug x64">
+				<Option output="Fractorium" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DUNICODE" />
+					<Add option="-DWIN32" />
+					<Add option="-DQT_DLL" />
+					<Add option="-DQT_CORE_LIB" />
+					<Add option="-DQT_GUI_LIB" />
+					<Add option="-DQT_MULTIMEDIA_LIB" />
+					<Add option="-DQT_HELP_LIB" />
+					<Add option="-DQT_OPENGL_LIB" />
+					<Add option="-DQT_WIDGETS_LIB" />
+					<Add option="-DQT_XML_LIB" />
+					<Add directory="." />
+					<Add directory="$(QTDIR)/include" />
+					<Add directory="../../Fractorium/GeneratedFiles" />
+					<Add directory="../../Fractorium/GeneratedFiles/ConfigurationName" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include/QtMultimedia" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include" />
+					<Add directory="$(QTDIR)/../qttools/include" />
+					<Add directory="$(QTDIR)/../qttools/include/QtHelp" />
+					<Add directory="$(QTDIR)/include/QtConcurrent" />
+					<Add directory="$(QTDIR)/include/QtCore" />
+					<Add directory="$(QTDIR)/include/QtGui" />
+					<Add directory="$(QTDIR)/include/QtOpenGL" />
+					<Add directory="$(QTDIR)/include/QtWidgets" />
+					<Add directory="$(QTDIR)/include/QtXml" />
+					<Add directory="./GeneratedFiles" />
+					<Add directory="../../Source/Ember" />
+					<Add directory="../../Source/EmberCL" />
+					<Add directory="../../Source/EmberCommon" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libjpeg" />
+					<Add directory="../../../libpng" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../glew/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+					<Add directory="./GeneratedFiles/" />
+				</Compiler>
+				<Linker>
+					<Add library="qtmaind.lib" />
+					<Add library="Qt5Cored.lib" />
+					<Add library="Qt5Guid.lib" />
+					<Add library="Qt5OpenGLd.lib" />
+					<Add library="opengl32.lib" />
+					<Add library="glu32.lib" />
+					<Add library="opencl.lib" />
+					<Add library="Qt5Widgetsd.lib" />
+					<Add library="Qt5Xmld.lib" />
+					<Add library="Ws2_32.lib" />
+					<Add directory="$(QTDIR)/lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseNvidia Win32">
+				<Option output="Fractorium" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DUNICODE" />
+					<Add option="-DWIN32" />
+					<Add option="-DQT_DLL" />
+					<Add option="-DQT_NO_DEBUG" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DQT_CORE_LIB" />
+					<Add option="-DQT_GUI_LIB" />
+					<Add option="-DQT_MULTIMEDIA_LIB" />
+					<Add option="-DQT_HELP_LIB" />
+					<Add option="-DQT_OPENGL_LIB" />
+					<Add option="-DQT_WIDGETS_LIB" />
+					<Add option="-DQT_XML_LIB" />
+					<Add directory="." />
+					<Add directory="$(QTDIR)/include" />
+					<Add directory="../../Fractorium/GeneratedFiles" />
+					<Add directory="../../Fractorium/GeneratedFiles/ConfigurationName" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include/QtMultimedia" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include" />
+					<Add directory="$(QTDIR)/../qttools/include" />
+					<Add directory="$(QTDIR)/../qttools/include/QtHelp" />
+					<Add directory="$(QTDIR)/include/QtConcurrent" />
+					<Add directory="$(QTDIR)/include/QtCore" />
+					<Add directory="$(QTDIR)/include/QtGui" />
+					<Add directory="$(QTDIR)/include/QtOpenGL" />
+					<Add directory="$(QTDIR)/include/QtWidgets" />
+					<Add directory="$(QTDIR)/include/QtXml" />
+					<Add directory="./GeneratedFiles" />
+					<Add directory="../../Source/Ember" />
+					<Add directory="../../Source/EmberCL" />
+					<Add directory="../../Source/EmberCommon" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libjpeg" />
+					<Add directory="../../../libpng" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../glew/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+					<Add directory="./GeneratedFiles/" />
+				</Compiler>
+				<Linker>
+					<Add library="qtmain.lib" />
+					<Add library="Qt5Core.lib" />
+					<Add library="Qt5Gui.lib" />
+					<Add library="Qt5OpenGL.lib" />
+					<Add library="opengl32.lib" />
+					<Add library="glu32.lib" />
+					<Add library="opencl.lib" />
+					<Add library="Qt5Widgets.lib" />
+					<Add library="Qt5Xml.lib" />
+					<Add directory="$(QTDIR)/lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseNvidia x64">
+				<Option output="Fractorium" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DUNICODE" />
+					<Add option="-DWIN32" />
+					<Add option="-DQT_DLL" />
+					<Add option="-DQT_NO_DEBUG" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DQT_CORE_LIB" />
+					<Add option="-DQT_GUI_LIB" />
+					<Add option="-DQT_MULTIMEDIA_LIB" />
+					<Add option="-DQT_HELP_LIB" />
+					<Add option="-DQT_OPENGL_LIB" />
+					<Add option="-DQT_WIDGETS_LIB" />
+					<Add option="-DQT_XML_LIB" />
+					<Add directory="." />
+					<Add directory="$(QTDIR)/include" />
+					<Add directory="../../Fractorium/GeneratedFiles" />
+					<Add directory="../../Fractorium/GeneratedFiles/ConfigurationName" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include/QtMultimedia" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include" />
+					<Add directory="$(QTDIR)/../qttools/include" />
+					<Add directory="$(QTDIR)/../qttools/include/QtHelp" />
+					<Add directory="$(QTDIR)/include/QtConcurrent" />
+					<Add directory="$(QTDIR)/include/QtCore" />
+					<Add directory="$(QTDIR)/include/QtGui" />
+					<Add directory="$(QTDIR)/include/QtOpenGL" />
+					<Add directory="$(QTDIR)/include/QtWidgets" />
+					<Add directory="$(QTDIR)/include/QtXml" />
+					<Add directory="./GeneratedFiles" />
+					<Add directory="../../Source/Ember" />
+					<Add directory="../../Source/EmberCL" />
+					<Add directory="../../Source/EmberCommon" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libjpeg" />
+					<Add directory="../../../libpng" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../glew/include" />
+					<Add directory="$(CUDA_PATH)include" />
+					<Add directory="./GeneratedFiles/" />
+				</Compiler>
+				<Linker>
+					<Add library="qtmain.lib" />
+					<Add library="Qt5Core.lib" />
+					<Add library="Qt5Gui.lib" />
+					<Add library="Qt5OpenGL.lib" />
+					<Add library="opengl32.lib" />
+					<Add library="glu32.lib" />
+					<Add library="opencl.lib" />
+					<Add library="Qt5Widgets.lib" />
+					<Add library="Ws2_32.lib" />
+					<Add directory="$(QTDIR)/lib" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="Release x64">
+				<Option output="Fractorium" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DUNICODE" />
+					<Add option="-DWIN32" />
+					<Add option="-DQT_DLL" />
+					<Add option="-DQT_NO_DEBUG" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DQT_CORE_LIB" />
+					<Add option="-DQT_GUI_LIB" />
+					<Add option="-DQT_MULTIMEDIA_LIB" />
+					<Add option="-DQT_HELP_LIB" />
+					<Add option="-DQT_OPENGL_LIB" />
+					<Add option="-DQT_WIDGETS_LIB" />
+					<Add option="-DQT_XML_LIB" />
+					<Add directory="." />
+					<Add directory="$(QTDIR)/include" />
+					<Add directory="../../Fractorium/GeneratedFiles" />
+					<Add directory="../../Fractorium/GeneratedFiles/ConfigurationName" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include/QtMultimedia" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include" />
+					<Add directory="$(QTDIR)/../qttools/include" />
+					<Add directory="$(QTDIR)/../qttools/include/QtHelp" />
+					<Add directory="$(QTDIR)/include/QtConcurrent" />
+					<Add directory="$(QTDIR)/include/QtCore" />
+					<Add directory="$(QTDIR)/include/QtGui" />
+					<Add directory="$(QTDIR)/include/QtOpenGL" />
+					<Add directory="$(QTDIR)/include/QtWidgets" />
+					<Add directory="$(QTDIR)/include/QtXml" />
+					<Add directory="./GeneratedFiles" />
+					<Add directory="../../Source/Ember" />
+					<Add directory="../../Source/EmberCL" />
+					<Add directory="../../Source/EmberCommon" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libjpeg" />
+					<Add directory="../../../libpng" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../glew/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+					<Add directory="./GeneratedFiles/" />
+				</Compiler>
+				<Linker>
+					<Add library="qtmain.lib" />
+					<Add library="Qt5Core.lib" />
+					<Add library="Qt5Gui.lib" />
+					<Add library="Qt5OpenGL.lib" />
+					<Add library="opengl32.lib" />
+					<Add library="glu32.lib" />
+					<Add library="opencl.lib" />
+					<Add library="Qt5Widgets.lib" />
+					<Add library="Ws2_32.lib" />
+					<Add directory="$(QTDIR)/lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="Fractorium" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DUNICODE" />
+					<Add option="-DWIN32" />
+					<Add option="-DQT_DLL" />
+					<Add option="-DQT_NO_DEBUG" />
+					<Add option="-DNDEBUG" />
+					<Add option="-DQT_CORE_LIB" />
+					<Add option="-DQT_GUI_LIB" />
+					<Add option="-DQT_MULTIMEDIA_LIB" />
+					<Add option="-DQT_HELP_LIB" />
+					<Add option="-DQT_OPENGL_LIB" />
+					<Add option="-DQT_WIDGETS_LIB" />
+					<Add option="-DQT_XML_LIB" />
+					<Add directory="." />
+					<Add directory="$(QTDIR)/include" />
+					<Add directory="../../Fractorium/GeneratedFiles" />
+					<Add directory="../../Fractorium/GeneratedFiles/ConfigurationName" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include/QtMultimedia" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include" />
+					<Add directory="$(QTDIR)/../qttools/include" />
+					<Add directory="$(QTDIR)/../qttools/include/QtHelp" />
+					<Add directory="$(QTDIR)/include/QtConcurrent" />
+					<Add directory="$(QTDIR)/include/QtCore" />
+					<Add directory="$(QTDIR)/include/QtGui" />
+					<Add directory="$(QTDIR)/include/QtOpenGL" />
+					<Add directory="$(QTDIR)/include/QtWidgets" />
+					<Add directory="$(QTDIR)/include/QtXml" />
+					<Add directory="./GeneratedFiles" />
+					<Add directory="../../Source/Ember" />
+					<Add directory="../../Source/EmberCL" />
+					<Add directory="../../Source/EmberCommon" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libjpeg" />
+					<Add directory="../../../libpng" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../glew/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+					<Add directory="./GeneratedFiles/" />
+				</Compiler>
+				<Linker>
+					<Add library="qtmain.lib" />
+					<Add library="Qt5Core.lib" />
+					<Add library="Qt5Gui.lib" />
+					<Add library="Qt5OpenGL.lib" />
+					<Add library="opengl32.lib" />
+					<Add library="glu32.lib" />
+					<Add library="opencl.lib" />
+					<Add library="Qt5Widgets.lib" />
+					<Add library="Qt5Xml.lib" />
+					<Add directory="$(QTDIR)/lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="Debug Win32">
+				<Option output="Fractorium" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-DUNICODE" />
+					<Add option="-DWIN32" />
+					<Add option="-DQT_DLL" />
+					<Add option="-DQT_CORE_LIB" />
+					<Add option="-DQT_GUI_LIB" />
+					<Add option="-DQT_MULTIMEDIA_LIB" />
+					<Add option="-DQT_HELP_LIB" />
+					<Add option="-DQT_OPENGL_LIB" />
+					<Add option="-DQT_WIDGETS_LIB" />
+					<Add option="-DQT_XML_LIB" />
+					<Add directory="." />
+					<Add directory="$(QTDIR)/include" />
+					<Add directory="../../Fractorium/GeneratedFiles" />
+					<Add directory="../../Fractorium/GeneratedFiles/ConfigurationName" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include/QtMultimedia" />
+					<Add directory="$(QTDIR)/../qtmultimedia/include" />
+					<Add directory="$(QTDIR)/../qttools/include" />
+					<Add directory="$(QTDIR)/../qttools/include/QtHelp" />
+					<Add directory="$(QTDIR)/include/QtConcurrent" />
+					<Add directory="$(QTDIR)/include/QtCore" />
+					<Add directory="$(QTDIR)/include/QtGui" />
+					<Add directory="$(QTDIR)/include/QtOpenGL" />
+					<Add directory="$(QTDIR)/include/QtWidgets" />
+					<Add directory="$(QTDIR)/include/QtXml" />
+					<Add directory="./GeneratedFiles" />
+					<Add directory="../../Source/Ember" />
+					<Add directory="../../Source/EmberCL" />
+					<Add directory="../../Source/EmberCommon" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libjpeg" />
+					<Add directory="../../../libpng" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../glew/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+					<Add directory="./GeneratedFiles/" />
+				</Compiler>
+				<Linker>
+					<Add library="qtmaind.lib" />
+					<Add library="Qt5Cored.lib" />
+					<Add library="Qt5Guid.lib" />
+					<Add library="Qt5OpenGLd.lib" />
+					<Add library="opengl32.lib" />
+					<Add library="glu32.lib" />
+					<Add library="opencl.lib" />
+					<Add library="Qt5Widgetsd.lib" />
+					<Add library="Qt5Xmld.lib" />
+					<Add directory="$(QTDIR)/lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../../../glm/glm/glm.hpp" />
+		<Unit filename="../../Source/EmberCommon/EmberCommon.h" />
+		<Unit filename="../../Source/Fractorium/AboutDialog.cpp" />
+		<Unit filename="../../Source/Fractorium/DoubleSpinBox.cpp" />
+		<Unit filename="../../Source/Fractorium/DoubleSpinBox.h" />
+		<Unit filename="../../Source/Fractorium/EmberFile.h" />
+		<Unit filename="../../Source/Fractorium/FinalRenderDialog.cpp" />
+		<Unit filename="../../Source/Fractorium/FinalRenderEmberController.cpp" />
+		<Unit filename="../../Source/Fractorium/FinalRenderEmberController.h" />
+		<Unit filename="../../Source/Fractorium/Fractorium.cpp" />
+		<Unit filename="../../Source/Fractorium/Fractorium.h" />
+		<Unit filename="../../Source/Fractorium/Fractorium.rc" />
+		<Unit filename="../../Source/Fractorium/FractoriumEmberController.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumEmberController.h" />
+		<Unit filename="../../Source/Fractorium/FractoriumInfo.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumLibrary.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumMenus.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumPalette.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumParams.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumPch.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumPch.h" />
+		<Unit filename="../../Source/Fractorium/FractoriumRender.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumSettings.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumToolbar.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumXforms.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumXformsAffine.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumXformsColor.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumXformsVariations.cpp" />
+		<Unit filename="../../Source/Fractorium/FractoriumXformsXaos.cpp" />
+		<Unit filename="../../Source/Fractorium/GLEmberController.cpp" />
+		<Unit filename="../../Source/Fractorium/GLEmberController.h" />
+		<Unit filename="../../Source/Fractorium/GLWidget.cpp" />
+		<Unit filename="../../Source/Fractorium/GLWidget.h" />
+		<Unit filename="../../Source/Fractorium/Icons/Fractorium.ico" />
+		<Unit filename="../../Source/Fractorium/OptionsDialog.cpp" />
+		<Unit filename="../../Source/Fractorium/SpinBox.cpp" />
+		<Unit filename="../../Source/Fractorium/SpinBox.h" />
+		<Unit filename="../../Source/Fractorium/StealthComboBox.h" />
+		<Unit filename="../../Source/Fractorium/TableWidget.h" />
+		<Unit filename="../../Source/Fractorium/VariationTreeWidgetItem.h" />
+		<Unit filename="../../Source/Fractorium/main.cpp" />
+		<Unit filename="../../Source/Fractorium/resource.h" />
+		<Unit filename="GeneratedFiles/Debug/moc_AboutDialog.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_DoubleSpinBox.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_FinalRenderDialog.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_Fractorium.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_FractoriumSettings.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_GLWidget.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_OptionsDialog.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_SpinBox.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_StealthComboBox.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_TableWidget.cpp" />
+		<Unit filename="GeneratedFiles/Debug/moc_TwoButtonWidget.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_AboutDialog.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_DoubleSpinBox.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_FinalRenderDialog.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_Fractorium.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_FractoriumSettings.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_GLWidget.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_OptionsDialog.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_SpinBox.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_StealthComboBox.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_TableWidget.cpp" />
+		<Unit filename="GeneratedFiles/ReleaseNvidia/moc_TwoButtonWidget.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_AboutDialog.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_DoubleSpinBox.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_FinalRenderDialog.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_Fractorium.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_FractoriumSettings.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_GLWidget.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_OptionsDialog.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_SpinBox.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_StealthComboBox.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_TableWidget.cpp" />
+		<Unit filename="GeneratedFiles/Release/moc_TwoButtonWidget.cpp" />
+		<Unit filename="GeneratedFiles/qrc_Fractorium.cpp" />
+		<Unit filename="GeneratedFiles/ui_AboutDialog.h" />
+		<Unit filename="GeneratedFiles/ui_FinalRenderDialog.h" />
+		<Unit filename="GeneratedFiles/ui_Fractorium.h" />
+		<Unit filename="GeneratedFiles/ui_OptionsDialog.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

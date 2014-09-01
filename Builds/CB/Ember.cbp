@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Ember" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Option virtualFolders="Headers/Filters/;/Headers/Xml/;" />
+		<Build>
+			<Target title="Debug x64">
+				<Option platforms="Unix;" />
+				<Option output="Ember" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-D_DEBUG" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBER" />
+					<Add option="-D_M_X64" />
+				</Compiler>
+			</Target>
+			<Target title="ReleaseNvidia Win32">
+				<Option output="Ember" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBER" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../tbb/include" />
+				</Compiler>
+			</Target>
+			<Target title="ReleaseNvidia x64">
+				<Option output="Ember" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBER" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../tbb/include" />
+				</Compiler>
+			</Target>
+			<Target title="Release x64">
+				<Option output="Ember" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBER" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../tbb/include" />
+				</Compiler>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="Ember" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBER" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../tbb/include" />
+				</Compiler>
+			</Target>
+			<Target title="Debug Win32">
+				<Option output="Ember" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBER" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="../../../tbb/include" />
+				</Compiler>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-march=k8" />
+			<Add option="-std=c++11" />
+			<Add option="-fpermissive" />
+			<Add option="-fPIC" />
+			<Add directory="/usr/include/libxml2" />
+		</Compiler>
+		<Linker>
+			<Add library="tbb" />
+			<Add library="libxml2" />
+		</Linker>
+		<Unit filename="../../Source/Ember/Affine2D.cpp" />
+		<Unit filename="../../Source/Ember/Affine2D.h" />
+		<Unit filename="../../Source/Ember/CarToRas.h" />
+		<Unit filename="../../Source/Ember/DensityFilter.h" />
+		<Unit filename="../../Source/Ember/DllMain.cpp" />
+		<Unit filename="../../Source/Ember/Ember.cpp" />
+		<Unit filename="../../Source/Ember/Ember.h" />
+		<Unit filename="../../Source/Ember/EmberDefines.h" />
+		<Unit filename="../../Source/Ember/EmberPch.cpp" />
+		<Unit filename="../../Source/Ember/EmberPch.h" />
+		<Unit filename="../../Source/Ember/EmberToXml.h" />
+		<Unit filename="../../Source/Ember/Interpolate.h" />
+		<Unit filename="../../Source/Ember/Isaac.h" />
+		<Unit filename="../../Source/Ember/Iterator.h" />
+		<Unit filename="../../Source/Ember/Palette.h" />
+		<Unit filename="../../Source/Ember/PaletteList.h" />
+		<Unit filename="../../Source/Ember/Point.h" />
+		<Unit filename="../../Source/Ember/Renderer.cpp" />
+		<Unit filename="../../Source/Ember/Renderer.h" />
+		<Unit filename="../../Source/Ember/SheepTools.h" />
+		<Unit filename="../../Source/Ember/SpatialFilter.h" />
+		<Unit filename="../../Source/Ember/TemporalFilter.h" />
+		<Unit filename="../../Source/Ember/Timing.h" />
+		<Unit filename="../../Source/Ember/Utils.h" />
+		<Unit filename="../../Source/Ember/Variation.h" />
+		<Unit filename="../../Source/Ember/VariationList.h" />
+		<Unit filename="../../Source/Ember/Variations01.h" />
+		<Unit filename="../../Source/Ember/Variations02.h" />
+		<Unit filename="../../Source/Ember/Variations03.h" />
+		<Unit filename="../../Source/Ember/Variations04.h" />
+		<Unit filename="../../Source/Ember/Variations05.h" />
+		<Unit filename="../../Source/Ember/VariationsDC.h" />
+		<Unit filename="../../Source/Ember/Xform.h" />
+		<Unit filename="../../Source/Ember/XmlToEmber.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

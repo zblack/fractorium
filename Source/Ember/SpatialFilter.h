@@ -481,7 +481,7 @@ public:
 			t = -t;
 
 		if (t < 3)
-			return Sinc(t) * Sinc(t / 3);
+			return SpatialFilter<T>::Sinc(t) * SpatialFilter<T>::Sinc(t / 3);
 
 		return 0;
 	}
@@ -515,7 +515,7 @@ public:
 			t = -t;
 
 		if (t < 2)
-			return Sinc(t) * Sinc(t / 2);
+			return SpatialFilter<T>::Sinc(t) * SpatialFilter<T>::Sinc(t / 2);
 
 		return 0;
 	}

@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="EmberCL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug x64">
+				<Option output="EmberCL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBERCL" />
+					<Add option="-DAMD_OS_WIN" />
+					<Add directory="../../Source/Ember/" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+				</Compiler>
+				<Linker>
+					<Add library="opencl.lib" />
+					<Add library="Opengl32.lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseNvidia Win32">
+				<Option output="EmberCL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBERCL" />
+					<Add option="-DAMD_OS_WIN" />
+					<Add directory="../../Source/Ember/" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+				</Compiler>
+				<Linker>
+					<Add library="opencl.lib" />
+					<Add library="Opengl32.lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="ReleaseNvidia x64">
+				<Option output="EmberCL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBERCL" />
+					<Add option="-DAMD_OS_WIN" />
+					<Add directory="../../Source/Ember/" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="$(CUDA_PATH)include" />
+				</Compiler>
+				<Linker>
+					<Add library="opencl.lib" />
+					<Add library="Opengl32.lib" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="Release x64">
+				<Option output="EmberCL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBERCL" />
+					<Add option="-DAMD_OS_WIN" />
+					<Add directory="../../Source/Ember/" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+				</Compiler>
+				<Linker>
+					<Add library="opencl.lib" />
+					<Add library="Opengl32.lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="Release Win32">
+				<Option output="EmberCL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBERCL" />
+					<Add option="-DAMD_OS_WIN" />
+					<Add directory="../../Source/Ember/" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+				</Compiler>
+				<Linker>
+					<Add library="opencl.lib" />
+					<Add library="Opengl32.lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+			<Target title="Debug Win32">
+				<Option output="EmberCL" prefix_auto="1" extension_auto="1" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-DWIN32" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_WINDOWS" />
+					<Add option="-D_USRDLL" />
+					<Add option="-DBUILDING_EMBERCL" />
+					<Add option="-DAMD_OS_WIN" />
+					<Add directory="../../Source/Ember/" />
+					<Add directory="../../../glm" />
+					<Add directory="../../../tbb/include" />
+					<Add directory="../../../libxml2/include" />
+					<Add directory="$(AMDAPPSDKROOT)/include" />
+					<Add directory="$(CUDA_PATH)include" />
+				</Compiler>
+				<Linker>
+					<Add library="opencl.lib" />
+					<Add library="Opengl32.lib" />
+					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
+					<Add directory="$(CUDA_PATH)lib/Linux" />
+				</Linker>
+			</Target>
+		</Build>
+		<Unit filename="../../Source/EmberCL/DEOpenCLKernelCreator.cpp" />
+		<Unit filename="../../Source/EmberCL/DEOpenCLKernelCreator.h" />
+		<Unit filename="../../Source/EmberCL/DllMain.cpp" />
+		<Unit filename="../../Source/EmberCL/EmberCLFunctions.h" />
+		<Unit filename="../../Source/EmberCL/EmberCLPch.h" />
+		<Unit filename="../../Source/EmberCL/EmberCLStructs.h" />
+		<Unit filename="../../Source/EmberCL/FinalAccumOpenCLKernelCreator.cpp" />
+		<Unit filename="../../Source/EmberCL/FinalAccumOpenCLKernelCreator.h" />
+		<Unit filename="../../Source/EmberCL/IterOpenCLKernelCreator.cpp" />
+		<Unit filename="../../Source/EmberCL/IterOpenCLKernelCreator.h" />
+		<Unit filename="../../Source/EmberCL/OpenCLWrapper.cpp" />
+		<Unit filename="../../Source/EmberCL/OpenCLWrapper.h" />
+		<Unit filename="../../Source/EmberCL/RendererCL.cpp" />
+		<Unit filename="../../Source/EmberCL/RendererCL.h" />
+		<Extensions>
+			<code_completion />
+			<debugger />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

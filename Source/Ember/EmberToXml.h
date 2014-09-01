@@ -127,6 +127,7 @@ public:
 	string ToString(Ember<T>& ember, string extraAttributes, unsigned int printEditDepth, bool doEdits, bool intPalette, bool hexPalette = true)
 	{
 		unsigned int i, j;
+		string s;
 		ostringstream os;
 		vector<Variation<T>*> variations;
 
@@ -296,7 +297,6 @@ public:
 		char timeString[128];
 		char buffer[128];
 		char commentString[128];
-		tm localt;
 		time_t myTime;
 		xmlDocPtr commentDoc = NULL;
 		xmlDocPtr doc = xmlNewDoc(XC "1.0");
@@ -306,12 +306,19 @@ public:
 		//Create the root node, called "edit".
 		rootNode = xmlNewNode(NULL, XC "edit");
 		xmlDocSetRootElement(doc, rootNode);
-		
+
 		//Add the edit attributes.
 		//Date.
 		myTime = time(NULL);
+#ifdef WIN32
+		tm localt;
 		localtime_s(&localt, &myTime);
 		strftime(timeString, 128, "%a %b %d %H:%M:%S %z %Y", &localt);//XXX use standard time format including timezone.
+#else
+		tm* localt;
+		localt = localtime(&myTime);
+		strftime(timeString, 128, "%a %b %d %H:%M:%S %z %Y", localt);//XXX use standard time format including timezone.
+#endif
 		xmlNewProp(rootNode, XC "date", XC timeString);
 
 		//Nick.
@@ -557,7 +564,9 @@ private:
 	string ToString(xmlNodePtr editNode, unsigned int tabs, bool formatting, unsigned int printEditDepth)
 	{
 		bool indentPrinted = false;
-		char* tabString = "   ", *attStr;
+		const char* tabString = "   ", *attStr;
+		const char* editString = "edit";
+		const char* sheepString = "sheep";
 		unsigned int ti, editOrSheep = 0;
 		xmlAttrPtr attPtr = NULL, curAtt = NULL;
 		xmlNodePtr childPtr = NULL, curChild = NULL;
@@ -578,12 +587,12 @@ private:
 
 			//This can either be an edit node or a sheep node.
 			//If it's an edit node, add one to the tab.
-			if (!Compare(editNode->name, "edit"))
+			if (!Compare(editNode->name, editString))
 			{
 				editOrSheep = 1;
 				tabs++;
 			}
-			else if (!Compare(editNode->name, "sheep"))
+			else if (!Compare(editNode->name, sheepString))
 				editOrSheep = 2;
 			else
 				editOrSheep = 0;
@@ -595,7 +604,7 @@ private:
 			{
 				attStr = (char*)xmlGetProp(editNode, curAtt->name);
 				os << " " << curAtt->name << "=\"" << attStr << "\"";
-				xmlFree(attStr);
+				xmlFree((void*)attStr);
 			}
 
 			//Does this node have children?
@@ -623,9 +632,9 @@ private:
 
 				for (curChild = childPtr; curChild; curChild = curChild->next)
 				{
-					//If child is an element, indent first and then print it. 
+					//If child is an element, indent first and then print it.
 					if (curChild->type == XML_ELEMENT_NODE &&
-					   (!Compare(curChild->name, "edit") || !Compare(curChild->name, "sheep")))
+					   (!Compare(curChild->name, editString) || !Compare(curChild->name, sheepString)))
 					{
 						if (indentPrinted)
 						{

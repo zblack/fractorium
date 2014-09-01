@@ -19,14 +19,14 @@ public:
 
 	VARCOPY(LinearVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * helper.In.x;
 		helper.Out.y = m_Weight * helper.In.y;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -56,14 +56,14 @@ public:
 
 	VARCOPY(SinusoidalVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * sin(helper.In.x);
 		helper.Out.y = m_Weight * sin(helper.In.y);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -94,7 +94,7 @@ public:
 
 	VARCOPY(SphericalVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r2 = m_Weight / Zeps(helper.m_PrecalcSumSquares);
 
@@ -103,7 +103,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -138,7 +138,7 @@ public:
 
 	VARCOPY(SwirlVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T c1, c2;
 
@@ -148,7 +148,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -184,7 +184,7 @@ public:
 
 	VARCOPY(HorseshoeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight / Zeps(helper.m_PrecalcSqrtSumSquares);
 
@@ -193,7 +193,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -225,14 +225,14 @@ public:
 
 	VARCOPY(PolarVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * (helper.m_PrecalcAtanxy * T(M_1_PI));
 		helper.Out.y = m_Weight * (helper.m_PrecalcSqrtSumSquares - 1);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -262,14 +262,14 @@ public:
 
 	VARCOPY(HandkerchiefVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * helper.m_PrecalcSqrtSumSquares * sin(helper.m_PrecalcAtanxy + helper.m_PrecalcSqrtSumSquares);
 		helper.Out.y = m_Weight * helper.m_PrecalcSqrtSumSquares * cos(helper.m_PrecalcAtanxy - helper.m_PrecalcSqrtSumSquares);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -300,7 +300,7 @@ public:
 
 	VARCOPY(HeartVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcSqrtSumSquares * helper.m_PrecalcAtanxy;
 		T r = m_Weight * helper.m_PrecalcSqrtSumSquares;
@@ -310,7 +310,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -348,7 +348,7 @@ public:
 
 	PARVARCOPY(DiscVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T val = T(M_PI) * helper.m_PrecalcSqrtSumSquares;
 		T r = m_WeightByPI * helper.m_PrecalcAtanxy;
@@ -358,7 +358,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -377,8 +377,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_WeightByPI = m_Weight * T(M_1_PI);
 	}
@@ -387,7 +387,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(true, &m_WeightByPI, prefix + "disc_weight_by_pi"));//Precalcs only, no params.
 	}
@@ -411,7 +411,7 @@ public:
 
 	VARCOPY(SpiralVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = Zeps(helper.m_PrecalcSqrtSumSquares);
 		T r1 = m_Weight / r;
@@ -421,7 +421,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -454,7 +454,7 @@ public:
 
 	VARCOPY(HyperbolicVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = Zeps(helper.m_PrecalcSqrtSumSquares);
 
@@ -463,7 +463,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -495,14 +495,14 @@ public:
 
 	VARCOPY(DiamondVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * helper.m_PrecalcSina * cos(helper.m_PrecalcSqrtSumSquares);
 		helper.Out.y = m_Weight * helper.m_PrecalcCosa * sin(helper.m_PrecalcSqrtSumSquares);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -536,7 +536,7 @@ public:
 
 	VARCOPY(ExVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcAtanxy;
 		T r = helper.m_PrecalcSqrtSumSquares;
@@ -550,7 +550,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -590,7 +590,7 @@ public:
 
 	VARCOPY(JuliaVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * sqrt(helper.m_PrecalcSqrtSumSquares);
 		T a = T(0.5) * helper.m_PrecalcAtanxy;
@@ -603,7 +603,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -641,7 +641,7 @@ public:
 
 	VARCOPY(BentVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T nx = helper.In.x < T(0.0) ? helper.In.x * 2 : helper.In.x;
 		T ny = helper.In.y < T(0.0) ? helper.In.y / 2 : helper.In.y;
@@ -651,7 +651,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -690,7 +690,7 @@ public:
 
 	PARVARCOPY(WavesVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T c10 = m_Xform->m_Affine.B();
 		T c11 = m_Xform->m_Affine.E();
@@ -702,7 +702,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -725,7 +725,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		if (m_Xform)//If this variation exists by itself and hasn't been added to an xform yet, m_Xform will be NULL.
 		{
@@ -760,7 +760,7 @@ private:
 /// nx = r * cos(a);
 /// ny = r * sin(a);
 /// p[0] += weight * nx;
-/// p[1] += weight * ny; 
+/// p[1] += weight * ny;
 /// </summary>
 template <typename T>
 class EMBER_API FisheyeVariation : public Variation<T>
@@ -770,7 +770,7 @@ public:
 
 	VARCOPY(FisheyeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = 2 * m_Weight / (helper.m_PrecalcSqrtSumSquares + 1);
 
@@ -779,7 +779,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -813,7 +813,7 @@ public:
 
 	VARCOPY(PopcornVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T dx = tan(3 * helper.In.y);
 		T dy = tan(3 * helper.In.x);
@@ -825,7 +825,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -862,7 +862,7 @@ public:
 
 	VARCOPY(ExponentialVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T dx = m_Weight * exp(helper.In.x - 1);
 		T dy = T(M_PI) * helper.In.y;
@@ -872,7 +872,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -909,7 +909,7 @@ public:
 
 	VARCOPY(PowerVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * pow(helper.m_PrecalcSqrtSumSquares, helper.m_PrecalcSina);
 
@@ -918,7 +918,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -950,7 +950,7 @@ public:
 
 	VARCOPY(CosineVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.In.x * T(M_PI);
 		T nx =  cos(a) * cosh(helper.In.y);
@@ -961,7 +961,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1000,7 +1000,7 @@ public:
 
 	VARCOPY(RingsVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T dx = Zeps(m_Xform->m_Affine.C() * m_Xform->m_Affine.C());
 		T r = helper.m_PrecalcSqrtSumSquares;
@@ -1011,7 +1011,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1042,7 +1042,7 @@ public:
 /// nx = cos(a) * r;
 /// ny = sin(a) * r;
 /// p[0] += weight * nx;
-/// p[1] += weight * ny; 
+/// p[1] += weight * ny;
 /// </summary>
 template <typename T>
 class EMBER_API FanVariation : public Variation<T>
@@ -1052,7 +1052,7 @@ public:
 
 	VARCOPY(FanVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T dx = T(M_PI) * Zeps(m_Xform->m_Affine.C() * m_Xform->m_Affine.C());
 		T dy = m_Xform->m_Affine.F();
@@ -1066,7 +1066,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1094,7 +1094,7 @@ public:
 /// r = r * (bloblow + (blobhigh - bloblow) * (0.5 + 0.5 * sin(blobwaves * a)));
 /// nx = sin(a) * r;
 /// ny = cos(a) * r;
-/// 
+///
 /// p[0] += weight * nx;
 /// p[1] += weight * ny;
 /// </summary>
@@ -1108,8 +1108,8 @@ public:
 	}
 
 	PARVARCOPY(BlobVariation)
-	
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = helper.m_PrecalcSqrtSumSquares * (m_BlobLow + m_BlobDiff * (T(0.5) + T(0.5) * sin(m_BlobWaves * helper.m_PrecalcAtanxy)));
 
@@ -1118,7 +1118,7 @@ public:
 		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1139,13 +1139,13 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_BlobDiff = m_BlobHigh - m_BlobLow;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_BlobLow   = T(0.2) + T(0.5) * rand.Frand01<T>();
 		m_BlobHigh  = T(0.8) + T(0.4) * rand.Frand01<T>();
@@ -1156,7 +1156,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_BlobLow,   prefix + "blob_low"));
 		m_Params.push_back(ParamWithName<T>(&m_BlobHigh,  prefix + "blob_high", 1));
@@ -1177,7 +1177,7 @@ private:
 /// nx2 = sin(pdjc * tx);
 /// ny1 = sin(pdja * ty);
 /// ny2 = cos(pdjd * ty);
-/// 
+///
 /// p[0] += weight * (ny1 - nx1);
 /// p[1] += weight * (nx2 - ny2);
 /// </summary>
@@ -1192,7 +1192,7 @@ public:
 
 	PARVARCOPY(PdjVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T nx1 = cos(m_PdjB * helper.In.x);
 		T nx2 = sin(m_PdjC * helper.In.x);
@@ -1203,8 +1203,8 @@ public:
 		helper.Out.y = m_Weight * (nx2 - ny2);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1229,7 +1229,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_PdjA = 3 * rand.Frand11<T>();
 		m_PdjB = 3 * rand.Frand11<T>();
@@ -1241,7 +1241,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_PdjA, prefix + "pdj_a"));
 		m_Params.push_back(ParamWithName<T>(&m_PdjB, prefix + "pdj_b"));
@@ -1260,21 +1260,21 @@ private:
 /// Fan2:
 /// a = precalc_atan;
 /// r = precalc_sqrt;
-/// 
+///
 /// dy = fan2y;
 /// dx = M_PI * (fan2x * fan2x + EPS);
 /// dx2 = dx / 2.0;
-/// 
+///
 /// t = a + dy - dx * (int)((a + dy) / dx);
-/// 
+///
 /// if (t > dx2)
 ///     a = a - dx2;
 /// else
 ///     a = a + dx2;
-/// 
+///
 /// nx = sin(a) * r;
 /// ny = cos(a) * r;
-/// 
+///
 /// p[0] += weight * nx;
 /// p[1] += weight * ny;
 /// </summary>
@@ -1289,7 +1289,7 @@ public:
 
 	PARVARCOPY(Fan2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcAtanxy;
 		T r = m_Weight * helper.m_PrecalcSqrtSumSquares;
@@ -1304,8 +1304,8 @@ public:
 		helper.Out.y = r * cos(a);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1315,7 +1315,7 @@ public:
 		string fan2Y = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string dx    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string dx2   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\treal_t a = precalcAtanxy;\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "] * precalcSqrtSumSquares;\n"
@@ -1334,13 +1334,13 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		m_Fan2Dx = T(M_PI) * Zeps(SQR(m_Fan2X));
 		m_Fan2Dx2 = T(0.5) * m_Fan2Dx;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Fan2X = rand.Frand11<T>();
 		m_Fan2Y = rand.Frand11<T>();
@@ -1350,7 +1350,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Fan2X, prefix + "fan2_x"));
 		m_Params.push_back(ParamWithName<T>(&m_Fan2Y, prefix + "fan2_y"));
@@ -1386,7 +1386,7 @@ public:
 
 	PARVARCOPY(Rings2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = helper.m_PrecalcSqrtSumSquares;
 
@@ -1395,8 +1395,8 @@ public:
 		helper.Out.y = m_Weight * helper.m_PrecalcCosa * r;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1417,12 +1417,12 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		m_Rings2Val2 = Zeps(SQR(m_Rings2Val));
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Rings2Val = 2 * rand.Frand01<T>();
 	}
@@ -1431,7 +1431,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Rings2Val, prefix + "rings2_val", 1));//This differs from the original which used zero. Use 1 instead to avoid getting too close to dividing by zero.
 		m_Params.push_back(ParamWithName<T>(true, &m_Rings2Val2, prefix + "rings2_val2"));//Precalc.
@@ -1456,7 +1456,7 @@ public:
 
 	VARCOPY(EyefishVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = 2 * m_Weight / (helper.m_PrecalcSqrtSumSquares + 1);
 
@@ -1465,7 +1465,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1493,7 +1493,7 @@ public:
 
 	VARCOPY(BubbleVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T denom = T(0.25) * helper.m_PrecalcSumSquares + 1;
 		T r = m_Weight / denom;
@@ -1503,7 +1503,7 @@ public:
 		helper.Out.z = m_Weight * (2 / denom - 1);
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1532,14 +1532,14 @@ public:
 
 	VARCOPY(CylinderVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * sin(helper.In.x);
 		helper.Out.y = m_Weight * helper.In.y;
 		helper.Out.z = m_Weight * cos(helper.In.x);
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1568,7 +1568,7 @@ public:
 
 	PARVARCOPY(PerspectiveVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T d = Zeps(m_Dist - helper.In.y * m_Vsin);
 		T t = 1 / d;
@@ -1577,8 +1577,8 @@ public:
 		helper.Out.y = m_Weight * m_VfCos * helper.In.y * t;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1601,7 +1601,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		T angle = m_Angle * T(M_PI) / 2;
 
@@ -1609,7 +1609,7 @@ public:
 		m_VfCos = m_Dist * cos(angle);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Angle = rand.Frand01<T>();
 		m_Dist = 2 * rand.Frand01<T>() + 1;
@@ -1619,7 +1619,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Angle, prefix + "perspective_angle"));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Dist,  prefix + "perspective_dist"));
@@ -1645,7 +1645,7 @@ public:
 
 	VARCOPY(NoiseVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tempr = rand.Frand01<T>() * M_2PI;
 		T r = m_Weight * rand.Frand01<T>();
@@ -1655,7 +1655,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1687,7 +1687,7 @@ public:
 
 	PARVARCOPY(JuliaNGenericVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tempr = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((ISAAC_INT)m_Rn)) / m_Power;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
@@ -1696,8 +1696,8 @@ public:
 		helper.Out.y = r * sin(tempr);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1721,14 +1721,14 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		m_Power = Zeps(m_Power);
 		m_Rn = fabs(m_Power);
 		m_Cn = m_Dist / m_Power / 2;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Dist = 1;
 		m_Power = (T)(int)(5 * rand.Frand01<T>() + 2);
@@ -1738,7 +1738,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Dist,  prefix + "julian_dist", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Power, prefix + "julian_power", 1, INTEGER_NONZERO));
@@ -1767,7 +1767,7 @@ public:
 
 	PARVARCOPY(JuliaScopeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		int rnd = (int)(m_Rn * rand.Frand01<T>());
 		T tempr, r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
@@ -1794,8 +1794,8 @@ public:
 		//helper.Out.x = r * cos(tempr);
 		//helper.Out.y = r * sin(tempr);
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -1841,14 +1841,14 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_Rn = fabs(m_Power);
 		m_Cn = m_Dist / m_Power / 2;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Dist = 1;
 		m_Power = (T)(int)(5 * rand.Frand01<T>() + 2);
@@ -1858,7 +1858,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Dist,  prefix + "juliascope_dist", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Power, prefix + "juliascope_power", 1));
@@ -1887,7 +1887,7 @@ public:
 
 	VARCOPY(BlurVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tempr = rand.Frand01<T>() * M_2PI;
 		T r = m_Weight * rand.Frand01<T>();
@@ -1897,7 +1897,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1926,7 +1926,7 @@ public:
 
 	VARCOPY(GaussianBlurVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T angle = rand.Frand01<T>() * M_2PI;
 		T r = m_Weight * (rand.Frand01<T>() + rand.Frand01<T>() + rand.Frand01<T>() + rand.Frand01<T>() - 2);
@@ -1936,7 +1936,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -1968,7 +1968,7 @@ public:
 
 	PARVARCOPY(RadialBlurVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		//Get pseudo-gaussian.
 		T rndG = m_Weight * (rand.Frand01<T>() + rand.Frand01<T>()
@@ -1983,8 +1983,8 @@ public:
 		helper.Out.y = ra * sin(tempa) + rz * helper.In.y;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2007,13 +2007,13 @@ public:
 
 		return ss.str();
 	}
-		
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		sincos(m_Angle * T(M_PI) / 2, &m_Spin, &m_Zoom);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Angle = (2 * rand.Frand01<T>() - 1);
 	}
@@ -2022,7 +2022,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Angle, prefix + "radial_blur_angle"));//Params.
 		m_Params.push_back(ParamWithName<T>(true, &m_Spin, prefix + "radial_blur_spin"));//Precalc.
@@ -2049,7 +2049,7 @@ public:
 
 	PARVARCOPY(PieVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		int sl = (int)(rand.Frand01<T>() * m_Slices + T(0.5));
 		T a = m_Rotation + M_2PI * (sl + rand.Frand01<T>() * m_Thickness) / m_Slices;
@@ -2058,8 +2058,8 @@ public:
 		helper.Out.x = r * cos(a);
 		helper.Out.y = r * sin(a);
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2081,8 +2081,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Params[0].Set(10 * rand.Frand01<T>());//Slices.
 		m_Params[1].Set(M_2PI * rand.Frand11<T>());//Rotation.
@@ -2093,7 +2093,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Slices,    prefix + "pie_slices", 6, INTEGER_NONZERO, 1));
 		m_Params.push_back(ParamWithName<T>(&m_Rotation,  prefix + "pie_rotation", T(0.5), REAL_CYCLIC, 0, M_2PI));
@@ -2120,7 +2120,7 @@ public:
 
 	PARVARCOPY(NgonVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T rFactor;
 
@@ -2130,7 +2130,7 @@ public:
 			rFactor = pow(helper.m_PrecalcSumSquares, m_CPower);
 
 		T phi = helper.m_PrecalcAtanyx - m_CSides * Floor<T>(helper.m_PrecalcAtanyx * m_CSidesInv);
-		
+
 		if (phi > T(0.5) * m_CSides)
 			phi -= m_CSides;
 
@@ -2140,8 +2140,8 @@ public:
 		helper.Out.y = amp * helper.In.y;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2178,14 +2178,14 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		m_CPower = -T(0.5) * m_Power;
 		m_CSides = 2 * T(M_PI) / m_Sides;
 		m_CSidesInv = 1 / m_CSides;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Sides = (T)(int)(rand.Frand01<T>() * 10 + 3);
 		m_Power = 3 * rand.Frand01<T>() + 1;
@@ -2197,7 +2197,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Sides,   prefix + "ngon_sides", 5, INTEGER_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_Power,   prefix + "ngon_power", 3));
@@ -2235,7 +2235,7 @@ public:
 
 	PARVARCOPY(CurlVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T re = 1 + m_C1 * helper.In.x + m_C2 * (SQR(helper.In.x) - SQR(helper.In.y));
 		T im = m_C1 * helper.In.y + m_C22 * helper.In.x * helper.In.y;
@@ -2245,8 +2245,8 @@ public:
 		helper.Out.y = (helper.In.y * re - helper.In.x * im) * r;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2268,13 +2268,13 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_C22 = 2 * m_C2;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_C1 = rand.Frand01<T>();
 		m_C2 = rand.Frand01<T>();
@@ -2284,13 +2284,13 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_C1, prefix + "curl_c1", 1));
 		m_Params.push_back(ParamWithName<T>(&m_C2, prefix + "curl_c2"));
 		m_Params.push_back(ParamWithName<T>(true, &m_C22, prefix + "curl_c22"));//Precalc.
 	}
-	
+
 private:
 	T m_C1;
 	T m_C2;
@@ -2311,7 +2311,7 @@ public:
 
 	PARVARCOPY(RectanglesVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (m_X == 0)
 			helper.Out.x = m_Weight * helper.In.x;
@@ -2325,8 +2325,8 @@ public:
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2352,7 +2352,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X = rand.Frand01<T>();
 		m_Y = rand.Frand01<T>();
@@ -2362,7 +2362,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X, prefix + "rectangles_x", 1));
 		m_Params.push_back(ParamWithName<T>(&m_Y, prefix + "rectangles_y", 1));
@@ -2384,7 +2384,7 @@ public:
 
 	VARCOPY(ArchVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T angle = rand.Frand01<T>() * m_Weight * T(M_PI);
 		T sinr, cosr;
@@ -2395,7 +2395,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2425,14 +2425,14 @@ public:
 
 	VARCOPY(TangentVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * sin(helper.In.x) / cos(helper.In.y);
 		helper.Out.y = m_Weight * tan(helper.In.y);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2458,14 +2458,14 @@ public:
 
 	VARCOPY(SquareVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * (rand.Frand01<T>() - T(0.5));
 		helper.Out.y = m_Weight * (rand.Frand01<T>() - T(0.5));
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2491,7 +2491,7 @@ public:
 
 	VARCOPY(RaysVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T ang = m_Weight * rand.Frand01<T>() * T(M_PI);
 		T r = m_Weight / Zeps(helper.m_PrecalcSumSquares);
@@ -2501,8 +2501,8 @@ public:
 		helper.Out.y = tanr * sin(helper.In.y);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2532,7 +2532,7 @@ public:
 
 	VARCOPY(BladeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = rand.Frand01<T>() * m_Weight * helper.m_PrecalcSqrtSumSquares;
 		T sinr, cosr;
@@ -2543,7 +2543,7 @@ public:
 		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2573,14 +2573,14 @@ public:
 
 	VARCOPY(Secant2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * helper.m_PrecalcSqrtSumSquares;
 		T cr = cos(r);
 		T icr = 1 / cr;
 
 		helper.Out.x = m_Weight * helper.In.x;
-   
+
 		if (cr < 0)
 			helper.Out.y = m_Weight * (icr + 1);
 		else
@@ -2589,7 +2589,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2624,14 +2624,14 @@ public:
 
 	VARCOPY(TwinTrianVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = rand.Frand01<T>() * m_Weight * helper.m_PrecalcSqrtSumSquares;
 		T sinr, cosr, diff;
 
 		sincos(r, &sinr, &cosr);
 		diff = log10(sinr * sinr) + cosr;
-   
+
 		if (BadVal(diff))
 			diff = -30.0;
 
@@ -2639,8 +2639,8 @@ public:
 		helper.Out.y = m_Weight * helper.In.x * (diff - sinr * T(M_PI));
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2674,16 +2674,16 @@ public:
 
 	VARCOPY(CrossVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight / Zeps(fabs((helper.In.x - helper.In.y) * (helper.In.x + helper.In.y)));
-		
+
 		helper.Out.x = helper.In.x * r;
 		helper.Out.y = helper.In.y * r;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -2714,7 +2714,7 @@ public:
 
 	PARVARCOPY(Disc2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r, t, sinr, cosr;
 
@@ -2725,8 +2725,8 @@ public:
 		helper.Out.y = (cosr + m_SinAdd) * r;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2751,8 +2751,8 @@ public:
 
 		return ss.str();
 	}
-			
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		T k, add = m_Twist;
 
@@ -2775,7 +2775,7 @@ public:
 		}
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Rot   = T(0.5) * rand.Frand01<T>();
 		m_Twist = T(0.5) * rand.Frand01<T>();
@@ -2785,7 +2785,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Rot,   prefix + "disc2_rot"));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Twist, prefix + "disc2_twist"));
@@ -2816,25 +2816,25 @@ public:
 
 	PARVARCOPY(SuperShapeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T theta = m_Pm4 * helper.m_PrecalcAtanyx + T(M_PI_4);
- 
+
 		T t1 = fabs(cos(theta));
 		t1 = pow(t1, m_N2);
 
 		T t2 = fabs(sin(theta));
 		t2 = pow(t2, m_N3);
 
-		T r = m_Weight * ((m_Rnd * rand.Frand01<T>() + (1 - m_Rnd) * helper.m_PrecalcSqrtSumSquares) - m_Holes) 
+		T r = m_Weight * ((m_Rnd * rand.Frand01<T>() + (1 - m_Rnd) * helper.m_PrecalcSqrtSumSquares) - m_Holes)
 			* pow(t1 + t2, m_PNeg1N1) / helper.m_PrecalcSqrtSumSquares;
 
 		helper.Out.x = r * helper.In.x;
 		helper.Out.y = r * helper.In.y;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2865,13 +2865,13 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		m_Pm4 = m_M / T(4.0);
 		m_PNeg1N1 = T(-1.0) / m_N1;
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Rnd   = rand.Frand01<T>();
 		m_M     = (T)(int)(rand.Frand01<T>() * 6);
@@ -2885,7 +2885,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_M,       prefix + "super_shape_m"));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_N1,      prefix + "super_shape_n1", 1));
@@ -2922,7 +2922,7 @@ public:
 
 	PARVARCOPY(FlowerVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T theta = helper.m_PrecalcAtanyx;
 		T r = m_Weight * (rand.Frand01<T>() - m_Holes) * cos(m_Petals * theta) / helper.m_PrecalcSqrtSumSquares;
@@ -2931,8 +2931,8 @@ public:
 		helper.Out.y = r * helper.In.y;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -2953,7 +2953,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Petals = 4 * rand.Frand01<T>();
 		m_Holes  = rand.Frand01<T>();
@@ -2963,12 +2963,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Petals, prefix + "flower_petals"));
 		m_Params.push_back(ParamWithName<T>(&m_Holes,  prefix + "flower_holes"));
 	}
-	
+
 private:
 	T m_Petals;
 	T m_Holes;
@@ -2988,18 +2988,18 @@ public:
 
 	PARVARCOPY(ConicVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T ct = helper.In.x / helper.m_PrecalcSqrtSumSquares;
-		T r = m_Weight * (rand.Frand01<T>() - m_Holes) * 
+		T r = m_Weight * (rand.Frand01<T>() - m_Holes) *
 					m_Eccentricity / (1 + m_Eccentricity * ct) / helper.m_PrecalcSqrtSumSquares;
 
 		helper.Out.x = r * helper.In.x;
 		helper.Out.y = r * helper.In.y;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3019,8 +3019,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Eccentricity = rand.Frand01<T>();
 		m_Holes        = rand.Frand01<T>();
@@ -3030,12 +3030,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Eccentricity, prefix + "conic_eccentricity", 1));
 		m_Params.push_back(ParamWithName<T>(&m_Holes,        prefix + "conic_holes"));
 	}
-	
+
 private:
 	T m_Eccentricity;
 	T m_Holes;
@@ -3055,7 +3055,7 @@ public:
 
 	PARVARCOPY(ParabolaVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sr, cr;
 
@@ -3064,8 +3064,8 @@ public:
 		helper.Out.y = m_Width * m_Weight * cr * rand.Frand01<T>();
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3073,7 +3073,7 @@ public:
 		string index = ss2.str();
 		string height = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string width  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\treal_t sr = sin(precalcSqrtSumSquares);\n"
 		   << "\t\treal_t cr = cos(precalcSqrtSumSquares);\n"
@@ -3085,8 +3085,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Height = T(0.5) * rand.Frand01<T>();
 		m_Width  = T(0.5) * rand.Frand01<T>();
@@ -3096,7 +3096,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Height, prefix + "parabola_height"));
 		m_Params.push_back(ParamWithName<T>(&m_Width,  prefix + "parabola_width"));
@@ -3121,7 +3121,7 @@ public:
 
 	PARVARCOPY(Bent2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (helper.In.x >= 0)
 			helper.Out.x = m_Weight * helper.In.x;
@@ -3136,7 +3136,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3163,14 +3163,14 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_Vx = m_X * m_Weight;
 		m_Vy = m_Y * m_Weight;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X = 3 * (T(-0.5) + rand.Frand01<T>());
 		m_Y = 3 * (T(-0.5) + rand.Frand01<T>());
@@ -3180,14 +3180,14 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X, prefix + "bent2_x", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Y, prefix + "bent2_y", 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_Vx, prefix + "bent2_vx"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Vy, prefix + "bent2_vy"));
 	}
-	
+
 private:
 	T m_X;//Params.
 	T m_Y;
@@ -3209,13 +3209,13 @@ public:
 
 	PARVARCOPY(BipolarVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		const T x2y2 = helper.m_PrecalcSumSquares;
 		const T t = x2y2 + 1;
 		const T x2 = 2 * helper.In.x;
 		T y = T(0.5) * atan2(2 * helper.In.y, x2y2 - 1) + m_S;
-		
+
 		if (y > T(M_PI_2))
 			y = -T(M_PI_2) + fmod(y + T(M_PI_2), T(M_PI));
 		else if (y < -T(M_PI_2))
@@ -3246,8 +3246,8 @@ public:
 			helper.Out.z = m_Weight * helper.In.z;
 		}
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3303,20 +3303,20 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_S = -T(M_PI_2) * m_Shift;;
 		m_V = m_Weight * T(M_2_PI);
 		m_V4 = m_Weight * T(0.25) * T(M_2_PI);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Shift = 2 * rand.Frand01<T>() - 1;
 	}
 
-	virtual bool SetParamVal(const char* name, T val)
+	virtual bool SetParamVal(const char* name, T val) override
 	{
 		if (!_stricmp(name, "bipolar_shift"))
 		{
@@ -3334,7 +3334,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Shift, prefix + "bipolar_shift"));//Params.
 		m_Params.push_back(ParamWithName<T>(true, &m_S,  prefix + "bipolar_s"));//Precalc.
@@ -3360,13 +3360,13 @@ public:
 
 	VARCOPY(BoardersVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T roundX = Rint(helper.In.x);
 		T roundY = Rint(helper.In.y);
 		T offsetX = helper.In.x - roundX;
 		T offsetY = helper.In.y - roundY;
-	
+
 		if (rand.Frand01<T>() >= 0.75)
 		{
 			helper.Out.x = m_Weight * (offsetX * T(0.5) + roundX);
@@ -3384,7 +3384,7 @@ public:
 				else
 				{
 					helper.Out.x = m_Weight * (offsetX * T(0.5) + roundX - T(0.25));
-					helper.Out.y = m_Weight * (offsetY * T(0.5) + roundY - T(0.25) * offsetY / offsetX);  
+					helper.Out.y = m_Weight * (offsetY * T(0.5) + roundY - T(0.25) * offsetY / offsetX);
 				}
 			}
 			else
@@ -3405,7 +3405,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -3469,18 +3469,18 @@ public:
 
 	VARCOPY(ButterflyVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T wx = m_Weight * T(1.3029400317411197908970256609023);//This precision came from the original.
 		T y2 = helper.In.y * 2;
 		T r = wx * sqrt(fabs(helper.In.y * helper.In.x) / Zeps(SQR(helper.In.x) + SQR(y2)));
-   
+
 		helper.Out.x = r * helper.In.x;
 		helper.Out.y = r * y2;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -3513,14 +3513,14 @@ public:
 
 	PARVARCOPY(CellVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T invCellSize = 1 / m_Size;
 		T x = floor(helper.In.x * invCellSize);//Calculate input cell. Note that int cast is omitted here. See below.
 		T y = floor(helper.In.y * invCellSize);
 		T dx = helper.In.x - x * m_Size;//Offset from cell origin.
 		T dy = helper.In.y - y * m_Size;
-   
+
 		//Interleave cells.
 		if (y >= 0)
 		{
@@ -3548,19 +3548,19 @@ public:
 				x = -(2 * x + 1);
 			}
 		}
-   
+
 		helper.Out.x = m_Weight * (dx + x * m_Size);
 		helper.Out.y = -(m_Weight * (dy + y * m_Size));
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
+
 	/// <summary>
 	/// Cell is very strange and will not run using integers.
 	/// When using floats, it at least gives some output, however
 	/// that output is slightly different than the CPU. But not by enough
 	/// to change the shape of the final image.
 	/// </summary>
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3615,8 +3615,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Size = 2 * rand.Frand01<T>() + T(0.5);
 	}
@@ -3625,11 +3625,11 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Size, prefix + "cell_size", 1));
 	}
-	
+
 private:
 	T m_Size;
 };
@@ -3648,19 +3648,19 @@ public:
 
 	PARVARCOPY(CpowVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcAtanyx;
 		T lnr = T(0.5) * log(helper.m_PrecalcSumSquares);
 		T angle = m_C * a + m_D * lnr + m_Ang * Floor<T>(m_Power * rand.Frand01<T>());
 		T m = m_Weight * exp(m_C * lnr - m_D * a);
-   
+
 		helper.Out.x = m * cos(angle);
 		helper.Out.y = m * sin(angle);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3686,15 +3686,15 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_C = m_PowerR / m_Power;
 		m_D = m_PowerI / m_Power;
 		m_Ang = 2 * T(M_PI) / m_Power;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_PowerR = 3 * rand.Frand01<T>();
 		m_PowerI = rand.Frand01<T>() - T(0.5);
@@ -3705,7 +3705,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_PowerR, prefix + "cpow_r", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_PowerI, prefix + "cpow_i"));
@@ -3714,7 +3714,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(true, &m_D,   prefix + "cpow_d"));
 		m_Params.push_back(ParamWithName<T>(true, &m_Ang, prefix + "cpow_ang"));
 	}
-	
+
 private:
 	T m_PowerR;//Params.
 	T m_PowerI;
@@ -3738,14 +3738,14 @@ public:
 
 	PARVARCOPY(CurveVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * helper.In.x + m_XAmpV * exp(-helper.In.y * helper.In.y * m_XLengthV);
 		helper.Out.y = m_Weight * helper.In.y + m_YAmpV * exp(-helper.In.x * helper.In.x * m_YLengthV);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3768,8 +3768,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_XAmpV = m_Weight * m_XAmp;
 		m_YAmpV = m_Weight * m_YAmp;
@@ -3777,7 +3777,7 @@ public:
 		m_YLengthV = 1 / max(SQR(m_YLength), T(1e-20));
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_XAmp    = 5 * (rand.Frand01<T>() - T(0.5));
 		m_YAmp    = 4 * (rand.Frand01<T>() - T(0.5));
@@ -3789,7 +3789,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_XAmp,    prefix + "curve_xamp"));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_YAmp,    prefix + "curve_yamp"));
@@ -3800,7 +3800,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(true, &m_XLengthV, prefix + "curve_xlenv"));
 		m_Params.push_back(ParamWithName<T>(true, &m_YLengthV, prefix + "curve_ylenv"));
 	}
-	
+
 private:
 	T m_XAmp;//Params.
 	T m_YAmp;
@@ -3823,7 +3823,7 @@ public:
 
 	VARCOPY(EdiscVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tmp = helper.m_PrecalcSumSquares + 1;
 		T tmp2 = 2 * helper.In.x;
@@ -3834,21 +3834,21 @@ public:
 		T a2 = -acos(Clamp<T>(helper.In.x / xmax, -1, 1));
 		T w = m_Weight / T(11.57034632);//This is an interesting magic number.
 		T snv, csv, snhu, cshu;
-   
+
 		sincos(a1, &snv, &csv);
-   
+
 		snhu = sinh(a2);
 		cshu = cosh(a2);
-   
+
 		if (helper.In.y > 0.0)
 			snv = -snv;
-   
+
 		helper.Out.x = w * cshu * csv;
 		helper.Out.y = w * snhu * snv;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -3866,7 +3866,7 @@ public:
 		   << "\t\treal_t csv = cos(a1);\n"
 		   << "\t\treal_t snhu = sinh(a2);\n"
 		   << "\t\treal_t cshu = cosh(a2);\n"
-   
+
 		   << "\t\tif (vIn.y > 0)\n"
 		   << "\t\t	snv = -snv;\n"
 
@@ -3893,7 +3893,7 @@ public:
 
 	PARVARCOPY(EllipticVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tmp = helper.m_PrecalcSumSquares + 1;
 		T x2 = 2 * helper.In.x;
@@ -3907,14 +3907,14 @@ public:
 			b = 0;
 		else
 			b = sqrt(b);
-	  
+
 		if (ssx < 0)
 			ssx = 0;
 		else
 			ssx = sqrt(ssx);
-	  
+
 		helper.Out.x = w * atan2(a, b);
-   
+
 		if (helper.In.y > 0)
 			helper.Out.y = w * log(xmax + ssx);
 		else
@@ -3923,7 +3923,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -3962,8 +3962,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_WeightDivPiDiv2 = m_Weight / T(M_PI_2);
 	}
@@ -3972,11 +3972,11 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(true, &m_WeightDivPiDiv2, prefix + "elliptic_weight_div_pi_div_2"));//Precalc.
 	}
-	
+
 private:
 	T m_WeightDivPiDiv2;//Precalc.
 };
@@ -3995,19 +3995,19 @@ public:
 
 	PARVARCOPY(EscherVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcAtanyx;
 		T lnr = T(0.5) * log(helper.m_PrecalcSumSquares);
 		T m = m_Weight * exp(m_C * lnr - m_D * a);
 		T n = m_C * a + m_D * lnr;
-   
+
 		helper.Out.x = m * cos(n);
 		helper.Out.y = m * sin(n);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4016,7 +4016,7 @@ public:
 		string beta = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string c    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string d    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\treal_t a = precalcAtanyx;\n"
 		   << "\t\treal_t lnr = 0.5 * log(precalcSumSquares);\n"
@@ -4030,20 +4030,20 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		sincos(m_Beta, &m_D, &m_C);
 		m_C = T(0.5) * (1 + m_C);
 		m_D = T(0.5) * m_D;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		SetParamVal("escher_beta", T(M_PI) * rand.Frand01<T>());
 	}
 
-	virtual bool SetParamVal(const char* name, T val)
+	virtual bool SetParamVal(const char* name, T val) override
 	{
 		if (!_stricmp(name, "escher_beta"))
 		{
@@ -4059,13 +4059,13 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Beta, prefix + "escher_beta"));//Params.
 		m_Params.push_back(ParamWithName<T>(true, &m_C, prefix + "escher_beta_c"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_D, prefix + "escher_beta_d"));
 	}
-	
+
 private:
 	T m_Beta;//Params.
 	T m_C;//Precalc.
@@ -4083,12 +4083,12 @@ public:
 
 	VARCOPY(FociVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T expx = exp(helper.In.x) * T(0.5);
 		T expnx = T(0.25) / expx;
 		T sn, cn, tmp;
-   
+
 		sincos(helper.In.y, &sn, &cn);
 
 		tmp = m_Weight / Zeps(expx + expnx - cn);
@@ -4098,7 +4098,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -4135,31 +4135,31 @@ public:
 
 	PARVARCOPY(LazySusanVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T x = helper.In.x - m_X;
 		T y = helper.In.y + m_Y;
 		T r = sqrt(x * x + y * y);
-   
+
 		if (r < m_Weight)
 		{
 			T a = atan2(y, x) + m_Spin + m_Twist * (m_Weight - r);
-	  
+
 			helper.Out.x = m_Weight * (r * cos(a) + m_X);//Fix to make it colapse to 0 when weight is 0.//SMOULDER
 			helper.Out.y = m_Weight * (r * sin(a) - m_Y);
 		}
 		else
 		{
 			r = 1 + m_Space / Zeps(r);
-	  
+
 			helper.Out.x = m_Weight * (r * x + m_X);//Fix to make it colapse to 0 when weight is 0.//SMOULDER
 			helper.Out.y = m_Weight * (r * y - m_Y);
 		}
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4196,20 +4196,20 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual bool SetParamVal(const char* name, T val)
+
+	virtual bool SetParamVal(const char* name, T val) override
 	{
 		if (!_stricmp(name, "lazysusan_spin"))
 		{
 			m_Spin = Fabsmod(val / T(M_2PI)) * T(M_2PI);
-			Precalc();
+			this->Precalc();
 			return true;
 		}
 
 		return ParametricVariation<T>::SetParamVal(name, val);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X     = 2       * rand.Frand11<T>();
 		m_Y     = 2       * rand.Frand11<T>();
@@ -4222,7 +4222,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Spin,  prefix + "lazysusan_spin", T(M_PI)));
 		m_Params.push_back(ParamWithName<T>(&m_Space, prefix + "lazysusan_space"));
@@ -4230,7 +4230,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(&m_X,     prefix + "lazysusan_x"));
 		m_Params.push_back(ParamWithName<T>(&m_Y,     prefix + "lazysusan_y"));
 	}
-	
+
 private:
 	T m_Spin;
 	T m_Space;
@@ -4253,7 +4253,7 @@ public:
 
 	PARVARCOPY(LoonieVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (helper.m_PrecalcSumSquares < m_W2 && helper.m_PrecalcSumSquares != 0)
 		{
@@ -4271,7 +4271,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4297,8 +4297,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_W2 = SQR(m_Weight);
 	}
@@ -4307,11 +4307,11 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(true, &m_W2, prefix + "loonie_w2"));//Precalc.
 	}
-	
+
 private:
 	T m_W2;//Precalc.
 };
@@ -4330,7 +4330,7 @@ public:
 
 	PARVARCOPY(ModulusVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (helper.In.x > m_X)
 			helper.Out.x = m_Weight * (-m_X + fmod(helper.In.x + m_X, m_XRange));
@@ -4338,7 +4338,7 @@ public:
 			helper.Out.x = m_Weight * ( m_X - fmod(m_X - helper.In.x, m_XRange));
 		else
 			helper.Out.x = m_Weight * helper.In.x;
-	  
+
 		if (helper.In.y > m_Y)
 			helper.Out.y = m_Weight * (-m_Y + fmod(helper.In.y + m_Y, m_YRange));
 		else if (helper.In.y < -m_Y)
@@ -4348,8 +4348,8 @@ public:
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4367,7 +4367,7 @@ public:
 		   << "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * ( " << x << " - fmod(" << x << " - vIn.x, " << xr << "));\n"
 		   << "\t\telse\n"
 		   << "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
-		   << "\n"	  
+		   << "\n"
 		   << "\t\tif (vIn.y > " << y << ")\n"
 		   << "\t\t	vOut.y = xform->m_VariationWeights[" << varIndex << "] * (-" << y << " + fmod(vIn.y + " << y << ", " << yr << "));\n"
 		   << "\t\telse if (vIn.y < -" << y << ")\n"
@@ -4380,14 +4380,14 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_XRange = 2 * m_X;
 		m_YRange = 2 * m_Y;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X = rand.Frand11<T>();
 		m_Y = rand.Frand11<T>();
@@ -4397,14 +4397,14 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X, prefix + "modulus_x", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Y, prefix + "modulus_y", 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_XRange, prefix + "modulus_xrange"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_YRange, prefix + "modulus_yrange"));
 	}
-	
+
 private:
 	T m_X;//Params.
 	T m_Y;
@@ -4426,7 +4426,7 @@ public:
 
 	PARVARCOPY(OscilloscopeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T t;
 
@@ -4434,7 +4434,7 @@ public:
 			t = m_Amplitude * cos(m_2PiFreq * helper.In.x) + m_Separation;
 		else
 			t = m_Amplitude * exp(-fabs(helper.In.x) * m_Damping) * cos(m_2PiFreq * helper.In.x) + m_Separation;
-   
+
 		if (fabs(helper.In.y) <= t)
 		{
 			helper.Out.x = m_Weight * helper.In.x;
@@ -4448,8 +4448,8 @@ public:
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4485,13 +4485,13 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_2PiFreq = m_Frequency * T(M_2PI);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Separation = 1 + rand.Frand11<T>();
 		m_Frequency  = T(M_PI) * rand.Frand11<T>();
@@ -4503,7 +4503,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Separation, prefix + "oscilloscope_separation", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Frequency,  prefix + "oscilloscope_frequency", T(M_PI)));
@@ -4511,7 +4511,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(&m_Damping,    prefix + "oscilloscope_damping"));
 		m_Params.push_back(ParamWithName<T>(true, &m_2PiFreq, prefix + "oscilloscope_2pifreq"));//Precalc.
 	}
-	
+
 private:
 	T m_Separation;//Params.
 	T m_Frequency;
@@ -4534,14 +4534,14 @@ public:
 
 	PARVARCOPY(Polar2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Vvar * helper.m_PrecalcAtanxy;
 		helper.Out.y = m_Vvar2 * log(helper.m_PrecalcSumSquares);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4559,7 +4559,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Precalc()
+	virtual void Precalc() override
 	{
 		m_Vvar = m_Weight / T(M_PI);
 		m_Vvar2 = m_Vvar * T(0.5);
@@ -4569,7 +4569,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(true, &m_Vvar, prefix + "polar2_vvar"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Vvar2, prefix + "polar2_vvar2"));
@@ -4594,14 +4594,14 @@ public:
 
 	PARVARCOPY(Popcorn2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * (helper.In.x + m_X * sin(tan(helper.In.y * m_C)));
 		helper.Out.y = m_Weight * (helper.In.y + m_Y * sin(tan(helper.In.x * m_C)));
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4619,8 +4619,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X = T(0.2) + rand.Frand01<T>();
 		m_Y = T(0.2) * rand.Frand01<T>();
@@ -4631,13 +4631,13 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X, prefix + "popcorn2_x", T(0.1)));
 		m_Params.push_back(ParamWithName<T>(&m_Y, prefix + "popcorn2_y", T(0.1)));
 		m_Params.push_back(ParamWithName<T>(&m_C, prefix + "popcorn2_c", 3));
 	}
-	
+
 private:
 	T m_X;
 	T m_Y;
@@ -4661,7 +4661,7 @@ public:
 
 	PARVARCOPY(ScryVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T t = helper.m_PrecalcSumSquares;
 		T r = 1 / Zeps(helper.m_PrecalcSqrtSumSquares * (t + m_InvWeight));
@@ -4671,7 +4671,7 @@ public:
 		helper.Out.z = (m_VarType == VARTYPE_REG) ? 0 : helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4690,8 +4690,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_InvWeight = 1 / Zeps(m_Weight);
 	}
@@ -4700,11 +4700,11 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(true, &m_InvWeight, prefix + "scry_inv_weight"));//Precalcs only, no params.
 	}
-	
+
 private:
 	T m_InvWeight;//Precalcs only, no params.
 };
@@ -4723,13 +4723,13 @@ public:
 
 	PARVARCOPY(SeparationVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (helper.In.x > 0.0)
 			helper.Out.x = m_Weight * (sqrt(SQR(helper.In.x) + m_XX) - helper.In.x * m_XInside);
 		else
 			helper.Out.x = -(m_Weight * (sqrt(SQR(helper.In.x) + m_XX) + helper.In.x * m_XInside));
-   
+
 		if (helper.In.y > 0.0)
 			helper.Out.y = m_Weight * (sqrt(SQR(helper.In.y) + m_YY) - helper.In.y * m_YInside);
 		else
@@ -4737,8 +4737,8 @@ public:
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4752,29 +4752,29 @@ public:
 		string yy      = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\tif (vIn.x > 0.0)\n" 
-		   << "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.x * vIn.x + " << xx << ") - vIn.x * " << xInside << ");\n" 
-		   << "\t\telse\n" 
-		   << "\t\t	vOut.x = -(xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.x * vIn.x + " << xx << ") + vIn.x * " << xInside << "));\n" 
-		   << "\n" 
-		   << "\t\tif (vIn.y > 0.0)\n" 
-		   << "\t\t	vOut.y = xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.y * vIn.y + " << yy << ") - vIn.y * " << yInside << ");\n" 
-		   << "\t\telse\n" 
-		   << "\t\t	vOut.y = -(xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.y * vIn.y + " << yy << ") + vIn.y * " << yInside << "));\n" 
+		   << "\t\tif (vIn.x > 0.0)\n"
+		   << "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.x * vIn.x + " << xx << ") - vIn.x * " << xInside << ");\n"
+		   << "\t\telse\n"
+		   << "\t\t	vOut.x = -(xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.x * vIn.x + " << xx << ") + vIn.x * " << xInside << "));\n"
+		   << "\n"
+		   << "\t\tif (vIn.y > 0.0)\n"
+		   << "\t\t	vOut.y = xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.y * vIn.y + " << yy << ") - vIn.y * " << yInside << ");\n"
+		   << "\t\telse\n"
+		   << "\t\t	vOut.y = -(xform->m_VariationWeights[" << varIndex << "] * (sqrt(vIn.y * vIn.y + " << yy << ") + vIn.y * " << yInside << "));\n"
 		   << "\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\t}\n";
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_XX = SQR(m_X);
 		m_YY = SQR(m_Y);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X       = 1 + rand.Frand11<T>();
 		m_XInside = 1 + rand.Frand11<T>();
@@ -4786,7 +4786,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X,       prefix + "separation_x", 1));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_XInside, prefix + "separation_xinside"));
@@ -4795,7 +4795,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(true, &m_XX, prefix + "separation_xx"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_YY, prefix + "separation_yy"));
 	}
-	
+
 private:
 	T m_X;//Params.
 	T m_XInside;
@@ -4819,7 +4819,7 @@ public:
 
 	PARVARCOPY(SplitVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (cos(helper.In.y * m_YAng) >= 0)
 			helper.Out.x = m_Weight * helper.In.x;
@@ -4833,8 +4833,8 @@ public:
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4844,7 +4844,7 @@ public:
 		string ySize = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string xAng  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string yAng  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\tif (cos(vIn.y * " << yAng << ") >= 0)\n"
 		   << "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
@@ -4861,14 +4861,14 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_XAng = T(M_PI) * m_XSize;
 		m_YAng = T(M_PI) * m_YSize;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_XSize = rand.Frand11<T>();
 		m_YSize = rand.Frand11<T>();
@@ -4878,14 +4878,14 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_XSize, prefix + "split_xsize", T(0.5)));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_YSize, prefix + "split_ysize", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(true, &m_XAng, prefix + "split_xang"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_YAng, prefix + "split_yang"));
 	}
-	
+
 private:
 	T m_XSize;//Params.
 	T m_YSize;
@@ -4907,13 +4907,13 @@ public:
 
 	PARVARCOPY(SplitsVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (helper.In.x >= 0)
 			helper.Out.x = m_Weight * (helper.In.x + m_X);
 		else
 			helper.Out.x = m_Weight * (helper.In.x - m_X);
-	  
+
 		if (helper.In.y >= 0)
 			helper.Out.y = m_Weight * (helper.In.y + m_Y);
 		else
@@ -4921,8 +4921,8 @@ public:
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -4930,7 +4930,7 @@ public:
 		string index = ss2.str();
 		string x = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string y = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\tif (vIn.x >= 0)\n"
 		   << "\t\t	vOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x + " << x << ");\n"
@@ -4947,8 +4947,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_X = rand.Frand11<T>();
 		m_Y = rand.Frand11<T>();
@@ -4958,12 +4958,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_X, prefix + "splits_x"));
 		m_Params.push_back(ParamWithName<T>(&m_Y, prefix + "splits_y"));
 	}
-	
+
 private:
 	T m_X;
 	T m_Y;
@@ -4983,7 +4983,7 @@ public:
 
 	PARVARCOPY(StripesVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T roundx = (T)(int)(helper.In.x >= 0 ? (helper.In.x + T(0.5)) : (helper.In.x - T(0.5)));
 		T offsetx = helper.In.x - roundx;
@@ -4992,8 +4992,8 @@ public:
 		helper.Out.y = m_Weight * (helper.In.y + offsetx * offsetx * m_Warp);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5001,7 +5001,7 @@ public:
 		string index = ss2.str();
 		string space = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string warp  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\treal_t roundx = (real_t)(int)(vIn.x >= 0 ? (vIn.x + 0.5) : (vIn.x - 0.5));\n"
 		   << "\t\treal_t offsetx = vIn.x - roundx;\n"
@@ -5013,8 +5013,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Params[0].Set(rand.Frand01<T>());//Space.
 		m_Params[1].Set(5 * rand.Frand01<T>());//Warp.
@@ -5024,12 +5024,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Space, prefix + "stripes_space", T(0.5), REAL, T(0.5), 5));
 		m_Params.push_back(ParamWithName<T>(&m_Warp,  prefix + "stripes_warp"));
 	}
-	
+
 private:
 	T m_Space;
 	T m_Warp;
@@ -5049,7 +5049,7 @@ public:
 
 	PARVARCOPY(WedgeVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = helper.m_PrecalcSqrtSumSquares;
 		T a = helper.m_PrecalcAtanyx + m_Swirl * r;
@@ -5061,8 +5061,8 @@ public:
 		helper.Out.y = r * sin(a);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5088,13 +5088,13 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_CompFac = 1 - m_Angle * m_Count * T(M_1_PI) * T(0.5);
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Angle = T(M_PI) * rand.Frand01<T>();
 		m_Hole  = T(0.5)  * rand.Frand11<T>();
@@ -5106,7 +5106,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Angle, prefix + "wedge_angle", T(M_PI_2)));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Hole,  prefix + "wedge_hole"));
@@ -5114,7 +5114,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(&m_Swirl, prefix + "wedge_swirl"));
 		m_Params.push_back(ParamWithName<T>(true, &m_CompFac, prefix + "wedge_compfac"));//Precalc.
 	}
-	
+
 private:
 	T m_Angle;//Params.
 	T m_Hole;
@@ -5137,7 +5137,7 @@ public:
 
 	PARVARCOPY(WedgeJuliaVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
 		int tRand = (int)(m_Rn * rand.Frand01<T>());
@@ -5149,8 +5149,8 @@ public:
 		helper.Out.y = r * sin(a);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5178,15 +5178,15 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_Cf = 1 - m_Angle * m_Count * T(M_1_PI) * T(0.5);
 		m_Rn = fabs(m_Power);
 		m_Cn = m_Dist / m_Power / 2;
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Power = (T)(int)(5 * rand.Frand01<T>() + 2);
 		m_Dist  = 1;
@@ -5198,7 +5198,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Angle, prefix + "wedge_julia_angle"));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Count, prefix + "wedge_julia_count", 1));
@@ -5233,7 +5233,7 @@ public:
 
 	PARVARCOPY(WedgeSphVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = 1 / Zeps(helper.m_PrecalcSqrtSumSquares);
 		T a = helper.m_PrecalcAtanyx + m_Swirl * r;
@@ -5246,8 +5246,8 @@ public:
 		helper.Out.y = r * sin(a);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5274,7 +5274,7 @@ public:
 		return ss.str();
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Angle = T(M_PI) * rand.Frand01<T>();
 		m_Count = (T)Floor<T>(5 * rand.Frand01<T>()) + 1;
@@ -5286,14 +5286,14 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Angle, prefix + "wedge_sph_angle"));
 		m_Params.push_back(ParamWithName<T>(&m_Count, prefix + "wedge_sph_hole", 1));
 		m_Params.push_back(ParamWithName<T>(&m_Hole,  prefix + "wedge_sph_count"));
 		m_Params.push_back(ParamWithName<T>(&m_Swirl, prefix + "wedge_sph_swirl"));
 	}
-	
+
 private:
 	T m_Angle;
 	T m_Count;
@@ -5315,7 +5315,7 @@ public:
 
 	PARVARCOPY(WhorlVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a, r = helper.m_PrecalcSqrtSumSquares;
 
@@ -5328,8 +5328,8 @@ public:
 		helper.Out.y = m_Weight * r * sin(a);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5337,7 +5337,7 @@ public:
 		string index = ss2.str();
 		string inside  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string outside = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\treal_t a;\n"
 		   << "\t\treal_t r = precalcSqrtSumSquares;\n"
@@ -5354,8 +5354,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Inside = rand.Frand01<T>();
 		m_Outside = rand.Frand01<T>();
@@ -5365,12 +5365,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Inside,  prefix + "whorl_inside", 1));
 		m_Params.push_back(ParamWithName<T>(&m_Outside, prefix + "whorl_outside", 1));
 	}
-	
+
 private:
 	T m_Inside;
 	T m_Outside;
@@ -5390,14 +5390,14 @@ public:
 
 	PARVARCOPY(Waves2Variation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * (helper.In.x + m_ScaleX * sin(helper.In.y * m_FreqX));
 		helper.Out.y = m_Weight * (helper.In.y + m_ScaleY * sin(helper.In.x * m_FreqY));
 		helper.Out.z = m_Weight * (helper.In.z + m_ScaleZ * sin(helper.m_PrecalcSqrtSumSquares * m_FreqZ));
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5418,9 +5418,9 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
-	{		
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
+	{
 		m_FreqX  = 4      * rand.Frand01<T>();
 		m_ScaleX = T(0.5) + rand.Frand01<T>();
 		m_FreqY  = 4      * rand.Frand01<T>();
@@ -5433,7 +5433,7 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_FreqX,  prefix + "waves2_freqx", 2));
 		m_Params.push_back(ParamWithName<T>(&m_ScaleX, prefix + "waves2_scalex"));
@@ -5442,7 +5442,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(&m_FreqZ,  prefix + "waves2_freqz"));
 		m_Params.push_back(ParamWithName<T>(&m_ScaleZ, prefix + "waves2_scalez"));
 	}
-	
+
 private:
 	T m_FreqX;
 	T m_ScaleX;
@@ -5463,7 +5463,7 @@ public:
 
 	VARCOPY(ExpVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T expe = m_Weight * exp(helper.In.x);
 
@@ -5472,7 +5472,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5503,14 +5503,14 @@ public:
 
 	PARVARCOPY(LogVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * log(helper.m_PrecalcSumSquares) * m_Denom;
 		helper.Out.y = m_Weight * helper.m_PrecalcAtanyx;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -5527,8 +5527,8 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_Denom = T(0.5) / log(m_Base);
 	}
@@ -5537,12 +5537,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Base, prefix + "log_base", T(M_E), REAL, EPS, TMAX));
 		m_Params.push_back(ParamWithName<T>(true, &m_Denom, prefix + "log_denom"));//Precalc.
 	}
-	
+
 private:
 	T m_Base;
 	T m_Denom;//Precalc.
@@ -5559,14 +5559,14 @@ public:
 
 	VARCOPY(SinVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * sin(helper.In.x) * cosh(helper.In.y);
 		helper.Out.y = m_Weight * cos(helper.In.x) * sinh(helper.In.y);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5592,7 +5592,7 @@ public:
 
 	VARCOPY(CosVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		//clamp fabs x and y to 7.104760e+002 for cosh, and |x| 7.104760e+002 for sinh
 		helper.Out.x = m_Weight * cos(helper.In.x) * cosh(helper.In.y);
@@ -5600,7 +5600,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5626,7 +5626,7 @@ public:
 
 	VARCOPY(TanVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tansin, tancos, tansinh, tancosh, tanden;
 
@@ -5639,7 +5639,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5671,7 +5671,7 @@ public:
 
 	VARCOPY(SecVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T secsin, seccos, secsinh, seccosh, secden;
 
@@ -5684,7 +5684,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5716,7 +5716,7 @@ public:
 
 	VARCOPY(CscVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T cscsin, csccos, cscsinh, csccosh, cscden;
 
@@ -5729,7 +5729,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5761,7 +5761,7 @@ public:
 
 	VARCOPY(CotVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T cotsin, cotcos, cotsinh, cotcosh, cotden;
 
@@ -5774,7 +5774,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5806,7 +5806,7 @@ public:
 
 	VARCOPY(SinhVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sinhsin, sinhcos, sinhsinh, sinhcosh;
 
@@ -5818,7 +5818,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5849,7 +5849,7 @@ public:
 
 	VARCOPY(CoshVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T coshsin,coshcos,coshsinh,coshcosh;
 
@@ -5861,7 +5861,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5892,7 +5892,7 @@ public:
 
 	VARCOPY(TanhVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T tanhsin, tanhcos, tanhsinh, tanhcosh, tanhden;
 
@@ -5905,7 +5905,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5937,7 +5937,7 @@ public:
 
 	VARCOPY(SechVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sechsin, sechcos, sechsinh, sechcosh, sechden;
 
@@ -5950,7 +5950,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -5982,7 +5982,7 @@ public:
 
 	VARCOPY(CschVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T cschsin, cschcos, cschsinh, cschcosh, cschden;
 
@@ -5995,7 +5995,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -6027,7 +6027,7 @@ public:
 
 	VARCOPY(CothVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T cothsin, cothcos, cothsinh, cothcosh, cothden;
 
@@ -6040,7 +6040,7 @@ public:
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
-	virtual string OpenCLString()
+	virtual string OpenCLString() override
 	{
 		ostringstream ss;
 		int varIndex = IndexInXform();
@@ -6075,7 +6075,7 @@ public:
 
 	PARVARCOPY(AugerVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T s = sin(m_Freq * helper.In.x);
 		T t = sin(m_Freq * helper.In.y);
@@ -6086,8 +6086,8 @@ public:
 		helper.Out.y = m_Weight * dy;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -6111,9 +6111,9 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
-	{		
+
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
+	{
 		m_Symmetry    = 0;
 		m_AugerWeight = T(0.5) + rand.Frand01<T>() / 2;
 		m_Freq        = (T)Floor<T>(5 * rand.Frand01<T>()) + 1;
@@ -6124,14 +6124,14 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Symmetry,    prefix + "auger_sym"));
 		m_Params.push_back(ParamWithName<T>(&m_AugerWeight, prefix + "auger_weight", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_Freq,        prefix + "auger_freq", 5));
 		m_Params.push_back(ParamWithName<T>(&m_Scale,       prefix + "auger_scale", T(0.1)));
 	}
-	
+
 private:
 	T m_Symmetry;
 	T m_AugerWeight;
@@ -6153,7 +6153,7 @@ public:
 
 	PARVARCOPY(FluxVariation)
 
-	void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T xpw = helper.In.x + m_Weight;
 		T xmw = helper.In.x - m_Weight;
@@ -6171,8 +6171,8 @@ public:
 		helper.Out.z = helper.In.z;
 		//helper.Out.z = m_Weight * helper.In.z;
 	}
-	
-	virtual string OpenCLString()
+
+	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
 		int i = 0, varIndex = IndexInXform();
@@ -6180,7 +6180,7 @@ public:
 		string index = ss2.str();
 		string spread = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 		string spr    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
-		
+
 		ss << "\t{\n"
 		   << "\t\treal_t xpw = vIn.x + xform->m_VariationWeights[" << varIndex << "];\n"
 		   << "\t\treal_t xmw = vIn.x - xform->m_VariationWeights[" << varIndex << "];\n"
@@ -6200,14 +6200,14 @@ public:
 
 		return ss.str();
 	}
-	
-	virtual void Precalc()
+
+	virtual void Precalc() override
 	{
 		m_Spr = 2 + m_Spread;
 	}
 
-	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
-	{		
+	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
+	{
 		m_Spread  = T(0.5) + rand.Frand01<T>() / 2;
 	}
 
@@ -6215,12 +6215,12 @@ protected:
 	void Init()
 	{
 		string prefix = Prefix();
-		
+
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Spread, prefix + "flux_spread"));//Params.
 		m_Params.push_back(ParamWithName<T>(true, &m_Spr, prefix + "flux_spr"));//Precalc.
 	}
-	
+
 private:
 	T m_Spread;//Params.
 	T m_Spr;//Precalc.

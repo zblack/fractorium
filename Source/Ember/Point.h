@@ -129,8 +129,14 @@ static int SortPointByY(const Point<T>& a, const Point<T>& b)
 /// specific to color handling.
 /// </summary>
 template <typename T>
-class EMBER_API Color : public v4T
+struct EMBER_API Color : public v4T
 {
+#ifndef _WIN32
+using v4T::r;
+using v4T::g;
+using v4T::b;
+using v4T::a;
+#endif
 public:
 	/// <summary>
 	/// Constructor to set color values to zero, with full visibility.
@@ -179,7 +185,11 @@ public:
 	template <typename U>
 	Color<T>& operator = (const Color<U>& color)
 	{
+#ifdef _WIN32
 		v4T::operator=<U>(color);
+#else
+		v4T::template operator=<U>(color);
+#endif
 		return *this;
 	}
 

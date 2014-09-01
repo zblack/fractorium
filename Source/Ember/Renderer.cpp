@@ -364,7 +364,10 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	bool resume = m_ProcessState != NONE;
 	bool newFilterAlloc;
 	unsigned int temporalSample, pass;
+	T deTime;
 	eRenderStatus success = RENDER_OK;
+	//double iterationTime = 0;
+	//double accumulationTime = 0;
 	//Timing it;
 
 	//Reset timers and progress percent if: Beginning anew or only filtering and/or accumulating.
@@ -455,14 +458,11 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 
 	if (!resume)
 		ResetBuckets(true, false);//Only reset hist here and do accum when needed later on.
-		
-	double iterationTime = 0;
-	double accumulationTime = 0;
 
 	//Passes, outermost loop 1.
 	for (; (pass < Passes()) && !m_Abort;)
 	{
-		T deTime = T(time) + m_TemporalFilter->Deltas()[pass * m_Ember.m_TemporalSamples];
+		deTime = T(time) + m_TemporalFilter->Deltas()[pass * m_Ember.m_TemporalSamples];
 
 		//Interpolate and get an ember for DE purposes.
 		//Additional interpolation will be done in the temporal samples loop.
@@ -509,10 +509,10 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 			//The actual number of times to iterate. Each thread will get (totalIters / ThreadCount) iters to do.
 			//This is based on zoom and scale calculated in ComputeCamera().
 			//Note that the iter count is based on the final image dimensions, and not the super sampled dimensions.
-			unsigned __int64 totalIterCount = TotalIterCount();
-			unsigned __int64 itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample in this pass without overrides.
-			unsigned __int64 sampleItersToDo;//The number of iterations to actually do in this sample in this pass, considering overrides.
-			
+			uint64_t totalIterCount = TotalIterCount();
+			uint64_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample in this pass without overrides.
+			uint64_t sampleItersToDo;//The number of iterations to actually do in this sample in this pass, considering overrides.
+
 			if (subBatchCountOverride > 0)
 				sampleItersToDo = subBatchCountOverride * SubBatchSize() * ThreadCount();//Run a specific number of sub batches.
 			else
@@ -735,7 +735,7 @@ EmberImageComments Renderer<T, bucketT>::ImageComments(unsigned int printEditDep
 /// <param name="includeFinal">If true include the memory needed for the final output image, else don't.</param>
 /// <returns>The memory required to render the current ember</returns>
 template <typename T, typename bucketT>
-unsigned __int64 Renderer<T, bucketT>::MemoryRequired(bool includeFinal)
+uint64_t Renderer<T, bucketT>::MemoryRequired(bool includeFinal)
 {
 	bool newFilterAlloc = false;
 
@@ -744,7 +744,7 @@ unsigned __int64 Renderer<T, bucketT>::MemoryRequired(bool includeFinal)
 	ComputeBounds();
 
 	//Because ComputeBounds() was called, this includes gutter.
-	unsigned __int64 histSize = SuperSize() * sizeof(glm::detail::tvec4<bucketT, glm::defaultp>);
+	uint64_t histSize = SuperSize() * sizeof(glm::detail::tvec4<bucketT, glm::defaultp>);
 
 	return (histSize * 2) + (includeFinal ? FinalBufferSize() : 0);//Multiply hist by 2 to account for the density filtering buffer which is the same size as the histogram.
 }
@@ -758,9 +758,9 @@ unsigned __int64 Renderer<T, bucketT>::MemoryRequired(bool includeFinal)
 /// </summary>
 /// <returns>An unsigned 64-bit integer specifying how much memory is available</returns>
 template <typename T, typename bucketT>
-unsigned __int64 Renderer<T, bucketT>::MemoryAvailable()
+uint64_t Renderer<T, bucketT>::MemoryAvailable()
 {
-	unsigned __int64 memAvailable = 0;
+	uint64_t memAvailable = 0;
 
 #ifdef WIN32
 
@@ -1053,7 +1053,7 @@ void Renderer<T, bucketT>::Callback(RenderCallback* callback)
 template <typename T, typename bucketT>
 void Renderer<T, bucketT>::MakeDmap(T colorScalar)
 {
-	m_Ember.m_Palette.MakeDmap<bucketT>(m_Dmap, colorScalar);
+	m_Ember.m_Palette.template MakeDmap<bucketT>(m_Dmap, colorScalar);
 }
 
 /// <summary>
@@ -1487,7 +1487,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 					p16[0] = (unsigned short)(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
 					p16[1] = (unsigned short)(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
 					p16[2] = (unsigned short)(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
-					
+
 					if (NumChannels() > 3)
 					{
 						if (Transparency())
@@ -1508,7 +1508,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 					pixels[pixelsRowStart]     = (unsigned char)Clamp<bucketT>(newBucket.r, 0, 255);
 					pixels[pixelsRowStart + 1] = (unsigned char)Clamp<bucketT>(newBucket.g, 0, 255);
 					pixels[pixelsRowStart + 2] = (unsigned char)Clamp<bucketT>(newBucket.b, 0, 255);
-					
+
 					if (NumChannels() > 3)
 					{
 						if (Transparency())
@@ -1567,16 +1567,16 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 /// <param name="temporalSample">The temporal sample within the current pass this is running for</param>
 /// <returns>Rendering statistics</returns>
 template <typename T, typename bucketT>
-EmberStats Renderer<T, bucketT>::Iterate(unsigned __int64 iterCount, unsigned int pass, unsigned int temporalSample)
+EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, unsigned int temporalSample)
 {
 	//Timing t2(4);
 	m_IterTimer.Tic();
 	unsigned int fuse = EarlyClip() ? 100 : 15;//EarlyClip was one way of detecting a later version of flam3, so it used 100 which is a better value.
-	unsigned __int64 totalItersPerThread = (unsigned __int64)ceil((double)iterCount / (double)m_ThreadsToUse);
+	uint64_t totalItersPerThread = (uint64_t)ceil((double)iterCount / (double)m_ThreadsToUse);
 	double percent, etaMs;
 	EmberStats stats;
 
-#ifdef TG	
+#ifdef TG
 	unsigned int threadIndex;
 
 	for (unsigned int i = 0; i < m_ThreadsToUse; i++)
@@ -1588,7 +1588,7 @@ EmberStats Renderer<T, bucketT>::Iterate(unsigned __int64 iterCount, unsigned in
 	{
 #endif
 		Timing t;
-		unsigned __int64 subBatchSize = (unsigned int)min(totalItersPerThread, (unsigned __int64)m_SubBatchSize);
+		uint64_t subBatchSize = (unsigned int)min(totalItersPerThread, (uint64_t)m_SubBatchSize);
 
 		m_BadVals[threadIndex] = 0;
 
@@ -1610,7 +1610,7 @@ EmberStats Renderer<T, bucketT>::Iterate(unsigned __int64 iterCount, unsigned in
 			//Finally, iterate.
 			//t.Tic();
 			//Iterating, loop 4.
-			m_BadVals[threadIndex] += (unsigned __int64)m_Iterator->Iterate(m_Ember, (unsigned int)subBatchSize, fuse, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
+			m_BadVals[threadIndex] += (uint64_t)m_Iterator->Iterate(m_Ember, (uint32_t)subBatchSize, fuse, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
 			//iterationTime += t.Toc();
 
 			if (m_LockAccum)
@@ -1933,9 +1933,9 @@ void Renderer<T, bucketT>::PrepFinalAccumVals(Color<T>& background, T& g, T& lin
 	linRange = GammaThresh();
 	vibrancy /= vibGamCount;
 
-	background.r = (IsNearZero(m_Background.r) ? m_Ember.m_Background.r : m_Background.r) / (vibGamCount / T(256.0));//Background is [0, 1].
-	background.g = (IsNearZero(m_Background.g) ? m_Ember.m_Background.g : m_Background.g) / (vibGamCount / T(256.0));
-	background.b = (IsNearZero(m_Background.b) ? m_Ember.m_Background.b : m_Background.b) / (vibGamCount / T(256.0));
+	background.x = (IsNearZero(m_Background.r) ? m_Ember.m_Background.r : m_Background.r) / (vibGamCount / T(256.0));//Background is [0, 1].
+	background.y = (IsNearZero(m_Background.g) ? m_Ember.m_Background.g : m_Background.g) / (vibGamCount / T(256.0));
+	background.z = (IsNearZero(m_Background.b) ? m_Ember.m_Background.b : m_Background.b) / (vibGamCount / T(256.0));
 }
 
 /// <summary>
@@ -2087,8 +2087,8 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 		ls = vibrancy * T(255) * alpha / bucket.a;
 		ClampRef<T>(alpha, 0, 1);
 	}
-	
-	Palette<T>::CalcNewRgb<bucketT>(&bucket[0], ls, HighlightPower(), newRgb);
+
+	Palette<T>::template CalcNewRgb<bucketT>(&bucket[0], ls, HighlightPower(), newRgb);
 
 	for (unsigned int rgbi = 0; rgbi < 3; rgbi++)
 	{
@@ -2189,8 +2189,8 @@ template <typename T, typename bucketT> double                       Renderer<T,
 template <typename T, typename bucketT> double                       Renderer<T, bucketT>::UpperRightY(bool gutter) const { return gutter ? m_CarToRas.CarUrY() : m_UpperRightY;                                            }
 template <typename T, typename bucketT> T                            Renderer<T, bucketT>::K1()                     const { return m_K1;                                                                                    }
 template <typename T, typename bucketT> T                            Renderer<T, bucketT>::K2()                     const { return m_K2;                                                                                    }
-template <typename T, typename bucketT> unsigned __int64             Renderer<T, bucketT>::TotalIterCount()	        const { return (unsigned __int64)((unsigned __int64)Round(m_ScaledQuality) * (unsigned __int64)FinalRasW() * (unsigned __int64)FinalRasH()); }//Use Round() because there can be some roundoff error when interpolating.
-template <typename T, typename bucketT> unsigned __int64             Renderer<T, bucketT>::ItersPerTemporalSample() const { return (unsigned __int64)ceil(double(TotalIterCount()) / double(Passes() * TemporalSamples())); }
+template <typename T, typename bucketT> uint64_t                     Renderer<T, bucketT>::TotalIterCount()	        const { return (uint64_t)((uint64_t)Round(m_ScaledQuality) * (uint64_t)FinalRasW() * (uint64_t)FinalRasH()); }//Use Round() because there can be some roundoff error when interpolating.
+template <typename T, typename bucketT> uint64_t                     Renderer<T, bucketT>::ItersPerTemporalSample() const { return (uint64_t)ceil(double(TotalIterCount()) / double(Passes() * TemporalSamples())); }
 template <typename T, typename bucketT> eProcessState                Renderer<T, bucketT>::ProcessState()           const { return m_ProcessState;                                                                          }
 template <typename T, typename bucketT> eProcessAction               Renderer<T, bucketT>::ProcessAction()          const { return m_ProcessAction;                                                                         }
 template <typename T, typename bucketT> EmberStats                   Renderer<T, bucketT>::Stats()                  const { return m_Stats;                                                                                 }

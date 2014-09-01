@@ -29,18 +29,12 @@ class EMBER_API Affine2D
 {
 public:
 	Affine2D();
-
-	/// <summary>
-	/// Default copy constructor.
-	/// </summary>
-	/// <param name="affine">The Affine2D object to copy</param>
-	Affine2D(const Affine2D<T>& affine)
-	{
-		Affine2D<T>::operator=<T>(affine);
-	}
+	Affine2D(const Affine2D<T>& affine);
 
 	/// <summary>
 	/// Copy constructor to copy an Affine2D object of type U.
+	/// Special case that must be here in the header because it has
+	/// a second template parameter.
 	/// </summary>
 	/// <param name="affine">The Affine2D object to copy</param>
 	template <typename U>
@@ -52,21 +46,12 @@ public:
 	Affine2D(v2T& x, v2T& y, v2T& t);
 	Affine2D(T xx, T xy, T yx, T yy, T tx, T ty);
 	Affine2D(m4T& mat);
-
-	/// <summary>
-	/// Default assignment operator.
-	/// </summary>
-	/// <param name="affine">The Affine2D object to copy</param>
-	Affine2D<T>& operator = (const Affine2D<T>& affine)
-	{
-		if (this != &affine)
-			Affine2D<T>::operator=<T>(affine);
-
-		return *this;
-	}
+	Affine2D<T>& operator = (const Affine2D<T>& affine);
 
 	/// <summary>
 	/// Assignment operator to assign an Affine2D object of type U.
+	/// Special case that must be here in the header because it has
+	/// a second template parameter.
 	/// </summary>
 	/// <param name="affine">The Affine2D object to copy.</param>
 	/// <returns>Reference to updated self</returns>
@@ -83,50 +68,49 @@ public:
 		return *this;
 	}
 
-	inline void MakeID();
-	inline bool IsID() const;
-	inline bool IsZero() const;
-	inline void Rotate(T angle);
-	inline void Translate(v2T& v);
-	inline void RotateScaleXTo(v2T& v);
-	inline void RotateScaleYTo(v2T& v);
-	inline Affine2D<T> Inverse() const;
-	inline v2T TransformNormal(const v2T& v) const;
-	inline v2T TransformVector(const v2T& v) const;
-	inline m2T ToMat2ColMajor() const;
-	inline m2T ToMat2RowMajor() const;
-	inline m4T ToMat4ColMajor(bool center = false) const;
-	inline m4T ToMat4RowMajor(bool center = false) const;
-
 	bool operator == (const Affine2D<T>& affine);
 	Affine2D<T>& operator * (const Affine2D<T>& affine);
 	v2T operator * (const v2T& v);
 
-	inline T A() const;
-	inline T B() const;
-	inline T C() const;
-	inline T D() const;
-	inline T E() const;
-	inline T F() const;
-					 
-	inline void A(T a);
-	inline void B(T b);
-	inline void C(T c);
-	inline void D(T d);
-	inline void E(T e);
-	inline void F(T f);
+	void MakeID();
+	bool IsID() const;
+	bool IsZero() const;
+	void Rotate(T angle);
+	void Translate(v2T& v);
+	void RotateScaleXTo(v2T& v);
+	void RotateScaleYTo(v2T& v);
+	Affine2D<T> Inverse() const;
+	v2T TransformNormal(const v2T& v) const;
+	v2T TransformVector(const v2T& v) const;
+	m2T ToMat2ColMajor() const;
+	m2T ToMat2RowMajor() const;
+	m4T ToMat4ColMajor(bool center = false) const;
+	m4T ToMat4RowMajor(bool center = false) const;
 
-	inline v2T X() const;
-	inline v2T Y() const;
-	inline v2T O() const;
+	T A() const;
+	T B() const;
+	T C() const;
+	T D() const;
+	T E() const;
+	T F() const;
 
-	inline void X(v2T& x);
-	inline void Y(v2T& y);
-	inline void O(v2T& t);
+	void A(T a);
+	void B(T b);
+	void C(T c);
+	void D(T d);
+	void E(T e);
+	void F(T f);
 
-	//static Affine2D Identity();//Complains about inline.
-	static inline Affine2D CalcRotateScale(v2T& from, v2T& to);
-	static inline void CalcRSAC(v2T& from, v2T& to, T& a, T& c);
+	v2T X() const;
+	v2T Y() const;
+	v2T O() const;
+
+	void X(const v2T& x);
+	void Y(const v2T& y);
+	void O(const v2T& t);
+
+	static Affine2D CalcRotateScale(const v2T& from, const v2T& to);
+	static void CalcRSAC(const v2T& from, const v2T& to, T& a, T& c);
 
 	m23T m_Mat;
 };

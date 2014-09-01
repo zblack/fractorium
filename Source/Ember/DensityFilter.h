@@ -18,7 +18,7 @@ public:
 	DensityFilterBase() { }
 	virtual ~DensityFilterBase() { }
 
-	virtual int FilterWidth() { return 0; }
+	virtual int FilterWidth() const { return 0; }
 };
 
 /// <summary>
@@ -76,7 +76,7 @@ public:
 	{
 		if (this != &filter)
 		{
-			m_MinRad            = filter.m_MinRad;           
+			m_MinRad            = filter.m_MinRad;
 			m_MaxRad			= filter.m_MaxRad;
 			m_Curve			    = filter.m_Curve;
 			m_Supersample		= filter.m_Supersample;
@@ -93,7 +93,7 @@ public:
 
 	/// <summary>
 	/// Create the filter vector of up to 10M entries.
-	/// If more than that are requested, it isn't created and 
+	/// If more than that are requested, it isn't created and
 	/// false is returned.
 	/// </summary>
 	/// <returns>True if success, else false.</returns>
@@ -118,7 +118,7 @@ public:
 		//    num filters = (de_max_width / de_min_width)^(1 / estimator_curve)
 		//
 		decFilterCount = pow(finalMaxRad / finalMinRad, T(1.0) / m_Curve);
-		
+
 		if (decFilterCount > 1e7)//Too many filters.
 			return false;
 
@@ -126,7 +126,7 @@ public:
 
 		//Condense the smaller kernels to save space.
 		if (intFilterCount > keepThresh)
-		{ 
+		{
 			maxIndex = (int)ceil(DE_THRESH + pow(T(intFilterCount - DE_THRESH), m_Curve)) + 1;
 			m_MaxFilteredCounts = (int)pow(T(maxIndex - DE_THRESH), T(1.0) / m_Curve) + DE_THRESH;
 		}
@@ -201,7 +201,7 @@ public:
 						m_Coefs[coefIndex] = 0.0;
 					else
 						m_Coefs[coefIndex] = gaussianFilter.Filter(gaussianFilter.Support() * filterVal) / filterSum;
-				  
+
 					coefIndex++;
 				}
 			}
@@ -316,11 +316,11 @@ public:
 	inline unsigned int KernelSize() const { return m_KernelSize; }
 	inline unsigned int MaxFilterIndex() const { return m_MaxFilterIndex; }
 	inline unsigned int MaxFilteredCounts() const { return m_MaxFilteredCounts; }
-	virtual int FilterWidth() const { return m_FilterWidth; }
+	virtual int FilterWidth() const override { return m_FilterWidth; }
 	inline unsigned int BufferSize() const { return (unsigned int)m_Widths.size(); }
 	inline unsigned int CoefsSizeBytes() const { return BufferSize() * m_KernelSize * sizeof(T); }
 	inline unsigned int WidthsSizeBytes() const { return BufferSize() * sizeof(T); }
-	inline unsigned int CoefsIndicesSizeBytes() const { return unsigned int(m_CoefIndices.size() * sizeof(unsigned int)); }
+	inline unsigned int CoefsIndicesSizeBytes() const { return (unsigned int)(m_CoefIndices.size() * sizeof(unsigned int)); }
 	inline const T* Coefs() const { return m_Coefs.data(); }
 	inline const T* Widths() const { return m_Widths.data(); }
 	inline const unsigned int* CoefIndices() const { return m_CoefIndices.data(); }

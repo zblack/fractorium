@@ -19,6 +19,17 @@ enum eTemporalFilterType
 };
 
 /// <summary>
+/// g++ needs a forward declaration here.
+/// </summary>
+template <typename T> class TemporalFilterCreator;
+
+#define TEMPORALFILTERUSINGS \
+	using TemporalFilter<T>::m_Filter; \
+	using TemporalFilter<T>::m_FilterExp; \
+	using TemporalFilter<T>::Size; \
+	using TemporalFilter<T>::FinishFilter;
+
+/// <summary>
 /// Temporal filter is for doing motion blur while rendering a series of frames for animation.
 /// The filter created is used as a vector of scalar values to multiply the time value by in between embers.
 /// There are three possible types: Gaussian, Box and Exp.
@@ -178,6 +189,7 @@ protected:
 template <typename T>
 class EMBER_API ExpTemporalFilter : public TemporalFilter<T>
 {
+TEMPORALFILTERUSINGS
 public:
 	/// <summary>
 	/// Constructor to create an Exp filter.
@@ -220,6 +232,7 @@ public:
 template <typename T>
 class EMBER_API GaussianTemporalFilter : public TemporalFilter<T>
 {
+TEMPORALFILTERUSINGS
 public:
 	/// <summary>
 	/// Constructor to create a Gaussian filter.
@@ -255,6 +268,7 @@ public:
 template <typename T>
 class EMBER_API BoxTemporalFilter : public TemporalFilter<T>
 {
+TEMPORALFILTERUSINGS
 public:
 	/// <summary>
 	/// Constructor to create a Box filter.

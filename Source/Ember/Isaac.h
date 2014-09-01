@@ -35,7 +35,7 @@
    typedef unsigned long int ISAAC_INT;
    const ISAAC_INT GOLDEN_RATIO = ISAAC_INT(0x9e3779b9);
 #else
-	typedef unsigned __int64 ISAAC_INT;
+	typedef uint64_t ISAAC_INT;
 	const ISAAC_INT GOLDEN_RATIO = ISAAC_INT(0x9e3779b97f4a7c13);
 #endif
 	
@@ -55,7 +55,7 @@ public:
 	/// Global ISAAC RNG to be used from anywhere. This is not thread safe, so take caution to only
 	/// use it when no other threads are.
 	/// </summary>
-	static auto_ptr<QTIsaac<ALPHA, ISAAC_INT>> GlobalRand;
+	static unique_ptr<QTIsaac<ALPHA, ISAAC_INT>> GlobalRand;
 
 	/// <summary>
 	/// The structure which holds all of the random information.

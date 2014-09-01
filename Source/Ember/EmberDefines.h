@@ -6,11 +6,21 @@
 /// Basic #defines used throughout the library.
 /// </summary>
 
-//MSVC specific?
-#if defined(BUILDING_EMBER)
-#define EMBER_API __declspec(dllexport)
+#ifdef _WIN32
+	#if defined(BUILDING_EMBER)
+		#define EMBER_API __declspec(dllexport)
+	#else
+		#define EMBER_API __declspec(dllimport)
+	#endif
 #else
-#define EMBER_API __declspec(dllimport)
+	#define EMBER_API
+	#define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),(mode)))==NULL
+	#define _stat stat
+	#define _fstat fstat
+	#define _stricmp strcmp
+	#define sscanf_s sscanf
+	#define sprintf_s snprintf
+	typedef int errno_t;
 #endif
 
 #define RESTRICT __restrict//This might make things faster, unsure if it really does though.
@@ -23,9 +33,10 @@ namespace EmberNs
 	#define sincos(x, s, c) *(s)=sin(x); *(c)=cos(x);
 #else
 	extern void sincos(double x, double *s, double *c);
+	extern void sincos(float x, float *s, float *c);
 #endif
 
-#define EMBER_VERSION "0.4.1.2"
+#define EMBER_VERSION "0.4.1.3"
 #define EPS6 T(1e-6)
 #define EPS std::numeric_limits<T>::epsilon()//Apoplugin.h uses -20, but it's more mathematically correct to do it this way.
 #define ISAAC_SIZE 4
@@ -51,14 +62,7 @@ namespace EmberNs
 #define CUBE(x) ((x) * (x) * (x))
 #define TLOW std::numeric_limits<T>::lowest()
 #define TMAX std::numeric_limits<T>::max()
-
-#ifndef acosh
-#define acosh(x) (log(x + sqrt(SQR(x) - 1)))//Remove this once you upgrade compilers to VS 2013 or later.//TODO
-#endif
-
-#ifndef fma
-#define fma(x, y, z) ((x * y) + z)
-#endif
+typedef std::chrono::high_resolution_clock Clock;
 
 #define DO_DOUBLE 1//Comment this out for shorter build times during development. Always uncomment for release.
 //#define ISAAC_FLAM3_DEBUG 1//This is almost never needed, but is very useful when troubleshooting difficult bugs. Enable it to do a side by side comparison with flam3.

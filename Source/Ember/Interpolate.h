@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Variation.h"
+#include "Ember.h"
 
 /// <summary>
 /// Interpolater class.
@@ -8,6 +8,11 @@
 
 namespace EmberNs
 {
+/// <summary>
+/// g++ needs a forward declaration here.
+/// </summary>
+template <typename T> class Ember;
+
 /// <summary>
 /// Contains many static functions for handling interpolation and other miscellaneous operations on
 /// embers and vectors of embers. This class is similar to, and used in conjunction with SheepTools.
@@ -22,7 +27,7 @@ public:
 	/// This is used to prepare embers before interpolating them.
 	/// Alignment means that every ember in a list will have the same number of xforms.
 	/// Each xform at a given position will have mostly the same variations as the xform
-	/// in the same position in the rest of the embers. However some 
+	/// in the same position in the rest of the embers. However some
 	/// intelligence is applied to add or remove variations that wouldn't look good with
 	/// the others present.
 	/// After this function completes, sourceEmbers will remain unchanged and destEmbers
@@ -418,7 +423,7 @@ public:
 
 		//To interpolate the xforms, make copies of the source embers
 		//and ensure that they both have the same number of xforms before progressing.
-		if (embers[i1].m_Interp == INTERP_LINEAR)
+		if (embers[i1].m_Interp == EMBER_INTERP_LINEAR)
 		{
 			Align(&embers[i1], &localEmbers[0], 2);
 			smoothFlag = false;

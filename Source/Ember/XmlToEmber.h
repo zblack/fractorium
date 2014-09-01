@@ -275,7 +275,7 @@ public:
 		rootnode = xmlDocGetRootElement(doc);
 
 		//Scan for <flame> nodes, starting with this node.
-		bn = basename(filename);
+		bn = basename((char*)filename);
 		ScanForEmberNodes(rootnode, bn, embers);
 		xmlFreeDoc(doc);
 		emberSize = (unsigned int)embers.size();
@@ -358,7 +358,7 @@ public:
 	/// <param name="str">The string to convert</param>
 	/// <param name="val">The converted value</param>
 	/// <returns>True if success, else false.</returns>
-	bool Atof(char* str, T& val)
+	bool Atof(const char* str, T& val)
 	{
 		bool b = true;
 		char* endp;
@@ -393,7 +393,7 @@ public:
 	/// <param name="str">The string to convert</param>
 	/// <param name="val">The converted unsigned integer value</param>
 	/// <returns>True if success, else false.</returns>
-	bool Atoi(char* str, unsigned int& val)
+	bool Atoi(const char* str, unsigned int& val)
 	{
 		return Atoi(str, (int&)val);
 	}
@@ -405,7 +405,7 @@ public:
 	/// <param name="str">The string to convert</param>
 	/// <param name="val">The converted unsigned integer value</param>
 	/// <returns>True if success, else false.</returns>
-	bool Atoi(char* str, int& val)
+	bool Atoi(const char* str, int& val)
 	{
 		bool b = true;
 		char* endp;
@@ -444,7 +444,11 @@ public:
 	{
 		char ch[16];
 
+#ifdef WIN32
 		_itoa_s(i, ch, 16, radix);
+#else
+		sprintf(ch, "%d", i);
+#endif
 		return string(ch);
 	}
 
@@ -455,11 +459,15 @@ public:
 	/// <param name="i">The unsigned 64-bit integer to convert</param>
 	/// <param name="radix">The radix of the integer. Default: 10.</param>
 	/// <returns>The converted string</returns>
-	static string Itos64(unsigned __int64 i, int radix = 10)
+	static string Itos64(uint64_t i, int radix = 10)
 	{
 		char ch[64];
 
+#ifdef WIN32
 		_ui64toa_s(i, ch, 64, radix);
+#else
+		sprintf(ch, "%lu", i);
+#endif
 		return string(ch);
 	}
 
@@ -1393,8 +1401,12 @@ private:
 			colorCount++;
 
 		} while (colorCount < numColors && colorCount < ember.m_Palette.m_Entries.size());
-   
-		if (sscanf_s(&(colstr[colorIndex]),"%1s", tmps, sizeof(tmps)) > 0)
+
+#ifdef WIN32
+		if (sscanf_s(&(colstr[colorIndex]),"%1s", tmps, sizeof(tmps)) > 0)//Really need to migrate all of this parsing to C++.//TODO
+#else
+		if (sscanf_s(&(colstr[colorIndex]),"%1s", tmps) > 0)
+#endif
 		{
 			m_ErrorReport.push_back(string(loc) + " : Extra data at end of hex color data " + string(&(colstr[colorIndex])));
 			ok = false;
@@ -1457,7 +1469,7 @@ private:
 	/// <param name="val">The parsed value</param>
 	/// <param name="b">Bitwise ANDed with true if name matched str and the call to Atof() succeeded, else false. Used for keeping a running value between successive calls.</param>
 	/// <returns>True if the tag was matched, else false</returns>
-	bool ParseAndAssignFloat(const xmlChar* name, char* attStr, char* str, T& val, bool& b)
+	bool ParseAndAssignFloat(const xmlChar* name, const char* attStr, const char* str, T& val, bool& b)
 	{
 		bool ret = false;
 
@@ -1479,7 +1491,7 @@ private:
 	/// <param name="val">The parsed value</param>
 	/// <param name="b">Bitwise ANDed with true if name matched str and the call to Atoi() succeeded, else false. Used for keeping a running value between successive calls.</param>
 	/// <returns>True if the tag was matched, else false</returns>
-	bool ParseAndAssignInt(const xmlChar* name, char* attStr, char* str, unsigned int& val, bool& b)
+	bool ParseAndAssignInt(const xmlChar* name, const char* attStr, const char* str, unsigned int& val, bool& b)
 	{
 		return ParseAndAssignInt(name, attStr, str, (int&)val, b);
 	}
@@ -1493,7 +1505,7 @@ private:
 	/// <param name="val">The parsed value</param>
 	/// <param name="b">Bitwise ANDed with true if name matched str and the call to Atoi() succeeded, else false. Used for keeping a running value between successive calls.</param>
 	/// <returns>True if the tag was matched, else false</returns>
-	bool ParseAndAssignInt(const xmlChar* name, char* attStr, char* str, int& val, bool& b)
+	bool ParseAndAssignInt(const xmlChar* name, const char* attStr, const char* str, int& val, bool& b)
 	{
 		bool ret = false;
 		T fval = 0;

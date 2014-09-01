@@ -37,8 +37,7 @@ namespace EmberNs
 {
 bool Timing::m_TimingInit = false;
 int Timing::m_ProcessorCount;
-LARGE_INTEGER Timing::m_Freq;
-auto_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand = auto_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>>(new QTIsaac<ISAAC_SIZE, ISAAC_INT>());
+template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand = unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>>(new QTIsaac<ISAAC_SIZE, ISAAC_INT>());
 
 #define EXPORTPREPOSTREGVAR(varName, T) \
 	template EMBER_API class varName##Variation<T>; \
@@ -47,8 +46,7 @@ auto_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalR
 
 #define EXPORT_SINGLE_TYPE_EMBER(T) \
 	template EMBER_API class Point<T>; \
-	template EMBER_API class Color<T>; \
-	template EMBER_API class Affine2D<T>; \
+	template EMBER_API struct Color<T>; \
 	template EMBER_API class Palette<T>; \
 	template EMBER_API class PaletteList<T>; \
 	template EMBER_API class Iterator<T>; \
@@ -278,7 +276,6 @@ auto_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalR
 	EXPORTPREPOSTREGVAR(ZScale, T) \
 	EXPORTPREPOSTREGVAR(ZTranslate, T) \
 	EXPORTPREPOSTREGVAR(ZCone, T) \
-	EXPORTPREPOSTREGVAR(Boarders2, T) \
 	EXPORTPREPOSTREGVAR(RotateX, T) \
 	EXPORTPREPOSTREGVAR(RotateY, T) \
 	EXPORTPREPOSTREGVAR(RotateZ, T) \
@@ -389,17 +386,16 @@ auto_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalR
 	template EMBER_API class CarToRas<T>; \
 	template EMBER_API class XmlToEmber<T>; \
 	template EMBER_API class EmberToXml<T>; \
-	bool PaletteList<T>::m_Init = false; \
-	vector<Palette<T>> PaletteList<T>::m_Palettes = vector<Palette<T>>(); \
-	bool XmlToEmber<T>::m_Init = false; \
-	vector<string> XmlToEmber<T>::m_FlattenNames = vector<string>(); \
-	vector<pair<string, string>> XmlToEmber<T>::m_BadParamNames = vector<pair<string, string>>(); \
-	vector<pair<pair<string, string>, vector<string>>> XmlToEmber<T>::m_BadVariationNames = vector<pair<pair<string, string>, vector<string>>>();
+	template<> bool PaletteList<T>::m_Init = false; \
+	template<> vector<Palette<T>> PaletteList<T>::m_Palettes = vector<Palette<T>>(); \
+	template<> bool XmlToEmber<T>::m_Init = false; \
+	template<> vector<string> XmlToEmber<T>::m_FlattenNames = vector<string>(); \
+	template<> vector<pair<string, string>> XmlToEmber<T>::m_BadParamNames = vector<pair<string, string>>(); \
+	template<> vector<pair<pair<string, string>, vector<string>>> XmlToEmber<T>::m_BadVariationNames = vector<pair<pair<string, string>, vector<string>>>();
 
 EXPORT_SINGLE_TYPE_EMBER(float)
 
 #define EXPORT_TWO_TYPE_EMBER(T, bucketT) \
-	template EMBER_API class Renderer<T, bucketT>; \
 	template EMBER_API class SheepTools<T, bucketT>;
 
 EXPORT_TWO_TYPE_EMBER(float, float)

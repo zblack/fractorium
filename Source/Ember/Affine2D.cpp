@@ -8,8 +8,18 @@ namespace EmberNs
 /// </summary>
 template <typename T>
 Affine2D<T>::Affine2D()
-{	
+{
 	MakeID();
+}
+
+/// <summary>
+/// Default copy constructor.
+/// </summary>
+/// <param name="affine">The Affine2D object to copy</param>
+template <typename T>
+Affine2D<T>::Affine2D(const Affine2D<T>& affine)
+{
+	Affine2D<T>::operator=<T>(affine);
 }
 
 /// <summary>
@@ -60,6 +70,68 @@ Affine2D<T>::Affine2D(m4T& mat)
 	D(mat[1][0]);
 	E(mat[1][1]);
 	F(mat[1][3]);
+}
+
+/// <summary>
+/// Default assignment operator.
+/// </summary>
+/// <param name="affine">The Affine2D object to copy</param>
+template <typename T>
+Affine2D<T>& Affine2D<T>::operator = (const Affine2D<T>& affine)
+{
+	if (this != &affine)
+		Affine2D<T>::operator=<T>(affine);
+
+	return *this;
+}
+
+/// <summary>
+/// == operator which tests if all fields are equal with another Affine2D.
+/// </summary>
+/// <param name="affine">The Affine2D to compare to</param>
+/// <returns>True if all fields are equal, else false</returns>
+template <typename T>
+bool Affine2D<T>::operator == (const Affine2D<T>& affine)
+{
+	return IsClose(A(), affine.A()) &&
+		   IsClose(B(), affine.B()) &&
+		   IsClose(C(), affine.C()) &&
+		   IsClose(D(), affine.D()) &&
+		   IsClose(E(), affine.E()) &&
+		   IsClose(F(), affine.F());
+}
+
+/// <summary>
+/// * operator to multiply this affine transform by another and return the result.
+/// </summary>
+/// <param name="affine">The Affine2D to multiply by</param>
+/// <returns>A new Affine2D which is the product of the multiplication</returns>
+template <typename T>
+Affine2D<T>& Affine2D<T>::operator * (const Affine2D<T>& affine)
+{
+	v2T x = affine.X();
+	v2T y = affine.Y();
+	v2T o = affine.O();
+	v2T tx = TransformNormal(x);
+	v2T ty = TransformNormal(y);
+	v2T to = TransformNormal(o);
+
+	X(tx);
+	Y(ty);
+	O(to);
+
+	return *this;
+}
+
+/// <summary>
+/// * operator to multiply this affine transform by a vec2 and return the result as a vec2.
+/// </summary>
+/// <param name="v">The vec2 to multiply by</param>
+/// <returns>A new vec2 which is the product of the multiplication</returns>
+template <typename T>
+typename v2T Affine2D<T>::operator * (const v2T& v)
+{
+	return TransformVector(v);
 }
 
 /// <summary>
@@ -252,48 +324,6 @@ typename m4T Affine2D<T>::ToMat4RowMajor(bool center) const
 }
 
 /// <summary>
-/// == operator which tests if all fields are equal with another Affine2D.
-/// </summary>
-/// <param name="affine">The Affine2D to compare to</param>
-/// <returns>True if all fields are equal, else false</returns>
-template <typename T>
-bool Affine2D<T>::operator == (const Affine2D<T>& affine)
-{
-	return IsClose(A(), affine.A()) &&
-		   IsClose(B(), affine.B()) &&
-		   IsClose(C(), affine.C()) &&
-		   IsClose(D(), affine.D()) &&
-		   IsClose(E(), affine.E()) &&
-		   IsClose(F(), affine.F());
-}
-
-/// <summary>
-/// * operator to multiply this affine transform by another and return the result.
-/// </summary>
-/// <param name="affine">The Affine2D to multiply by</param>
-/// <returns>A new Affine2D which is the product of the multiplication</returns>
-template <typename T>
-Affine2D<T>& Affine2D<T>::operator * (const Affine2D<T>& affine)
-{
-	X(TransformNormal(affine.X()));
-	Y(TransformNormal(affine.Y()));
-	O(TransformVector(affine.O()));
-
-	return *this;
-}
-
-/// <summary>
-/// * operator to multiply this affine transform by a vec2 and return the result as a vec2.
-/// </summary>
-/// <param name="v">The vec2 to multiply by</param>
-/// <returns>A new vec2 which is the product of the multiplication</returns>
-template <typename T>
-typename v2T Affine2D<T>::operator * (const v2T& v)
-{
-	return TransformVector(v);
-}
-
-/// <summary>
 /// Accessors.
 /// </summary>
 template <typename T> T Affine2D<T>::A() const { return m_Mat[0][0]; }//[0][0]//flam3
@@ -301,7 +331,7 @@ template <typename T> T Affine2D<T>::B() const { return m_Mat[0][1]; }//[1][0]
 template <typename T> T Affine2D<T>::C() const { return m_Mat[0][2]; }//[2][0]
 template <typename T> T Affine2D<T>::D() const { return m_Mat[1][0]; }//[0][1]
 template <typename T> T Affine2D<T>::E() const { return m_Mat[1][1]; }//[1][1]
-template <typename T> T Affine2D<T>::F() const { return m_Mat[1][2]; }//[2][1]	
+template <typename T> T Affine2D<T>::F() const { return m_Mat[1][2]; }//[2][1]
 
 template <typename T> void Affine2D<T>::A(T a) { m_Mat[0][0] = a; }
 template <typename T> void Affine2D<T>::B(T b) { m_Mat[0][1] = b; }
@@ -314,9 +344,9 @@ template <typename T> typename v2T Affine2D<T>::X() const { return v2T(A(), D())
 template <typename T> typename v2T Affine2D<T>::Y() const { return v2T(B(), E()); }//Y Axis.
 template <typename T> typename v2T Affine2D<T>::O() const { return v2T(C(), F()); }//Translation.
 
-template <typename T> void Affine2D<T>::X(v2T& x) { A(x.x); D(x.y); }//X Axis.
-template <typename T> void Affine2D<T>::Y(v2T& y) { B(y.x); E(y.y); }//Y Axis.
-template <typename T> void Affine2D<T>::O(v2T& t) { C(t.x); F(t.y); }//Translation.
+template <typename T> void Affine2D<T>::X(const v2T& x) { A(x.x); D(x.y); }//X Axis.
+template <typename T> void Affine2D<T>::Y(const v2T& y) { B(y.x); E(y.y); }//Y Axis.
+template <typename T> void Affine2D<T>::O(const v2T& t) { C(t.x); F(t.y); }//Translation.
 
 /// <summary>
 /// Rotate and scale this affine transform and return as a copy. Orginal is unchanged.
@@ -325,7 +355,7 @@ template <typename T> void Affine2D<T>::O(v2T& t) { C(t.x); F(t.y); }//Translati
 /// <param name="to">The ending point to rotate and scale to</param>
 /// <returns>The newly rotated and scalled Affine2D</returns>
 template <typename T>
-Affine2D<T> Affine2D<T>::CalcRotateScale(v2T& from, v2T& to)
+Affine2D<T> Affine2D<T>::CalcRotateScale(const v2T& from, const v2T& to)
 {
 	T a, c;
 
@@ -342,7 +372,7 @@ Affine2D<T> Affine2D<T>::CalcRotateScale(v2T& from, v2T& to)
 /// <param name="a">a</param>
 /// <param name="c">c</param>
 template <typename T>
-void Affine2D<T>::CalcRSAC(v2T& from, v2T& to, T& a, T& c)
+void Affine2D<T>::CalcRSAC(const v2T& from, const v2T& to, T& a, T& c)
 {
 	T lsq = from.x * from.x + from.y * from.y;
 

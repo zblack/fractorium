@@ -11,6 +11,11 @@
 
 namespace EmberNs
 {
+#define ITERATORUSINGS \
+	using Iterator<T>::NextXformFromIndex; \
+	using Iterator<T>::DoFinalXform; \
+	using Iterator<T>::DoBadVals;
+
 /// <summary>
 /// Iterator base class.
 /// Iterating is one loop level outside of the inner xform application loop so it's still very important
@@ -255,6 +260,7 @@ protected:
 template <typename T>
 class EMBER_API StandardIterator : public Iterator<T>
 {
+ITERATORUSINGS
 public:
 	/// <summary>
 	/// Empty constructor.
@@ -375,6 +381,7 @@ public:
 template <typename T>
 class EMBER_API XaosIterator : public Iterator<T>
 {
+ITERATORUSINGS
 public:
 	/// <summary>
 	/// Empty constructor.

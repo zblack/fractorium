@@ -1280,7 +1280,7 @@ public:
 	/// <param name="bmin">The bmin[0] and bmin[1] will be the minimum x and y values.</param>
 	/// <param name="bmax">The bmax[0] and bmax[1] will be the maximum x and y values.</param>
 	/// <returns>The number of iterations ran</returns>
-	unsigned __int64 EstimateBoundingBox(Ember<T>& ember, T eps, unsigned int samples, T* bmin, T* bmax)
+	uint64_t EstimateBoundingBox(Ember<T>& ember, T eps, unsigned int samples, T* bmin, T* bmax)
 	{
 		unsigned int i, lowTarget, highTarget;
 		T min[2], max[2];
@@ -1293,8 +1293,8 @@ public:
 		m_Iterator->InitDistributions(ember);
 		m_Samples.resize(samples);
 
-		unsigned __int64 bv = m_Iterator->Iterate(ember, samples, 20, m_Samples.data(), m_Rand);//Use a special fuse of 20, all other calls to this will use 15, or 100.
-		
+		uint64_t bv = m_Iterator->Iterate(ember, samples, 20, m_Samples.data(), m_Rand);//Use a special fuse of 20, all other calls to this will use 15, or 100.
+
 		if (bv / T(samples) > eps)
 			eps = 3 * bv / T(samples);
    

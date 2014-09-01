@@ -32,13 +32,13 @@ public:
 	/// <summary>
 	/// Set the begin time.
 	/// </summary>
-	/// <returns>The quad part of the begin time cast to a double</returns>
+	/// <returns>The begin time cast to a double</returns>
 	double Tic()
 	{
-		QueryPerformanceCounter(&m_BeginTime);
+		m_BeginTime = Clock::now();
 		return BeginTime();
 	}
- 
+
 	/// <summary>
 	/// Set the end time and optionally output a string showing the elapsed time.
 	/// </summary>
@@ -47,7 +47,7 @@ public:
 	/// <returns>The elapsed time in milliseconds as a double</returns>
 	double Toc(const char* str = NULL, bool fullString = false)
 	{
-		QueryPerformanceCounter(&m_EndTime);
+		m_EndTime = Clock::now();
 		double ms = ElapsedTime();
 
 		if (str != NULL)
@@ -59,22 +59,27 @@ public:
 	}
 
 	/// <summary>
-	/// Return the quad part of the begin time as a double.
+	/// Return the begin time as a double.
 	/// </summary>
 	/// <returns></returns>
-	double BeginTime() { return (double)m_BeginTime.QuadPart; }
+	double BeginTime() { return (double)m_BeginTime.time_since_epoch().count(); }
 
 	/// <summary>
-	/// Return the quad part of the end time as a double.
+	/// Return the end time as a double.
 	/// </summary>
 	/// <returns></returns>
-	double EndTime() { return (double)m_EndTime.QuadPart; }
+	double EndTime() { return (double)m_EndTime.time_since_epoch().count(); }
 
 	/// <summary>
 	/// Return the elapsed time in milliseconds.
 	/// </summary>
 	/// <returns>The elapsed time in milliseconds as a double</returns>
-	double ElapsedTime() { return double(m_EndTime.QuadPart - m_BeginTime.QuadPart) * 1000.0 / double(m_Freq.QuadPart); }
+	double ElapsedTime()
+	{
+		duration<double> elapsed = duration_cast<milliseconds, Clock::rep, Clock::period>(m_EndTime - m_BeginTime);
+
+		return elapsed.count() * 1000.0;
+	}
 
 	/// <summary>
 	/// Formats a specified milliseconds value as a string.
@@ -87,7 +92,7 @@ public:
 	string Format(double ms)
 	{
 		stringstream ss;
-			
+
 		double x = ms / 1000;
 		double secs = fmod(x, 60);
 		x /= 60;
@@ -111,16 +116,6 @@ public:
 	}
 
 	/// <summary>
-	/// Return the frequency of the clock as a double.
-	/// </summary>
-	/// <returns></returns>
-	static double Freq()
-	{
-		Init();
-		return (double)m_Freq.QuadPart;
-	}
-
-	/// <summary>
 	/// Return the number of cores in the system.
 	/// </summary>
 	/// <returns>The number of cores in the system</returns>
@@ -140,21 +135,16 @@ private:
 	{
 		if (!m_TimingInit)
 		{
-			SYSTEM_INFO sysinfo;
- 
-			QueryPerformanceFrequency(&m_Freq);
-			GetSystemInfo(&sysinfo);
-			m_ProcessorCount = sysinfo.dwNumberOfProcessors;
+			m_ProcessorCount = thread::hardware_concurrency();
 			m_TimingInit = true;
 		}
 	}
 
 	int m_Precision;//How many digits after the decimal place to print for seconds.
-	LARGE_INTEGER m_BeginTime;//The start of the timing, set with Tic().
-	LARGE_INTEGER m_EndTime;//The end of the timing, set with Toc().
+	time_point<Clock> m_BeginTime;//The start of the timing, set with Tic().
+	time_point<Clock> m_EndTime;//The end of the timing, set with Toc().
 	static bool m_TimingInit;//Whether the performance info has bee queried.
 	static int m_ProcessorCount;//The number of cores on the system, set in Init().
-	static LARGE_INTEGER m_Freq;//The clock frequency, set in Init().
 };
 
 /// <summary>
@@ -162,9 +152,9 @@ private:
 /// </summary>
 class EMBER_API CriticalSection
 {
-#ifdef _WIN32
-
 public:
+
+#ifdef _WIN32
 	/// <summary>
 	/// Constructor which initialized the underlying CRITICAL_SECTION object.
 	/// </summary>
@@ -176,7 +166,7 @@ public:
 	/// </summary>
 	/// <param name="spinCount">The spin count.</param>
 	CriticalSection(DWORD spinCount) { InitializeCriticalSectionAndSpinCount(&m_CriticalSection, spinCount); }
-	
+
 	/// <summary>
 	/// Deletes the underlying CRITICAL_SECTION object.
 	/// </summary>

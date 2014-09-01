@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "VariationList.h"
+#include "Interpolate.h"
 
 /// <summary>
 /// Xform class.
@@ -600,7 +601,7 @@ public:
 				iterHelper.In.x = iterHelper.m_TransX;//Read must be done before every pre variation because transX/Y are changing.
 				iterHelper.In.y = iterHelper.m_TransY;
 				iterHelper.In.z = iterHelper.m_TransZ;
-				m_PreVariations[i]->Precalc(iterHelper, inPoint);//Apply per-variation precalc, the second parameter is unused for pre variations.
+				m_PreVariations[i]->PrecalcHelper(iterHelper, inPoint);//Apply per-variation precalc, the second parameter is unused for pre variations.
 				m_PreVariations[i]->Func(iterHelper, *outPoint, rand);
 				WritePre(iterHelper, m_PreVariations[i]->AssignType());
 			}
@@ -652,7 +653,7 @@ public:
 			iterHelper.In.x = outPoint->m_X;//Read must be done before every post variation because the out point is changing.
 			iterHelper.In.y = outPoint->m_Y;
 			iterHelper.In.z = outPoint->m_Z;
-			m_PostVariations[i]->Precalc(iterHelper, outPoint);//Apply per-variation precalc.
+			m_PostVariations[i]->PrecalcHelper(iterHelper, outPoint);//Apply per-variation precalc.
 			m_PostVariations[i]->Func(iterHelper, *outPoint, rand);
 			WritePost(iterHelper, *outPoint, m_PostVariations[i]->AssignType());
 		}
