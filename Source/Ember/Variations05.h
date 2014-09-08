@@ -1636,8 +1636,8 @@ public:
 		if (otherZ == 0)
 			tempPZ = m_Vv * m_SinTanC * helper.m_PrecalcAtanyx;
 
-		helper.Out.x = m_HalfWeight * (helper.In.x + m_X * sin(tan(m_C * helper.In.y)));
-		helper.Out.y = m_HalfWeight * (helper.In.y + m_Y * sin(tan(m_C * helper.In.x)));
+		helper.Out.x = m_HalfWeight * (helper.In.x + m_X * sin(SafeTan<T>(m_C * helper.In.y)));
+		helper.Out.y = m_HalfWeight * (helper.In.y + m_Y * sin(SafeTan<T>(m_C * helper.In.x)));
 		helper.Out.z = tempPZ + m_Vv * (m_Z * m_SinTanC * tempTZ);
 	}
 
@@ -1677,7 +1677,7 @@ public:
 
 	virtual void Precalc() override
 	{
-		m_SinTanC = sin(tan(m_C));
+		m_SinTanC = sin(SafeTan<T>(m_C));
 		m_HalfWeight = m_Weight * T(0.5);
 
 		if (fabs(m_Weight) <= 1)

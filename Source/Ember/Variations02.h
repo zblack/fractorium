@@ -5469,7 +5469,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		helper.Out.x = m_Weight01 / tan(helper.In.x) * cos(helper.In.y);
+		helper.Out.x = m_Weight01 / SafeTan<T>(helper.In.x) * cos(helper.In.y);
 		helper.Out.y = m_Weight01 / sin(helper.In.x) * (-helper.In.y);
 		helper.Out.z = m_Weight * helper.In.z;
 	}

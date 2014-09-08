@@ -187,8 +187,8 @@ public:
 	{
 		T u = sqrt(ClampGte0<T>(Zeps(m_A) * SQR(helper.In.x) + Zeps(m_B) * SQR(helper.In.y)));//Original did not clamp.
 
-		helper.Out.x = cos(u) * tan(helper.In.x) * m_Weight;
-		helper.Out.y = sin(u) * tan(helper.In.y) * m_Weight;
+		helper.Out.x = cos(u) * SafeTan<T>(helper.In.x) * m_Weight;
+		helper.Out.y = sin(u) * SafeTan<T>(helper.In.y) * m_Weight;
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 

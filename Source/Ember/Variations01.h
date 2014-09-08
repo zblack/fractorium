@@ -815,8 +815,8 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T dx = tan(3 * helper.In.y);
-		T dy = tan(3 * helper.In.x);
+		T dx = SafeTan<T>(3 * helper.In.y);
+		T dy = SafeTan<T>(3 * helper.In.x);
 		T nx = helper.In.x + m_Xform->m_Affine.C() * sin(dx);
 		T ny = helper.In.y + m_Xform->m_Affine.F() * sin(dy);
 
@@ -2428,7 +2428,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		helper.Out.x = m_Weight * sin(helper.In.x) / cos(helper.In.y);
-		helper.Out.y = m_Weight * tan(helper.In.y);
+		helper.Out.y = m_Weight * SafeTan<T>(helper.In.y);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
@@ -2495,7 +2495,7 @@ public:
 	{
 		T ang = m_Weight * rand.Frand01<T>() * T(M_PI);
 		T r = m_Weight / Zeps(helper.m_PrecalcSumSquares);
-		T tanr = m_Weight * tan(ang) * r;
+		T tanr = m_Weight * SafeTan<T>(ang) * r;
 
 		helper.Out.x = tanr * cos(helper.In.x);
 		helper.Out.y = tanr * sin(helper.In.y);
@@ -4596,8 +4596,8 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		helper.Out.x = m_Weight * (helper.In.x + m_X * sin(tan(helper.In.y * m_C)));
-		helper.Out.y = m_Weight * (helper.In.y + m_Y * sin(tan(helper.In.x * m_C)));
+		helper.Out.x = m_Weight * (helper.In.x + m_X * sin(SafeTan<T>(helper.In.y * m_C)));
+		helper.Out.y = m_Weight * (helper.In.y + m_Y * sin(SafeTan<T>(helper.In.x * m_C)));
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 

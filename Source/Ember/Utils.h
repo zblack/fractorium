@@ -16,7 +16,7 @@ namespace EmberNs
 /// <param name="pred">The lambda to call on each element</param>
 /// <returns>True if pred returned true once, else false.</returns>
 template<class c, class pr>
-bool inline FindIf(c& container, pr pred)
+static inline bool FindIf(c& container, pr pred)
 {
 	return std::find_if(container.begin(), container.end(), pred) != container.end();
 }
@@ -28,7 +28,7 @@ bool inline FindIf(c& container, pr pred)
 /// <param name="container">The container to call for_each() on</param>
 /// <param name="pred">The lambda to call on each element</param>
 template<class c, class fn>
-void inline ForEach(c& container, fn func)
+static inline void ForEach(c& container, fn func)
 {
 	std::for_each(container.begin(), container.end(), func);
 }
@@ -199,7 +199,7 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 /// <param name="dest">The vector of type T to copy to</param>
 /// <param name="source">The vector of type U to copy from</param>
 template <typename T, typename U>
-void CopyVec(vector<T>& dest, const vector<U>& source)
+static void CopyVec(vector<T>& dest, const vector<U>& source)
 {
 	dest.clear();
 	dest.resize(source.size());
@@ -390,7 +390,7 @@ static inline void ClampGte0Ref(T& val)
 /// <param name="r">The value to round</param>
 /// <returns>The rounded value</returns>
 template <typename T>
-T Round(T r)
+static inline T Round(T r)
 {
 	return (r > 0) ? (T)Floor<T>(r + T(0.5)) : ceil(r - T(0.5));
 }
@@ -400,7 +400,7 @@ T Round(T r)
 /// </summary>
 /// <param name="x">The value to round</param>
 /// <returns>The rounded value</returns>
-inline float LRint(float x)
+static inline float LRint(float x)
 {
 	int temp = (x >= 0 ? (int)(x + 0.5f) : (int)(x - 0.5f));
 	return (float)temp;
@@ -411,7 +411,7 @@ inline float LRint(float x)
 /// </summary>
 /// <param name="x">The value to round</param>
 /// <returns>The rounded value</returns>
-inline double LRint(double x)
+static inline double LRint(double x)
 {
 	int64_t temp = (x >= 0 ? (int64_t)(x + 0.5) : (int64_t)(x - 0.5));
 	return (double)temp;
@@ -481,6 +481,30 @@ static inline T SafeSqrt(T x)
 		return 0;
 
 	return sqrt(x);
+}
+
+template <typename T>
+static inline T SafeTan(T x)
+{
+	return x;
+}
+
+template <>
+#ifdef _WIN32
+static
+#endif
+float SafeTan<float>(float x)
+{
+	return tan(Clamp<float>(x, FLOAT_MIN_TAN, FLOAT_MAX_TAN));
+}
+
+template <>
+#ifdef _WIN32
+static
+#endif
+double SafeTan<double>(double x)
+{
+	return tan(x);
 }
 
 /// <summary>
@@ -664,7 +688,7 @@ static inline bool IsNearZero(T val, T tolerance = 1e-6)
 /// <param name="tolerance">The tolerance. Default: 1e-6.</param>
 /// <returns>True if the values were very close to each other, else false</returns>
 template <typename T>
-static bool IsClose(T val1, T val2, T tolerance = 1e-6)
+static inline bool IsClose(T val1, T val2, T tolerance = 1e-6)
 {
 	return IsNearZero(val1 - val2, tolerance);
 }
@@ -773,7 +797,7 @@ static inline string Trim(string& str, char ch = ' ')
 /// <param name="def">The default value to return if the environment variable was not present</param>
 /// <returns>The value of the specified environment variable if found, else default</returns>
 template <typename T>
-static T Arg(char* name, T def)
+static inline T Arg(char* name, T def)
 {
 	T t;
 	return t;
@@ -923,7 +947,7 @@ string Arg<string>(char* name, string def)
 /// <param name="replace">The value to replace with</param>
 /// <returns>The number of instances replaced</returns>
 template<typename T>
-unsigned int inline FindAndReplace(T& source, const T& find, const T& replace)
+static unsigned int FindAndReplace(T& source, const T& find, const T& replace)
 {
 	unsigned int replaceCount = 0;
 	typename T::size_type fLen = find.size();
@@ -946,7 +970,7 @@ unsigned int inline FindAndReplace(T& source, const T& find, const T& replace)
 /// <summary>
 /// Return a character pointer to a version string composed of the EMBER_OS and EMBER_VERSION values.
 /// </summary>
-static const char* EmberVersion()
+static inline const char* EmberVersion()
 {
 	return EMBER_OS "-" EMBER_VERSION;
 }

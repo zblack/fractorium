@@ -29,6 +29,10 @@ Fractorium::Fractorium(QWidget* parent)
 	m_OptionsDialog = new FractoriumOptionsDialog(m_Settings, this);
 	m_AboutDialog = new FractoriumAboutDialog(this);
 
+	//Put the about dialog in the screen center.
+	const QRect screen = QApplication::desktop()->screenGeometry();
+	m_AboutDialog->move(screen.center() - m_AboutDialog->rect().center());
+
 	//The options dialog should be a fixed size without a size grip, however even if it's here, it still shows up. Perhaps Qt will fix it some day.
 	m_OptionsDialog->layout()->setSizeConstraint(QLayout::SetFixedSize);
 	m_OptionsDialog->setSizeGripEnabled(false);

@@ -62,6 +62,8 @@ namespace EmberNs
 #define CUBE(x) ((x) * (x) * (x))
 #define TLOW std::numeric_limits<T>::lowest()
 #define TMAX std::numeric_limits<T>::max()
+#define FLOAT_MAX_TAN 8388607.0f
+#define FLOAT_MIN_TAN -FLOAT_MAX_TAN
 typedef std::chrono::high_resolution_clock Clock;
 
 #define DO_DOUBLE 1//Comment this out for shorter build times during development. Always uncomment for release.
