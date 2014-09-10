@@ -311,7 +311,7 @@ bool EmberAnimate(EmberOptions& opt)
 
 		if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
 		{
-			EmberNs::RgbaToRgb(finalImage, vecRgb, renderer->FinalRasW(), renderer->FinalRasH());
+			RgbaToRgb(finalImage, vecRgb, renderer->FinalRasW(), renderer->FinalRasH());
 
 			finalImagep = vecRgb.data();
 		}

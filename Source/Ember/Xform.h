@@ -68,7 +68,7 @@ public:
 		  T pe = 1,
 		  T pc = 0,
 		  T pf = 0)
-													
+
 	{
 		Init();
 
@@ -101,7 +101,7 @@ public:
 	/// </summary>
 	/// <param name="xform">The Xform object to copy</param>
 	Xform(const Xform<T>& xform)
-		: m_ParentEmber(NULL)//Hack.
+		: m_ParentEmber(nullptr)//Hack.
 	{
 		Xform<T>::operator=<T>(xform);
 	}
@@ -112,7 +112,7 @@ public:
 	/// <param name="xform">The Xform object to copy</param>
 	template <typename U>
 	Xform(const Xform<U>& xform)
-		: m_ParentEmber(NULL)//Hack.
+		: m_ParentEmber(nullptr)//Hack.
 	{
 		Xform<T>::operator=<U>(xform);
 	}
@@ -171,8 +171,8 @@ public:
 		//the variation's m_IndexInXform member gets properly set to this.
 		for (unsigned int i = 0; i < xform.TotalVariationCount(); i++)
 		{
-			Variation<T>* var = NULL;
-			
+			Variation<T>* var = nullptr;
+
 			if (Variation<U>* varOrig = xform.GetVariation(i))
 			{
 				varOrig->Copy(var);//Will convert from type U to type T.
@@ -236,7 +236,7 @@ public:
 		m_NeedPrecalcAtanYX = false;
 		m_HasPost = false;
 		m_HasPreOrRegularVars = false;
-		m_ParentEmber = NULL;
+		m_ParentEmber = nullptr;
 		m_PreVariations.reserve(MAX_VARS_PER_XFORM);
 		m_Variations.reserve(MAX_VARS_PER_XFORM);
 		m_PostVariations.reserve(MAX_VARS_PER_XFORM);
@@ -254,7 +254,7 @@ public:
 	/// <returns>True if the successful, else false.</returns>
 	bool AddVariation(Variation<T>* variation)
 	{
-		if (variation && (GetVariationById(variation->VariationId()) == NULL))
+		if (variation && (GetVariationById(variation->VariationId()) == nullptr))
 		{
 			string name = variation->Name();
 			bool pre = name.find("pre_") == 0;
@@ -294,11 +294,11 @@ public:
 	/// Get a pointer to the variation at the specified index.
 	/// </summary>
 	/// <param name="index">The index in the list to retrieve</param>
-	/// <returns>A pointer to the variation at the index if in range, else NULL.</returns>
+	/// <returns>A pointer to the variation at the index if in range, else nullptr.</returns>
 	Variation<T>* GetVariation(size_t index) const
 	{
 		size_t count = 0;
-		Variation<T>* var = NULL;
+		Variation<T>* var = nullptr;
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
@@ -320,16 +320,16 @@ public:
 	/// Get a pointer to the variation with the specified ID.
 	/// </summary>
 	/// <param name="id">The ID to search for</param>
-	/// <returns>A pointer to the variation if found, else NULL.</returns>
+	/// <returns>A pointer to the variation if found, else nullptr.</returns>
 	Variation<T>* GetVariationById(eVariationId id) const
 	{
-		Variation<T>* var = NULL;
+		Variation<T>* var = nullptr;
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
 			for (unsigned int i = 0; i < variations.size(); i++)
 			{
-				if (variations[i] != NULL && variations[i]->VariationId() == id)
+				if (variations[i] != nullptr && variations[i]->VariationId() == id)
 				{
 					var = variations[i];
 					keepGoing = false;
@@ -345,16 +345,16 @@ public:
 	/// Get a pointer to the variation with the specified name.
 	/// </summary>
 	/// <param name="name">The name to search for</param>
-	/// <returns>A pointer to the variation if found, else NULL.</returns>
+	/// <returns>A pointer to the variation if found, else nullptr.</returns>
 	Variation<T>* GetVariationByName(string name) const
 	{
-		Variation<T>* var = NULL;
+		Variation<T>* var = nullptr;
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
 			for (unsigned int i = 0; i < variations.size(); i++)
 			{
-				if (variations[i] != NULL && variations[i]->Name() == name)
+				if (variations[i] != nullptr && variations[i]->Name() == name)
 				{
 					var = variations[i];
 					keepGoing = false;
@@ -406,7 +406,7 @@ public:
 		{
 			for (unsigned int i = 0; i < variations.size(); i++)
 			{
-				if (variations[i] != NULL && variations[i]->VariationId() == id)
+				if (variations[i] != nullptr && variations[i]->VariationId() == id)
 				{
 					delete variations[i];
 					variations.erase(variations.begin() + i);
@@ -442,7 +442,7 @@ public:
 	/// Reset this xform to be totally empty by clearing all variations, resetting both affines to the
 	/// identity matrix, clearing xaos, color, visibility, wind, animate and setting name
 	/// to the empty string.
-	/// Note that this also sets the parent ember to NULL, so if this xform is reused after calling Clear(),
+	/// Note that this also sets the parent ember to nullptr, so if this xform is reused after calling Clear(),
 	/// the caller must reset the parent ember to whatever ember they add it to again.
 	/// </summary>
 	void Clear()
@@ -452,7 +452,7 @@ public:
 		m_Affine.MakeID();
 		m_Post.MakeID();
 		m_Xaos.clear();
-		m_ParentEmber = NULL;
+		m_ParentEmber = nullptr;
 		m_ColorSpeedCache = 0;
 		m_OneMinusColorCache = 0;
 		m_VizAdjusted = 0;
@@ -537,7 +537,7 @@ public:
 			while (m_Xaos.size() > m_ParentEmber->XformCount())
 				m_Xaos.pop_back();
 	}
-	
+
 	/// <summary>
 	/// Remove all xaos from this xform.
 	/// </summary>
@@ -657,7 +657,7 @@ public:
 			m_PostVariations[i]->Func(iterHelper, *outPoint, rand);
 			WritePost(iterHelper, *outPoint, m_PostVariations[i]->AssignType());
 		}
-		
+
 		//Optionally apply the post affine transform if it's present.
 		if (m_HasPost)
 		{
@@ -688,7 +688,7 @@ public:
 
 		//Loop over the motion elements and add their contribution to the original vals.
 		for (i = 0; i < xform.m_Motion.size(); i++)
-		{   
+		{
 			//Original only pulls these from the first motion xform which is a bug. Want to pull it from each one.
 			Xform<T>* currentMot = &xform.m_Motion[i];
 			int freq = currentMot->m_MotionFreq;
@@ -698,11 +698,11 @@ public:
 			APPMOT(m_Weight);
 			APPMOT(m_ColorX);
 			//APPMOT(m_ColorY);
-			APPMOT(m_DirectColor); 
-			APPMOT(m_Opacity);      
+			APPMOT(m_DirectColor);
+			APPMOT(m_Opacity);
 			APPMOT(m_ColorSpeed);
 			APPMOT(m_Animate);
-			
+
 			for (j = 0; j < currentMot->TotalVariationCount(); j++)//For each variation in the motion xform.
 			{
 				Variation<T>* motVar = currentMot->GetVariation(j);//Get the variation, which may or may not be present in this xform.
@@ -724,7 +724,7 @@ public:
 
 				//At this point, we've added if needed, or just applied the motion func to the weight.
 				//Now apply the motion func to the params if needed.
-				if (motParVar != NULL)
+				if (motParVar != nullptr)
 				{
 					ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var);
 					ParamWithName<T>* params = parVar->Params();
@@ -747,7 +747,7 @@ public:
 				}
 			}
 		}
-   
+
 		//Make sure certain params are within reasonable bounds.
 		ClampRef<T>(m_ColorX, 0, 1);
 		//ClampRef<T>(m_ColorY, 0, 1);
@@ -866,11 +866,11 @@ public:
 
 		if (m_NeedPrecalcAtanXY)
 			helper.m_PrecalcAtanxy = atan2(helper.m_TransX, helper.m_TransY);
-		
+
 		if (m_NeedPrecalcAtanYX)
 			helper.m_PrecalcAtanyx = atan2(helper.m_TransY, helper.m_TransX);
 	}
-	
+
 	/// <summary>
 	/// Flatten this xform by adding a flatten variation if none is present, and if any of the
 	/// variations or parameters in the vector are present.
@@ -881,7 +881,7 @@ public:
 	{
 		bool shouldFlatten = true;
 
-		if (GetVariationById(VAR_FLATTEN) == NULL)
+		if (GetVariationById(VAR_FLATTEN) == nullptr)
 		{
 			AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 			{
@@ -953,6 +953,7 @@ public:
 				"\tvIn.z = transZ;\n";
 			break;
 		case VARTYPE_POST:
+		default:
 			s =
 				"\tvIn.x = outPoint->m_X;\n"
 				"\tvIn.y = outPoint->m_Y;\n"
@@ -980,6 +981,7 @@ public:
 				break;
 			}
 			case ASSIGNTYPE_SUM:
+			default:
 			{
 				helper.m_TransX += helper.Out.x;
 				helper.m_TransY += helper.Out.y;
@@ -1006,6 +1008,7 @@ public:
 				break;
 			}
 			case ASSIGNTYPE_SUM:
+			default:
 			{
 				outPoint.m_X += helper.Out.x;
 				outPoint.m_Y += helper.Out.y;
@@ -1014,7 +1017,7 @@ public:
 			}
 		}
 	}
-	
+
 	/// <summary>
 	/// Generate the OpenCL string for writing output values from a call to a variation.
 	/// </summary>
@@ -1048,6 +1051,7 @@ public:
 						break;
 					}
 					case ASSIGNTYPE_SUM:
+					default:
 					{
 						s =
 						"\ttransX += vOut.x;\n"
@@ -1060,6 +1064,7 @@ public:
 				break;
 			}
 			case VARTYPE_POST:
+			default:
 			{
 				switch (assignType)
 				{
@@ -1072,6 +1077,7 @@ public:
 						break;
 					}
 					case ASSIGNTYPE_SUM:
+					default:
 					{
 						s =
 						"\toutPoint->m_X += vOut.x;\n"
@@ -1160,7 +1166,7 @@ public:
 	//Color coordinates for this function. This is the index into the palette used to look up a color and add to the histogram for each iter.
 	//The original only allows for an x coord. Will eventually allow for a y coord like Fractron for 2D palettes.
 	T m_ColorX, m_ColorY;
-	
+
 private:
 	T m_ColorSpeedCache;//Cache of m_ColorSpeed * m_ColorX. Need to recalc cache values whenever anything relating to color is set. Made private because one affects the other.
 	T m_OneMinusColorCache;//Cache of 1 - m_ColorSpeedCache.
@@ -1184,7 +1190,7 @@ public:
 
 private:
 	vector<Variation<T>*> m_PostVariations;//The list of post variations to call when applying this xform.
-	
+
 public:
 	T m_DirectColor;//Used with direct color variations.
 
@@ -1192,7 +1198,7 @@ public:
 	//Discussed on page 4 of the paper:
 	//Probability wi.
 	T m_Weight;
-	
+
 	//Scaling factor on color added to current iteration, also known as color weight. Normally defaults to 0.5.
 	//Discussed on page 9 of the paper with a hard coded default value of 0.5:
 	//C = (C + Ci) * m_ColorSpeed.

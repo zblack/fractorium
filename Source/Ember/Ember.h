@@ -43,9 +43,9 @@ public:
 	{
 		Init();
 	}
-	
+
 	Ember(const Ember<T>& ember)
-		: m_Edits(NULL)
+		: m_Edits(nullptr)
 	{
 		Ember<T>::operator=<T>(ember);
 	}
@@ -56,7 +56,7 @@ public:
 	/// <param name="ember">The Ember object to copy</param>
 	template <typename U>
 	Ember(const Ember<U>& ember)
-		: m_Edits(NULL)
+		: m_Edits(nullptr)
 	{
 		Ember<T>::operator=<U>(ember);
 	}
@@ -106,7 +106,7 @@ public:
 		m_CamDepthBlur		  = T(ember.m_CamDepthBlur);
 		m_CamMat			  = ember.m_CamMat;
 		m_CenterX			  = T(ember.m_CenterX);
-		m_CenterY			  = T(ember.m_CenterY);			
+		m_CenterY			  = T(ember.m_CenterY);
 		m_Rotate			  = T(ember.m_Rotate);
 		m_Hue				  = T(ember.m_Hue);
 		m_Brightness		  = T(ember.m_Brightness);
@@ -165,8 +165,8 @@ public:
 
 		SetProjFunc();
 		ClearEdit();
-			
-		if (ember.m_Edits != NULL)
+
+		if (ember.m_Edits != nullptr)
 			m_Edits = xmlCopyDoc(ember.m_Edits, 1);
 
 		return *this;
@@ -235,9 +235,9 @@ public:
 		m_Index = 0;
 		m_Xforms.reserve(12);
 
-		m_Edits = NULL;
+		m_Edits = nullptr;
 	}
-	
+
 	/// <summary>
 	/// Add a copy of a new xform to the xforms vector.
 	/// </summary>
@@ -284,7 +284,7 @@ public:
 		Ember<T> ember(*this);
 
 		ember.PadXforms(xformPad);
-		
+
 		if (doFinal)
 		{
 			if (UseFinalXform())//Caller wanted one and this ember has one.
@@ -301,7 +301,7 @@ public:
 				ember.m_FinalXform.AddVariation(new LinearVariation<T>(0));//Do this so it doesn't appear empty.
 			}
 		}
-		
+
 		return ember;
 	}
 
@@ -322,7 +322,7 @@ public:
 			//Now shuffle xaos values from i on back by 1 for every xform.
 			for (unsigned int x1 = 0; x1 < XformCount(); x1++)
 			{
-				if (xform = GetXform(x1))
+				if ((xform = GetXform(x1)))
 				{
 					for (unsigned int x2 = i + 1; x2 <= XformCount(); x2++)//Iterate from the position after the deletion index up to the old count.
 						xform->SetXaos(x2 - 1, xform->Xaos(x2));
@@ -330,7 +330,7 @@ public:
 					xform->TruncateXaos();//Make sure no old values are hanging around in case more xforms are added to this ember later.
 				}
 			}
-				
+
 			return true;
 		}
 
@@ -358,13 +358,13 @@ public:
 	/// Get a pointer to the xform at the specified index, excluding the final one.
 	/// </summary>
 	/// <param name="i">The index to get</param>
-	/// <returns>A pointer to the xform at the index if successful, else NULL.</returns>
+	/// <returns>A pointer to the xform at the index if successful, else nullptr.</returns>
 	Xform<T>* GetXform(unsigned int i) const
 	{
 		if (i < XformCount())
 			return (Xform<T>*)&m_Xforms[i];
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	/// <summary>
@@ -372,7 +372,7 @@ public:
 	/// </summary>
 	/// <param name="i">The index to get</param>
 	/// <param name="forceFinal">If true, return the final xform when its index is requested even if one is not present</param>
-	/// <returns>A pointer to the xform at the index if successful, else NULL.</returns>
+	/// <returns>A pointer to the xform at the index if successful, else nullptr.</returns>
 	Xform<T>* GetTotalXform(unsigned int i, bool forceFinal = false) const
 	{
 		if (i < XformCount())
@@ -380,7 +380,7 @@ public:
 		else if (i == XformCount() || forceFinal)
 			return (Xform<T>*)&m_FinalXform;
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	/// <summary>
@@ -407,7 +407,7 @@ public:
 	int GetTotalXformIndex(Xform<T>* xform) const
 	{
 		unsigned int totalXformCount = TotalXformCount();
-		
+
 		for (unsigned int i = 0; i < totalXformCount; i++)
 			if (GetTotalXform(i) == xform)
 				return (int)i;
@@ -461,7 +461,7 @@ public:
 		for (unsigned int i = 0; i < TotalXformCount(); i++)
 		{
 			Xform<T>* xform = GetTotalXform(i);
-			
+
 			xform->CacheColorVals();
 			xform->SetPrecalcFlags();
 		}
@@ -677,29 +677,29 @@ public:
 		bool allID, final;
 		unsigned int i, j, k, l, maxXformCount, totalXformCount;
 		T bgAlphaSave = m_Background.a;
-		T coefSave[2];
+		T coefSave[2] {0, 0};
 		vector<Xform<T>*> xformVec;
 
-		//Palette and others 
+		//Palette and others
 		if (embers[0].m_PaletteInterp == INTERP_HSV)
 		{
 			for (i = 0; i < 256; i++)
 			{
 				T t[3], s[4] = { 0, 0, 0, 0 };
-		 
+
 				for (k = 0; k < size; k++)
 				{
 					Palette<T>::RgbToHsv(glm::value_ptr(embers[k].m_Palette[i]), t);
 
 					for (j = 0; j < 3; j++)
 						s[j] += coefs[k] * t[j];
-				
+
 					s[3] += coefs[k] * embers[k].m_Palette[i][3];
 				}
-	   			
+
 				Palette<T>::HsvToRgb(s, glm::value_ptr(m_Palette[i]));
 				m_Palette[i][3] = s[3];
-				
+
 				for (j = 0; j < 4; j++)
 					Clamp<T>(m_Palette[i][j], 0, 1);
 			}
@@ -803,7 +803,7 @@ public:
 
 				var->m_Weight = 0;
 
-				if (parVar != NULL)
+				if (parVar != nullptr)
 					parVar->Clear();
 
 				for (k = 0; k < size; k++)//For each ember in the list.
@@ -814,17 +814,17 @@ public:
 					{
 						Variation<T>* tempVar = tempXform->GetVariationById(var->VariationId());//See if the variation at this xform index exists in that ember at this xform index.
 
-						if (tempVar != NULL)
+						if (tempVar != nullptr)
 						{
 							//Interp weight.
 							var->m_Weight += tempVar->m_Weight * coefs[k];
 
 							//If it was a parametric variation, interp params.
-							if (parVar != NULL)
+							if (parVar != nullptr)
 							{
 								ParametricVariation<T>* tempParVar = dynamic_cast<ParametricVariation<T>*>(tempVar);
 
-								if (tempParVar != NULL && (parVar->ParamCount() == tempParVar->ParamCount()))//This check will should always be true, but just check to be absolutely sure to avoid clobbering memory.
+								if (tempParVar != nullptr && (parVar->ParamCount() == tempParVar->ParamCount()))//This check will should always be true, but just check to be absolutely sure to avoid clobbering memory.
 								{
 									ParamWithName<T>* params = parVar->Params();
 									ParamWithName<T>* tempParams = tempParVar->Params();
@@ -846,7 +846,7 @@ public:
 			InterpXform<&Xform<T>::m_ColorSpeed>(thisXform, i, embers, coefs, size);
 			InterpXform<&Xform<T>::m_Opacity>	(thisXform, i, embers, coefs, size);
 			InterpXform<&Xform<T>::m_Animate>	(thisXform, i, embers, coefs, size);
-			
+
 			ClampGte0Ref(thisXform->m_Weight);
 			ClampRef<T>(thisXform->m_ColorX, 0, 1);
 			ClampRef<T>(thisXform->m_ColorSpeed, -1, 1);
@@ -857,9 +857,9 @@ public:
 				vector<v2T> cxMag(size);
 				vector<v2T> cxAng(size);
 				vector<v2T> cxTrn(size);
-				
+
 				thisXform->m_Affine.m_Mat = m23T(0);
-				
+
 				//Affine part.
 				Interpolater<T>::ConvertLinearToPolar(embers, size, i, 0, cxAng, cxMag, cxTrn);
 				Interpolater<T>::InterpAndConvertBack(coefs, cxAng, cxMag, cxTrn, thisXform->m_Affine);
@@ -887,7 +887,7 @@ public:
 				{
 					Interpolater<T>::ConvertLinearToPolar(embers, size, i, 1, cxAng, cxMag, cxTrn);
 					Interpolater<T>::InterpAndConvertBack(coefs, cxAng, cxMag, cxTrn, thisXform->m_Post);
-				}         
+				}
 			}
 			else if (m_AffineInterp == INTERP_LINEAR)
 			{
@@ -999,7 +999,7 @@ public:
 			//Don't rotate xforms with animate set to 0.
 			if (m_Xforms[i].m_Animate == 0)
 				continue;
-			
+
 			//Assume that if there are no variations, then it's a padding xform.
 			if (m_Xforms[i].Empty() && m_AffineInterp != INTERP_LOG)
 				continue;
@@ -1066,7 +1066,7 @@ public:
 			m_Xforms[i].m_Affine.E(1);
 			m_Xforms[i].m_Affine.F(0);
 			m_Xforms[i].AddVariation(new LinearVariation<T>());
-			
+
 			result++;
 			sym = -sym;
 		}
@@ -1201,9 +1201,9 @@ public:
 		T z = point.m_Z - m_CamZPos;
 		T x = m_CamMat[0][0] * point.m_X + m_CamMat[1][0] * point.m_Y;
 		T y = m_CamMat[0][1] * point.m_X + m_CamMat[1][1] * point.m_Y + m_CamMat[2][1] * z;
-		
+
 		z = m_CamMat[0][2] * point.m_X + m_CamMat[1][2] * point.m_Y + m_CamMat[2][2] * z;
-		
+
 		T zr = Zeps(1 - m_CamPerspective * z);
 		T dr = rand.Frand01<T>() * m_BlurCoef * z;
 
@@ -1294,7 +1294,7 @@ public:
 			m_Supersample = 0;
 			m_SpatialFilterRadius = -1;
 			m_Zoom = 999999;
-			m_ProjFunc = NULL;
+			m_ProjFunc = nullptr;
 			m_CamZPos = 999999;
 			m_CamPerspective = 999999;
 			m_CamYaw = 999999;
@@ -1316,21 +1316,21 @@ public:
 			m_TemporalFilterExp = -999;
 			m_PaletteMode = PALETTE_STEP;
 		}
-		
+
 		m_Xforms.clear();
 		m_FinalXform.Clear();
 		ClearEdit();
 	}
 
 	/// <summary>
-	/// Thin wrapper to clear edit doc if not NULL and set to NULL.
+	/// Thin wrapper to clear edit doc if not nullptr and set to nullptr.
 	/// </summary>
 	void ClearEdit()
 	{
-		if (m_Edits != NULL)
+		if (m_Edits != nullptr)
 			xmlFreeDoc(m_Edits);
 
-		m_Edits = NULL;
+		m_Edits = nullptr;
 	}
 
 	/// <summary>
@@ -1384,7 +1384,7 @@ public:
 		   << "Temporal Filter Type: " << m_TemporalFilterType << endl
 		   << "Temporal Filter Exp: " << m_TemporalFilterExp << endl
 		   << "Temporal Filter Width: " << m_TemporalFilterWidth << endl
-		   
+
 		   << "Palette Mode: " << m_PaletteMode << endl
 		   << "Palette Interp: " << m_PaletteInterp << endl
 		   << "Palette Index: " << m_Palette.m_Index << endl
@@ -1454,14 +1454,14 @@ public:
 	//Note that increasing this value does not adjust the quality by a proportional amount, so an increased value may produce a degraded image.
 	//Xml field: "scale".
 	T m_PixelsPerUnit;
-	
-	//A value greater than 0 will zoom in the field of view, however it will also increase the quality by a proportional amount. This is used to 
+
+	//A value greater than 0 will zoom in the field of view, however it will also increase the quality by a proportional amount. This is used to
 	//overcome the shortcoming of scale by also adjusting the quality.
 	//Xml field: "zoom".
 	T m_Zoom;
-	
+
 	//3D fields.
-private:	
+private:
 	typedef void (Ember<T>::*ProjFuncPtr)(Point<T>&, QTIsaac<ISAAC_SIZE, ISAAC_INT>&);
 	ProjFuncPtr m_ProjFunc;
 
@@ -1492,41 +1492,41 @@ public:
 	//Xml field: "center".
 	T m_CenterX;
 	T m_CenterY;
-	
+
 	//Rotate the camera by this many degrees. Since this is a camera rotation, the final output image will be rotated counter-clockwise.
 	//Xml field: "rotate".
 	T m_Rotate;
-	
+
 	//When specifying the palette as an index in the palette file, rather than inserted in the Xml, it can optionally have its hue
 	//rotated by this amount.
 	//Xml field: "hue".
 	T m_Hue;
-	
+
 	//Determine how bright to make the image during final accumulation.
 	//Xml field: "brightness".
 	T m_Brightness;
-	
+
 	//Gamma level used in gamma correction during final accumulation.
 	//Xml field: "gamma".
 	T m_Gamma;
-	
+
 	//Used in color correction during final accumulation.
 	//Xml field: "vibrancy".
 	T m_Vibrancy;
-	
+
 	//Gamma threshold used in gamma correction during final accumulation.
 	//Xml field: "gamma_threshold".
 	T m_GammaThresh;
-	
+
 	//Value to control saturation of some pixels in gamma correction during final accumulation.
 	//Xml field: "highlight_power".
 	T m_HighlightPower;
-	
+
 	//When animating a file full of many embers, this value is used to specify the time in the animation
 	//that this ember should be rendered. They must all be sequential and increase by a default value of 1.
 	//Xml field: "time".
 	T m_Time;
-	
+
 	//The background color of the image used in final accumulation, ranged 0-1.
 	//Xml field: "background".
 	Color<T> m_Background;
@@ -1544,7 +1544,7 @@ public:
 	//The type of interpolation to use for the palette when interpolating embers for animation.
 	//Xml field: "palette_interpolation".
 	ePaletteInterp m_PaletteInterp;
-	
+
 	//Temporal Filter.
 
 	//Only used if temporal filter type is exp, else unused.
@@ -1564,11 +1564,11 @@ public:
 	//The minimum radius of the DE filter.
 	//Xml field: "estimator_minimum".
 	T m_MinRadDE;
-	
+
 	//The maximum radius of the DE filter.
 	//Xml field: "estimator_radius".
 	T m_MaxRadDE;
-	
+
 	//The shape of the curve that governs how quickly or slowly the filter drops off as it moves away from the center point.
 	//Xml field: "estimator_curve".
 	T m_CurveDE;
@@ -1584,7 +1584,7 @@ public:
 	//Lanczos2, Mitchell, Blackman, Catrom, Hamming, Hanning, Quadratic.
 	//Xml field: "filter_shape".
 	eSpatialFilterType m_SpatialFilterType;
-	
+
 	//Palette.
 
 	//The method used for retrieving a color from the palette when accumulating to the histogram: step, linear.

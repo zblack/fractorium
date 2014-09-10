@@ -89,7 +89,7 @@ public:
 		{
 			m_FinalFilterWidth = filter.m_FinalFilterWidth;
 			m_Supersample = filter.m_Supersample;
-			m_Support = filter.m_Support;           
+			m_Support = filter.m_Support;
 			m_FilterRadius = filter.m_FilterRadius;
 			m_PixelAspectRatio = filter.m_PixelAspectRatio;
 			m_FilterType = filter.m_FilterType;
@@ -107,7 +107,7 @@ public:
 	{
 		T fw = T(2.0) * m_Support * m_Supersample * m_FilterRadius / m_PixelAspectRatio;
 		T adjust, ii, jj;
-  
+
 		int fwidth = ((int)fw) + 1;
 		int i, j;
 
@@ -283,7 +283,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	HermiteFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(HERMITE_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Hermite filter to t parameter and return.
 	/// f(t) = 2|t|^3 - 3|t|^2 + 1, -1 <= t <= 1.
@@ -318,7 +318,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	BoxFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BOX_SPATIAL_FILTER, T(0.5), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Box filter to t parameter and return.
 	/// </summary>
@@ -349,7 +349,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	TriangleFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(TRIANGLE_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Triangle filter to t parameter and return.
 	/// </summary>
@@ -383,7 +383,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	BellFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BELL_SPATIAL_FILTER, T(1.5), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Bell filter to t parameter and return.
 	/// </summary>
@@ -392,7 +392,7 @@ public:
 	virtual T Filter(T t) const
 	{
 		//box (*) box (*) box.
-		if (t < 0) 
+		if (t < 0)
 			t = -t;
 
 		if (t < T(0.5))
@@ -424,7 +424,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	BsplineFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BSPLINE_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply B Spline filter to t parameter and return.
 	/// </summary>
@@ -467,9 +467,9 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	Lanczos3Filter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0)) 
+	Lanczos3Filter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(LANCZOS3_SPATIAL_FILTER, T(3.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Lanczos 3 filter to t parameter and return.
 	/// </summary>
@@ -503,7 +503,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	Lanczos2Filter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(LANCZOS2_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Lanczos 2 filter to t parameter and return.
 	/// </summary>
@@ -537,7 +537,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	MitchellFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(MITCHELL_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Mitchell filter to t parameter and return.
 	/// </summary>
@@ -590,7 +590,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	BlackmanFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BLACKMAN_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Blackman filter to t parameter and return.
 	/// </summary>
@@ -618,7 +618,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	CatromFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(CATROM_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Catmull-Rom filter to t parameter and return.
 	/// </summary>
@@ -661,7 +661,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	HammingFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(HAMMING_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Hamming filter to t parameter and return.
 	/// </summary>
@@ -689,7 +689,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	HanningFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(HANNING_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Hanning filter to t parameter and return.
 	/// </summary>
@@ -717,7 +717,7 @@ public:
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
 	QuadraticFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(QUADRATIC_SPATIAL_FILTER, T(1.5), filterRadius, superSample, pixelAspectRatio) { }
-	
+
 	/// <summary>
 	/// Apply Quadratic filter to t parameter and return.
 	/// </summary>
@@ -758,7 +758,7 @@ public:
 	/// <returns>A pointer to the newly created filter object</returns>
 	static SpatialFilter<T>* Create(eSpatialFilterType filterType, T filterRadius, unsigned int superSample, T pixelAspectRatio = 1)
 	{
-		SpatialFilter<T>* filter = NULL;
+		SpatialFilter<T>* filter = nullptr;
 
 		if (filterType == GAUSSIAN_SPATIAL_FILTER)
 			filter = new GaussianFilter<T>(filterRadius, superSample, pixelAspectRatio);

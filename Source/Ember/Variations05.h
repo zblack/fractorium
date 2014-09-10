@@ -658,6 +658,7 @@ public:
 				helper.Out.z = ((pz - (m_Smooth * (1 - m_Fill) * pz * znxy))  + (helper.In.z * m_Smooth * m_Fill * znxy))  - lattd;
 				break;
 			case 7 :
+			default:
 				helper.Out.x = ((px - (m_Smooth * (1 - m_Fill) * px * exnze)) + (helper.In.x * m_Smooth * m_Fill * exnze)) - lattd;
 				helper.Out.y = ((py - (m_Smooth * (1 - m_Fill) * py * wynze)) + (helper.In.y * m_Smooth * m_Fill * wynze)) - lattd;
 				helper.Out.z = ((pz - (m_Smooth * (1 - m_Fill) * pz * znxy))  + (helper.In.z * m_Smooth * m_Fill * znxy))  - lattd;
@@ -888,6 +889,7 @@ public:
 				helper.Out.z = pztz * m_Fill * znxy  - lattd;
 				break;
 			case 7 :
+			default:
 				helper.Out.x = pxtx * m_Fill * exnze - lattd;
 				helper.Out.y = pyty * m_Fill * wynze - lattd;
 				helper.Out.z = pztz * m_Fill * znxy  - lattd;
@@ -1078,7 +1080,6 @@ public:
 		T ww = SQR(helper.In.z);
 		T atOmegaX = atan2(vv, ww);
 		T atOmegaY = atan2(uu, ww);
-		T atOmegaZ = atan2(vv, uu);
 		T su = sin(helper.In.x);
 		T cu = cos(helper.In.x);
 		T sv = sin(helper.In.y);
@@ -1110,7 +1111,6 @@ public:
 		   << "\t\treal_t ww = SQR(vIn.z);\n"
 		   << "\t\treal_t atOmegaX = atan2(vv, ww);\n"
 		   << "\t\treal_t atOmegaY = atan2(uu, ww);\n"
-		   << "\t\treal_t atOmegaZ = atan2(vv, uu);\n"
 		   << "\t\treal_t su = sin(vIn.x);\n"
 		   << "\t\treal_t cu = cos(vIn.x);\n"
 		   << "\t\treal_t sv = sin(vIn.y);\n"
@@ -1334,7 +1334,6 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T rmod = rand.Frand01<T>() * T(0.5) + T(0.125);
 		T kikr = helper.m_PrecalcAtanyx;
 		T efTez = helper.In.z == 0 ? kikr : helper.In.z;
 		T r2 = helper.m_PrecalcSumSquares + SQR(efTez);
@@ -1364,7 +1363,6 @@ public:
 		string vv = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t rmod = MwcNext01(mwc) * 0.5 + 0.125;\n"
 		   << "\t\treal_t kikr = precalcAtanyx;\n"
 		   << "\t\treal_t efTez = vIn.z == 0 ? kikr : vIn.z;\n"
 		   << "\t\treal_t r2 = precalcSumSquares + SQR(efTez);\n"
@@ -1644,7 +1642,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string x   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1780,7 +1778,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string invWeight = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2149,6 +2147,7 @@ public:
 				helper.Out.z = m_Weight * (rad * sigmas);
 				break;
 			case 2://Box.
+			default:
 				scale = Clamp<T>(rs, 0, T(0.9)) + T(0.1);
 				denom = 1 / scale;
 				helper.Out.x = m_Weight * Lerp<T>(helper.In.x, floor(helper.In.x * denom) + scale * ax, m_MulX * rs) + m_MulX * pow(ax, m_BoxPow) * rs * denom;//m_BoxPow should be an integer value held in T,
@@ -2318,6 +2317,7 @@ public:
 				}
 				break;
 			case 2://Gaussian.
+			default:
 				{
 					const T sigma = dist * random.y * M_2PI;
 					const T phi = dist * random.z * T(M_PI);
@@ -2339,7 +2339,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string scatter = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2483,6 +2483,7 @@ public:
 				radius = sqrt(Sqr(helper.In.x - m_CenterX) + Sqr(helper.In.y - m_CenterY) + Sqr(helper.In.z - m_CenterZ));
 				break;
 			case 1://Square.
+			default:
 				radius = max(fabs(helper.In.x - m_CenterX), max(fabs(helper.In.y - m_CenterY), (fabs(helper.In.z - m_CenterZ))));//Original called a macro named min, which internally performed max.
 				break;
 		}
@@ -2532,6 +2533,7 @@ public:
 			}
 			break;
 		case 2://Log.
+		default:
 			{
 				const T coeff = m_RMax <= EPS ? dist : dist + m_Alpha * (LogMap(dist) - dist);
 
@@ -2547,7 +2549,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string blurType     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;

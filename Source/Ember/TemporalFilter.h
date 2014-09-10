@@ -72,7 +72,7 @@ public:
 				m_Deltas[i] = (T(i) / T(steps - 1) - T(0.5)) * filterWidth;
 		}
 	}
-	
+
 	/// <summary>
 	/// Copy constructor.
 	/// </summary>
@@ -141,7 +141,7 @@ public:
 
 		return ss.str();
 	}
-	
+
 	/// <summary>
 	/// Accessors.
 	/// </summary>
@@ -169,7 +169,7 @@ protected:
 			m_Filter[i] /= maxFilt;
 			m_SumFilt += m_Filter[i];
 		}
-		 
+
 		m_SumFilt /= Size();
 	}
 
@@ -214,7 +214,7 @@ public:
 
 				//Scale the color based on these values.
 				m_Filter[i] = pow(slpx, fabs(filterExp));
-		 
+
 				//Keep the max.
 				if (m_Filter[i] > maxFilt)
 					maxFilt = m_Filter[i];
@@ -251,7 +251,7 @@ public:
 			for (unsigned int i = 0; i < Size(); i++)
 			{
 				m_Filter[i] = gaussian.Filter(gaussian.Support() * fabs(i - halfSteps) / halfSteps);
-				
+
 				//Keep the max.
 				if (m_Filter[i] > maxFilt)
 					maxFilt = m_Filter[i];
@@ -283,7 +283,7 @@ public:
 		{
 			for (unsigned int i = 0; i < Size(); i++)
 				m_Filter[i] = 1;
-		 
+
 			FinishFilter(1);
 		}
 	}
@@ -307,7 +307,7 @@ public:
 	/// <returns>A pointer to the newly created filter object</returns>
 	static TemporalFilter<T>* Create(eTemporalFilterType filterType, unsigned int passes, unsigned int temporalSamples, T filterWidth, T filterExp = 1)
 	{
-		TemporalFilter<T>* filter = NULL;
+		TemporalFilter<T>* filter = nullptr;
 
 		if (filterType == BOX_TEMPORAL_FILTER)
 			filter = new BoxTemporalFilter<T>(passes, temporalSamples, filterWidth);

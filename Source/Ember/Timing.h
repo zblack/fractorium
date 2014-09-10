@@ -42,15 +42,15 @@ public:
 	/// <summary>
 	/// Set the end time and optionally output a string showing the elapsed time.
 	/// </summary>
-	/// <param name="str">The string to output. Default: NULL.</param>
+	/// <param name="str">The string to output. Default: nullptr.</param>
 	/// <param name="fullString">If true, output the string verbatim, else output the text " processing time: " in between str and the formatted time.</param>
 	/// <returns>The elapsed time in milliseconds as a double</returns>
-	double Toc(const char* str = NULL, bool fullString = false)
+	double Toc(const char* str = nullptr, bool fullString = false)
 	{
 		m_EndTime = Clock::now();
 		double ms = ElapsedTime();
 
-		if (str != NULL)
+		if (str != nullptr)
 		{
 			cout << string(str) << (fullString ? "" : " processing time: ") << Format(ms) << endl;
 		}

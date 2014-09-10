@@ -146,7 +146,7 @@ public:
 		os << " rotate=\"" << ember.m_Rotate << "\"";
 		os << " supersample=\"" << max(1u, ember.m_Supersample) << "\"";
 		os << " filter=\"" << ember.m_SpatialFilterRadius << "\"";
-		
+
 		os << " filter_shape=\"" << ToLower(SpatialFilterCreator<T>::ToString(ember.m_SpatialFilterType)) << "\"";
 		os << " temporal_filter_type=\"" << ToLower(TemporalFilterCreator<T>::ToString(ember.m_TemporalFilterType)) << "\"";
 
@@ -247,7 +247,7 @@ public:
 				double g = ember.m_Palette[i][1] * 255;
 				double b = ember.m_Palette[i][2] * 255;
 				double a = ember.m_Palette[i][3] * 255;
-	  
+
 				os << "   ";
 				//The original used a precision of 6 which is totally unnecessary, use 2.
 				if (IsClose(a, 255.0))
@@ -269,7 +269,7 @@ public:
 			}
 		}
 
-		if (doEdits && ember.m_Edits != NULL)
+		if (doEdits && ember.m_Edits != nullptr)
 			os << ToString(xmlDocGetRootElement(ember.m_Edits), 1, true, printEditDepth);
 
 		os << "</flame>\n";
@@ -282,8 +282,8 @@ public:
 	/// This is used when an ember is made out of some mutation or edit from one or two existing embers and
 	/// the user wants to capture the genetic lineage history information in the edit doc of the new ember.
 	/// </summary>
-	/// <param name="parent0">The first parent, optionally NULL.</param>
-	/// <param name="parent1">The second parent, optionally NULL.</param>
+	/// <param name="parent0">The first parent, optionally nullptr.</param>
+	/// <param name="parent1">The second parent, optionally nullptr.</param>
 	/// <param name="action">The action that was taken to create the new ember</param>
 	/// <param name="nick">The nickname of the author</param>
 	/// <param name="url">The Url of the author</param>
@@ -298,18 +298,18 @@ public:
 		char buffer[128];
 		char commentString[128];
 		time_t myTime;
-		xmlDocPtr commentDoc = NULL;
+		xmlDocPtr commentDoc = nullptr;
 		xmlDocPtr doc = xmlNewDoc(XC "1.0");
-		xmlNodePtr rootNode = NULL, node = NULL, nodeCopy = NULL;
-		xmlNodePtr rootComment = NULL;
+		xmlNodePtr rootNode = nullptr, node = nullptr, nodeCopy = nullptr;
+		xmlNodePtr rootComment = nullptr;
 
 		//Create the root node, called "edit".
-		rootNode = xmlNewNode(NULL, XC "edit");
+		rootNode = xmlNewNode(nullptr, XC "edit");
 		xmlDocSetRootElement(doc, rootNode);
 
 		//Add the edit attributes.
 		//Date.
-		myTime = time(NULL);
+		myTime = time(nullptr);
 #ifdef WIN32
 		tm localt;
 		localtime_s(&localt, &myTime);
@@ -339,7 +339,7 @@ public:
 		if (sheepGen > 0 && sheepId > 0)
 		{
 			//Create a child node of the root node called sheep.
-			node = xmlNewChild(rootNode, NULL, XC "sheep", NULL);
+			node = xmlNewChild(rootNode, nullptr, XC "sheep", nullptr);
 
 			//Create the sheep attributes.
 			sprintf_s(buffer, 128, "%d", sheepGen);
@@ -366,7 +366,7 @@ public:
 			else
 			{
 				//Insert a (parent has no edit) message.
-				nodeCopy = xmlNewChild(rootNode, NULL, XC "edit", NULL);
+				nodeCopy = xmlNewChild(rootNode, nullptr, XC "edit", nullptr);
 				AddFilenameWithoutAmpersand(nodeCopy, parent0->m_ParentFilename);
 				sprintf_s(buffer, 128, "%d", parent0->m_Index);
 				xmlNewProp(nodeCopy, XC "index", XC buffer);
@@ -388,7 +388,7 @@ public:
 			else
 			{
 				//Insert a (parent has no edit) message.
-				nodeCopy = xmlNewChild(rootNode, NULL, XC "edit",NULL);
+				nodeCopy = xmlNewChild(rootNode, nullptr, XC "edit",nullptr);
 				AddFilenameWithoutAmpersand(nodeCopy, parent1->m_ParentFilename);
 				sprintf_s(buffer, 128, "%d", parent1->m_Index);
 				xmlNewProp(nodeCopy, XC "index", XC buffer);
@@ -405,10 +405,10 @@ public:
 		if (comment != "")
 		{
 			sprintf_s(commentString, 128, "<comm>%s</comm>", comment.c_str());
-			commentDoc = xmlReadMemory(commentString, (int)strlen(commentString), "comment.env", NULL, XML_PARSE_NONET);
+			commentDoc = xmlReadMemory(commentString, (int)strlen(commentString), "comment.env", nullptr, XML_PARSE_NONET);
 
 			//Check for errors.
-			if (commentDoc != NULL)
+			if (commentDoc != nullptr)
 			{
 
 				//Loop through the children of the new document and copy them into the rootNode.
@@ -567,9 +567,9 @@ private:
 		const char* tabString = "   ", *attStr;
 		const char* editString = "edit";
 		const char* sheepString = "sheep";
-		unsigned int ti, editOrSheep = 0;
-		xmlAttrPtr attPtr = NULL, curAtt = NULL;
-		xmlNodePtr childPtr = NULL, curChild = NULL;
+		unsigned int ti;//, editOrSheep = 0;
+		xmlAttrPtr attPtr = nullptr, curAtt = nullptr;
+		xmlNodePtr childPtr = nullptr, curChild = nullptr;
 		ostringstream os;
 
 		if (printEditDepth > 0 && tabs > printEditDepth)
@@ -589,13 +589,13 @@ private:
 			//If it's an edit node, add one to the tab.
 			if (!Compare(editNode->name, editString))
 			{
-				editOrSheep = 1;
+				//editOrSheep = 1;
 				tabs++;
 			}
-			else if (!Compare(editNode->name, sheepString))
-				editOrSheep = 2;
-			else
-				editOrSheep = 0;
+			else if (!Compare(editNode->name, sheepString)) { }
+				//editOrSheep = 2;
+			else { }
+				//editOrSheep = 0;
 
 			//Print the attributes.
 			attPtr = editNode->properties;
@@ -649,15 +649,15 @@ private:
 						//Child is a text node, don't want to indent more than once.
 						if (xmlIsBlankNode(curChild))
 							continue;
-						
+
 						if (!indentPrinted && formatting)
 						{
 							for (ti = 0; ti < tabs; ti++)
 								os << tabString;
-						
+
 							indentPrinted = true;
 						}
-						
+
 						//Print nodes without formatting.
 						os << ToString(curChild, tabs, false, printEditDepth);
 					}

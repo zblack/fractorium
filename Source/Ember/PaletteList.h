@@ -45,9 +45,9 @@ public:
 
 			if (ReadFile(filename.c_str(), buf))
 			{
-				xmlDocPtr doc = xmlReadMemory((const char*)buf.data(), (int)buf.size(), filename.c_str(), NULL, XML_PARSE_NONET);
+				xmlDocPtr doc = xmlReadMemory((const char*)buf.data(), (int)buf.size(), filename.c_str(), nullptr, XML_PARSE_NONET);
 
-				if (doc != NULL)
+				if (doc != nullptr)
 				{
 					xmlNode* rootNode = xmlDocGetRootElement(doc);
 
@@ -74,7 +74,7 @@ public:
 	/// Gets the palette at a specified index.
 	/// </summary>
 	/// <param name="i">The index of the palette to read. A value of -1 indicates a random palette.</param>
-	/// <returns>A pointer to the requested palette if the index was in range, else NULL.</returns>
+	/// <returns>A pointer to the requested palette if the index was in range, else nullptr.</returns>
 	Palette<T>* GetPalette(int i)
 	{
 		if (!m_Palettes.empty())
@@ -85,21 +85,21 @@ public:
 				return &m_Palettes[i];
 		}
 
-		return NULL;
+		return nullptr;
 	}
-	
+
 	/// <summary>
 	/// Gets a pointer to a palette with a specified name.
 	/// </summary>
 	/// <param name="name">The name of the palette to retrieve</param>
-	/// <returns>A pointer to the palette if found, else NULL</returns>
+	/// <returns>A pointer to the palette if found, else nullptr</returns>
 	Palette<T>* GetPaletteByName(string& name)
 	{
 		for (unsigned int i = 0; i < Count(); i++)
 			if (m_Palettes[i].m_Name == name)
 				return &m_Palettes[i];
 
-		return NULL;
+		return nullptr;
 	}
 
 	/// <summary>
@@ -166,7 +166,7 @@ private:
 					if (!Compare(attr->name, "data"))
 					{
 						int colorIndex = 0;
-						int r, g, b;
+						unsigned int r, g, b;
 						int colorCount = 0;
 						hexError = false;
 

@@ -1009,7 +1009,7 @@ public:
 			  bool needPrecalcAtanYX = false)
 			  : m_Name(name)//Omit unnecessary default constructor call.
 	{
-		m_Xform = NULL;
+		m_Xform = nullptr;
 		m_VariationId = id;
 		m_Weight = weight;
 		m_NeedPrecalcSumSquares = needPrecalcSumSquares;
@@ -1085,7 +1085,7 @@ public:
 		m_AssignType = variation.AssignType();
 		m_VariationId = variation.VariationId();
 		m_Weight = T(variation.m_Weight);
-		m_Xform = typeid(T) == typeid(U) ? (Xform<T>*)variation.ParentXform() : NULL;
+		m_Xform = typeid(T) == typeid(U) ? (Xform<T>*)variation.ParentXform() : nullptr;
 		m_NeedPrecalcSumSquares = variation.NeedPrecalcSumSquares();
 		m_NeedPrecalcSqrtSumSquares = variation.NeedPrecalcSqrtSumSquares();
 		m_NeedPrecalcAngles = variation.NeedPrecalcAngles();
@@ -1403,7 +1403,7 @@ public:
 	/// </summary>
 	ParamWithName()
 	{
-		Init(NULL, "", 0, REAL, TLOW, TMAX);
+		Init(nullptr, "", 0, REAL, TLOW, TMAX);
 	}
 
 	/// <summary>
@@ -1541,6 +1541,7 @@ public:
 			}
 
 			case INTEGER_NONZERO :
+			default:
 			{
 				int vi = (int)max(min<T>((T)Floor<T>(val + T(0.5)), m_Max), m_Min);
 
@@ -1661,6 +1662,14 @@ public:
 	}
 
 	/// <summary>
+	/// Empty virtual destructor.
+	/// Needed to eliminate warnings about inlining.
+	/// </summary>
+	virtual ~ParametricVariation()
+	{
+	}
+
+	/// <summary>
 	/// Determine whether the params vector contains a parameter with the specified name.
 	/// </summary>
 	/// <param name="name">The name to search for</param>
@@ -1689,7 +1698,7 @@ public:
 			if (!_stricmp(m_Params[i].Name().c_str(), name))
 				return m_Params[i].Param();
 
-		return NULL;
+		return nullptr;
 	}
 
 	/// <summary>
@@ -1857,13 +1866,11 @@ protected:
 	using Variation<T>::XformIndexInEmber; \
 	using Variation<T>::Prefix;
 
-	//using Variation<T>::Precalc; \
-
 #ifdef DO_DOUBLE
 #define VARCOPYDOUBLE(name) \
 	virtual void Copy(Variation<double>*& var) const override \
 	{ \
-		if (var != NULL) \
+		if (var != nullptr) \
 			delete var; \
 		\
 		var = new name<double>(*this); \
@@ -1894,7 +1901,7 @@ protected:
 	\
 	virtual void Copy(Variation<float>*& var) const override \
 	{ \
-		if (var != NULL) \
+		if (var != nullptr) \
 			delete var; \
 		\
 		var = new name<float>(*this); \
@@ -1921,7 +1928,7 @@ protected:
 	\
 	virtual void Copy(Variation<float>*& var) const override \
 	{ \
-		if (var != NULL) \
+		if (var != nullptr) \
 			delete var; \
 		\
 		var = new name<float>(*this); \
@@ -1981,8 +1988,6 @@ protected:
 	using ParametricVariation<T>::m_Params; \
 	using ParametricVariation<T>::CopyParamVals;
 
-	//using Variation<T>::Precalc; \
-
 #define PARVARCOPY(name) \
 	VARUSINGS \
 	PARVARUSINGS \
@@ -2009,7 +2014,7 @@ protected:
 	\
 	virtual void Copy(Variation<float>*& var) const override \
 	{ \
-		if (var != NULL) \
+		if (var != nullptr) \
 			delete var; \
 		\
 		var = new name<float>(*this); \
@@ -2040,7 +2045,7 @@ protected:
 	\
 	virtual void Copy(Variation<float>*& var) const override \
 	{ \
-		if (var != NULL) \
+		if (var != nullptr) \
 			delete var; \
 		\
 		var = new name<float>(*this); \

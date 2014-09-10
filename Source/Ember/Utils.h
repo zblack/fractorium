@@ -41,6 +41,14 @@ class EMBER_API EmberImageComments
 {
 public:
 	/// <summary>
+	/// Empty destructor.
+	/// Needed to eliminate warnings about inlining.
+	/// </summary>
+	~EmberImageComments()
+	{
+	}
+
+	/// <summary>
 	/// Set all values to the empty string.
 	/// </summary>
 	void Clear()
@@ -68,6 +76,11 @@ public:
 class EMBER_API EmberReport
 {
 public:
+	/// <summary>
+	/// Virtual destructor needed for virtual classes.
+	/// </summary>
+	virtual ~EmberReport() { }
+
 	/// <summary>
 	/// Write the entire error report as a single string to the console.
 	/// Derived classes with members that also derive from EmberReport should override this to capture
@@ -144,13 +157,13 @@ protected:
 static bool ReadFile(const char* filename, string& buf, bool nullTerminate = true)
 {
 	bool b = false;
-	FILE* f;
+	FILE* f = nullptr;
 
 	try
 	{
 		fopen_s(&f, filename, "rb");//Open in binary mode.
 
-		if (f != NULL)
+		if (f != nullptr)
 		{
 			struct _stat statBuf;
 
@@ -162,15 +175,15 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 
 			if (statResult == 0)//Check if statistics are valid.
 			{
-				buf.resize(statBuf.st_size + (nullTerminate ? 1 : 0));//Allocate vector to be the size of the entire file, with an optional additional character for NULL.
+				buf.resize(statBuf.st_size + (nullTerminate ? 1 : 0));//Allocate vector to be the size of the entire file, with an optional additional character for nullptr.
 
-				if (buf.size() == statBuf.st_size + 1)//Ensure allocation succeeded.
+				if (buf.size() == (size_t)(statBuf.st_size + 1))//Ensure allocation succeeded.
 				{
 					size_t bytesRead = fread(&buf[0], 1, statBuf.st_size, f);//Read the entire file at once.
 
-					if (bytesRead == statBuf.st_size)//Ensure the number of bytes read matched what was requested.
+					if (bytesRead == (size_t)statBuf.st_size)//Ensure the number of bytes read matched what was requested.
 					{
-						if (nullTerminate)//Optionally NULL terminate if they want to treat it as a string.
+						if (nullTerminate)//Optionally nullptr terminate if they want to treat it as a string.
 							buf[buf.size() - 1] = 0;
 
 						b = true;//Success.
@@ -183,7 +196,7 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 	}
 	catch (...)
 	{
-		if (f != NULL)
+		if (f != nullptr)
 			fclose(f);
 
 		b = false;
@@ -209,7 +222,7 @@ static void CopyVec(vector<T>& dest, const vector<U>& source)
 }
 
 /// <summary>
-/// Clear a vector of pointers to any type by checking each element for NULL and calling delete on it, then clearing the entire vector.
+/// Clear a vector of pointers to any type by checking each element for nullptr and calling delete on it, then clearing the entire vector.
 /// Optionally call array delete if the elements themselves are pointers to dynamically allocated arrays.
 /// </summary>
 /// <param name="vec">The vector to be cleared</param>
@@ -219,7 +232,7 @@ static void ClearVec(vector<T*>& vec, bool arrayDelete = false)
 {
 	for (unsigned int i = 0; i < vec.size(); i++)
 	{
-		if (vec[i] != NULL)
+		if (vec[i] != nullptr)
 		{
 			if (arrayDelete)
 				delete [] vec[i];
@@ -227,29 +240,10 @@ static void ClearVec(vector<T*>& vec, bool arrayDelete = false)
 				delete vec[i];
 		}
 
-		vec[i] = NULL;
+		vec[i] = nullptr;
 	}
 
 	vec.clear();
-}
-
-/// <summary>
-/// Convert an RGBA buffer to an RGB buffer.
-/// </summary>
-/// <param name="rgba">The RGBA buffer</param>
-/// <param name="rgb">The RGB buffer</param>
-/// <param name="width">The width of the image in pixels</param>
-/// <param name="height">The height of the image in pixels</param>
-static void RgbaToRgb(vector<unsigned char>& rgba, vector<unsigned char>& rgb, unsigned int width, unsigned int height)
-{
-	rgb.resize(width * height * 3);
-
-	for (unsigned int i = 0, j = 0; i < (width * height * 4); i += 4, j += 3)
-	{
-		rgb[j]	   = rgba[i];
-		rgb[j + 1] = rgba[i + 1];
-		rgb[j + 2] = rgba[i + 2];
-	}
 }
 
 /// <summary>
@@ -737,7 +731,7 @@ static inline T NormalizeDeg360(T angle)
 /// </summary>
 /// <param name="str">The string to copy and make lower case</param>
 /// <returns>The lower case string</returns>
-static inline string ToLower(const string& str)
+static string ToLower(const string& str)
 {
 	string lower;
 
@@ -751,7 +745,7 @@ static inline string ToLower(const string& str)
 /// </summary>
 /// <param name="str">The string to copy and make upper case</param>
 /// <returns>The upper case string</returns>
-static inline string ToUpper(const string& str)
+static string ToUpper(const string& str)
 {
 	string upper;
 
@@ -767,7 +761,7 @@ static inline string ToUpper(const string& str)
 /// <param name="str">The string to trim</param>
 /// <param name="ch">The character to trim. Default: space.</param>
 /// <returns>The trimmed string</returns>
-static inline string Trim(string& str, char ch = ' ')
+static string Trim(string& str, char ch = ' ')
 {
 	string ret;
 
@@ -817,8 +811,8 @@ int Arg<int>(char* name, int def)
 {
 	char* ch;
 	int returnVal;
-	size_t len;
 #ifdef WIN32
+	size_t len;
 	errno_t err = _dupenv_s(&ch, &len, name);
 #else
 	int err = 1;
@@ -880,8 +874,8 @@ double Arg<double>(char* name, double def)
 {
 	char* ch;
 	double returnVal;
-	size_t len;
 #ifdef WIN32
+	size_t len;
 	errno_t err = _dupenv_s(&ch, &len, name);
 #else
 	int err = 1;
@@ -913,8 +907,8 @@ string Arg<string>(char* name, string def)
 {
 	char* ch;
 	string returnVal;
-	size_t len;
 #ifdef WIN32
+	size_t len;
 	errno_t err = _dupenv_s(&ch, &len, name);
 #else
 	int err = 1;

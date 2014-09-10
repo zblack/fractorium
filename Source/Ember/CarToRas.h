@@ -134,8 +134,8 @@ public:
 		m_PixPerImageUnitH = (T)rasH * invSizeH;
 		m_RasLlY = m_PixPerImageUnitH * carLlY;
 
-		T m_OneRow = abs(m_CarUrY - m_CarLlY) / m_RasHeight;
-		T m_OneCol = abs(m_CarUrX - m_CarLlX) / m_RasWidth;
+		m_OneRow = abs(m_CarUrY - m_CarLlY) / m_RasHeight;
+		m_OneCol = abs(m_CarUrX - m_CarLlX) / m_RasWidth;
 
 		m_PadCarLlX = m_CarLlX + m_OneCol;
 		m_PadCarUrX = m_CarUrX - m_OneCol;

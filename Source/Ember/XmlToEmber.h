@@ -28,22 +28,22 @@ public:
 	{
 		m_Category = category;
 		m_NewLocale = string(loc);
-		m_OriginalLocale = setlocale(category, NULL);//Query.
+		m_OriginalLocale = setlocale(category, nullptr);//Query.
 
 		if (m_OriginalLocale.empty())
 			cout << "Couldn't get original locale." << endl;
 
-		if (setlocale(category, loc) == NULL)//Set.
+		if (setlocale(category, loc) == nullptr)//Set.
 			cout << "Couldn't set new locale " << category << ", " << loc << "." << endl;
 	}
-	
+
 	/// <summary>
 	/// Reset the locale to the value stored during construction.
 	/// </summary>
 	~Locale()
 	{
 		if (!m_OriginalLocale.empty())
-			if (setlocale(m_Category, m_OriginalLocale.c_str()) == NULL)//Restore.
+			if (setlocale(m_Category, m_OriginalLocale.c_str()) == nullptr)//Restore.
 				cout << "Couldn't restore original locale " << m_Category << ", " << m_OriginalLocale << "." << endl;
 	}
 
@@ -250,7 +250,7 @@ public:
 	bool Parse(unsigned char* buf, const char* filename, vector<Ember<T>>& embers)
 	{
 		char* bn;
-		const char* xmlBuf;
+		const char* xmlPtr;
 		const char* loc = __FUNCTION__;
 		unsigned int emberSize;
 		size_t bufSize;
@@ -260,12 +260,12 @@ public:
 		m_ErrorReport.clear();
 
 		//Parse XML string into internal document.
-		xmlBuf = (const char*)(&buf[0]);
-		bufSize = strlen(xmlBuf);
+		xmlPtr = (const char*)(&buf[0]);
+		bufSize = strlen(xmlPtr);
 		embers.reserve(bufSize / 2500);//The Xml text for an ember is around 2500 bytes, but can be much more. Pre-allocate to aovid unnecessary resizing.
-		doc = xmlReadMemory(xmlBuf, (int)bufSize, filename, NULL, XML_PARSE_NONET);//Forbid network access during read.
+		doc = xmlReadMemory(xmlPtr, (int)bufSize, filename, nullptr, XML_PARSE_NONET);//Forbid network access during read.
 
-		if (doc == NULL)
+		if (doc == nullptr)
 		{
 			m_ErrorReport.push_back(string(loc) + " : Error parsing xml file " + string(filename));
 			return false;
@@ -310,7 +310,7 @@ public:
 				{
 					while (embers[i].m_Rotate < embers[i - 1].m_Rotate - 180)
 						embers[i].m_Rotate += 360;
-			
+
 					while (embers[i].m_Rotate > embers[i - 1].m_Rotate + 180)
 						embers[i].m_Rotate -= 360;
 				}
@@ -416,7 +416,7 @@ public:
 
 		//Convert the string using strtod().
 		val = strtol(str, &endp, 10);
-	
+
 		//Check errno & return string.
 		if (endp != str + strlen(str))
 		{
@@ -483,7 +483,7 @@ private:
 	void ScanForEmberNodes(xmlNode* curNode, char* parentFile, vector<Ember<T>>& embers)
 	{
 		bool parseEmberSuccess;
-		xmlNodePtr thisNode = NULL;
+		xmlNodePtr thisNode = nullptr;
 		const char* loc = __FUNCTION__;
 		string parentFileString = string(parentFile);
 
@@ -537,7 +537,7 @@ private:
 	/// <returns>True if there were no errors, else false.</returns>
 	bool ParseEmberElement(xmlNode* emberNode, Ember<T>& currentEmber)
 	{
-		bool b = true;
+		bool ret = true;
 		unsigned int newLinear = 0;
 		char* attStr;
 		const char* loc = __FUNCTION__;
@@ -550,7 +550,7 @@ private:
 		currentEmber.m_Palette.Clear();//Wipe out the current palette.
 		att = emberNode->properties;//The top level element is a ember element, read the attributes of it and store them.
 
-		if (att == NULL)
+		if (att == nullptr)
 		{
 			m_ErrorReport.push_back(string(loc) + " : <flame> element has no attributes");
 			return false;
@@ -561,36 +561,36 @@ private:
 			attStr = (char*)xmlGetProp(emberNode, curAtt->name);
 
 			//First parse out simple float reads.
-			if		(ParseAndAssignFloat(curAtt->name, attStr, "time",                  currentEmber.m_Time,                b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "scale",                 currentEmber.m_PixelsPerUnit,       b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "rotate",                currentEmber.m_Rotate,              b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "zoom",                  currentEmber.m_Zoom,                b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "filter",                currentEmber.m_SpatialFilterRadius, b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "temporal_filter_width", currentEmber.m_TemporalFilterWidth, b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "temporal_filter_exp",   currentEmber.m_TemporalFilterExp,   b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "quality",               currentEmber.m_Quality,             b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "brightness",            currentEmber.m_Brightness,          b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "gamma",                 currentEmber.m_Gamma,               b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "highlight_power",       currentEmber.m_HighlightPower,      b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "vibrancy",              currentEmber.m_Vibrancy,            b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "estimator_radius",      currentEmber.m_MaxRadDE,            b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "estimator_minimum",     currentEmber.m_MinRadDE,            b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "estimator_curve",       currentEmber.m_CurveDE,             b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "gamma_threshold",       currentEmber.m_GammaThresh,         b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_zpos",				currentEmber.m_CamZPos,				b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_persp",				currentEmber.m_CamPerspective,      b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_perspective",		currentEmber.m_CamPerspective,      b)) { }//Apo bug.
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_yaw",				currentEmber.m_CamYaw,				b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_pitch",				currentEmber.m_CamPitch,			b)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_dof",				currentEmber.m_CamDepthBlur,        b)) { }
-			
+			if		(ParseAndAssignFloat(curAtt->name, attStr, "time",                  currentEmber.m_Time,                ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "scale",                 currentEmber.m_PixelsPerUnit,       ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "rotate",                currentEmber.m_Rotate,              ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "zoom",                  currentEmber.m_Zoom,                ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "filter",                currentEmber.m_SpatialFilterRadius, ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "temporal_filter_width", currentEmber.m_TemporalFilterWidth, ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "temporal_filter_exp",   currentEmber.m_TemporalFilterExp,   ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "quality",               currentEmber.m_Quality,             ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "brightness",            currentEmber.m_Brightness,          ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "gamma",                 currentEmber.m_Gamma,               ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "highlight_power",       currentEmber.m_HighlightPower,      ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "vibrancy",              currentEmber.m_Vibrancy,            ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "estimator_radius",      currentEmber.m_MaxRadDE,            ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "estimator_minimum",     currentEmber.m_MinRadDE,            ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "estimator_curve",       currentEmber.m_CurveDE,             ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "gamma_threshold",       currentEmber.m_GammaThresh,         ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_zpos",				currentEmber.m_CamZPos,				ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_persp",				currentEmber.m_CamPerspective,      ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_perspective",		currentEmber.m_CamPerspective,      ret)) { }//Apo bug.
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_yaw",				currentEmber.m_CamYaw,				ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_pitch",				currentEmber.m_CamPitch,			ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "cam_dof",				currentEmber.m_CamDepthBlur,        ret)) { }
+
 			//Parse simple int reads.
-			else if (ParseAndAssignInt(curAtt->name, attStr, "palette",          currentEmber.m_Palette.m_Index, b)) { }
-			else if (ParseAndAssignInt(curAtt->name, attStr, "oversample",       currentEmber.m_Supersample    , b)) { }
-			else if (ParseAndAssignInt(curAtt->name, attStr, "supersample",      currentEmber.m_Supersample    , b)) { }
-			else if (ParseAndAssignInt(curAtt->name, attStr, "temporal_samples", currentEmber.m_TemporalSamples, b)) { }
-			else if (ParseAndAssignInt(curAtt->name, attStr, "soloxform",		 soloXform                     , b)) { }
-			else if (ParseAndAssignInt(curAtt->name, attStr, "new_linear",		 newLinear					   , b)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "palette",          currentEmber.m_Palette.m_Index, ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "oversample",       currentEmber.m_Supersample    , ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "supersample",      currentEmber.m_Supersample    , ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "temporal_samples", currentEmber.m_TemporalSamples, ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "soloxform",		 soloXform                     , ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "new_linear",		 newLinear					   , ret)) { }
 
 			//Parse more complicated reads that have multiple possible values.
 			else if (!Compare(curAtt->name, "interpolation"))
@@ -631,7 +631,7 @@ private:
 			}
 			else if (!Compare(curAtt->name, "size"))
 			{
-				if (sscanf_s(attStr, "%d %d", &currentEmber.m_FinalRasW, &currentEmber.m_FinalRasH) != 2)
+				if (sscanf_s(attStr, "%u %u", &currentEmber.m_FinalRasW, &currentEmber.m_FinalRasH) != 2)
 				{
 					m_ErrorReport.push_back(string(loc) + " : Invalid size attribute " + string(attStr));
 					xmlFree(attStr);
@@ -709,7 +709,7 @@ private:
 				//Loop through the attributes of the color element.
 				att = childNode->properties;
 
-				if (att == NULL)
+				if (att == nullptr)
 				{
 					m_ErrorReport.push_back(string(loc) + " : No attributes for color element");
 					continue;
@@ -775,7 +775,7 @@ private:
 				//Loop through the attributes of the color element.
 				att = childNode->properties;
 
-				if (att == NULL)
+				if (att == nullptr)
 				{
 					m_ErrorReport.push_back(string(loc) + " : No attributes for colors element");
 					continue;
@@ -821,7 +821,7 @@ private:
 				//Loop through the attributes of the palette element.
 				att = childNode->properties;
 
-				if (att == NULL)
+				if (att == nullptr)
 				{
 					m_ErrorReport.push_back(string(loc) + " : No attributes for palette element");
 					continue;
@@ -864,7 +864,7 @@ private:
 					else if (!Compare(curAtt->name, "format"))
 					{
 						newFormat = true;
-					
+
 						if (!_stricmp(attStr, "RGB"))
 							numBytes = 3;
 						else if (!_stricmp(attStr, "RGBA"))
@@ -879,7 +879,7 @@ private:
 					{
 						m_ErrorReport.push_back(string(loc) + " : Unknown palette attribute " + string((const char*)curAtt->name));
 					}
-					
+
 					xmlFree(attStr);
 				}
 
@@ -914,7 +914,7 @@ private:
 				//Loop through the attributes of the palette element.
 				att = childNode->properties;
 
-				if (att == NULL)
+				if (att == nullptr)
 				{
 					m_ErrorReport.push_back(string(loc) + " : No attributes for palette element");
 					continue;
@@ -944,7 +944,7 @@ private:
 			}
 			else if (!Compare(childNode->name, "xform") || !Compare(childNode->name, "finalxform"))
 			{
-				Xform<T>* theXform = NULL;
+				Xform<T>* theXform = nullptr;
 
 				if (!Compare(childNode->name, "finalxform"))
 				{
@@ -1033,7 +1033,7 @@ private:
 	bool ParseXform(xmlNode* childNode, Xform<T>& xform, bool motion)
 	{
 		bool success = true;
-		char* attStr, *copy;
+		char* attStr;
 		const char* loc = __FUNCTION__;
 		unsigned int j;
 		T temp;
@@ -1044,7 +1044,7 @@ private:
 		//Loop through the attributes of the xform element.
 		attPtr = childNode->properties;
 
-		if (attPtr == NULL)
+		if (attPtr == nullptr)
 		{
 			m_ErrorReport.push_back(string(loc) + " : Error: No attributes for element");
 			return false;
@@ -1052,7 +1052,7 @@ private:
 
 		for (curAtt = attPtr; curAtt; curAtt = curAtt->next)
 		{
-			copy = attStr = (char*)xmlGetProp(childNode, curAtt->name);
+			attStr = (char*)xmlGetProp(childNode, curAtt->name);
 
 			//First parse out simple float reads.
 			if (ParseAndAssignFloat(curAtt->name, attStr, "weight", xform.m_Weight, success)) { }
@@ -1095,7 +1095,6 @@ private:
 			}
 			else if (!Compare(curAtt->name, "color"))
 			{
-				T tmpc1 = 0;
 				xform.m_ColorX = xform.m_ColorY = 0;
 
 				//Try two coords first .
@@ -1141,7 +1140,7 @@ private:
 					a = d = b = e = c = f = 0;
 					m_ErrorReport.push_back(string(loc) + " : Bad coeffs attribute " + string(attStr));
 				}
-				
+
 				xform.m_Affine.A(T(a));
 				xform.m_Affine.B(T(b));
 				xform.m_Affine.C(T(c));
@@ -1167,7 +1166,6 @@ private:
 			else
 			{
 				string s = GetCorrectedVariationName(m_BadVariationNames, curAtt);
-				const char* name = s.c_str();
 
 				if (Variation<T>* var = m_VariationList.GetVariation(s))
 				{
@@ -1192,11 +1190,11 @@ private:
 
 			if (!Compare(curAtt->name, "var1"))
 			{
-				copy = attStr = (char*)xmlGetProp(childNode, curAtt->name);
+				attStr = (char*)xmlGetProp(childNode, curAtt->name);
 
 				for (j = 0; j < xform.TotalVariationCount(); j++)
 					xform.GetVariation(j)->m_Weight = 0;
-				
+
 				if (Atof(attStr, temp))
 				{
 					unsigned int iTemp = (unsigned int)temp;
@@ -1207,7 +1205,7 @@ private:
 						var1 = true;
 					}
 				}
-				
+
 				if (!var1)
 					m_ErrorReport.push_back(string(loc) + " : Bad value for var1 " + string(attStr));
 
@@ -1223,7 +1221,7 @@ private:
 
 			if (!Compare(curAtt->name, "var"))
 			{
-				copy = attStr = (char*)xmlGetProp(childNode, curAtt->name);
+				attStr = (char*)xmlGetProp(childNode, curAtt->name);
 
 				if (Atof(attStr, temp))
 				{
@@ -1232,7 +1230,7 @@ private:
 
 					var = true;
 				}
-				
+
 				if (!var)
 					m_ErrorReport.push_back(string(loc) + " : Bad value for var " + string(attStr));
 
@@ -1254,7 +1252,7 @@ private:
 					if (parVar->ContainsParam(name))
 					{
 						T val = 0;
-						copy = attStr = (char*)xmlGetProp(childNode, curAtt->name);
+						attStr = (char*)xmlGetProp(childNode, curAtt->name);
 
 						if (Atof(attStr, val))
 						{
@@ -1264,7 +1262,7 @@ private:
 						{
 							m_ErrorReport.push_back(string(loc) + " : Failed to parse parametric variation parameter " + s + " - " + string(attStr));
 						}
-		
+
 						xmlFree(attStr);
 					}
 				}
@@ -1339,7 +1337,7 @@ private:
 		{
 			if (!_stricmp(name, (const char*)temp->name))
 				return true;
-		} while (temp = temp->next);
+		} while ((temp = temp->next));
 
 		return false;
 	}
@@ -1357,13 +1355,13 @@ private:
 	{
 		int colorIndex = 0;
 		int colorCount = 0;
-		int r, g, b, a;
+		unsigned int r, g, b, a;
 		int ret;
 		char tmps[2];
 		int skip = (int)abs(chan);
 		bool ok = true;
 		const char* loc = __FUNCTION__;
-		
+
 		//Strip whitespace prior to first color.
 		while (isspace((int)colstr[colorIndex]))
 			colorIndex++;
@@ -1389,10 +1387,10 @@ private:
 			}
 
 			colorIndex += 2 * skip;
-			
+
 			while (isspace((int)colstr[colorIndex]))
 				colorIndex++;
-			
+
 			ember.m_Palette.m_Entries[colorCount].r = T(r) / T(255);//Hex palette is [0..255], convert to [0..1].
 			ember.m_Palette.m_Entries[colorCount].g = T(g) / T(255);
 			ember.m_Palette.m_Entries[colorCount].b = T(b) / T(255);
@@ -1411,7 +1409,7 @@ private:
 			m_ErrorReport.push_back(string(loc) + " : Extra data at end of hex color data " + string(&(colstr[colorIndex])));
 			ok = false;
 		}
-   
+
 		return ok;
 	}
 
@@ -1443,13 +1441,13 @@ private:
 
 				Palette<T>::RgbToHsv(glm::value_ptr(hueAdjusted0[i]), s);
 				Palette<T>::RgbToHsv(glm::value_ptr(hueAdjusted1[i]), t);
-				
+
 				s[3] = hueAdjusted0[i][3];
 				t[3] = hueAdjusted1[i][3];
-				
+
 				for (j = 0; j < 4; j++)
 					t[j] = ((1 - blend) * s[j]) + (blend * t[j]);
-				
+
 				Palette<T>::HsvToRgb(t, glm::value_ptr(palette.m_Entries[i]));
 				palette.m_Entries[i][3] = t[3];
 			}
@@ -1518,7 +1516,7 @@ private:
 		}
 
 		return ret;
-	}	
+	}
 
 	static bool m_Init;
 	static vector<pair<string, string>> m_BadParamNames;

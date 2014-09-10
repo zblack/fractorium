@@ -119,7 +119,7 @@ public:
 	virtual void EarlyClip(bool earlyClip) { }
 	virtual bool YAxisUp() const { return false; }
 	virtual void YAxisUp(bool yup) { }
-	virtual void ThreadCount(unsigned int threads, const char* seedString = NULL) { }
+	virtual void ThreadCount(unsigned int threads, const char* seedString = nullptr) { }
 	virtual void Transparency(bool transparency) { }
 	virtual void InteractiveFilter(eInteractiveFilter filter) { }
 	virtual unsigned int FinalRasW()       const { return 0; }
@@ -141,7 +141,7 @@ public:
 	virtual EmberStats     Stats() 		   const { EmberStats stats; return stats; }
 	virtual eRenderStatus Run(vector<unsigned char>& finalImage, double time = 0, unsigned int subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) { return RENDER_ERROR; }
 	virtual EmberImageComments ImageComments(unsigned int printEditDepth = 0, bool intPalette = false, bool hexPalette = true) { EmberImageComments comments; return comments; }
-	virtual DensityFilterBase* GetDensityFilter() { return NULL; }
+	virtual DensityFilterBase* GetDensityFilter() { return nullptr; }
 };
 
 /// <summary>
@@ -204,7 +204,7 @@ public:
 	virtual void NumChannels(unsigned int numChannels);
 	virtual eRendererType RendererType() const;
 	virtual unsigned int ThreadCount() const;
-	virtual void ThreadCount(unsigned int threads, const char* seedString = NULL);
+	virtual void ThreadCount(unsigned int threads, const char* seedString = nullptr);
 	virtual void Callback(RenderCallback* callback);
 
 protected:
@@ -341,7 +341,7 @@ protected:
 private:
 	//Miscellaneous functions used only in this class.
 	void Accumulate(Point<T>* samples, unsigned int sampleCount, const Palette<bucketT>* palette);
-	inline void AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, int i, int ii, int j, int jj);
+	/*inline*/ void AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, int i, int ii, int j, int jj);
 	template <typename accumT> void GammaCorrection(glm::detail::tvec4<bucketT, glm::defaultp>& bucket, Color<T>& background, T g, T linRange, T vibrancy, bool doAlpha, bool scale, accumT* correctedChannels);
 
 protected:
@@ -395,14 +395,14 @@ protected:
 	CarToRas<T> m_CarToRas;
 	RenderCallback* m_Callback;
 	Iterator<T>* m_Iterator;
-	auto_ptr<StandardIterator<T>> m_StandardIterator;
-	auto_ptr<XaosIterator<T>> m_XaosIterator;
+	unique_ptr<StandardIterator<T>> m_StandardIterator;
+	unique_ptr<XaosIterator<T>> m_XaosIterator;
 	Palette<bucketT> m_Dmap;
 	vector<glm::detail::tvec4<bucketT, glm::defaultp>> m_HistBuckets;
 	vector<glm::detail::tvec4<bucketT, glm::defaultp>> m_AccumulatorBuckets;
-	auto_ptr<SpatialFilter<T>> m_SpatialFilter;
-	auto_ptr<TemporalFilter<T>> m_TemporalFilter;
-	auto_ptr<DensityFilter<T>> m_DensityFilter;
+	unique_ptr<SpatialFilter<T>> m_SpatialFilter;
+	unique_ptr<TemporalFilter<T>> m_TemporalFilter;
+	unique_ptr<DensityFilter<T>> m_DensityFilter;
 	vector<vector<Point<T>>> m_Samples;
 	vector<uint64_t> m_SubBatch;
 	vector<uint64_t> m_BadVals;

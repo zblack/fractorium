@@ -1748,7 +1748,7 @@ double RandD(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int i;
+	//int i;
 	Timing t(4);
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
 

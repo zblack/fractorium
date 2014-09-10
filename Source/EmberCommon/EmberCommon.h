@@ -84,7 +84,7 @@ private:
 /// <returns>True if success, else false.</returns>
 template <typename T>
 static bool ParseEmberFile(XmlToEmber<T>& parser, string filename, vector<Ember<T>>& embers)
-{	
+{
 	if (!parser.Parse(filename.c_str(), embers))
 	{
 		cout << "Error parsing flame file " << filename << ", returning without executing." << endl;
@@ -109,7 +109,7 @@ static bool ParseEmberFile(XmlToEmber<T>& parser, string filename, vector<Ember<
 /// <returns>True if success, else false.</returns>
 template <typename T>
 static bool InitPaletteList(string filename)
-{	
+{
 	PaletteList<T> paletteList;//Even though this is local, the members are static so they will remain.
 
 	if (!paletteList.Init(filename))
@@ -120,6 +120,25 @@ static bool InitPaletteList(string filename)
 	}
 
 	return true;
+}
+
+/// <summary>
+/// Convert an RGBA buffer to an RGB buffer.
+/// </summary>
+/// <param name="rgba">The RGBA buffer</param>
+/// <param name="rgb">The RGB buffer</param>
+/// <param name="width">The width of the image in pixels</param>
+/// <param name="height">The height of the image in pixels</param>
+static void RgbaToRgb(vector<unsigned char>& rgba, vector<unsigned char>& rgb, unsigned int width, unsigned int height)
+{
+	rgb.resize(width * height * 3);
+
+	for (unsigned int i = 0, j = 0; i < (width * height * 4); i += 4, j += 3)
+	{
+		rgb[j]	   = rgba[i];
+		rgb[j + 1] = rgba[i + 1];
+		rgb[j + 2] = rgba[i + 2];
+	}
 }
 
 /// <summary>

@@ -211,6 +211,7 @@ public:
 
 				break;
 			case 2:
+			default:
 				x = m_Weight * p;
 				y = m_Weight * q;
 				z = m_Weight * (j ? -1 : 1);

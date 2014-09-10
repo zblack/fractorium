@@ -309,7 +309,7 @@ bool EmberRender(EmberOptions& opt)
 
 				if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
 				{
-					EmberNs::RgbaToRgb(finalImage, vecRgb, renderer->FinalRasW(), realHeight);
+					RgbaToRgb(finalImage, vecRgb, renderer->FinalRasW(), realHeight);
 
 					finalImagep = vecRgb.data();
 				}

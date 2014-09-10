@@ -374,25 +374,25 @@ public:
 	/// Get a pointer to the variation at the specified index.
 	/// </summary>
 	/// <param name="index">The index in the list to retrieve</param>
-	/// <returns>A pointer to the variation at the index if in range, else NULL.</returns>
-	Variation<T>* GetVariation(size_t index) { return index < m_Variations.size() ? m_Variations[index] : NULL; }
+	/// <returns>A pointer to the variation at the index if in range, else nullptr.</returns>
+	Variation<T>* GetVariation(size_t index) { return index < m_Variations.size() ? m_Variations[index] : nullptr; }
 
 	/// <summary>
 	/// Get a pointer to the variation of a specified type at the specified index.
 	/// </summary>
 	/// <param name="index">The index in the list to retrieve</param>
 	/// <param name="varType">The type of variation to retrieve</param>
-	/// <returns>A pointer to the variation of the specified type at the index if in range, else NULL.</returns>
+	/// <returns>A pointer to the variation of the specified type at the index if in range, else nullptr.</returns>
 	Variation<T>* GetVariation(size_t index, eVariationType varType)
 	{
 		if (varType == VARTYPE_REG)
-			return index < m_RegVariations.size() ? m_RegVariations[index] : NULL;
+			return index < m_RegVariations.size() ? m_RegVariations[index] : nullptr;
 		else if (varType == VARTYPE_PRE)
-			return index < m_PreVariations.size() ? m_PreVariations[index] : NULL;
+			return index < m_PreVariations.size() ? m_PreVariations[index] : nullptr;
 		else if (varType == VARTYPE_POST)
-			return index < m_PostVariations.size() ? m_PostVariations[index] : NULL;
+			return index < m_PostVariations.size() ? m_PostVariations[index] : nullptr;
 		else
-			return NULL;
+			return nullptr;
 	}
 
 	/// <summary>
@@ -401,7 +401,7 @@ public:
 	/// </summary>
 	/// <param name="index">The index in the list to make a copy of</param>
 	/// <param name="weight">The weight to assign the new copy. Default: 1</param>
-	/// <returns>A pointer to the variation at the index if in range, else NULL.</returns>
+	/// <returns>A pointer to the variation at the index if in range, else nullptr.</returns>
 	Variation<T>* GetVariationCopy(size_t index, T weight = 1) { return MakeCopyWithWeight(GetVariation(index), weight); }
 	Variation<T>* GetVariationCopy(size_t index, eVariationType varType, T weight = 1) { return MakeCopyWithWeight(GetVariation(index, varType), weight); }
 
@@ -409,14 +409,14 @@ public:
 	/// Get a pointer to the variation with the specified ID.
 	/// </summary>
 	/// <param name="id">The ID to search for</param>
-	/// <returns>A pointer to the variation if found, else NULL.</returns>
+	/// <returns>A pointer to the variation if found, else nullptr.</returns>
 	Variation<T>* GetVariation(eVariationId id)
 	{
-		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != NULL; i++)
+		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (id == m_Variations[i]->VariationId())
 				return m_Variations[i];
 
-		return NULL;
+		return nullptr;
 	}
 
 	/// <summary>
@@ -425,21 +425,21 @@ public:
 	/// </summary>
 	/// <param name="id">The id of the variation in the list to make a copy of</param>
 	/// <param name="weight">The weight to assign the new copy. Default: 1</param>
-	/// <returns>A pointer to the variation with a matching ID, else NULL.</returns>
+	/// <returns>A pointer to the variation with a matching ID, else nullptr.</returns>
 	Variation<T>* GetVariationCopy(eVariationId id, T weight = 1) { return MakeCopyWithWeight(GetVariation(id), weight); }
 
 	/// <summary>
 	/// Get a pointer to the variation with the specified name.
 	/// </summary>
 	/// <param name="name">The name to search for</param>
-	/// <returns>A pointer to the variation if found, else NULL.</returns>
-	Variation<T>* GetVariation(string name)
+	/// <returns>A pointer to the variation if found, else nullptr.</returns>
+	Variation<T>* GetVariation(string& name)
 	{
-		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != NULL; i++)
+		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_Variations[i]->Name().c_str()))
 				return m_Variations[i];
-		
-		return NULL;
+
+		return nullptr;
 	}
 
 	/// <summary>
@@ -448,7 +448,7 @@ public:
 	/// </summary>
 	/// <param name="name">The name of the variation in the list to make a copy of</param>
 	/// <param name="weight">The weight to assign the new copy. Default: 1</param>
-	/// <returns>A pointer to the variation with a matching name, else NULL.</returns>
+	/// <returns>A pointer to the variation with a matching name, else nullptr.</returns>
 	Variation<T>* GetVariationCopy(string name, T weight = 1) { return MakeCopyWithWeight(GetVariation(name), weight); }
 
 	/// <summary>
@@ -456,21 +456,21 @@ public:
 	/// Note this is the index in the parametric variations list, not in the master list.
 	/// </summary>
 	/// <param name="index">The index in the parametric variations list to retrieve</param>
-	/// <returns>The parametric variation at the index specified if in range, else NULL.</returns>
-	ParametricVariation<T>* GetParametricVariation(size_t index) { return index < m_ParametricVariations.size() ? m_ParametricVariations[index] : NULL; }
-	
+	/// <returns>The parametric variation at the index specified if in range, else nullptr.</returns>
+	ParametricVariation<T>* GetParametricVariation(size_t index) { return index < m_ParametricVariations.size() ? m_ParametricVariations[index] : nullptr; }
+
 	/// <summary>
 	/// Get a parametric variation with the specified name.
 	/// </summary>
 	/// <param name="name">The name of the variation in the parametric variations list to retrieve</param>
-	/// <returns>The parametric variation with a matching name, else NULL.</returns>
+	/// <returns>The parametric variation with a matching name, else nullptr.</returns>
 	ParametricVariation<T>* GetParametricVariation(string name)
 	{
-		for (unsigned int i = 0; i < m_ParametricVariations.size() && m_ParametricVariations[i] != NULL; i++)
+		for (unsigned int i = 0; i < m_ParametricVariations.size() && m_ParametricVariations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_ParametricVariations[i]->Name().c_str()))
 				return m_ParametricVariations[i];
-		
-		return NULL;
+
+		return nullptr;
 	}
 
 	/// <summary>
@@ -480,10 +480,10 @@ public:
 	/// <returns>The index of the variation with the matching name, else -1</returns>
 	int GetVariationIndex(string name)
 	{
-		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != NULL; i++)
+		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_Variations[i]->Name().c_str()))
 				return i;
-		
+
 		return -1;
 	}
 
@@ -503,7 +503,7 @@ private:
 	/// </summary>
 	/// <param name="var">The variation to copy</param>
 	/// <param name="weight">The weight to assign it</param>
-	/// <returns>A pointer to the new variation copy if success, else NULL.</returns>
+	/// <returns>A pointer to the new variation copy if success, else nullptr.</returns>
 	Variation<T>* MakeCopyWithWeight(Variation<T>* var, T weight)
 	{
 		if (var)
@@ -514,7 +514,7 @@ private:
 			return var2;
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	/// <summary>

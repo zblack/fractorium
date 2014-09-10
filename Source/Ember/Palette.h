@@ -44,7 +44,7 @@ public:
 		m_Name = name;
 		m_Index = index;
 		m_Entries.resize(size);
-		
+
 		if (xmlPaletteEntries)
 		{
 			memcpy(&m_Entries[0], xmlPaletteEntries, Size() * sizeof(m_Entries[0]));
@@ -113,6 +113,14 @@ public:
 	Palette(const Palette<U>& palette)
 	{
 		Palette<T>::operator=<U>(palette);
+	}
+
+	/// <summary>
+	/// Empty destructor.
+	/// Needed to eliminate warnings about inlining.
+	/// </summary>
+	~Palette()
+	{
 	}
 
 	/// <summary>
@@ -197,16 +205,16 @@ public:
 		palette.m_Index = m_Index;
 		palette.m_Name = m_Name;
 		palette.m_Entries.resize(Size());
-		
+
 		for (unsigned int i = 0; i < Size(); i++)
 		{
 			size_t ii = (i * 256) / COLORMAP_LENGTH;
 			T rgb[3], hsv[3];
-			
+
 			rgb[0] = m_Entries[ii].r;
 			rgb[1] = m_Entries[ii].g;
 			rgb[2] = m_Entries[ii].b;
-			
+
 			RgbToHsv(rgb, hsv);
 			hsv[0] += hue * T(6.0);
 			HsvToRgb(hsv, rgb);
@@ -264,7 +272,7 @@ public:
 		for (size_t i = 0; i < Size(); i++)
 		{
 			size_t ii = (i * 256) / COLORMAP_LENGTH;
-			
+
 			rgb[0] = palette[(COLORMAP_LENGTH + ii - rot) % COLORMAP_LENGTH].r;//Rotation.
 			rgb[1] = palette[(COLORMAP_LENGTH + ii - rot) % COLORMAP_LENGTH].g;
 			rgb[2] = palette[(COLORMAP_LENGTH + ii - rot) % COLORMAP_LENGTH].b;
@@ -284,7 +292,7 @@ public:
 			palette[i].r = rgb[0];
 			palette[i].g = rgb[1];
 			palette[i].b = rgb[2];
-			palette[i].a = 1;			
+			palette[i].a = 1;
 		}
 
 		if (blur > 0)
@@ -445,7 +453,7 @@ public:
 		p = v * (1 - s);
 		q = v * (1 - (s * f));
 		t = v * (1 - (s * (1 - f)));
-   
+
 		switch (j)
 		{
 			case 0:  r = v;  g = t;  b = p;  break;
@@ -481,7 +489,7 @@ public:
 	{
 		T frac, alpha;
 		T funcval = pow(linrange, gamma);
-   
+
 		if (density > 0)
 		{
 			if (density < linrange)
@@ -494,7 +502,7 @@ public:
 		}
 		else
 			alpha = 0;
-	  
+
 		return alpha;
 	}
 
@@ -534,7 +542,7 @@ public:
 		{
 			newls = T(255.0) / maxc;
 			lsratio = pow(newls / ls, highPow);
-			
+
 			//Calculate the max-value color (ranged 0 - 1).
 			for (rgbi = 0; rgbi < 3; rgbi++)
 				newRgb[rgbi] = (bucketT)newls * cBuf[rgbi] / bucketT(255.0);
@@ -551,7 +559,7 @@ public:
 		{
 			newls = T(255.0) / maxc;
 			adjustedHighlight = -highPow;
-			
+
 			if (adjustedHighlight > 1)
 				adjustedHighlight = 1;
 

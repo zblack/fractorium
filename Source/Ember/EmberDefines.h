@@ -14,7 +14,7 @@
 	#endif
 #else
 	#define EMBER_API
-	#define fopen_s(pFile,filename,mode) ((*(pFile))=fopen((filename),(mode)))==NULL
+	#define fopen_s(pFile,filename,mode) ((*(pFile)=fopen((filename),(mode)))==nullptr)
 	#define _stat stat
 	#define _fstat fstat
 	#define _stricmp strcmp

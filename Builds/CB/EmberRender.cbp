@@ -161,18 +161,18 @@
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="../../EmberCommon/EmberCommon.h" />
-		<Unit filename="../../EmberCommon/EmberCommonPch.cpp" />
-		<Unit filename="../../EmberCommon/EmberCommonPch.h" />
-		<Unit filename="../../EmberCommon/EmberOptions.h" />
-		<Unit filename="../../EmberCommon/JpegUtils.h" />
-		<Unit filename="../../EmberCommon/SimpleGlob.h" />
-		<Unit filename="../../EmberCommon/SimpleOpt.h" />
-		<Unit filename="../../EmberRender/EmberRender.cpp" />
-		<Unit filename="../../EmberRender/EmberRender.h" />
 		<Unit filename="../../EmberRender/EmberRender.rc" />
-		<Unit filename="../../EmberRender/resource.h" />
 		<Unit filename="../../Fractorium/Icons/Fractorium.ico" />
+		<Unit filename="../../Source/EmberCommon/EmberCommon.h" />
+		<Unit filename="../../Source/EmberCommon/EmberCommonPch.cpp" />
+		<Unit filename="../../Source/EmberCommon/EmberCommonPch.h" />
+		<Unit filename="../../Source/EmberCommon/EmberOptions.h" />
+		<Unit filename="../../Source/EmberCommon/JpegUtils.h" />
+		<Unit filename="../../Source/EmberCommon/SimpleGlob.h" />
+		<Unit filename="../../Source/EmberCommon/SimpleOpt.h" />
+		<Unit filename="../../Source/EmberRender/EmberRender.cpp" />
+		<Unit filename="../../Source/EmberRender/EmberRender.h" />
+		<Unit filename="../../Source/EmberRender/resource.h" />
 		<Unit filename="ReadMe.txt" />
 		<Extensions>
 			<code_completion />

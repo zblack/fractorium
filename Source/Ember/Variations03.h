@@ -1964,7 +1964,6 @@ public:
 	{
 		T sinX = sin(helper.In.x);
 		T cosX = cos(helper.In.x);
-		T sinY = sin(helper.In.y);
 		T cosY = cos(helper.In.y);
 		T bx = Cube(cosX*cosY);
 		T by = Cube(sinX*cosY);

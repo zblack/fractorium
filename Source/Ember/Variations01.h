@@ -727,7 +727,7 @@ public:
 
 	virtual void Precalc() override
 	{
-		if (m_Xform)//If this variation exists by itself and hasn't been added to an xform yet, m_Xform will be NULL.
+		if (m_Xform)//If this variation exists by itself and hasn't been added to an xform yet, m_Xform will be nullptr.
 		{
 			T dx = m_Xform->m_Affine.C();
 			T dy = m_Xform->m_Affine.F();
@@ -4674,7 +4674,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string invWeight = "parVars[" + ToUpper(m_Params[i++].Name()) + index;

@@ -347,7 +347,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 
@@ -1925,7 +1925,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string repeat  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -4435,7 +4435,6 @@ public:
 	{
 		T c0 = helper.In.x * m_Vpi;
 		T c1 = helper.In.y * m_Vpi;
-		T c2 = helper.In.z * m_Vpi;
 		T sinc0, cosc0, sinc1, cosc1;
 
 		sincos(c0, &sinc0, &cosc0);
@@ -4449,7 +4448,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string zscale = "parVars[" + ToUpper(m_Params[i++].Name())  + index;
@@ -4458,7 +4457,6 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t c0 = vIn.x * " << vpi << ";\n"
 		   << "\t\treal_t c1 = vIn.y * " << vpi << ";\n"
-		   << "\t\treal_t c2 = vIn.z * " << vpi << ";\n"
 		   << "\n"
 		   << "\t\treal_t sinc0 = sin(c0);\n"
 		   << "\t\treal_t cosc0 = cos(c0);\n"

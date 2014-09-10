@@ -57,7 +57,7 @@ public:
 	/// <summary>
 	/// Accessors.
 	/// </summary>
-	const unsigned char* XformDistributions() const { return m_XformDistributions.empty() ? NULL : &m_XformDistributions[0]; }
+	const unsigned char* XformDistributions() const { return m_XformDistributions.empty() ? nullptr : &m_XformDistributions[0]; }
 	const unsigned int   XformDistributionsSize() const { return (unsigned int)m_XformDistributions.size(); }
 
 	/// <summary>
@@ -70,7 +70,7 @@ public:
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
 	virtual unsigned int Iterate(Ember<T>& ember, unsigned int count, unsigned int skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { return 0; }
-	
+
 	/// <summary>
 	/// Initialize the xform selection vector by normalizing the weights of all xforms and
 	/// setting the corresponding percentage of elements in the vector to each xform's index in its
@@ -103,7 +103,7 @@ public:
 			for (i = 0; i < ember.XformCount(); i++)
 			{
 				T d = xforms[i].m_Weight;
-					 
+
 				if (distrib > 0)
 					d *= xforms[distrib - 1].Xaos(i);
 
@@ -124,12 +124,12 @@ public:
 			for (i = 0; i < ember.XformCount(); i++)
 			{
 				T temp = xforms[i].m_Weight;
-			
+
 				if (distrib > 0)
 					temp *= xforms[distrib - 1].Xaos(i);
-			
+
 				currentDensityLimit += temp;
-			
+
 				//Populate points corresponding to this xform's weight/density.
 				//Also check that j is within the bounds of the distribution array just to be safe in the case of a rounding error.
 				while (tempDensity < currentDensityLimit && j < CHOOSE_XFORM_GRAIN)
@@ -169,7 +169,7 @@ public:
 		return true;
 	}
 
-protected:	
+protected:
 	/// <summary>
 	/// When iterating, if the computed location of the point is either very close to zero, or very close to infinity,
 	/// it's considered a bad value. In that case, a new random input point is fed into a new randomly chosen xform. This
@@ -240,7 +240,7 @@ protected:
 
 	/// <summary>
 	/// Retrieve an element in the distributions vector between 0 and CHOOSE_XFORM_GRAIN which will
-	/// contain the index of the next xform to use. When xaos is prsent, the offset is the index in 
+	/// contain the index of the next xform to use. When xaos is prsent, the offset is the index in
 	/// the ember of the previous xform used when.
 	/// </summary>
 	/// <param name="index">The index to retrieve</param>
@@ -344,7 +344,7 @@ public:
 				}
 
 				DoFinalXform(ember, p1, samples, rand);//Apply to last fuse point and store as the first element in samples.
-				
+
 				for (i = 1; i < count; i++)//Real loop.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))//Feed the resulting value of applying the randomly selected xform back into the next iter, and not the result of applying the final xform.
@@ -405,7 +405,7 @@ public:
 	{
 		unsigned int consec = 0;
 		Point<T> firstBadPoint;
-		
+
 		while (consec < 5)
 		{
 			consec++;
@@ -468,11 +468,11 @@ public:
 
 				DoFinalXform(ember, p1, samples, rand);//Apply to last fuse point and store as the first element in samples.
 				ember.Proj(samples[0], rand);
-				
+
 				for (i = 1; i < count; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
-			
+
 					if (xforms[xformIndex].Apply(&p1, &p1, rand))//Feed the resulting value of applying the randomly selected xform back into the next iter, and not the result of applying the final xform.
 						DoBadVals(xforms, xformIndex, lastXformUsed, badVals, &p1, rand);
 
@@ -520,7 +520,7 @@ public:
 				for (i = 0; i < skip; i++)//Fuse.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
-			
+
 					if (xforms[xformIndex].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, xformIndex, lastXformUsed, badVals, &p1, rand);
 
@@ -532,7 +532,7 @@ public:
 				for (i = 1; i < count; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
-			
+
 					if (xforms[xformIndex].Apply(&p1, &p1, rand))//Feed the resulting value of applying the randomly selected xform back into the next iter, and not the result of applying the final xform.
 						DoBadVals(xforms, xformIndex, lastXformUsed, badVals, &p1, rand);
 
@@ -547,7 +547,7 @@ public:
 				for (i = 0; i < skip; i++)//Fuse.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
-			
+
 					if (xforms[xformIndex].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, xformIndex, lastXformUsed, badVals, &p1, rand);
 
@@ -559,7 +559,7 @@ public:
 				for (i = 0; i < count - 1; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
-			
+
 					if (xforms[xformIndex].Apply(samples + i, samples + i + 1, rand))
 						DoBadVals(xforms, xformIndex, lastXformUsed, badVals, samples + i + 1, rand);
 

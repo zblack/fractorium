@@ -698,7 +698,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string rxSin = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -783,7 +783,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string rySin = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -865,7 +865,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string rzSin = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -1549,6 +1549,7 @@ public:
 				r = (rand.Rand((ISAAC_INT)m_Slices) + m_YThickness + rand.Frand01<T>() * (1 - m_YThickness)) / m_Slices;
 				break;
 			case 4:
+			default:
 				a = (rand.Rand((ISAAC_INT)m_Slices) + m_XThickness + rand.Frand01<T>() * (1 - m_XThickness)) / m_Slices;
 				r = rand.Frand01<T>();
 				break;
@@ -1562,7 +1563,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string slices     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2830,7 +2831,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string thetaPeriod = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3209,7 +3210,7 @@ public:
 		T c = cos(absV);
 		T sh = sinh(helper.In.x);
 		T ch = cosh(helper.In.x);
-		T d = m_Weight * c * sh / absV;
+		T d = m_Weight * ch * s / absV;
 
 		helper.Out.x = m_Weight * sh * c;
 		helper.Out.y = d * helper.In.y;
@@ -3227,7 +3228,7 @@ public:
 		   << "\t\treal_t c = cos(absV);\n"
 		   << "\t\treal_t sh = sinh(vIn.x);\n"
 		   << "\t\treal_t ch = cosh(vIn.x);\n"
-		   << "\t\treal_t d = xform->m_VariationWeights[" << varIndex << "] * c * sh / absV;\n"
+		   << "\t\treal_t d = xform->m_VariationWeights[" << varIndex << "] * ch * s / absV;\n"
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * sh * c;\n"
 		   << "\t\tvOut.y = d * vIn.y;\n"
@@ -4238,7 +4239,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		int i = 0;
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string extended    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;

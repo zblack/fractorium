@@ -23,11 +23,11 @@ Renderer<T, bucketT>::Renderer()
 	m_PixelAspectRatio = 1;
 	m_Transparency = false;
 	ThreadCount(Timing::ProcessorCount());
-	m_StandardIterator = auto_ptr<StandardIterator<T>>(new StandardIterator<T>());
-	m_XaosIterator = auto_ptr<XaosIterator<T>>(new XaosIterator<T>());
+	m_StandardIterator = unique_ptr<StandardIterator<T>>(new StandardIterator<T>());
+	m_XaosIterator = unique_ptr<XaosIterator<T>>(new XaosIterator<T>());
 	m_Iterator = m_StandardIterator.get();
-	m_Callback = NULL;
-	m_ProgressParameter = NULL;
+	m_Callback = nullptr;
+	m_ProgressParameter = nullptr;
 	m_LastPass = 0;
 	m_LastTemporalSample = 0;
 	m_LastIter = 0;
@@ -60,7 +60,7 @@ void Renderer<T, bucketT>::ComputeBounds()
 	m_GutterWidth = ClampGte((m_SpatialFilter->FinalFilterWidth() - Supersample()) / 2, 0u);
 
 	//Check the size of the density estimation filter.
-	//If the radius of the density estimation filter is greater than the          
+	//If the radius of the density estimation filter is greater than the
 	//gutter width, have to pad with more.  Otherwise, use the same value.
 	for (unsigned int i = 0; i < m_Embers.size(); i++)
 		maxDEFilterWidth = max((unsigned int)(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
@@ -130,7 +130,7 @@ void Renderer<T, bucketT>::ChangeVal(std::function<void (void)> func, eProcessAc
 	Abort();
 	EnterRender();
 	func();
-	
+
 	//If they want a full render, don't bother inspecting process state, just start over.
 	if (action == FULL_RENDER)
 	{
@@ -138,7 +138,7 @@ void Renderer<T, bucketT>::ChangeVal(std::function<void (void)> func, eProcessAc
 		m_ProcessAction = FULL_RENDER;
 	}
 	//Keep iterating is when rendering has completed and the user increases the quality.
-	//Rendering can be started where it left off by adding just the difference between the 
+	//Rendering can be started where it left off by adding just the difference between the
 	//new and old quality values.
 	else if (action == KEEP_ITERATING)
 	{
@@ -190,7 +190,7 @@ void Renderer<T, bucketT>::ChangeVal(std::function<void (void)> func, eProcessAc
 			m_ProcessAction = ACCUM_ONLY;
 		}
 	}
-		
+
 	LeaveRender();
 }
 
@@ -209,7 +209,7 @@ template <typename T, typename bucketT>
 void Renderer<T, bucketT>::SetEmber(Ember<T>& ember, eProcessAction action)
 {
 	ChangeVal([&]
-	{ 
+	{
 		m_Embers.clear();
 		m_Embers.push_back(ember);
 		m_Embers[0].m_TemporalSamples = 1;//Set temporal samples here to 1 because using the real value only makes sense when using a vector of Embers for animation.
@@ -256,7 +256,7 @@ void Renderer<T, bucketT>::AddEmber(Ember<T>& ember)
 /// from the last temporal filter created.
 /// </summary>
 /// <param name="newAlloc">True if a new filter instance was created, else false.</param>
-/// <returns>True if the filter is not NULL (whether a new one was created or not), else false.</returns>
+/// <returns>True if the filter is not nullptr (whether a new one was created or not), else false.</returns>
 template <typename T, typename bucketT>
 bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 {
@@ -270,12 +270,12 @@ bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 		(m_Ember.m_TemporalFilterWidth != m_TemporalFilter->FilterWidth()) ||
 		(m_Ember.m_TemporalFilterExp != m_TemporalFilter->FilterExp()))
 	{
-		m_TemporalFilter = auto_ptr<TemporalFilter<T>>(
+		m_TemporalFilter = unique_ptr<TemporalFilter<T>>(
 							TemporalFilterCreator<T>::Create(m_Ember.m_TemporalFilterType, m_Ember.m_Passes, m_Ember.m_TemporalSamples, m_Ember.m_TemporalFilterWidth, m_Ember.m_TemporalFilterExp));
 		newAlloc = true;
 	}
 
-	return m_TemporalFilter.get() != NULL;
+	return m_TemporalFilter.get() != nullptr;
 }
 
 /// <summary>
@@ -363,7 +363,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	bool accumOnly = m_ProcessAction == ACCUM_ONLY;
 	bool resume = m_ProcessState != NONE;
 	bool newFilterAlloc;
-	unsigned int temporalSample, pass;
+	unsigned int temporalSample = 0, pass;
 	T deTime;
 	eRenderStatus success = RENDER_OK;
 	//double iterationTime = 0;
@@ -419,10 +419,10 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 		m_Vibrancy = m_Ember.m_Vibrancy;
 		m_Gamma = m_Ember.m_Gamma;
 		m_Background = m_Ember.m_Background;
-			
+
 		if (filterAndAccumOnly)
 			goto FilterAndAccum;
-		
+
 		if (accumOnly)
 			goto AccumOnly;
 	}
@@ -442,7 +442,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	CreateTemporalFilter(newFilterAlloc);
 	ComputeBounds();
 
-	if (m_SpatialFilter.get() == NULL || m_TemporalFilter.get() == NULL)
+	if (m_SpatialFilter.get() == nullptr || m_TemporalFilter.get() == nullptr)
 	{
 		m_ErrorReport.push_back("Spatial and temporal filter allocations failed, aborting.\n");
 		success = RENDER_ERROR;
@@ -509,7 +509,6 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 			//The actual number of times to iterate. Each thread will get (totalIters / ThreadCount) iters to do.
 			//This is based on zoom and scale calculated in ComputeCamera().
 			//Note that the iter count is based on the final image dimensions, and not the super sampled dimensions.
-			uint64_t totalIterCount = TotalIterCount();
 			uint64_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample in this pass without overrides.
 			uint64_t sampleItersToDo;//The number of iterations to actually do in this sample in this pass, considering overrides.
 
@@ -596,7 +595,7 @@ FilterAndAccum:
 			}
 			else
 				m_K2 = (Supersample() * Supersample() * Passes()) / (area * m_ScaledQuality * m_TemporalFilter->SumFilt());
-				
+
 			if (filterAndAccumOnly || pass == 0)
 				ResetBuckets(false, true);//Only the histogram was reset above, now reset the density filtering buffer.
 			//t.Tic();
@@ -645,7 +644,7 @@ FilterAndAccum:
 		//Also skip if rendering jumped straight here after completely finishing beforehand.
 		if (!filterAndAccumOnly && temporalSample >= TemporalSamples())//This may not work if filtering was prematurely exited.
 			pass++;
-		
+
 		if (!filterAndAccumOnly)
 			m_LastPass = pass;
 
@@ -662,14 +661,14 @@ AccumOnly:
 			success = RENDER_ABORT;
 			goto Finish;
 		}
-		
+
 		//Make sure a filter has been created.
 		CreateSpatialFilter(newFilterAlloc);
 
 		if (AccumulatorToFinalImage(finalImage, finalOffset) == RENDER_OK)
 		{
 			m_Stats.m_RenderMs = m_RenderTimer.Toc();//Record total time from the very beginning to the very end, including all intermediate calls.
-		
+
 			//Even though the ember changes throughought the inner loops because of interpolation, it's probably ok to assign here.
 			//This will hold the last interpolated value (even though spatial and temporal filters were created based off of one of the first interpolated values).
 			m_LastEmber = m_Ember;
@@ -786,7 +785,7 @@ uint64_t Renderer<T, bucketT>::MemoryAvailable()
 		static int mib[2] = { CTL_HW, HW_PHYSMEM };
 	#endif
 
-	if (sysctl(mib, 2, &physmem, &len, NULL, 0) == 0 && len == sizeof(physmem))
+	if (sysctl(mib, 2, &physmem, &len, nullptr, 0) == 0 && len == sizeof(physmem))
 	{
 		memAvailable = physmem;
 	}
@@ -840,7 +839,7 @@ bool Renderer<T, bucketT>::Ok() const
 /// log scale filtering will be used.
 /// </summary>
 /// <param name="newAlloc">True if a new filter instance was created, else false.</param>
-/// <returns>True if the filter is not NULL (whether a new one was created or not) or if max rad is 0, else false.</returns>
+/// <returns>True if the filter is not nullptr (whether a new one was created or not) or if max rad is 0, else false.</returns>
 template <typename T, typename bucketT>
 bool Renderer<T, bucketT>::CreateDEFilter(bool& newAlloc)
 {
@@ -856,7 +855,7 @@ bool Renderer<T, bucketT>::CreateDEFilter(bool& newAlloc)
 			(m_Ember.m_CurveDE != m_DensityFilter->Curve()) ||
 			(m_Ember.m_Supersample != m_DensityFilter->Supersample()))
 		{
-			m_DensityFilter = auto_ptr<DensityFilter<T>>(new DensityFilter<T>(m_Ember.m_MinRadDE, m_Ember.m_MaxRadDE, m_Ember.m_CurveDE, m_Ember.m_Supersample));
+			m_DensityFilter = unique_ptr<DensityFilter<T>>(new DensityFilter<T>(m_Ember.m_MinRadDE, m_Ember.m_MaxRadDE, m_Ember.m_CurveDE, m_Ember.m_Supersample));
 			newAlloc = true;
 		}
 
@@ -882,7 +881,7 @@ bool Renderer<T, bucketT>::CreateDEFilter(bool& newAlloc)
 /// from the last spatial filter created.
 /// </summary>
 /// <param name="newAlloc">True if a new filter instance was created, else false.</param>
-/// <returns>True if the filter is not NULL (whether a new one was created or not), else false.</returns>
+/// <returns>True if the filter is not nullptr (whether a new one was created or not), else false.</returns>
 template <typename T, typename bucketT>
 bool Renderer<T, bucketT>::CreateSpatialFilter(bool& newAlloc)
 {
@@ -895,12 +894,12 @@ bool Renderer<T, bucketT>::CreateSpatialFilter(bool& newAlloc)
 		(m_Ember.m_Supersample != m_SpatialFilter->Supersample()) ||
 		(m_PixelAspectRatio != m_SpatialFilter->PixelAspectRatio()))
 	{
-		m_SpatialFilter = auto_ptr<SpatialFilter<T>>(
+		m_SpatialFilter = unique_ptr<SpatialFilter<T>>(
 							SpatialFilterCreator<T>::Create(m_Ember.m_SpatialFilterType, m_Ember.m_SpatialFilterRadius, m_Ember.m_Supersample, m_PixelAspectRatio));
 		newAlloc = true;
 	}
 
-	return m_SpatialFilter.get() != NULL;
+	return m_SpatialFilter.get() != nullptr;
 }
 
 /// <summary>
@@ -972,7 +971,7 @@ unsigned int Renderer<T, bucketT>::ThreadCount() const { return m_ThreadsToUse; 
 /// Reset the rendering process.
 /// </summary>
 /// <param name="threads">The number of threads to use</param>
-/// <param name="seedString">The seed string to use if threads is 1. Default: NULL.</param>
+/// <param name="seedString">The seed string to use if threads is 1. Default: nullptr.</param>
 template <typename T, typename bucketT>
 void Renderer<T, bucketT>::ThreadCount(unsigned int threads, const char* seedString)
 {
@@ -1194,7 +1193,7 @@ eRenderStatus Renderer<T, bucketT>::LogScaleDensityFilter()
 		parallel_for(startRow, endRow, [&] (unsigned int j)
 		{
 			unsigned int row = j * m_SuperRasW;
-		
+
 			for (unsigned int i = startCol; (i < endCol) && !m_Abort; i++)
 			{
 				unsigned int index = row + i;
@@ -1240,7 +1239,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 	unsigned int startCol = Supersample() - 1;
 	unsigned int endCol = m_SuperRasW - (Supersample() - 1);
 	unsigned int chunkSize = (unsigned int)ceil(double(endRow - startRow) / double(threads));
-		
+
 	//parallel_for scales very well, dividing the work almost perfectly among all processors.
 	parallel_for((unsigned int)0, threads, [&] (unsigned int threadIndex)
 	{
@@ -1311,7 +1310,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 				//Only have to calculate the values for ~1/8 of the square.
 				filterCoefIndex = filterSelectInt * m_DensityFilter->KernelSize();
 				arrFilterWidth = (int)ceil(filterWidths[filterSelectInt]) - 1;
-				
+
 				for (jj = 0; jj <= arrFilterWidth; jj++)
 				{
 					for (ii = 0; ii <= jj; ii++, filterCoefIndex++)
@@ -1369,7 +1368,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 				if (percentDiff >= 10 || (toc > 1000 && percentDiff >= 1))
 				{
 					double etaMs = ((100.0 - percent) / percent) * totalTime.Toc();
-					
+
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 1, etaMs))
 						Abort();
 
@@ -1379,7 +1378,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 			}
 		}
 	});
-		
+
 	if (m_Callback && !m_Abort)
 		m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0);
 
@@ -1398,7 +1397,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(vector<unsigned char
 {
 	if (PrepFinalAccumVector(pixels))
 		return AccumulatorToFinalImage(pixels.data(), finalOffset);
-	
+
 	return RENDER_ERROR;
 }
 
@@ -1431,7 +1430,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 		parallel_for((unsigned int)0, m_SuperRasH, [&] (unsigned int j)
 		{
 			unsigned int rowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
-	
+
 			for (unsigned int i = 0; i < m_SuperRasW && !m_Abort; i++)
 			{
 				GammaCorrection(m_AccumulatorBuckets[i + rowStart], background, g, linRange, vibrancy, true, false, &(m_AccumulatorBuckets[i + rowStart][0]));//Write back in place.
@@ -1461,14 +1460,14 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 			unsigned int ii, jj;
 			unsigned int x = m_DensityFilterOffset + (i * Supersample());//Start at the beginning column of each super sample block.
 			newBucket.Clear();
-		
+
 			//Original was iterating column-wise, which is slow.
 			//Here, iterate one row at a time, giving a 10% speed increase.
 			for (jj = 0; jj < filterWidth; jj++)
 			{
 				unsigned int filterKRowIndex = jj * filterWidth;
 				unsigned int accumRowIndex = (y + jj) * m_SuperRasW;//Pull out of inner loop for optimization.
-		
+
 				for (ii = 0; ii < filterWidth; ii++)
 				{
 					//Need to dereference the spatial filter pointer object to use the [] operator. Makes no speed difference.
@@ -1477,7 +1476,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 					newBucket += (m_AccumulatorBuckets[(x + ii) + accumRowIndex] * k);
 				}
 			}
-			
+
 			if (BytesPerChannel() == 2)
 			{
 				p16 = (unsigned short*)(pixels + pixelsRowStart);
@@ -1524,7 +1523,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 			}
 		}
 	});
-	
+
 	//Insert the palette into the image for debugging purposes. Only works with 8bpc.
 	if (m_InsertPalette && BytesPerChannel() == 1)
 	{
@@ -1532,7 +1531,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 
 		if (ph >= FinalRasH())
 			ph = FinalRasH();
-			
+
 		for (j = 0; j < ph; j++)
 		{
 			for (i = 0; i < FinalRasW(); i++)
@@ -1621,7 +1620,7 @@ EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, 
 			//accumulationTime += t.Toc();
 			if (m_LockAccum)
 				m_AccumCs.Leave();
-			
+
 			if (m_Callback && threadIndex == 0)
 			{
 				percent = 100.0 *
@@ -1647,7 +1646,7 @@ EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, 
 				if (percentDiff >= 10 || (toc > 1000 && percentDiff >= 1))//Call callback function if either 10% has passed, or one second (and 1%).
 				{
 					etaMs = ((100.0 - percent) / percent) * m_RenderTimer.Toc();
-					
+
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 0, etaMs))
 						Abort();
 
@@ -1681,7 +1680,7 @@ EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, 
 /// </summary>
 /// <returns>The vector of random contexts to assign</returns>
 template <typename T, typename bucketT>
-vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> Renderer<T, bucketT>::RandVec() { return m_Rand; };
+vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> Renderer<T, bucketT>::RandVec() { return m_Rand; }
 
 /// <summary>
 /// Set the vector of random contexts.
@@ -1706,7 +1705,7 @@ bool Renderer<T, bucketT>::RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randV
 	}
 
 	return b;
-};
+}
 
 /// <summary>
 /// Get whether the histogram is locked during accumulation.
@@ -1957,7 +1956,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 	const glm::detail::tvec4<bucketT, glm::defaultp>* dmap = &(palette->m_Entries[0]);
 
 	//It's critical to understand what's going on here as it's one of the most important parts of the algorithm.
-	//A color value gets retrieved from the palette and 
+	//A color value gets retrieved from the palette and
 	//its RGB values are added to the existing RGB values in the histogram bucket.
 	//Alpha is always 1 in the palettes, so that serves as the hit count.
 	//This differs from the original since redundantly adding both an alpha component and a hit count is omitted.
@@ -1985,7 +1984,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 			if (samples[i].m_VizAdjusted != 0)
 			{
 				m_CarToRas.Convert(samples[i], histIndex);
-				
+
 				//There is a very slim chance that a point will be right on the border and will technically be in bounds, passing the InBounds() test,
 				//but ends up being mapped to a histogram bucket that is out of bounds due to roundoff error. Perform one final check before proceeding.
 				//This will result in a few points at the very edges getting discarded, but prevents a crash and doesn't seem to make a speed difference.
@@ -2016,7 +2015,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 						{
 							colorIndexFrac = colorIndex - (bucketT)intColorIndex;//Interpolate between intColorIndex and intColorIndex + 1.
 						}
-					
+
 						if (samples[i].m_VizAdjusted == 1)
 							m_HistBuckets[histIndex] += ((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac));
 						else
@@ -2141,7 +2140,7 @@ bool Renderer<T, bucketT>::AssignIterator()
 		m_Iterator = m_XaosIterator.get();
 	else
 		m_Iterator = m_StandardIterator.get();
-		
+
 	//Timing t;
 	return m_Iterator->InitDistributions(m_Ember);
 	//t.Toc("Distrib creation");
@@ -2240,7 +2239,7 @@ template <typename T, typename bucketT> ePaletteMode         Renderer<T, bucketT
 /// Iterator wrappers.
 /// </summary>
 
-template <typename T, typename bucketT> const unsigned char* Renderer<T, bucketT>::XformDistributions()              const { return m_Iterator != NULL ? m_Iterator->XformDistributions() : NULL;  }
-template <typename T, typename bucketT> const unsigned int   Renderer<T, bucketT>::XformDistributionsSize()          const { return m_Iterator != NULL ? m_Iterator->XformDistributionsSize() : 0; }
-template <typename T, typename bucketT> Point<T>*            Renderer<T, bucketT>::Samples(unsigned int threadIndex) const { return threadIndex < m_Samples.size() ? (Point<T>*)m_Samples[threadIndex].data() : NULL; }
+template <typename T, typename bucketT> const unsigned char* Renderer<T, bucketT>::XformDistributions()              const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr;  }
+template <typename T, typename bucketT> const unsigned int   Renderer<T, bucketT>::XformDistributionsSize()          const { return m_Iterator != nullptr ? m_Iterator->XformDistributionsSize() : 0; }
+template <typename T, typename bucketT> Point<T>*            Renderer<T, bucketT>::Samples(unsigned int threadIndex) const { return threadIndex < m_Samples.size() ? (Point<T>*)m_Samples[threadIndex].data() : nullptr; }
 }

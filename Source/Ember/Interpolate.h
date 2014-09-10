@@ -85,14 +85,14 @@ public:
 			for (xf = 0; xf < maxCount; xf++)//This will include both normal xforms and the final.
 			{
 				destXform = destEmbers[i].GetTotalXform(xf, final);
-				
+
 				//Ensure every parametric variation contained in every xform at either position i - 1 or i + 1 is also contained in the dest xform.
 				if (i > 0)
 					destOtherXform = destEmbers[i - 1].GetTotalXform(xf);
 				else if (i < count - 1)
 					destOtherXform = destEmbers[i + 1].GetTotalXform(xf);
 				else
-					destOtherXform = NULL;//Should never happen
+					destOtherXform = nullptr;//Should never happen
 
 				if (destOtherXform)
 					MergeXformVariations1Way(destOtherXform, destXform, true, true);
@@ -130,15 +130,15 @@ public:
 							//with weight -1.
 							//Added JULIAN/JULIASCOPE to get rid of black wedges.
 							if (destOtherXform->GetVariationById(VAR_SPHERICAL) ||
-								destOtherXform->GetVariationById(VAR_NGON) || 
-								destOtherXform->GetVariationById(VAR_JULIAN) || 
+								destOtherXform->GetVariationById(VAR_NGON) ||
+								destOtherXform->GetVariationById(VAR_JULIAN) ||
 								destOtherXform->GetVariationById(VAR_JULIASCOPE) ||
 								destOtherXform->GetVariationById(VAR_POLAR) ||
 								destOtherXform->GetVariationById(VAR_WEDGE_SPH) ||
 								destOtherXform->GetVariationById(VAR_WEDGE_JULIA))
 							{
 								destXform->AddVariation(new LinearVariation<T>(-1));
-								
+
 								//Set the coefs appropriately.
 								destXform->m_Affine.A(-1);
 								destXform->m_Affine.D(0);
@@ -244,7 +244,7 @@ public:
 							if (xf >= sourceEmbers[i + ii].TotalXformCount())
 								continue;
 
-							Xform<T>* destOtherXform = destEmbers[i + ii].GetTotalXform(xf);
+							destOtherXform = destEmbers[i + ii].GetTotalXform(xf);
 
 							if (destOtherXform->GetVariationById(VAR_FAN))
 							{
@@ -413,7 +413,7 @@ public:
 
 			while (embers[i1].m_Time < time)
 				i1++;
-		
+
 			i1--;
 			i2 = i1 + 1;
 		}
@@ -437,7 +437,7 @@ public:
 				Align(&embers[i1], &localEmbers[0], 2);
 				smoothFlag = false;
 			}
-			
+
 			if (i2 == size - 1)
 			{
 				//fprintf(stderr, "error: cannot use smooth interpolation on last segment.\n");
@@ -445,7 +445,7 @@ public:
 				Align(&embers[i1], &localEmbers[0], 2);
 				smoothFlag = false;
 			}
-			
+
 			Align(&embers[i1 - 1], &localEmbers[0], 4);//Should really be doing some sort of checking here to ensure the ember vectors have 4 elements.
 			smoothFlag = true;
 		}
@@ -545,7 +545,7 @@ public:
 	static void InterpParametricVar(vector<ParametricVariation<T>*>& first, ParametricVariation<T>* second, vector<T>& c)
 	{
 		//First, make sure the variation vector is the same size as the coefficient vector.
-		if (second != NULL && first.size() == c.size())
+		if (second != nullptr && first.size() == c.size())
 		{
 			second->Clear();
 			ParamWithName<T>* secondParams = second->Params();
@@ -616,7 +616,7 @@ public:
 				//Establish the angles and magnitudes for each component.
 				//Keep translation linear.
 				zlm[0] = zlm[1] = 0;
-				
+
 				if (Xform<T>* xform = embers[k].GetTotalXform(xfi))
 				{
 					for (col = 0; col < 2; col++)
@@ -633,16 +633,16 @@ public:
 							c1[1] = xform->m_Post.m_Mat[1][col];
 							t = xform->m_Post.m_Mat[col][2];
 						}
-					
+
 						cxAng[k][col] = atan2(c1[1], c1[0]);
 						cxMag[k][col] = sqrt(c1[0] * c1[0] + c1[1] * c1[1]);
-					
+
 						if (cxMag[k][col] == 0)
 							zlm[col] = 1;
-					
+
 						cxTrn[k][col] = t;
 					}
-	  
+
 					if (zlm[0] == 1 && zlm[1] == 0)
 						cxAng[k][0] = cxAng[k][1];
 					else if (zlm[0] == 0 && zlm[1] == 1)
@@ -671,7 +671,7 @@ public:
 							//Make sure both angles are within [refang refang + 2 * pi].
 							while(cxAng[k - 1][col] < refang)
 								cxAng[k - 1][col] += M_2PI;
-				
+
 							while(cxAng[k - 1][col] > refang + M_2PI)
 								cxAng[k - 1][col] -= M_2PI;
 
@@ -722,7 +722,7 @@ public:
 				{
 					c1[0] = embers[k].GetXform(xfi)->m_Affine.m_Mat[0][col];//A,D then B,E.
 					c1[1] = embers[k].GetXform(xfi)->m_Affine.m_Mat[1][col];
-		
+
 					cxang[k][col] = atan2(c1[1], c1[0]);
 				}
 			}
@@ -772,7 +772,7 @@ public:
 		size_t size = coefs.size();
 		glm::length_t i, col, accmode[2] = { 0, 0 };
 		T expmag, accang[2] = { 0, 0 }, accmag[2] = { 0, 0 };
-		
+
 		//Accumulation mode defaults to logarithmic, but in special
 		//cases switch to linear accumulation.
 		for (col = 0; col < 2; col++)
@@ -783,23 +783,23 @@ public:
 					accmode[col] = 1;//Mode set to linear interp.
 			}
 		}
-		
+
 		for (i = 0; i < size; i++)
 		{
 			for (col = 0; col < 2; col++)
 			{
 				accang[col] += coefs[i] * cxAng[i][col];
-		 
+
 				if (accmode[col] == 0)
 					accmag[col] += coefs[i] * log(cxMag[i][col]);
-				else 
+				else
 					accmag[col] += coefs[i] * (cxMag[i][col]);
-			
+
 				//Translation is ready to go.
 				store.m_Mat[col][2] += coefs[i] * cxTrn[i][col];
 			}
 		}
-		
+
 		//Convert the angle back to rectangular.
 		for (col = 0; col < 2; col++)
 		{
@@ -807,7 +807,7 @@ public:
 				expmag = exp(accmag[col]);
 			else
 				expmag = accmag[col];
-		
+
 			store.m_Mat[0][col] = expmag * cos(accang[col]);
 			store.m_Mat[1][col] = expmag * sin(accang[col]);
 		}
@@ -836,7 +836,7 @@ public:
 	{
 		//maxStag is the spacing between xform start times if staggerPercent = 1.0.
 		T maxStag = T(numXforms - 1) / numXforms;
-   
+
 		//Scale the spacing by staggerPercent.
 		T stagScaled = staggerPercent * maxStag;
 
@@ -845,7 +845,7 @@ public:
 		//The second line makes the last xform interpolate first.
 		T st = stagScaled * (numXforms - 1 - thisXform) / (numXforms - 1);
 		T et = st + (1 - stagScaled);
-	  
+
 		if (t <= st)
 			return 0;
 		else if (t >= et)
@@ -871,17 +871,17 @@ public:
 		else if (funcNum == MOTION_TRIANGLE)
 		{
 			T fr = fmod(timeVal, T(1.0));
-	  
+
 			if (fr < 0)
 				fr += 1;
-	  
+
 			if (fr <= T(0.25))
 				fr *= 4;
 			else if (fr <= T(0.75))
 				fr = -4 * fr + 2;
 			else
 				fr = 4 * fr - 4;
-	 
+
 			return fr;
 		}
 		else//MOTION_HILL
@@ -889,7 +889,7 @@ public:
 			return ((1 - cos(T(2.0) * T(M_PI) * timeVal)) * T(0.5));
 		}
 	}
-	
+
 	/*
 	//Will need to alter this to handle 2D palettes.
 	static bool InterpMissingColors(vector<glm::detail::tvec4<T>>& palette)
@@ -914,18 +914,18 @@ public:
 				break;
 			}
 		}
-	
+
 		if (i == 256)
 		{
 			//No colors. Set all indices properly.
 			for (i = 0; i < 256; i++)
-				palette[i].m_Index = (T)i;     
+				palette[i].m_Index = (T)i;
 
 			return false;
 		}
-		
+
 		wrapMin = minIndex + 256;
-		
+
 		for (i = 255; i >= 0; i--)//Moving backwards, ouch!
 		{
 			if (palette[i].m_Index >= 0)
@@ -934,9 +934,9 @@ public:
 				break;
 			}
 		}
-		
+
 		wrapMax = maxIndex - 256;
-		
+
 		//Loop over the indices looking for negs,
 		i = 0;
 
@@ -956,29 +956,29 @@ public:
 					colorri = intr;
 					i++;
 				}
-		
+
 				if (intl == -1)
 				{
 					intl = wrapMax;
 					colorli = maxIndex;
 				}
-		
+
 				if (intr == 256)
 				{
 					intr = wrapMin;
 					colorri = minIndex;
 				}
-				
+
 				for (j = str; j <= enr; j++)
 				{
 					prcr = (j - intl) / T(intr - intl);
-				
+
 					for (k = 0; k <= 3; k++)
 						palette[j].Channels[k] = T(palette[colorli].Channels[k] * (1 - prcr) + palette[colorri].Channels[k] * prcr);
-					
+
 					palette[j].m_Index = T(j);
 				}
-		
+
 				i = colorri + 1;
 			}
 			else

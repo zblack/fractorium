@@ -137,7 +137,7 @@ void FractoriumEmberControllerBase::SaveCurrentRender(QString filename)
 		
 		if ((suffix == "jpg" || suffix == "bmp") && m_Renderer->NumChannels() == 4)
 		{
-			EmberNs::RgbaToRgb(m_FinalImage, vecRgb, width, height);
+			RgbaToRgb(m_FinalImage, vecRgb, width, height);
 			
 			data = vecRgb.data();
 		}

@@ -33,7 +33,7 @@ enum eCrossMode
 {
 	CROSS_NOT_SPECIFIED = -1,
 	CROSS_UNION         = 0,
-	CROSS_INTERPOLATE   = 1, 
+	CROSS_INTERPOLATE   = 1,
 	CROSS_ALTERNATE     = 2
 };
 
@@ -56,7 +56,7 @@ class EMBER_API SheepTools
 public:
 	/// <summary>
 	/// Constructor which takes a palette path and pre-constructed renderer.
-	/// This class will take over ownership of the passed in renderer so the 
+	/// This class will take over ownership of the passed in renderer so the
 	/// caller should not delete it.
 	/// </summary>
 	/// <param name="palettePath">The full path and filename of the palette file</param>
@@ -73,9 +73,9 @@ public:
 		m_OffsetY = 0;
 
 		m_PaletteList.Init(palettePath);
-		m_StandardIterator = auto_ptr<StandardIterator<T>>(new StandardIterator<T>());
-		m_XaosIterator = auto_ptr<XaosIterator<T>>(new XaosIterator<T>());
-		m_Renderer = auto_ptr<Renderer<T, bucketT>>(renderer);
+		m_StandardIterator = unique_ptr<StandardIterator<T>>(new StandardIterator<T>());
+		m_XaosIterator = unique_ptr<XaosIterator<T>>(new XaosIterator<T>());
+		m_Renderer = unique_ptr<Renderer<T, bucketT>>(renderer);
 		m_Rand = QTIsaac<ISAAC_SIZE, ISAAC_INT>(ISAAC_INT(t.Tic()), ISAAC_INT(t.Tic() * 2), ISAAC_INT(t.Tic() * 3));
 	}
 
@@ -98,7 +98,7 @@ public:
 		ember.AddXform(xform1);
 		ember.AddXform(xform2);
 		ember.AddXform(xform3);
-		
+
 		if (m_PaletteList.Init())
 			ember.m_Palette = *m_PaletteList.GetPalette(-1);
 
@@ -140,8 +140,8 @@ public:
 
 			do
 			{
-				Variation<T>* var = NULL;
-				Variation<T>* smallestVar = NULL;
+				Variation<T>* var = nullptr;
+				Variation<T>* smallestVar = nullptr;
 
 				numVars = 0;
 				smallest = -1;
@@ -200,7 +200,7 @@ public:
 		if (mode == MUTATE_NOT_SPECIFIED)
 		{
 			randSelect = m_Rand.Frand01<T>();
-	  
+
 			if (randSelect < T(0.1))
 				mode = MUTATE_ALL_VARIATIONS;
 			else if (randSelect < T(0.3))
@@ -216,7 +216,7 @@ public:
 			else
 				mode = MUTATE_ALL_COEFS;
 		}
-	  
+
 		if (mode == MUTATE_ALL_VARIATIONS)
 		{
 			os << "mutate all variations";
@@ -238,7 +238,7 @@ public:
 							Variation<T>* var1 = xform1->GetVariation(j);
 							Variation<T>* var2 = xform2->GetVariationById(var1->VariationId());
 
-							if ((var1 == NULL) ^ (var2 == NULL))//If any of them are different, clear the first and copy all of the second and exit the while loop.
+							if ((var1 == nullptr) ^ (var2 == nullptr))//If any of them are different, clear the first and copy all of the second and exit the while loop.
 							{
 								xform1->ClearAndDeleteVariations();
 
@@ -285,7 +285,7 @@ public:
 		{
 			unsigned int b = 1 + m_Rand.Rand() % 6;
 			unsigned int same = m_Rand.Rand() & 3;//25% chance of using the same post for all of them.
-	  
+
 			sprintf_s(ministr, 32, "(%d%s)", b, (same > 0) ? " same" : "");
 			os << "mutate post xforms " << ministr;
 
@@ -295,7 +295,7 @@ public:
 				Xform<T>* xform = ember.GetTotalXform(i);
 
 				if (copy)//Copy the post from the first xform to the rest of them.
-				{ 
+				{
 					xform->m_Post = ember.GetTotalXform(0)->m_Post;
 				}
 				else
@@ -304,40 +304,40 @@ public:
 					if (b & 1)
 					{
 						T f = T(M_PI) * m_Rand.Frand11<T>();
-						T a, b, d, e;
+						T ra, rb, rd, re;
 
-						a = (xform->m_Affine.A() * cos(f) + xform->m_Affine.B() * -sin(f));
-						d = (xform->m_Affine.A() * sin(f) + xform->m_Affine.D() *  cos(f));
-						b = (xform->m_Affine.B() * cos(f) + xform->m_Affine.E() * -sin(f));
-						e = (xform->m_Affine.B() * sin(f) + xform->m_Affine.E() *  cos(f));
+						ra = (xform->m_Affine.A() * cos(f) + xform->m_Affine.B() * -sin(f));
+						rd = (xform->m_Affine.A() * sin(f) + xform->m_Affine.D() *  cos(f));
+						rb = (xform->m_Affine.B() * cos(f) + xform->m_Affine.E() * -sin(f));
+						re = (xform->m_Affine.B() * sin(f) + xform->m_Affine.E() *  cos(f));
 
-						xform->m_Affine.A(a);
-						xform->m_Affine.B(b);
-						xform->m_Affine.D(d);
-						xform->m_Affine.E(e);
+						xform->m_Affine.A(ra);
+						xform->m_Affine.B(rb);
+						xform->m_Affine.D(rd);
+						xform->m_Affine.E(re);
 
 						f *= -1;
 
-						a = (xform->m_Post.A() * cos(f) + xform->m_Post.B() * -sin(f));
-						d = (xform->m_Post.A() * sin(f) + xform->m_Post.D() *  cos(f));
-						b = (xform->m_Post.B() * cos(f) + xform->m_Post.E() * -sin(f));
-						e = (xform->m_Post.B() * sin(f) + xform->m_Post.E() *  cos(f));
+						ra = (xform->m_Post.A() * cos(f) + xform->m_Post.B() * -sin(f));
+						rd = (xform->m_Post.A() * sin(f) + xform->m_Post.D() *  cos(f));
+						rb = (xform->m_Post.B() * cos(f) + xform->m_Post.E() * -sin(f));
+						re = (xform->m_Post.B() * sin(f) + xform->m_Post.E() *  cos(f));
 
-						xform->m_Post.A(a);
-						xform->m_Post.B(b);
-						xform->m_Post.D(d);
-						xform->m_Post.E(e);
+						xform->m_Post.A(ra);
+						xform->m_Post.B(rb);
+						xform->m_Post.D(rd);
+						xform->m_Post.E(re);
 					}
 
 					//33% chance.
 					if (b & 2)
-					{ 
+					{
 						T f = T(0.2) + m_Rand.Frand01<T>();
 						T g = T(0.2) + m_Rand.Frand01<T>();
 
 						if (m_Rand.RandBit())
 							f = 1 / f;
-			   
+
 						if (m_Rand.RandBit())
 							g = f;
 						else
@@ -355,7 +355,7 @@ public:
 					}
 
 					if (b & 4)//16% chance.
-					{ 
+					{
 						T f = m_Rand.Frand11<T>();
 						T g = m_Rand.Frand11<T>();
 
@@ -372,12 +372,12 @@ public:
 			T s = m_Rand.Frand01<T>();
 
 			if (s < T(0.4))//Randomize xform color coords.
-			{ 
+			{
 				ImproveColors(ember, 100, false, 10);
 				os << "mutate color coords";
 			}
 			else if (s < T(0.8))//Randomize xform color coords and palette.
-			{ 
+			{
 				ImproveColors(ember, 25, true, 10);
 				os << "mutate color all";
 			}
@@ -412,7 +412,7 @@ public:
 				ember.DeleteTotalXform(nx);
 		}
 		else if (mode == MUTATE_ALL_COEFS)
-		{ 
+		{
 			os << "mutate all coefs";
 			Random(mutation, useVars, sym, ember.TotalXformCount());
 
@@ -451,7 +451,7 @@ public:
 		if (crossMode == CROSS_NOT_SPECIFIED)
 		{
 			T s = m_Rand.Frand01<T>();
-	  
+
 			if (s < 0.1)
 				crossMode = CROSS_UNION;
 			else if (s < 0.2)
@@ -494,29 +494,29 @@ public:
 		{
 			int got0, got1, usedParent;
 			string trystr;
-			
+
 			//Each xform comes from a random parent, possible for an entire parent to be excluded.
 			do
 			{
 				got0 = got1 = 0;
 				rb = m_Rand.RandBit();
 				os << rb << ":";
-			
+
 				//Copy the parent, sorting the final xform to the end if it's present.
 				emberOut = rb ? ember1 : ember0;
 				usedParent = rb;
-			
+
 				//Only replace non-final xforms.
 				for (i = 0; i < emberOut.XformCount(); i++)
 				{
 					rb = m_Rand.RandBit();
-			
+
 					//Replace xform if bit is 1.
 					if (rb == 1)
 					{
 						if (usedParent == 0)
 						{
-							if (i < ember1.XformCount() && ember1.GetXform(i)->m_Weight > 0) 
+							if (i < ember1.XformCount() && ember1.GetXform(i)->m_Weight > 0)
 							{
 								Xform<T>* xform = emberOut.GetXform(i);
 								*xform = *ember1.GetXform(i);
@@ -555,14 +555,14 @@ public:
 							got0 = 1;
 					}
 				}
-			 
+
 				if (usedParent == 0 && ember0.UseFinalXform())
 					got0 = 1;
 				else if (usedParent == 1 && ember1.UseFinalXform())
 					got1 = 1;
-			   
+
 			} while ((i > 1) && !(got0 && got1));
-			
+
 			os << "cross alternate ";
 			os << trystr;
 		}
@@ -574,15 +574,15 @@ public:
 			//emberOut.GetTotalXform(i)->m_ColorX = m_Rand.Frand01<T>();//Do rand which gives better coloring but produces different results every time it's run.
 			//emberOut.GetTotalXform(i)->m_ColorY = ?????;//Will need to update this if 2D coordinates are ever supported.
 		}
-			   
+
 		//Potentially genetically cross the two palettes together.
 		if (m_Rand.Frand01<T>() < T(0.4))
 		{
 			//Select the starting parent.
 			unsigned int ci, startParent = m_Rand.RandBit();
-		
+
 			os << " cmap_cross " << startParent << ":";
-		
+
 			//Loop over the entries, switching to the other parent 1% of the time.
 			for (ci = 0; ci < 256; ci++)//Will need to update this if 2D coordinates are ever supported.
 			{
@@ -653,7 +653,7 @@ public:
 		{
 			ember.AddXforms(xformDistrib[m_Rand.Rand() % Vlen(xformDistrib)]);
 			addfinal = m_Rand.Frand01<T>() < T(0.15);//Add a final xform 15% of the time.
-			
+
 			if (addfinal)
 			{
 				Xform<T> xform;
@@ -661,14 +661,14 @@ public:
 				xform.m_Affine.A(T(1.1));//Just put something in there so it doesn't show up as being an empty final xform.
 				ember.SetFinalXform(xform);
 			}
-		}   
-		
+		}
+
 		//If first input variation is -1 random choose one to use or decide to use multiple.
 		if (useVars.empty() || useVars[0] == -1)
 			var = m_Rand.RandBit() ? m_Rand.Rand() % varCount : -1;
 		else
 			var = -2;
-		
+
 		samed = m_Rand.RandBit();
 		multid = m_Rand.RandBit();
 		postid = m_Rand.Frand01<T>() < T(0.6);
@@ -734,7 +734,7 @@ public:
 						n = 2;
 						while (m_Rand.RandBit() && (n < varCount))
 							n++;
-			   
+
 						//Randomly choose n variations, and change their weights.
 						//A var can be selected more than once, further reducing
 						//the probability that multiple vars are used.
@@ -769,7 +769,7 @@ public:
 
 				if (m_Rand.RandBit())
 					n++;
-		 
+
 				//Randomly choose n variations, and change their weights.
 				//A var can be selected more than once, further reducing
 				//the probability that multiple vars are used.
@@ -786,7 +786,7 @@ public:
 						xform->AddVariation(m_VariationList.GetVariationCopy(useVars[m_Rand.Rand() % useVars.size()], m_Rand.Frand<T>(T(0.001), 1)));
 					}
 				}
-		
+
 				xform->NormalizeVariationWeights();//Normalize weights to 1.0 total.
 			}
 
@@ -822,7 +822,7 @@ public:
 			cout << "Error in TryColors(), skipping ImproveColors()" << endl;
 			return;
 		}
-		
+
 		for (i = 0; i < tries; i++)
 		{
 			ChangeColors(ember, changePalette);
@@ -833,14 +833,14 @@ public:
 				cout << "Error in TryColors, aborting tries." << endl;
 				break;
 			}
-		
+
 			if (b > best)
 			{
 				best = b;
 				bestEmber = ember;
 			}
 		}
-		
+
 		ember = bestEmber;
 	}
 
@@ -857,13 +857,13 @@ public:
 		unsigned int pixTotal, res3 = res * res * res;
 		T scalar;
 		Ember<T> adjustedEmber = ember;
-		
+
 		adjustedEmber.m_Quality = 1;
 		adjustedEmber.m_Supersample = 1;
 		adjustedEmber.m_MaxRadDE = 0;
-	
+
 		//Scale the image so that the total number of pixels is ~10,000.
-		pixTotal = ember.m_FinalRasW * ember.m_FinalRasH;    
+		pixTotal = ember.m_FinalRasW * ember.m_FinalRasH;
 		scalar = sqrt(T(10000) / pixTotal);
 		adjustedEmber.m_FinalRasW = (unsigned int)(ember.m_FinalRasW  * scalar);
 		adjustedEmber.m_FinalRasH = (unsigned int)(ember.m_FinalRasH  * scalar);
@@ -877,8 +877,8 @@ public:
 		m_Renderer->PixelAspectRatio(1);
 		m_Renderer->ThreadCount(Timing::ProcessorCount());
 		m_Renderer->SubBatchSize(10000);
-		m_Renderer->Callback(NULL);
-		
+		m_Renderer->Callback(nullptr);
+
 		if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
 		{
 			cout << "Error rendering test image for TryColors().  Aborting." << endl;
@@ -919,7 +919,7 @@ public:
 
 		if (changePalette)
 		{
-			Palette<T>* palette;
+			Palette<T>* palette = nullptr;
 
 			ember.m_Hue = 0.0;
 
@@ -942,16 +942,16 @@ public:
 			ember.GetTotalXform(i)->m_ColorX = m_Rand.Frand01<T>();
 			ember.GetTotalXform(i)->m_ColorY = m_Rand.Frand01<T>();
 		}
-		
+
 		xform0 = RandomXform(ember, -1);
 		xform1 = RandomXform(ember, ember.GetXformIndex(xform0));
-		
+
 		if (xform0 && (m_Rand.Rand() & 1))
 		{
 			xform0->m_ColorX = 0;
 			xform0->m_ColorY = 0;
 		}
-		
+
 		if (xform1 && (m_Rand.Rand() & 1))
 		{
 			xform1->m_ColorX = 1;
@@ -965,7 +965,7 @@ public:
 	/// </summary>
 	/// <param name="ember">The ember to get a random xform from</param>
 	/// <param name="excluded">Optionally exclude an xform. Pass -1 to include all for consideration.</param>
-	/// <returns>The random xform if successful, else NULL.</returns>
+	/// <returns>The random xform if successful, else nullptr.</returns>
 	Xform<T>* RandomXform(Ember<T>& ember, int excluded)
 	{
 		int ntries = 0;
@@ -983,7 +983,7 @@ public:
 			}
 		}
 
-		return NULL;
+		return nullptr;
 	}
 
 	/// <summary>
@@ -1007,7 +1007,7 @@ public:
 
 			if (!xform1->m_Motion.empty())
 				xform2->ApplyMotion(*xform1, blend);
-			
+
 			xform2->DeleteMotionElements();
 		}
 
@@ -1033,7 +1033,7 @@ public:
 		for (si = 0; si < 2; si++)
 		{
 			prealign[si] = embers[si];
-		
+
 			for (i = 0; i < embers[si].TotalXformCount(); i++)
 			{
 				Xform<T>* xform = embers[si].GetTotalXform(i);
@@ -1042,7 +1042,7 @@ public:
 					xform->ApplyMotion(*(prealign[si].GetTotalXform(i)), blend);//Apply motion parameters to result.xform[i] using blend parameter.
 			}
 		}
-		
+
 		//Use the un-padded original for blend=0 when creating a sequence.
 		//This keeps the original interpolation type intact.
 		if (seqFlag && blend == 0)
@@ -1053,17 +1053,17 @@ public:
 		{
 			//Align what's going to be interpolated.
 			Interpolater<T>::Align(prealign, spun, 2);
-		
+
 			spun[0].m_Time = 0;
 			spun[1].m_Time = 1;
-		
+
 			//Call this first to establish the asymmetric reference angles.
 			Interpolater<T>::AsymmetricRefAngles(spun, 2);
-		
+
 			//Rotate the aligned xforms.
 			spun[0].RotateAffines(-blend * 360);
 			spun[1].RotateAffines(-blend * 360);
-		
+
 			Interpolater<T>::Interpolate(spun, 2, m_Smooth ? Interpolater<T>::Smoother(blend) : blend, m_Stagger, result);
 		}
 
@@ -1078,7 +1078,7 @@ public:
 	/// Apply subpixel jitter to center using offset members.
 	/// </summary>
 	/// <param name="parent">The ember to spin</param>
-	/// <param name="templ">The template to apply if not NULL, else ignore.</param>
+	/// <param name="templ">The template to apply if not nullptr, else ignore.</param>
 	/// <param name="result">The result of the spin</param>
 	/// <param name="frame">The frame in the sequence to be stored in the m_Time member of result</param>
 	/// <param name="blend">The interpolation time</param>
@@ -1101,7 +1101,7 @@ public:
 		//Create the edit doc xml.
 		sprintf_s(temp, 50, "rotate %g", blend * 360.0);
 		result.ClearEdit();
-		result.m_Edits = m_EmberToXml.CreateNewEditdoc(&parent, NULL, temp, m_Nick, m_Url, m_Id, m_Comment, m_SheepGen, m_SheepId);
+		result.m_Edits = m_EmberToXml.CreateNewEditdoc(&parent, nullptr, temp, m_Nick, m_Url, m_Id, m_Comment, m_SheepGen, m_SheepId);
 
 		//Subpixel jitter.
 		Offset(result, m_OffsetX, m_OffsetY);
@@ -1118,7 +1118,7 @@ public:
 	/// Apply subpixel jitter to center using offset members.
 	/// </summary>
 	/// <param name="parents">The embers to interpolate</param>
-	/// <param name="templ">The template to apply if not NULL, else ignore.</param>
+	/// <param name="templ">The template to apply if not nullptr, else ignore.</param>
 	/// <param name="result">The result of the spin</param>
 	/// <param name="frame">The frame in the sequence to be stored in the m_Time member of result</param>
 	/// <param name="seqFlag">True if embers points to the first or last ember in the entire sequence, else false.</param>
@@ -1131,7 +1131,7 @@ public:
 		Edge(parents, result, blend, seqFlag);
 
 		//Original did an interpolated palette hack here for random palettes, but it was never used anywhere so ember omits it.//ORIG
-		
+
 		//Apply the template if necessary.
 		if (templ)
 			ApplyTemplate(result, *templ);
@@ -1166,68 +1166,68 @@ public:
 
 		if (templ.m_Zoom < 999999998)
 			ember.m_Zoom = templ.m_Zoom;
-		
+
 		if (templ.m_Supersample > 0)
 			ember.m_Supersample = templ.m_Supersample;
-		
+
 		if (templ.m_SpatialFilterRadius >= 0)
 			ember.m_SpatialFilterRadius = templ.m_SpatialFilterRadius;
-		
+
 		if (templ.m_Quality > 0)
 			ember.m_Quality = templ.m_Quality;
-		
+
 		if (templ.m_Passes > 0)
 			ember.m_Passes = templ.m_Passes;
-		
+
 		if (templ.m_TemporalSamples > 0)
 			ember.m_TemporalSamples = templ.m_TemporalSamples;
-		
+
 		if (templ.m_FinalRasW > 0)
 		{
 			//Preserving scale should be an option.
 			ember.m_PixelsPerUnit = ember.m_PixelsPerUnit * templ.m_FinalRasW / ember.m_FinalRasW;
 			ember.m_FinalRasW = templ.m_FinalRasW;
 		}
-		
+
 		if (templ.m_FinalRasH > 0)
 			ember.m_FinalRasH = templ.m_FinalRasH;
-		
+
 		if (templ.m_MaxRadDE >= 0)
 			ember.m_MaxRadDE = templ.m_MaxRadDE;
-		
+
 		if (templ.m_MinRadDE >= 0)
 			ember.m_MinRadDE = templ.m_MinRadDE;
-		
+
 		if (templ.m_CurveDE >= 0)
 			ember.m_CurveDE = templ.m_CurveDE;
-		
+
 		if (templ.m_GammaThresh >= 0)
 			ember.m_GammaThresh = templ.m_GammaThresh;
-		
+
 		if (templ.m_Passes > 0)
 			ember.m_Passes = templ.m_Passes;
-		
+
 		if (templ.m_SpatialFilterType > 0)
 			ember.m_SpatialFilterType = templ.m_SpatialFilterType;
-		
+
 		if (templ.m_Interp >= 0)
 			ember.m_Interp = templ.m_Interp;
-		
+
 		if (templ.m_AffineInterp >= 0)
 			ember.m_AffineInterp = templ.m_AffineInterp;
-		
+
 		if (templ.m_TemporalFilterType >= 0)
 			ember.m_TemporalFilterType = templ.m_TemporalFilterType;
-		
+
 		if (templ.m_TemporalFilterWidth > 0)
 			ember.m_TemporalFilterWidth = templ.m_TemporalFilterWidth;
-		
+
 		if (templ.m_TemporalFilterExp > -900)
 			ember.m_TemporalFilterExp = templ.m_TemporalFilterExp;
-		
+
 		if (templ.m_HighlightPower >= 0)
 			ember.m_HighlightPower = templ.m_HighlightPower;
-		
+
 		if (templ.m_PaletteMode >= 0)
 			ember.m_PaletteMode = templ.m_PaletteMode;
 	}
@@ -1261,7 +1261,7 @@ public:
 		T th = by * 2 * T(M_PI) / 360;
 		T c = cos(th);
 		T s = -sin(th);
-		
+
 		newCenterX -= oldCenterX;
 		newCenterY -= oldCenterY;
 		r[0] = c * newCenterX - s * newCenterY;
@@ -1269,7 +1269,7 @@ public:
 		newCenterX = r[0] + oldCenterX;
 		newCenterY = r[1] + oldCenterY;
 	}
-	
+
 	/// <summary>
 	/// Find a 2D bounding box that does not enclose eps of the fractal density in each compass direction.
 	/// This will run the inner loops of iteration without all of the surrounding interpolation and filtering.
@@ -1297,7 +1297,7 @@ public:
 
 		if (bv / T(samples) > eps)
 			eps = 3 * bv / T(samples);
-   
+
 		if (eps > T(0.3))
 			eps = T(0.3);
 
@@ -1384,9 +1384,9 @@ private:
 	vector<unsigned int> m_Hist;
 	EmberToXml<T> m_EmberToXml;
 	Iterator<T>* m_Iterator;
-	auto_ptr<StandardIterator<T>> m_StandardIterator;
-	auto_ptr<XaosIterator<T>> m_XaosIterator;
-	auto_ptr<Renderer<T, bucketT>> m_Renderer;
+	unique_ptr<StandardIterator<T>> m_StandardIterator;
+	unique_ptr<XaosIterator<T>> m_XaosIterator;
+	unique_ptr<Renderer<T, bucketT>> m_Renderer;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> m_Rand;
 	PaletteList<T> m_PaletteList;
 	VariationList<T> m_VariationList;

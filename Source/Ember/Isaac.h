@@ -5,29 +5,29 @@
 /// <summary>
 /// C++ TEMPLATE VERSION OF Robert J. Jenkins Jr.'s
 /// ISAAC Random Number Generator.
-/// 
+///
 /// Ported from vanilla C to to template C++ class
 /// by Quinn Tyler Jackson on 16-23 July 1998.
-/// 
+///
 /// 	quinn@qtj.net
-/// 
+///
 /// The function for the expected period of this
 /// random number generator, according to Jenkins is:
-/// 
+///
 /// 	f(a,b) = 2**((a+b*(3+2^^a)-1)
-/// 
+///
 /// 	(where a is ALPHA and b is bitwidth)
-/// 		
+///
 /// So, for a bitwidth of 32 and an ALPHA of 8,
 /// the expected period of ISAAC is:
-/// 
+///
 /// 	2^^(8+32*(3+2^^8)-1) = 2^^8295
-/// 
+///
 /// Jackson has been able to run implementations
 /// with an ALPHA as high as 16, or
-/// 
+///
 /// 	2^^2097263
-/// 
+///
 /// -Modified by Matt Feemster to eliminate needless dynamic memory allocation and virtual functions and bring inline with Ember coding style.
 /// </summary>
 
@@ -38,13 +38,13 @@
 	typedef uint64_t ISAAC_INT;
 	const ISAAC_INT GOLDEN_RATIO = ISAAC_INT(0x9e3779b97f4a7c13);
 #endif
-	
+
 namespace EmberNs
 {
 /// <summary>
 /// QTIsaac class which allows using ISAAC in an OOP manner.
 /// </summary>
-template <int ALPHA = 4, class T = ISAAC_INT> 
+template <int ALPHA = 4, class T = ISAAC_INT>
 class EMBER_API QTIsaac
 {
 public:
@@ -69,7 +69,7 @@ public:
 		T randb;
 		T randc;
 	};
-   
+
 	/// <summary>
 	/// Constructor which initialized the random context using the values passed in.
 	/// Leaving these as their defaults is fine, and will still give different
@@ -80,8 +80,8 @@ public:
 	/// <param name="a">First random seed. Default: 0.</param>
 	/// <param name="b">Second random seed. Default: 0.</param>
 	/// <param name="c">Third random seed. Default: 0.</param>
-	/// <param name="s">Pointer to a buffer of 256 random integer seeds. Default: NULL.</param>
-	QTIsaac(T a = 0, T b = 0, T c = 0, T* s = NULL)
+	/// <param name="s">Pointer to a buffer of 256 random integer seeds. Default: nullptr.</param>
+	QTIsaac(T a = 0, T b = 0, T c = 0, T* s = nullptr)
 	{
 		Srand(a, b, c, s);
 	}
@@ -193,44 +193,44 @@ public:
 		T a, b, c, d, e, f, g, h;
 		T* m = ctx->randmem;
 		T* r = ctx->randrsl;
-   
+
 		a = b = c = d = e = f = g = h = GOLDEN_RATIO;
-   
+
 		if (!useSeed)
 		{
 			ctx->randa = 0;
 			ctx->randb = 0;
 			ctx->randc = 0;
 		}
-   
+
 		//Scramble it.
-		for (i = 0; i < 4; ++i)         
+		for (i = 0; i < 4; ++i)
 		{
 			Shuffle(a, b, c, d, e, f, g, h);
 		}
-   
-		if (useSeed) 
+
+		if (useSeed)
 		{
 			//Initialize using the contents of r[] as the seed.
 			for (i = 0; i < N; i += 8)
 			{
 				a += r[i    ]; b += r[i + 1]; c += r[i + 2]; d += r[i + 3];
 				e += r[i + 4]; f += r[i + 5]; g += r[i + 6]; h += r[i + 7];
-		 
+
 				Shuffle(a, b, c, d, e, f, g, h);
-		 
+
 				m[i    ] = a; m[i + 1] = b; m[i + 2] = c; m[i + 3] = d;
 				m[i + 4] = e; m[i + 5] = f; m[i + 6] = g; m[i + 7] = h;
-			}           
-	  
+			}
+
 			//Do a second pass to make all of the seed affect all of m.
 			for (i = 0; i < N; i += 8)
 			{
 				a += m[i    ]; b += m[i + 1]; c += m[i + 2]; d += m[i + 3];
 				e += m[i + 4]; f += m[i + 5]; g += m[i + 6]; h += m[i + 7];
-		 
+
 				Shuffle(a, b, c, d, e, f, g, h);
-		 
+
 				m[i    ] = a; m[i + 1] = b; m[i + 2] = c; m[i + 3] = d;
 				m[i + 4] = e; m[i + 5] = f; m[i + 6] = g; m[i + 7] = h;
 			}
@@ -239,11 +239,11 @@ public:
 		{
 			//Fill in mm[] with messy stuff.
 			Shuffle(a, b, c, d, e, f, g, h);
-	  
+
 			m[i    ] = a; m[i + 1] = b; m[i + 2] = c; m[i + 3] = d;
 			m[i + 4] = e; m[i + 5] = f; m[i + 6] = g; m[i + 7] = h;
 		}
-   
+
 		Isaac(ctx);      //Fill in the first set of results.
 		ctx->randcnt = N;//TODO//0;//Prepare to use the first set of results.
 	}
@@ -255,10 +255,10 @@ public:
 	/// <param name="a">First random seed. Default: 0.</param>
 	/// <param name="b">Second random seed. Default: 0.</param>
 	/// <param name="c">Third random seed. Default: 0.</param>
-	/// <param name="s">Pointer to a buffer of 256 random integer seeds. Default: NULL.</param>
-	void Srand(T a = 0, T b = 0, T c = 0, T* s = NULL)
+	/// <param name="s">Pointer to a buffer of 256 random integer seeds. Default: nullptr.</param>
+	void Srand(T a = 0, T b = 0, T c = 0, T* s = nullptr)
 	{
-		if (s == NULL)//Default to using time plus index as the seed if s was NULL.
+		if (s == nullptr)//Default to using time plus index as the seed if s was nullptr.
 		{
 			for (int i = 0; i < N; i++)
 				m_Rc.randrsl[i] = (T)time(0) + i;
@@ -272,9 +272,9 @@ public:
 #ifndef ISAAC_FLAM3_DEBUG
 		if (a == 0 && b == 0 && c == 0)
 		{
-			m_Rc.randa = (T)time(0);
-			m_Rc.randb = (T)time(0) * (T)time(0);
-			m_Rc.randc = (T)time(0) * (T)time(0) * (T)time(0);
+			m_Rc.randa = (T)time(nullptr);
+			m_Rc.randb = (T)time(nullptr) * (T)time(nullptr);
+			m_Rc.randc = (T)time(nullptr) * (T)time(nullptr) * (T)time(nullptr);
 		}
 		else
 #endif
@@ -283,10 +283,10 @@ public:
 			m_Rc.randb = b;
 			m_Rc.randc = c;
 		}
-   
+
 		RandInit(&m_Rc, true);
 	}
-   
+
 protected:
 	/// <summary>
 	/// Compute the next batch of random numbers for a random context.
@@ -295,17 +295,17 @@ protected:
 	void Isaac(randctx* ctx)
 	{
 		T x,y;
-   
+
 		T* mm = ctx->randmem;
 		T* r  = ctx->randrsl;
-   
+
 		T a = (ctx->randa);
 		T b = (ctx->randb + (++ctx->randc));
-   
-		T* m    = mm; 
+
+		T* m    = mm;
 		T* m2   = (m + (N / 2));
 		T* mend = m2;
-   
+
 		for(; m < mend; )
 		{
 		#ifndef __ISAAC64
@@ -320,9 +320,9 @@ protected:
 			RngStep(  a ^ (a >> 33) , a, b, mm, m, m2, r, x, y);
 		#endif  // __ISAAC64
 		}
-   
+
 		m2 = mm;
-   
+
 		for(; m2<mend;)
 		{
 		#ifndef __ISAAC64
@@ -337,11 +337,11 @@ protected:
 			RngStep(  a ^ (a >> 33) , a, b, mm, m, m2, r, x, y);
 		#endif  // __ISAAC64
 		}
-   
+
 		ctx->randb = b;
 		ctx->randa = a;
 	}
-   
+
 	/// <summary>
 	/// Retrieves a value using indirection.
 	/// </summary>
@@ -362,26 +362,26 @@ protected:
 	/// </summary>
 	void RngStep(T mix, T& a, T& b, T*& mm, T*& m, T*& m2, T*& r, T& x, T& y)
 	{
-		x = *m;  
-		a = (a ^ (mix)) + *(m2++); 
-		*(m++) = y = Ind(mm, x) + a + b; 
-		*(r++) = b = Ind(mm, y >> ALPHA) + x; 
+		x = *m;
+		a = (a ^ (mix)) + *(m2++);
+		*(m++) = y = Ind(mm, x) + a + b;
+		*(r++) = b = Ind(mm, y >> ALPHA) + x;
 	}
 
 	/// <summary>
 	/// Unsure what this does.
 	/// </summary>
 	void Shuffle(T& a, T& b, T& c, T& d, T& e, T& f, T& g, T& h)
-	{ 
+	{
 #ifndef __ISAAC64
-		a ^= b << 11; d += a; b += c; 
-		b ^= c >>  2; e += b; c += d; 
-		c ^= d <<  8; f += c; d += e; 
-		d ^= e >> 16; g += d; e += f; 
-		e ^= f << 10; h += e; f += g; 
-		f ^= g >>  4; a += f; g += h; 
-		g ^= h <<  8; b += g; h += a; 
-		h ^= a >>  9; c += h; a += b; 
+		a ^= b << 11; d += a; b += c;
+		b ^= c >>  2; e += b; c += d;
+		c ^= d <<  8; f += c; d += e;
+		d ^= e >> 16; g += d; e += f;
+		e ^= f << 10; h += e; f += g;
+		f ^= g >>  4; a += f; g += h;
+		g ^= h <<  8; b += g; h += a;
+		h ^= a >>  9; c += h; a += b;
 #else // __ISAAC64
 		a -= e; f ^= h >> 9;  h += a;
 		b -= f; g ^= a << 9;  a += b;
@@ -393,7 +393,7 @@ protected:
 		h -= d; e ^= g << 14; g += h;
 #endif // __ISAAC64
 	}
-   
+
 private:
 	randctx m_Rc;//The random context which holds all of the seed and state information as well as the random number values.
 };
