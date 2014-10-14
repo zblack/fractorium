@@ -36,11 +36,11 @@ public:
 	/// <param name="sourceEmbers">The array of embers to align</param>
 	/// <param name="destEmbers">The array which will contain the aligned embers </param>
 	/// <param name="count">The number of elements in sourceEmbers</param>
-	static void Align(Ember<T>* sourceEmbers, Ember<T>* destEmbers, unsigned int count)
+	static void Align(Ember<T>* sourceEmbers, Ember<T>* destEmbers, size_t count)
 	{
 		bool aligned = true;
 		bool currentFinal, final = sourceEmbers[0].UseFinalXform();
-		unsigned int i, xf, currentCount, maxCount = sourceEmbers[0].XformCount();
+		size_t i, xf, currentCount, maxCount = sourceEmbers[0].XformCount();
 		Xform<T>* destXform;
 		Xform<T>* destOtherXform;
 
@@ -80,7 +80,7 @@ public:
 		//All embers will have the same number of xforms at this point.
 		for (i = 0; i < count; i++)
 		{
-			unsigned int ii;
+			size_t ii;
 
 			for (xf = 0; xf < maxCount; xf++)//This will include both normal xforms and the final.
 			{
@@ -104,7 +104,7 @@ public:
 				//If the current xform index is greater than what the original xform count was for this ember, then it's a padding xform.
 				if (xf >= sourceEmbers[i].TotalXformCount() && !aligned)
 				{
-					unsigned int found = 0;
+					size_t found = 0;
 
 					//Remove linear.
 					destXform->DeleteVariationById(VAR_LINEAR);
@@ -304,7 +304,7 @@ public:
 	/// <returns>True if at least one ember contained xaos, else false.</returns>
 	static bool AnyXaosPresent(Ember<T>* embers, size_t size)
 	{
-		for (unsigned int i = 0; i < size; i++)
+		for (size_t i = 0; i < size; i++)
 			if (embers[i].XaosPresent())
 				return true;
 
@@ -316,7 +316,7 @@ public:
 	/// </summary>
 	/// <param name="embers">The vector of embers to inspect for the greatest xform count</param>
 	/// <returns>The greatest non-final xform count in any of the embers</returns>
-	static unsigned int MaxXformCount(vector<Ember<T>>& embers)
+	static size_t MaxXformCount(vector<Ember<T>>& embers)
 	{
 		return MaxXformCount(embers.data(), embers.size());
 	}
@@ -327,9 +327,9 @@ public:
 	/// <param name="embers">The array of embers to inspect</param>
 	/// <param name="size">The size of the embers array</param>
 	/// <returns>The greatest non-final xform count in any of the embers</returns>
-	static unsigned int MaxXformCount(Ember<T>* embers, size_t size)
+	static size_t MaxXformCount(Ember<T>* embers, size_t size)
 	{
-		unsigned int i, maxCount = 0;
+		size_t i, maxCount = 0;
 
 		for (i = 0; i < size; i++)
 			if (embers[i].XformCount() > maxCount)
@@ -473,7 +473,7 @@ public:
 	{
 		Xform<T> xform;
 
-		for (unsigned int xf = 0; xf < xforms.size(); xf++)
+		for (size_t xf = 0; xf < xforms.size(); xf++)
 			MergeXformVariations1Way(xforms[xf], &xform, false, clearWeights);
 
 		return xform;
@@ -488,7 +488,7 @@ public:
 	/// <param name="clearWeights">If true, set variation weights in dest to 0, else copy weights</param>
 	static void MergeXformVariations1Way(Xform<T>* source, Xform<T>* dest, bool parVarsOnly, bool clearWeights)
 	{
-		for (unsigned int i = 0; i < source->TotalVariationCount(); i++)//Iterate through the first xform's variations.
+		for (size_t i = 0; i < source->TotalVariationCount(); i++)//Iterate through the first xform's variations.
 		{
 			Variation<T>* var = source->GetVariation(i);//Grab the variation at index in in the first xform.
 			Variation<T>* var2 = dest->GetVariationById(var->VariationId());//See if the same variation exists in the second xform.
@@ -551,19 +551,19 @@ public:
 			ParamWithName<T>* secondParams = second->Params();
 
 			//Iterate through each of the source variations.
-			for (unsigned int i = 0; i < first.size(); i++)
+			for (size_t i = 0; i < first.size(); i++)
 			{
 				ParametricVariation<T>* firstVar = first[i];
 
 				//Make sure the source variation at this index is the same type as the variation being written to.
 				if (firstVar->VariationId() == second->VariationId())
 				{
-					unsigned int size = firstVar->ParamCount();
+					size_t size = firstVar->ParamCount();
 					ParamWithName<T>* firstParams = firstVar->Params();
 
 					//Multiply each parameter of the variation at this index by the coefficient at this index, and add
 					//the result to the corresponding parameter in second.
-					for (unsigned int j = 0; j < size; j++)
+					for (size_t j = 0; j < size; j++)
 					{
 						if (!firstParams[j].IsPrecalc())
 							*(secondParams[j].Param()) += c[i] * firstParams[j].ParamVal();
@@ -584,7 +584,7 @@ public:
 	/// <param name="cxAng">The vec2 vector to store the polar angular values</param>
 	/// <param name="cxMag">The vec2 vector to store the polar magnitude values</param>
 	/// <param name="cxTrn">The vec2 vector to store the polar translation values</param>
-	static void ConvertLinearToPolar(vector<Ember<T>>& embers, int xfi, int cflag, vector<v2T>& cxAng, vector<v2T>& cxMag, vector<v2T>& cxTrn)
+	static void ConvertLinearToPolar(vector<Ember<T>>& embers, size_t xfi, size_t cflag, vector<v2T>& cxAng, vector<v2T>& cxMag, vector<v2T>& cxTrn)
 	{
 		ConvertLinearToPolar(embers.data(), embers.size(), xfi, cflag, cxAng, cxMag, cxTrn);
 	}
@@ -600,7 +600,7 @@ public:
 	/// <param name="cxAng">The vec2 vector to store the polar angular values</param>
 	/// <param name="cxMag">The vec2 vector to store the polar magnitude values</param>
 	/// <param name="cxTrn">The vec2 vector to store the polar translation values</param>
-	static void ConvertLinearToPolar(Ember<T>* embers, size_t size, int xfi, int cflag, vector<v2T>& cxAng, vector<v2T>& cxMag, vector<v2T>& cxTrn)
+	static void ConvertLinearToPolar(Ember<T>* embers, size_t size, size_t xfi, size_t cflag, vector<v2T>& cxAng, vector<v2T>& cxMag, vector<v2T>& cxTrn)
 	{
 		if (size == cxAng.size() &&
 			size == cxMag.size() &&
@@ -707,9 +707,9 @@ public:
 	/// </summary>
 	/// <param name="embers">The array of embers</param>
 	/// <param name="count">The size of the embers array</param>
-	static void AsymmetricRefAngles(Ember<T>* embers, unsigned int count)
+	static void AsymmetricRefAngles(Ember<T>* embers, size_t count)
 	{
-		unsigned int k, xfi, col;
+		size_t k, xfi;
 		T cxang[4][2], c1[2], d;
 
 		for (xfi = 0; xfi < embers[0].XformCount(); xfi++)//Final xforms don't rotate regardless of their symmetry.
@@ -718,7 +718,7 @@ public:
 			{
 				//Establish the angle for each component.
 				//Should potentially functionalize.
-				for (col = 0; col < 2; col++)
+				for (glm::length_t col = 0; col < 2; col++)
 				{
 					c1[0] = embers[k].GetXform(xfi)->m_Affine.m_Mat[0][col];//A,D then B,E.
 					c1[1] = embers[k].GetXform(xfi)->m_Affine.m_Mat[1][col];
@@ -729,7 +729,7 @@ public:
 
 			for (k = 1; k < count; k++)
 			{
-				for (col = 0; col < 2; col++)
+				for (size_t col = 0; col < 2; col++)
 				{
 					int sym0, sym1;
 					int padSymFlag;
@@ -832,7 +832,7 @@ public:
 	/// <param name="numXforms">The number xforms in the ember</param>
 	/// <param name="thisXform">The index of this xform within the ember</param>
 	/// <returns>The stagger coefficient</returns>
-	static inline T GetStaggerCoef(T t, T staggerPercent, int numXforms, int thisXform)
+	static inline T GetStaggerCoef(T t, T staggerPercent, size_t numXforms, size_t thisXform)
 	{
 		//maxStag is the spacing between xform start times if staggerPercent = 1.0.
 		T maxStag = T(numXforms - 1) / numXforms;

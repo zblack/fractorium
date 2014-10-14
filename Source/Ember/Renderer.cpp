@@ -10,33 +10,10 @@ namespace EmberNs
 template <typename T, typename bucketT>
 Renderer<T, bucketT>::Renderer()
 {
-	m_Abort = false;
-	m_LockAccum = false;
-	m_EarlyClip = false;
-	m_YAxisUp = false;
-	m_InsertPalette = false;
-	m_ReclaimOnResize = false;
-	m_SubBatchSize = 1024 * 10;
-	m_NumChannels = 3;
-	m_BytesPerChannel = 1;
-	m_SuperSize = 0;
 	m_PixelAspectRatio = 1;
-	m_Transparency = false;
-	ThreadCount(Timing::ProcessorCount());
 	m_StandardIterator = unique_ptr<StandardIterator<T>>(new StandardIterator<T>());
 	m_XaosIterator = unique_ptr<XaosIterator<T>>(new XaosIterator<T>());
 	m_Iterator = m_StandardIterator.get();
-	m_Callback = nullptr;
-	m_ProgressParameter = nullptr;
-	m_LastPass = 0;
-	m_LastTemporalSample = 0;
-	m_LastIter = 0;
-	m_LastIterPercent = 0;
-	m_InteractiveFilter = FILTER_LOG;
-	m_ProcessState = NONE;
-	m_ProcessAction = FULL_RENDER;
-	m_InRender = false;
-	m_InFinalAccum = false;
 }
 
 /// <summary>
@@ -48,36 +25,8 @@ Renderer<T, bucketT>::~Renderer()
 }
 
 /// <summary>
-/// Compute the bounds of the histogram and density filtering buffers.
-/// These are affected by the final requested dimensions, spatial and density
-/// filter sizes and supersampling.
+/// Non-virtual processing functions.
 /// </summary>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::ComputeBounds()
-{
-	unsigned int maxDEFilterWidth = 0;
-
-	m_GutterWidth = ClampGte((m_SpatialFilter->FinalFilterWidth() - Supersample()) / 2, 0u);
-
-	//Check the size of the density estimation filter.
-	//If the radius of the density estimation filter is greater than the
-	//gutter width, have to pad with more.  Otherwise, use the same value.
-	for (unsigned int i = 0; i < m_Embers.size(); i++)
-		maxDEFilterWidth = max((unsigned int)(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
-
-	//Need an extra ss = (int)floor(m_Supersample / 2.0) of pixels so that a local iteration count for DE can be determined.//SMOULDER
-	if (maxDEFilterWidth > 0)
-		maxDEFilterWidth += (unsigned int)Floor<T>(m_Ember.m_Supersample / T(2));
-
-	//To have a fully present set of pixels for the spatial filter, must
-	//add the DE filter width to the spatial filter width.//SMOULDER
-	m_DensityFilterOffset = maxDEFilterWidth;
-	m_GutterWidth += m_DensityFilterOffset;
-
-	m_SuperRasW = (Supersample() * FinalRasW()) + (2 * m_GutterWidth);
-	m_SuperRasH = (Supersample() * FinalRasH()) + (2 * m_GutterWidth);
-	m_SuperSize = m_SuperRasW * m_SuperRasH;
-}
 
 /// <summary>
 /// Compute the camera.
@@ -115,83 +64,80 @@ void Renderer<T, bucketT>::ComputeCamera()
 }
 
 /// <summary>
-/// Abort the render and call a function to do something, most likely change a value.
-/// Then update the current process action to the one specified.
-/// The current process action will only be set if it makes sense based
-/// on the current process state. If the value specified doesn't make sense
-/// the next best choice will be made. If nothing makes sense, a complete
-/// re-render will be triggered on the next call to Run().
+/// Add an ember to the end of the embers vector and reset the rendering process.
+/// Reset the rendering process.
 /// </summary>
-/// <param name="func">The function to execute</param>
-/// <param name="action">The desired process action</param>
+/// <param name="ember">The ember to add</param>
 template <typename T, typename bucketT>
-void Renderer<T, bucketT>::ChangeVal(std::function<void (void)> func, eProcessAction action)
+void Renderer<T, bucketT>::AddEmber(Ember<T>& ember)
 {
-	Abort();
-	EnterRender();
-	func();
+	ChangeVal([&]
+	{
+		m_Embers.push_back(ember);
 
-	//If they want a full render, don't bother inspecting process state, just start over.
-	if (action == FULL_RENDER)
-	{
-		m_ProcessState = NONE;
-		m_ProcessAction = FULL_RENDER;
-	}
-	//Keep iterating is when rendering has completed and the user increases the quality.
-	//Rendering can be started where it left off by adding just the difference between the
-	//new and old quality values.
-	else if (action == KEEP_ITERATING)
-	{
-		if (m_ProcessState == ACCUM_DONE && TemporalSamples() == 1 && Passes() == 1)
-		{
-			m_ProcessState = ITER_STARTED;
-			m_ProcessAction = KEEP_ITERATING;
-		}
-		else//Invaid process state to handle KEEP_ITERATING, so just start over.
-		{
-			m_ProcessState = NONE;
-			m_ProcessAction = FULL_RENDER;
-		}
-	}
-	else if (action == FILTER_AND_ACCUM)
-	{
-		//If in the middle of a render, cannot skip to filtering or accum, so just start over.
-		if (m_ProcessState == NONE || m_ProcessState == ITER_STARTED)
-		{
-			m_ProcessState = NONE;
-			m_ProcessAction = FULL_RENDER;
-		}
-		//If passes == 1, set the state to ITER_DONE and the next process action to FILTER_AND_ACCUM.
-		else
-		{
-			m_ProcessState = Passes() == 1 ? ITER_DONE : NONE;
-			m_ProcessAction = Passes() == 1 ? FILTER_AND_ACCUM : FULL_RENDER;//Cannot just filter if passes > 1 because filtering is done with each pass.
-		}
-	}
-	//Run accum only.
-	else if (action == ACCUM_ONLY)
-	{
-		//Doesn't make sense if in the middle of iterating, so just start over.
-		if (m_ProcessState == NONE || m_ProcessState == ITER_STARTED)
-		{
-			m_ProcessAction = FULL_RENDER;
-		}
-		else if (m_ProcessState == ITER_DONE)//If iterating is done, can start at density filtering and proceed.
-		{
-			m_ProcessAction = FILTER_AND_ACCUM;
-		}
-		else if (m_ProcessState == FILTER_DONE)//Density filtering is done, so the process action is assigned as desired.
-		{
-			m_ProcessAction = ACCUM_ONLY;
-		}
-		else if (m_ProcessState == ACCUM_DONE)//Final accum is done, so back up and run final accum again.
-		{
-			m_ProcessState = FILTER_DONE;
-			m_ProcessAction = ACCUM_ONLY;
-		}
-	}
+		if (m_Embers.size() == 1)
+			m_Ember = m_Embers[0];
+	}, FULL_RENDER);
+}
 
-	LeaveRender();
+/// <summary>
+/// Set the m_Iterator member to point to the appropriate
+/// iterator based on whether the ember currently being rendered
+/// contains xaos.
+/// After assigning, initialize the xform selection buffer.
+/// </summary>
+/// <returns>True if assignment and distribution initialization succeeded, else false.</returns>
+template <typename T, typename bucketT>
+bool Renderer<T, bucketT>::AssignIterator()
+{
+	//Setup iterator and distributions.
+	//Both iterator types were setup in the constructor (add more in the future if needed).
+	//So simply assign the pointer to the correct type and re-initialize its distributions
+	//based on the current ember.
+	if (XaosPresent())
+		m_Iterator = m_XaosIterator.get();
+	else
+		m_Iterator = m_StandardIterator.get();
+
+	//Timing t;
+	return m_Iterator->InitDistributions(m_Ember);
+	//t.Toc("Distrib creation");
+}
+
+/// <summary>
+/// Virtual processing functions overriden from RendererBase.
+/// </summary>
+
+/// <summary>
+/// Compute the bounds of the histogram and density filtering buffers.
+/// These are affected by the final requested dimensions, spatial and density
+/// filter sizes and supersampling.
+/// </summary>
+template <typename T, typename bucketT>
+void Renderer<T, bucketT>::ComputeBounds()
+{
+	size_t maxDEFilterWidth = 0;
+
+	m_GutterWidth = ClampGte((m_SpatialFilter->FinalFilterWidth() - Supersample()) / 2, 0ULL);
+
+	//Check the size of the density estimation filter.
+	//If the radius of the density estimation filter is greater than the
+	//gutter width, have to pad with more.  Otherwise, use the same value.
+	for (size_t i = 0; i < m_Embers.size(); i++)
+		maxDEFilterWidth = max((size_t)(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
+
+	//Need an extra ss = (int)floor(m_Supersample / 2.0) of pixels so that a local iteration count for DE can be determined.//SMOULDER
+	if (maxDEFilterWidth > 0)
+		maxDEFilterWidth += (size_t)Floor<T>(m_Ember.m_Supersample / T(2));
+
+	//To have a fully present set of pixels for the spatial filter, must
+	//add the DE filter width to the spatial filter width.//SMOULDER
+	m_DensityFilterOffset = maxDEFilterWidth;
+	m_GutterWidth += m_DensityFilterOffset;
+
+	m_SuperRasW = (Supersample() * FinalRasW()) + (2 * m_GutterWidth);
+	m_SuperRasH = (Supersample() * FinalRasH()) + (2 * m_GutterWidth);
+	m_SuperSize = m_SuperRasW * m_SuperRasH;
 }
 
 /// <summary>
@@ -235,20 +181,73 @@ void Renderer<T, bucketT>::SetEmber(vector<Ember<T>>& embers)
 }
 
 /// <summary>
-/// Add an ember to the end of the embers vector and reset the rendering process.
-/// Reset the rendering process.
+/// Create the density filter if the current filter parameters differ
+/// from the last density filter created.
+/// The filter will be deleted if the max DE radius is 0, in which case regular
+/// log scale filtering will be used.
 /// </summary>
-/// <param name="ember">The ember to add</param>
+/// <param name="newAlloc">True if a new filter instance was created, else false.</param>
+/// <returns>True if the filter is not nullptr (whether a new one was created or not) or if max rad is 0, else false.</returns>
 template <typename T, typename bucketT>
-void Renderer<T, bucketT>::AddEmber(Ember<T>& ember)
+bool Renderer<T, bucketT>::CreateDEFilter(bool& newAlloc)
 {
-	ChangeVal([&]
-	{
-		m_Embers.push_back(ember);
+	//If they wanted DE, create it if needed, else clear the last DE filter which means we'll do regular log filtering after iters are done.
+	newAlloc = false;
 
-		if (m_Embers.size() == 1)
-			m_Ember = m_Embers[0];
-	}, FULL_RENDER);
+	if (m_Ember.m_MaxRadDE > 0)
+	{
+		//Use intelligent testing so it isn't created every time a new ember is passed in.
+		if ((!m_DensityFilter.get()) ||
+			(m_Ember.m_MinRadDE != m_DensityFilter->MinRad()) ||
+			(m_Ember.m_MaxRadDE != m_DensityFilter->MaxRad()) ||
+			(m_Ember.m_CurveDE != m_DensityFilter->Curve()) ||
+			(m_Ember.m_Supersample != m_DensityFilter->Supersample()))
+		{
+			m_DensityFilter = unique_ptr<DensityFilter<T>>(new DensityFilter<T>(m_Ember.m_MinRadDE, m_Ember.m_MaxRadDE, m_Ember.m_CurveDE, m_Ember.m_Supersample));
+			newAlloc = true;
+		}
+
+		if (newAlloc)
+		{
+			if (!m_DensityFilter.get()) { return false; }//Did object creation succeed?
+			if (!m_DensityFilter->Create()) { return false; }//Object creation succeeded, did filter creation succeed?
+			//cout << m_DensityFilter->ToString() << endl;
+		}
+		else
+			if (!m_DensityFilter->Valid()) { return false; }//Previously created, are values ok?
+	}
+	else
+	{
+		m_DensityFilter.reset();//They want to do log filtering. Return true because even though the filter is being deleted, nothing went wrong.
+	}
+
+	return true;
+}
+
+/// <summary>
+/// Create the spatial filter if the current filter parameters differ
+/// from the last spatial filter created.
+/// </summary>
+/// <param name="newAlloc">True if a new filter instance was created, else false.</param>
+/// <returns>True if the filter is not nullptr (whether a new one was created or not), else false.</returns>
+template <typename T, typename bucketT>
+bool Renderer<T, bucketT>::CreateSpatialFilter(bool& newAlloc)
+{
+	newAlloc = false;
+
+	//Use intelligent testing so it isn't created every time a new ember is passed in.
+	if ((!m_SpatialFilter.get()) ||
+		(m_Ember.m_SpatialFilterType != m_SpatialFilter->FilterType()) ||
+		(m_Ember.m_SpatialFilterRadius != m_SpatialFilter->FilterRadius()) ||
+		(m_Ember.m_Supersample != m_SpatialFilter->Supersample()) ||
+		(m_PixelAspectRatio != m_SpatialFilter->PixelAspectRatio()))
+	{
+		m_SpatialFilter = unique_ptr<SpatialFilter<T>>(
+			SpatialFilterCreator<T>::Create(m_Ember.m_SpatialFilterType, m_Ember.m_SpatialFilterRadius, m_Ember.m_Supersample, m_PixelAspectRatio));
+		newAlloc = true;
+	}
+
+	return m_SpatialFilter.get() != nullptr;
 }
 
 /// <summary>
@@ -276,40 +275,6 @@ bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 	}
 
 	return m_TemporalFilter.get() != nullptr;
-}
-
-/// <summary>
-/// Resize the passed in vector to be large enough to handle the output image.
-/// If m_ReclaimOnResize is true, and the vector is already larger than needed,
-/// it will be shrunk to the needed size. However if m_ReclaimOnResize is false,
-/// it will be left alone if already large enough.
-/// ComputeBounds() must be called before calling this function.
-/// </summary>
-/// <param name="pixels">The vector to allocate</param>
-/// <returns>True if the vector contains enough space to hold the output image</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::PrepFinalAccumVector(vector<unsigned char>& pixels)
-{
-	EnterResize();
-	size_t size = FinalBufferSize();
-
-	if (m_ReclaimOnResize)
-	{
-		if (pixels.size() != size)
-		{
-			pixels.resize(size);
-			pixels.shrink_to_fit();
-		}
-	}
-	else
-	{
-		if (pixels.size() < size)
-			pixels.resize(size);
-	}
-
-	LeaveResize();
-
-	return pixels.size() >= size;//Ensure allocation went ok.
 }
 
 /// <summary>
@@ -354,7 +319,7 @@ bool Renderer<T, bucketT>::PrepFinalAccumVector(vector<unsigned char>& pixels)
 /// <param name="finalOffset">Offset in finalImage to store the pixels to. Default: 0.</param>
 /// <returns>True if nothing went wrong, else false.</returns>
 template <typename T, typename bucketT>
-eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, double time, unsigned int subBatchCountOverride, bool forceOutput, size_t finalOffset)
+eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, double time, size_t subBatchCountOverride, bool forceOutput, size_t finalOffset)
 {
 	m_InRender = true;
 	EnterRender();
@@ -363,7 +328,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	bool accumOnly = m_ProcessAction == ACCUM_ONLY;
 	bool resume = m_ProcessState != NONE;
 	bool newFilterAlloc;
-	unsigned int temporalSample = 0, pass;
+	size_t temporalSample = 0, pass;
 	T deTime;
 	eRenderStatus success = RENDER_OK;
 	//double iterationTime = 0;
@@ -408,8 +373,8 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	pass = (resume ? m_LastPass : 0);
 
 	//Make sure values are within valid range.
-	ClampGteRef(m_Ember.m_Passes, 1u);
-	ClampGteRef(m_Ember.m_Supersample, 1u);
+	ClampGteRef(m_Ember.m_Passes, 1ULL);
+	ClampGteRef(m_Ember.m_Supersample, 1ULL);
 
 	//Make sure to get most recent update since loop won't be entered to call Interp().
 	//Vib, gam and background are normally summed for each temporal sample. However if iteration is skipped, make sure to get the latest.
@@ -509,8 +474,8 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 			//The actual number of times to iterate. Each thread will get (totalIters / ThreadCount) iters to do.
 			//This is based on zoom and scale calculated in ComputeCamera().
 			//Note that the iter count is based on the final image dimensions, and not the super sampled dimensions.
-			uint64_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample in this pass without overrides.
-			uint64_t sampleItersToDo;//The number of iterations to actually do in this sample in this pass, considering overrides.
+			size_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample in this pass without overrides.
+			size_t sampleItersToDo;//The number of iterations to actually do in this sample in this pass, considering overrides.
 
 			if (subBatchCountOverride > 0)
 				sampleItersToDo = subBatchCountOverride * SubBatchSize() * ThreadCount();//Run a specific number of sub batches.
@@ -710,339 +675,25 @@ Finish:
 /// <param name="hexPalette">If true, embed a hexadecimal palette instead of Xml Color tags, else use Xml color tags.</param>
 /// <returns>The EmberImageComments object with image comments filled out</returns>
 template <typename T, typename bucketT>
-EmberImageComments Renderer<T, bucketT>::ImageComments(unsigned int printEditDepth, bool intPalette, bool hexPalette)
+EmberImageComments Renderer<T, bucketT>::ImageComments(EmberStats& stats, size_t printEditDepth, bool intPalette, bool hexPalette)
 {
 	ostringstream ss;
 	EmberImageComments comments;
 
 	ss.imbue(std::locale(""));
 	comments.m_Genome = m_EmberToXml.ToString(m_Ember, "", printEditDepth, false, intPalette, hexPalette);
-	ss << ((double)m_Stats.m_Badvals / (double)m_Stats.m_Iters);//Percentage of bad values to iters.
+	ss << ((double)stats.m_Badvals / (double)stats.m_Iters);//Percentage of bad values to iters.
 	comments.m_Badvals = ss.str(); ss.str("");
-	ss << m_Stats.m_Iters;
+	ss << stats.m_Iters;
 	comments.m_NumIters = ss.str(); ss.str("");//Total iters.
-	ss << (m_Stats.m_RenderMs / 1000.0);
+	ss << (stats.m_RenderMs / 1000.0);
 	comments.m_Runtime = ss.str();//Number of seconds for iterating, accumulating and filtering.
 
 	return comments;
 }
 
 /// <summary>
-/// Return the amount of memory needed to render the current ember.
-/// Optionally include the memory needed for the final output image.
-/// </summary>
-/// <param name="includeFinal">If true include the memory needed for the final output image, else don't.</param>
-/// <returns>The memory required to render the current ember</returns>
-template <typename T, typename bucketT>
-uint64_t Renderer<T, bucketT>::MemoryRequired(bool includeFinal)
-{
-	bool newFilterAlloc = false;
-
-	CreateSpatialFilter(newFilterAlloc);
-	CreateTemporalFilter(newFilterAlloc);
-	ComputeBounds();
-
-	//Because ComputeBounds() was called, this includes gutter.
-	uint64_t histSize = SuperSize() * sizeof(glm::detail::tvec4<bucketT, glm::defaultp>);
-
-	return (histSize * 2) + (includeFinal ? FinalBufferSize() : 0);//Multiply hist by 2 to account for the density filtering buffer which is the same size as the histogram.
-}
-
-/// <summary>
-/// Virtual functions to be overriden in derived renderers that use the GPU.
-/// </summary>
-
-/// <summary>
-/// The amount of RAM available to render with.
-/// </summary>
-/// <returns>An unsigned 64-bit integer specifying how much memory is available</returns>
-template <typename T, typename bucketT>
-uint64_t Renderer<T, bucketT>::MemoryAvailable()
-{
-	uint64_t memAvailable = 0;
-
-#ifdef WIN32
-
-	MEMORYSTATUSEX stat;
-
-	stat.dwLength = sizeof(stat);
-	GlobalMemoryStatusEx(&stat);
-	memAvailable = stat.ullTotalPhys;
-
-#elif defined(_SC_PHYS_PAGES) && defined(_SC_PAGESIZE)
-
-	memAvailable = sysconf(_SC_PHYS_PAGES) * sysconf(_SC_PAGESIZE);
-
-#elif defined __APPLE__
-
-	#ifdef __LP64__
-		long physmem;
-		size_t len = sizeof(physmem);
-		static int mib[2] = { CTL_HW, HW_MEMSIZE };
-	#else
-		unsigned int physmem;
-		size_t len = sizeof(physmem);
-		static int mib[2] = { CTL_HW, HW_PHYSMEM };
-	#endif
-
-	if (sysctl(mib, 2, &physmem, &len, nullptr, 0) == 0 && len == sizeof(physmem))
-	{
-		memAvailable = physmem;
-	}
-	else
-	{
-		cout << "Warning: unable to determine physical memory." << endl;
-		memAvailable = 4e9;
-	}
-
-#else
-
-	cout << "Warning: unable to determine physical memory." << endl;
-	memAvailable = 4e9;
-
-#endif
-
-	return memAvailable;
-}
-
-/// <summary>
-/// Stop rendering, ensure all locks are exited and reset the rendering state.
-/// </summary>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::Reset()
-{
-	Abort();
-	EnterRender();
-	EnterFinalAccum();
-	LeaveFinalAccum();
-	LeaveRender();
-	m_ProcessState = NONE;
-	m_ProcessAction = FULL_RENDER;
-}
-
-/// <summary>
-/// Get a status indicating whether this renderer is ok.
-/// Return true for this class, derived classes will inspect GPU hardware
-/// to determine if they are ok.
-/// </summary>
-/// <returns>Always true for this class</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::Ok() const
-{
-	return true;
-}
-
-/// <summary>
-/// Create the density filter if the current filter parameters differ
-/// from the last density filter created.
-/// The filter will be deleted if the max DE radius is 0, in which case regular
-/// log scale filtering will be used.
-/// </summary>
-/// <param name="newAlloc">True if a new filter instance was created, else false.</param>
-/// <returns>True if the filter is not nullptr (whether a new one was created or not) or if max rad is 0, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::CreateDEFilter(bool& newAlloc)
-{
-	//If they wanted DE, create it if needed, else clear the last DE filter which means we'll do regular log filtering after iters are done.
-	newAlloc = false;
-
-	if (m_Ember.m_MaxRadDE > 0)
-	{
-		//Use intelligent testing so it isn't created every time a new ember is passed in.
-		if ((!m_DensityFilter.get()) ||
-			(m_Ember.m_MinRadDE != m_DensityFilter->MinRad()) ||
-			(m_Ember.m_MaxRadDE != m_DensityFilter->MaxRad()) ||
-			(m_Ember.m_CurveDE != m_DensityFilter->Curve()) ||
-			(m_Ember.m_Supersample != m_DensityFilter->Supersample()))
-		{
-			m_DensityFilter = unique_ptr<DensityFilter<T>>(new DensityFilter<T>(m_Ember.m_MinRadDE, m_Ember.m_MaxRadDE, m_Ember.m_CurveDE, m_Ember.m_Supersample));
-			newAlloc = true;
-		}
-
-		if (newAlloc)
-		{
-			if (!m_DensityFilter.get()) { return false; }//Did object creation succeed?
-			if (!m_DensityFilter->Create()) { return false; }//Object creation succeeded, did filter creation succeed?
-			//cout << m_DensityFilter->ToString() << endl;
-		}
-		else
-			if (!m_DensityFilter->Valid()) { return false; }//Previously created, are values ok?
-	}
-	else
-	{
-		m_DensityFilter.reset();//They want to do log filtering. Return true because even though the filter is being deleted, nothing went wrong.
-	}
-
-	return true;
-}
-
-/// <summary>
-/// Create the spatial filter if the current filter parameters differ
-/// from the last spatial filter created.
-/// </summary>
-/// <param name="newAlloc">True if a new filter instance was created, else false.</param>
-/// <returns>True if the filter is not nullptr (whether a new one was created or not), else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::CreateSpatialFilter(bool& newAlloc)
-{
-	newAlloc = false;
-
-	//Use intelligent testing so it isn't created every time a new ember is passed in.
-	if ((!m_SpatialFilter.get()) ||
-		(m_Ember.m_SpatialFilterType != m_SpatialFilter->FilterType()) ||
-		(m_Ember.m_SpatialFilterRadius != m_SpatialFilter->FilterRadius()) ||
-		(m_Ember.m_Supersample != m_SpatialFilter->Supersample()) ||
-		(m_PixelAspectRatio != m_SpatialFilter->PixelAspectRatio()))
-	{
-		m_SpatialFilter = unique_ptr<SpatialFilter<T>>(
-							SpatialFilterCreator<T>::Create(m_Ember.m_SpatialFilterType, m_Ember.m_SpatialFilterRadius, m_Ember.m_Supersample, m_PixelAspectRatio));
-		newAlloc = true;
-	}
-
-	return m_SpatialFilter.get() != nullptr;
-}
-
-/// <summary>
-/// Get the sub batch size. This is the size of of the chunks that the iteration
-/// trajectory will be broken up into.
-/// Default: 10k.
-/// </summary>
-/// <returns>The sub batch size</returns>
-template <typename T, typename bucketT>
-unsigned int Renderer<T, bucketT>::SubBatchSize() const { return m_SubBatchSize; }
-
-/// <summary>
-/// Set the sub batch size. This is the size of of the chunks that the iteration
-/// trajectory will be broken up into.
-/// Reset the rendering process.
-/// </summary>
-/// <param name="sbs">The sub batch size to set</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::SubBatchSize(unsigned int sbs)
-{
-	ChangeVal([&] { m_SubBatchSize = sbs; }, FULL_RENDER);
-}
-
-/// <summary>
-/// Get the number of channels per pixel in the output image. 3 for RGB images
-/// like Bitmap and Jpeg, 4 for Png.
-/// Default is 3.
-/// </summary>
-/// <returns>The number of channels per pixel in the output image</returns>
-template <typename T, typename bucketT> unsigned int Renderer<T, bucketT>::NumChannels() const { return m_NumChannels; }
-
-/// <summary>
-/// Set the number of channels per pixel in the output image. 3 for RGB images
-/// like Bitmap and Jpeg, 4 for Png.
-/// Default is 3.
-/// Set the render state to ACCUM_ONLY.
-/// </summary>
-/// <param name="numChannels">The number of channels per pixel in the output image</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::NumChannels(unsigned int numChannels)
-{
-	ChangeVal([&] { m_NumChannels = numChannels; }, ACCUM_ONLY);
-}
-
-/// <summary>
-/// Get the renderer type enum.
-/// CPU_RENDERER for this class, other values for derived classes.
-/// </summary>
-/// <returns>CPU_RENDERER</returns>
-template <typename T, typename bucketT>
-eRendererType Renderer<T, bucketT>::RendererType() const { return CPU_RENDERER; }
-
-/// <summary>
-/// Get the number of threads used when rendering.
-/// Default: use all avaliable cores.
-/// </summary>
-/// <returns>The number of threads used when rendering</returns>
-template <typename T, typename bucketT>
-unsigned int Renderer<T, bucketT>::ThreadCount() const { return m_ThreadsToUse; }
-
-/// <summary>
-/// Set the number of threads to use when rendering.
-/// This will also reset the vector of random contexts to be the same size
-/// as the number of specified threads.
-/// Since this is where they get set up, the caller can optionally pass in
-/// a seed string, however it's only used if threads is 1.
-/// This is useful for debugging since it will run the same point trajectory
-/// every time.
-/// Reset the rendering process.
-/// </summary>
-/// <param name="threads">The number of threads to use</param>
-/// <param name="seedString">The seed string to use if threads is 1. Default: nullptr.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::ThreadCount(unsigned int threads, const char* seedString)
-{
-	ChangeVal([&]
-	{
-		Timing t;
-		unsigned int i, size;
-		const unsigned int isaacSize = 1 << ISAAC_SIZE;
-		ISAAC_INT seeds[isaacSize];
-		m_ThreadsToUse = threads > 0 ? threads : 1;
-		m_Rand.clear();
-		m_SubBatch.clear();
-		m_SubBatch.resize(m_ThreadsToUse);
-		m_BadVals.resize(m_ThreadsToUse);
-
-		if (seedString)
-		{
-			memset(seeds, 0, isaacSize * sizeof(ISAAC_INT));
-			memcpy((char*)seeds, seedString, min(strlen(seedString), isaacSize * sizeof(ISAAC_INT)));
-		}
-
-		//This is critical for multithreading, otherwise the threads all happen
-		//too close to each other in time, resulting in bad randomization.
-		while (m_Rand.size() < m_ThreadsToUse)
-		{
-			size = (unsigned int)m_Rand.size();
-
-			if (seedString)
-			{
-				unsigned int newSize = size + 5 + (unsigned int)(t.Toc() + t.EndTime());
-
-#ifdef ISAAC_FLAM3_DEBUG
-				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(0, 0, 0, seeds);
-#else
-				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(newSize, newSize * 2, newSize * 3, seeds);
-#endif
-				m_Rand.push_back(isaac);
-
-				for (i = 0; i < (isaacSize * sizeof(ISAAC_INT)); i++)
-					((unsigned char*)seeds)[i]++;
-			}
-			else
-			{
-				for (i = 0; i < isaacSize; i++)
-				{
-					t.Toc();
-					seeds[i] = (ISAAC_INT)(t.EndTime() * i) + (size + 1);
-				}
-
-				t.Toc();
-				ISAAC_INT r = (size * i) + i + (ISAAC_INT)t.EndTime();
-				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(r, r * 2, r * 3, seeds);
-
-				m_Rand.push_back(isaac);
-			}
-		}
-	}, FULL_RENDER);
-}
-
-/// <summary>
-/// Set the callback object.
-/// </summary>
-/// <param name="callback">The callback object to set</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::Callback(RenderCallback* callback)
-{
-	m_Callback = callback;
-}
-
-/// <summary>
-/// Virtual functions to be overriden in derived renderers that use the GPU, but not accessed outside.
+/// New virtual functions to be overridden in derived renderers that use the GPU, but not accessed outside.
 /// </summary>
 
 /// <summary>
@@ -1103,7 +754,7 @@ bool Renderer<T, bucketT>::Alloc()
 		b &= (m_Samples.size() == m_ThreadsToUse);
 	}
 
-	for (unsigned int i = 0; i < m_Samples.size(); i++)
+	for (size_t i = 0; i < m_Samples.size(); i++)
 	{
 		if (m_Samples[i].size() != m_SubBatchSize)
 		{
@@ -1134,13 +785,13 @@ bool Renderer<T, bucketT>::ResetBuckets(bool resetHist, bool resetAccum)
 	//parallel_invoke(
 	//[&]
 	//{
-		if (resetHist && !m_HistBuckets.empty())
-			memset((void*)m_HistBuckets.data(), 0, m_HistBuckets.size() * sizeof(m_HistBuckets[0]));
+	if (resetHist && !m_HistBuckets.empty())
+		Memset(m_HistBuckets);
 	//},
 	//[&]
 	//{
-		if (resetAccum && !m_AccumulatorBuckets.empty())
-			memset(m_AccumulatorBuckets.data(), 0, m_AccumulatorBuckets.size() * sizeof(m_AccumulatorBuckets[0]));
+	if (resetAccum && !m_AccumulatorBuckets.empty())
+		Memset(m_AccumulatorBuckets);
 	//});
 
 	return resetHist || resetAccum;
@@ -1155,26 +806,26 @@ bool Renderer<T, bucketT>::ResetBuckets(bool resetHist, bool resetAccum)
 template <typename T, typename bucketT>
 eRenderStatus Renderer<T, bucketT>::LogScaleDensityFilter()
 {
-	unsigned int startRow = 0;
-	unsigned int endRow = m_SuperRasH;
-	unsigned int startCol = 0;
-	unsigned int endCol = m_SuperRasW;
+	size_t startRow = 0;
+	size_t endRow = m_SuperRasH;
+	size_t startCol = 0;
+	size_t endCol = m_SuperRasW;
 	//Timing t(4);
 
 	//Original didn't parallelize this, doing so gives a 50-75% speedup.
 	//If there is only one pass, the value can be directly assigned, which is quicker than summing.
 	if (Passes() == 1)
 	{
-		parallel_for(startRow, endRow, [&] (unsigned int j)
+		parallel_for(startRow, endRow, [&] (size_t j)
 		{
-			unsigned int row = j * m_SuperRasW;
+			size_t row = j * m_SuperRasW;
 			//__m128 logm128;//Figure out SSE at some point.
 			//__m128 bucketm128;
 			//__m128 scaledBucket128;
 
-			for (unsigned int i = startCol; (i < endCol) && !m_Abort; i++)
+			for (size_t i = startCol; (i < endCol) && !m_Abort; i++)
 			{
-				unsigned int index = row + i;
+				size_t index = row + i;
 
 				//Check for visibility first before doing anything else to avoid all possible unnecessary calculations.
 				if (m_HistBuckets[index].a != 0)
@@ -1190,13 +841,13 @@ eRenderStatus Renderer<T, bucketT>::LogScaleDensityFilter()
 	}
 	else//Passes > 1, so sum.
 	{
-		parallel_for(startRow, endRow, [&] (unsigned int j)
+		parallel_for(startRow, endRow, [&] (size_t j)
 		{
-			unsigned int row = j * m_SuperRasW;
+			size_t row = j * m_SuperRasW;
 
-			for (unsigned int i = startCol; (i < endCol) && !m_Abort; i++)
+			for (size_t i = startCol; (i < endCol) && !m_Abort; i++)
 			{
-				unsigned int index = row + i;
+				size_t index = row + i;
 
 				//Check for visibility first before doing anything else to avoid all possible unnecessary calculations.
 				if (m_HistBuckets[index].a != 0)
@@ -1229,48 +880,48 @@ template <typename T, typename bucketT>
 eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 {
 	Timing totalTime, localTime;
-	int scf = !(Supersample() & 1);
-	unsigned int ss = Floor<T>(Supersample() / T(2));
+	bool scf = !(Supersample() & 1);
+	intmax_t ss = Floor<T>(Supersample() / T(2));
 	T scfact = pow(Supersample() / (Supersample() + T(1.0)), T(2.0));
-
-	unsigned int threads = m_ThreadsToUse;
-	unsigned int startRow = Supersample() - 1;
-	unsigned int endRow = m_SuperRasH - (Supersample() - 1);//Original did + which is most likely wrong.
-	unsigned int startCol = Supersample() - 1;
-	unsigned int endCol = m_SuperRasW - (Supersample() - 1);
-	unsigned int chunkSize = (unsigned int)ceil(double(endRow - startRow) / double(threads));
-
+	
+	size_t threads = m_ThreadsToUse;
+	size_t startRow = Supersample() - 1;
+	size_t endRow = m_SuperRasH - (Supersample() - 1);//Original did + which is most likely wrong.
+	intmax_t startCol = Supersample() - 1;
+	intmax_t endCol = m_SuperRasW - (Supersample() - 1);
+	size_t chunkSize = (size_t)ceil(double(endRow - startRow) / double(threads));
+	
 	//parallel_for scales very well, dividing the work almost perfectly among all processors.
-	parallel_for((unsigned int)0, threads, [&] (unsigned int threadIndex)
+	parallel_for(0ULL, threads, [&] (size_t threadIndex)
 	{
-		unsigned int pixelNumber = 0;
-		unsigned int localStartRow = min(startRow + (threadIndex * chunkSize), endRow - 1);
-		unsigned int localEndRow = min(localStartRow + chunkSize, endRow);
-		unsigned int pixelsThisThread = (localEndRow - localStartRow) * m_SuperRasW;
+		size_t pixelNumber = 0;
+		int localStartRow = (int)min(startRow + (threadIndex * chunkSize), endRow - 1);
+		int localEndRow = (int)min(localStartRow + chunkSize, endRow);
+		size_t pixelsThisThread = size_t(localEndRow - localStartRow) * m_SuperRasW;
 		double lastPercent = 0;
 		glm::detail::tvec4<bucketT, glm::defaultp> logScaleBucket;
-
-		for (unsigned int j = localStartRow; (j < localEndRow) && !m_Abort; j++)
+	
+		for (intmax_t j = localStartRow; (j < localEndRow) && !m_Abort; j++)
 		{
-			unsigned int bucketRowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
+			size_t bucketRowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
 			const glm::detail::tvec4<bucketT, glm::defaultp>* bucket;
 			const glm::detail::tvec4<bucketT, glm::defaultp>* buckets = m_HistBuckets.data();
 			const T* filterCoefs = m_DensityFilter->Coefs();
 			const T* filterWidths = m_DensityFilter->Widths();
-
-			for (unsigned int i = startCol; i < endCol; i++)
+	
+			for (intmax_t i = startCol; i < endCol; i++)
 			{
-				int ii, jj, arrFilterWidth;
-				unsigned int filterSelectInt, filterCoefIndex;
+				intmax_t ii, jj, arrFilterWidth;
+				size_t filterSelectInt, filterCoefIndex;
 				T filterSelect = 0;
 				bucket = buckets + bucketRowStart + i;
-
+	
 				//Don't do anything if there's no hits here. Must also put this first to avoid dividing by zero below.
 				if (bucket->a == 0)
 					continue;
-
+	
 				T cacheLog = (m_K1 * log(T(1.0) + bucket->a * m_K2)) / bucket->a;//Caching this calculation gives a 30% speedup.
-
+	
 				if (ss == 0)
 				{
 					filterSelect = bucket->a;
@@ -1280,37 +931,37 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 					//The original contained a glaring flaw as it would run past the boundaries of the buffers
 					//when calculating the density for a box centered on the last row or column.
 					//Clamp here to not run over the edge.
-					int densityBoxLeftX = i - min(i, ss);
-					int densityBoxRightX = i + min(ss, m_SuperRasW - i - 1);
-					int densityBoxTopY = j - min(j, ss);
-					int densityBoxBottomY = j + min(ss, m_SuperRasH - j - 1);
-
+					intmax_t densityBoxLeftX = (i - min(i, ss));
+					intmax_t densityBoxRightX = (i + min(ss, (intmax_t)m_SuperRasW - i - 1));
+					intmax_t densityBoxTopY = (j - min(j, ss));
+					intmax_t densityBoxBottomY = (j + min(ss, (intmax_t)m_SuperRasH - j - 1));
+	
 					//Count density in ssxss area.
 					//Original went one col at a time, which is cache inefficient. Go one row at at time here for a slight speedup.
 					for (jj = densityBoxTopY; jj <= densityBoxBottomY; jj++)
 						for (ii = densityBoxLeftX; ii <= densityBoxRightX; ii++)
 							filterSelect += buckets[ii + (jj * m_SuperRasW)].a;//Original divided by 255 in every iteration. Omit here because colors are already in the range of [0..1].
 				}
-
+	
 				//Scale if supersample > 1 for equal iters.
 				if (scf)
 					filterSelect *= scfact;
-
+	
 				if (filterSelect > m_DensityFilter->MaxFilteredCounts())
 					filterSelectInt = m_DensityFilter->MaxFilterIndex();
 				else if (filterSelect <= DE_THRESH)
-					filterSelectInt = (int)ceil(filterSelect) - 1;
+					filterSelectInt = (size_t)ceil(filterSelect) - 1;
 				else
-					filterSelectInt = (int)DE_THRESH + Floor<T>(pow(filterSelect - DE_THRESH, m_DensityFilter->Curve()));
-
+					filterSelectInt = DE_THRESH + (size_t)Floor<T>(pow(filterSelect - DE_THRESH, m_DensityFilter->Curve()));
+	
 				//If the filter selected below the min specified clamp it to the min.
 				if (filterSelectInt > m_DensityFilter->MaxFilterIndex())
 					filterSelectInt = m_DensityFilter->MaxFilterIndex();
-
+	
 				//Only have to calculate the values for ~1/8 of the square.
 				filterCoefIndex = filterSelectInt * m_DensityFilter->KernelSize();
-				arrFilterWidth = (int)ceil(filterWidths[filterSelectInt]) - 1;
-
+				arrFilterWidth = (intmax_t)ceil(filterWidths[filterSelectInt]) - 1;
+	
 				for (jj = 0; jj <= arrFilterWidth; jj++)
 				{
 					for (ii = 0; ii <= jj; ii++, filterCoefIndex++)
@@ -1318,12 +969,12 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 						//Skip if coef is 0.
 						if (filterCoefs[filterCoefIndex] == 0)
 							continue;
-
+	
 						T logScale = filterCoefs[filterCoefIndex] * cacheLog;
-
+	
 						//Original first assigned the fields, then scaled them. Combine into a single step for a 1% optimization.
 						logScaleBucket = (*bucket * bucketT(logScale));
-
+	
 						if (jj == 0 && ii == 0)
 						{
 							AddToAccum(logScaleBucket, i, ii, j, jj);
@@ -1357,28 +1008,28 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 					}
 				}
 			}
-
+	
 			if (m_Callback && threadIndex == 0)
 			{
 				pixelNumber += m_SuperRasW;
 				double percent = (double(pixelNumber) / double(pixelsThisThread)) * 100.0;
 				double percentDiff = percent - lastPercent;
 				double toc = localTime.Toc();
-
+	
 				if (percentDiff >= 10 || (toc > 1000 && percentDiff >= 1))
 				{
 					double etaMs = ((100.0 - percent) / percent) * totalTime.Toc();
-
+	
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 1, etaMs))
 						Abort();
-
+	
 					lastPercent = percent;
 					localTime.Tic();
 				}
 			}
 		}
 	});
-
+	
 	if (m_Callback && !m_Abort)
 		m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0);
 
@@ -1416,7 +1067,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 
 	EnterFinalAccum();
 	//Timing t(4);
-	unsigned int filterWidth = m_SpatialFilter->FinalFilterWidth();
+	size_t filterWidth = m_SpatialFilter->FinalFilterWidth();
 	T g, linRange, vibrancy;
 	Color<T> background;
 
@@ -1427,11 +1078,11 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 	//The original does it this way as well and it's roughly 11 times faster to do it this way than inline below with each pixel.
 	if (EarlyClip())
 	{
-		parallel_for((unsigned int)0, m_SuperRasH, [&] (unsigned int j)
+		parallel_for(0ULL, m_SuperRasH, [&] (size_t j)
 		{
-			unsigned int rowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
+			size_t rowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
 
-			for (unsigned int i = 0; i < m_SuperRasW && !m_Abort; i++)
+			for (size_t i = 0; i < m_SuperRasW && !m_Abort; i++)
 			{
 				GammaCorrection(m_AccumulatorBuckets[i + rowStart], background, g, linRange, vibrancy, true, false, &(m_AccumulatorBuckets[i + rowStart][0]));//Write back in place.
 			}
@@ -1447,26 +1098,26 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 	//Note that abort is not checked here. The final accumulation must run to completion
 	//otherwise artifacts that resemble page tearing will occur in an interactive run. It's
 	//critical to never exit this loop prematurely.
-	//for (unsigned int j = 0; j < FinalRasH(); j++)//Keep around for debugging.
-	parallel_for((unsigned int)0, FinalRasH(), [&] (unsigned int j)
+	//for (size_t j = 0; j < FinalRasH(); j++)//Keep around for debugging.
+	parallel_for(0ULL, FinalRasH(), [&](size_t j)
 	{
 		Color<bucketT> newBucket;
-		int pixelsRowStart = (m_YAxisUp ? ((FinalRasH() - j) - 1) : j) * FinalRowSize();//Pull out of inner loop for optimization.
-		unsigned int y = m_DensityFilterOffset + (j * Supersample());//Start at the beginning row of each super sample block.
+		size_t pixelsRowStart = (m_YAxisUp ? ((FinalRasH() - j) - 1) : j) * FinalRowSize();//Pull out of inner loop for optimization.
+		size_t y = m_DensityFilterOffset + (j * Supersample());//Start at the beginning row of each super sample block.
 		unsigned short* p16;
 
-		for (unsigned int i = 0; i < FinalRasW(); i++, pixelsRowStart += PixelSize())
+		for (size_t i = 0; i < FinalRasW(); i++, pixelsRowStart += PixelSize())
 		{
-			unsigned int ii, jj;
-			unsigned int x = m_DensityFilterOffset + (i * Supersample());//Start at the beginning column of each super sample block.
+			size_t ii, jj;
+			size_t x = m_DensityFilterOffset + (i * Supersample());//Start at the beginning column of each super sample block.
 			newBucket.Clear();
 
 			//Original was iterating column-wise, which is slow.
 			//Here, iterate one row at a time, giving a 10% speed increase.
 			for (jj = 0; jj < filterWidth; jj++)
 			{
-				unsigned int filterKRowIndex = jj * filterWidth;
-				unsigned int accumRowIndex = (y + jj) * m_SuperRasW;//Pull out of inner loop for optimization.
+				size_t filterKRowIndex = jj * filterWidth;
+				size_t accumRowIndex = (y + jj) * m_SuperRasW;//Pull out of inner loop for optimization.
 
 				for (ii = 0; ii < filterWidth; ii++)
 				{
@@ -1527,7 +1178,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 	//Insert the palette into the image for debugging purposes. Only works with 8bpc.
 	if (m_InsertPalette && BytesPerChannel() == 1)
 	{
-		unsigned int i, j, ph = 100;
+		size_t i, j, ph = 100;
 
 		if (ph >= FinalRasH())
 			ph = FinalRasH();
@@ -1566,28 +1217,28 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 /// <param name="temporalSample">The temporal sample within the current pass this is running for</param>
 /// <returns>Rendering statistics</returns>
 template <typename T, typename bucketT>
-EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, unsigned int temporalSample)
+EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t pass, size_t temporalSample)
 {
 	//Timing t2(4);
 	m_IterTimer.Tic();
-	unsigned int fuse = EarlyClip() ? 100 : 15;//EarlyClip was one way of detecting a later version of flam3, so it used 100 which is a better value.
-	uint64_t totalItersPerThread = (uint64_t)ceil((double)iterCount / (double)m_ThreadsToUse);
+	size_t fuse = EarlyClip() ? 100 : 15;//EarlyClip was one way of detecting a later version of flam3, so it used 100 which is a better value.
+	size_t totalItersPerThread = (size_t)ceil((double)iterCount / (double)m_ThreadsToUse);
 	double percent, etaMs;
 	EmberStats stats;
 
 #ifdef TG
-	unsigned int threadIndex;
+	size_t threadIndex;
 
-	for (unsigned int i = 0; i < m_ThreadsToUse; i++)
+	for (size_t i = 0; i < m_ThreadsToUse; i++)
 	{
 		threadIndex = i;
 		m_TaskGroup.run([&, threadIndex] () {
 #else
-	parallel_for((unsigned int)0, m_ThreadsToUse, [&] (unsigned int threadIndex)
+	parallel_for(0ULL, m_ThreadsToUse, [&] (size_t threadIndex)
 	{
 #endif
 		Timing t;
-		uint64_t subBatchSize = (unsigned int)min(totalItersPerThread, (uint64_t)m_SubBatchSize);
+		size_t subBatchSize = (size_t)min(totalItersPerThread, (size_t)m_SubBatchSize);
 
 		m_BadVals[threadIndex] = 0;
 
@@ -1609,14 +1260,14 @@ EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, 
 			//Finally, iterate.
 			//t.Tic();
 			//Iterating, loop 4.
-			m_BadVals[threadIndex] += (uint64_t)m_Iterator->Iterate(m_Ember, (uint32_t)subBatchSize, fuse, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
+			m_BadVals[threadIndex] += m_Iterator->Iterate(m_Ember, subBatchSize, fuse, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
 			//iterationTime += t.Toc();
 
 			if (m_LockAccum)
 				m_AccumCs.Enter();
 			//t.Tic();
 			//Map temp buffer samples into the histogram using the palette for color.
-			Accumulate(m_Samples[threadIndex].data(), (unsigned int)subBatchSize, &m_Dmap);
+			Accumulate(m_Samples[threadIndex].data(), subBatchSize, &m_Dmap);
 			//accumulationTime += t.Toc();
 			if (m_LockAccum)
 				m_AccumCs.Leave();
@@ -1670,202 +1321,8 @@ EmberStats Renderer<T, bucketT>::Iterate(uint64_t iterCount, unsigned int pass, 
 }
 
 /// <summary>
-/// Accessors for render properties.
+/// Non-virtual render properties, getters and setters.
 /// </summary>
-
-/// <summary>
-/// Get a copy of the vector of random contexts.
-/// Useful for debugging because the returned vector can be used for future renders to
-/// produce the exact same output.
-/// </summary>
-/// <returns>The vector of random contexts to assign</returns>
-template <typename T, typename bucketT>
-vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> Renderer<T, bucketT>::RandVec() { return m_Rand; }
-
-/// <summary>
-/// Set the vector of random contexts.
-/// Assignment will only take place if the size of the vector matches
-/// the number of threads used for rendering.
-/// Reset the rendering process.
-/// </summary>
-/// <param name="randVec">The vector of random contexts to assign</param>
-/// <returns>True if the size of the vector matched the number of threads used for rendering, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec)
-{
-	bool b = false;
-
-	if (randVec.size() == ThreadCount())
-	{
-		ChangeVal([&]
-		{
-			m_Rand = randVec;
-			b = true;
-		}, FULL_RENDER);
-	}
-
-	return b;
-}
-
-/// <summary>
-/// Get whether the histogram is locked during accumulation.
-/// This is to prevent two threads from writing to the same histogram
-/// bucket at once.
-/// The current implementation matches flam3 and is very innefficient
-/// to the point of negating any gains gotten from multi-threading.
-/// Future workarounds may be tried in the future.
-/// Default: false.
-/// </summary>
-/// <returns>True if the histogram is locked during accumulation, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::LockAccum() const { return m_LockAccum; }
-
-/// <summary>
-/// Set whether the histogram is locked during accumulation.
-/// This is to prevent two threads from writing to the same histogram
-/// bucket at once.
-/// The current implementation matches flam3 and is very innefficient
-/// to the point of negating any gains gotten from multi-threading.
-/// Different workarounds may be tried in the future.
-/// Reset the rendering process.
-/// </summary>
-/// <param name="lockAccum">True if the histogram should be locked when accumulating, else false</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::LockAccum(bool lockAccum)
-{
-	ChangeVal([&] { m_LockAccum = lockAccum; }, FULL_RENDER);
-}
-
-/// <summary>
-/// Get whether color clipping and gamma correction is done before
-/// or after spatial filtering.
-/// Default: false.
-/// </summary>
-/// <returns>True if early clip, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::EarlyClip() const { return m_EarlyClip; }
-
-/// <summary>
-/// Set whether color clipping and gamma correction is done before
-/// or after spatial filtering.
-/// Set the render state to FILTER_AND_ACCUM.
-/// </summary>
-/// <param name="earlyClip">True if early clip, else false.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::EarlyClip(bool earlyClip)
-{
-	ChangeVal([&] { m_EarlyClip = earlyClip; }, FILTER_AND_ACCUM);
-}
-
-/// <summary>
-/// Get whether the positive Y coordinate of the final output image is up.
-/// Default: false.
-/// </summary>
-/// <returns>True if up, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::YAxisUp() const { return m_YAxisUp; }
-
-/// <summary>
-/// Set whether the positive Y axis of the final output image is up.
-/// </summary>
-/// <param name="yup">True if the positive y axis is up, else false.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::YAxisUp(bool yup)
-{
-	ChangeVal([&] { m_YAxisUp = yup; }, ACCUM_ONLY);
-}
-
-/// <summary>
-/// Get whether to insert the palette as a block of colors in the final output image.
-/// This is useful for debugging palette issues.
-/// Default: 1.
-/// </summary>
-/// <returns>True if inserting the palette, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::InsertPalette() const { return m_InsertPalette; }
-
-/// <summary>
-/// Set whether to insert the palette as a block of colors in the final output image.
-/// This is useful for debugging palette issues.
-/// Set the render state to ACCUM_ONLY.
-/// </summary>
-/// <param name="insertPalette">True if inserting the palette, else false.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::InsertPalette(bool insertPalette)
-{
-	ChangeVal([&] { m_InsertPalette = insertPalette; }, ACCUM_ONLY);
-}
-
-/// <summary>
-/// Get whether to reclaim unused memory in the final output buffer
-/// when a smaller size is requested than has been previously allocated.
-/// Default: false.
-/// </summary>
-/// <returns>True if reclaim, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::ReclaimOnResize() const { return m_ReclaimOnResize; }
-
-/// <summary>
-/// Set whether to reclaim unused memory in the final output buffer
-/// when a smaller size is requested than has been previously allocated.
-/// Reset the rendering process.
-/// </summary>
-/// <param name="reclaimOnResize">True if reclaim, else false.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::ReclaimOnResize(bool reclaimOnResize)
-{
-	ChangeVal([&] { m_ReclaimOnResize = reclaimOnResize; }, FULL_RENDER);
-}
-
-/// <summary>
-/// Get whether to use transparency in the alpha channel.
-/// This only applies when the number of channels is 4 and the output
-/// image is Png.
-/// Default: false.
-/// </summary>
-/// <returns>True if using transparency, else false.</returns>
-template <typename T, typename bucketT> bool Renderer<T, bucketT>::Transparency() const { return m_Transparency; }
-
-/// <summary>
-/// Set whether to use transparency in the alpha channel.
-/// This only applies when the number of channels is 4 and the output
-/// image is Png.
-/// Set the render state to ACCUM_ONLY.
-/// </summary>
-/// <param name="transparency">True if using transparency, else false.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::Transparency(bool transparency)
-{
-	ChangeVal([&] { m_Transparency = transparency; }, ACCUM_ONLY);
-}
-
-/// <summary>
-/// Get the bytes per channel of the output image.
-/// The only acceptable values are 1 and 2, and 2 is only
-/// used when the output is Png.
-/// Default: 1.
-/// </summary>
-/// <returns></returns>
-template <typename T, typename bucketT> unsigned int Renderer<T, bucketT>::BytesPerChannel() const { return m_BytesPerChannel; }
-
-/// <summary>
-/// Set the bytes per channel of the output image.
-/// The only acceptable values are 1 and 2, and 2 is only
-/// used when the output is Png.
-/// Set the render state to ACCUM_ONLY.
-/// </summary>
-/// <param name="bytesPerChannel">The bytes per channel.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::BytesPerChannel(unsigned int bytesPerChannel)
-{
-	ChangeVal([&]
-	{
-		if (bytesPerChannel == 0 || bytesPerChannel > 2)
-			m_BytesPerChannel = 1;
-		else
-			m_BytesPerChannel = bytesPerChannel;
-	}, ACCUM_ONLY);
-}
 
 /// <summary>
 /// Get the pixel aspect ratio of the output image.
@@ -1886,28 +1343,78 @@ void Renderer<T, bucketT>::PixelAspectRatio(T pixelAspectRatio)
 }
 
 /// <summary>
-/// Get the type of filter to use for preview renders during interactive rendering.
-/// Using basic log scaling is quicker, but doesn't provide any bluring.
-/// Full DE is much slower, but provides a more realistic preview of what the final image
-/// will look like.
-/// Default: FILTER_LOG.
+/// Non-virtual renderer properties, getters only.
 /// </summary>
-/// <returns>The type of filter to use</returns>
-template <typename T, typename bucketT> eInteractiveFilter Renderer<T, bucketT>::InteractiveFilter() const { return m_InteractiveFilter; }
+
+template <typename T, typename bucketT> T											Renderer<T, bucketT>::Scale()			   const { return m_Scale; }
+template <typename T, typename bucketT> T											Renderer<T, bucketT>::PixelsPerUnitX()	   const { return m_PixelsPerUnitX; }
+template <typename T, typename bucketT> T											Renderer<T, bucketT>::PixelsPerUnitY()	   const { return m_PixelsPerUnitY; }
+template <typename T, typename bucketT> T											Renderer<T, bucketT>::K1()				   const { return m_K1; }
+template <typename T, typename bucketT> T											Renderer<T, bucketT>::K2()				   const { return m_K2; }
+template <typename T, typename bucketT> const CarToRas<T>*							Renderer<T, bucketT>::CoordMap()		   const { return &m_CarToRas; }
+template <typename T, typename bucketT> glm::detail::tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::HistBuckets()				 { return m_HistBuckets.data(); }
+template <typename T, typename bucketT> glm::detail::tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::AccumulatorBuckets()		 { return m_AccumulatorBuckets.data(); }
+template <typename T, typename bucketT> SpatialFilter<T>*							Renderer<T, bucketT>::GetSpatialFilter()		 { return m_SpatialFilter.get(); }
+template <typename T, typename bucketT> TemporalFilter<T>*							Renderer<T, bucketT>::GetTemporalFilter()		 { return m_TemporalFilter.get(); }
 
 /// <summary>
-/// Set the type of filter to use for preview renders during interactive rendering.
-/// Using basic log scaling is quicker, but doesn't provide any bluring.
-/// Full DE is much slower, but provides a more realistic preview of what the final image
-/// will look like.
-/// Reset the rendering process.
+/// Virtual renderer properties overridden from RendererBase, getters only.
 /// </summary>
-/// <param name="filter">The filter.</param>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::InteractiveFilter(eInteractiveFilter filter)
-{
-	ChangeVal([&] { m_InteractiveFilter = filter; }, FULL_RENDER);
-}
+
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::ScaledQuality()		  const { return (double)m_ScaledQuality; }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::LowerLeftX(bool  gutter) const { return (double)(gutter ? m_CarToRas.CarLlX() : m_LowerLeftX); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::LowerLeftY(bool  gutter) const { return (double)(gutter ? m_CarToRas.CarLlY() : m_LowerLeftY); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::UpperRightX(bool gutter) const { return (double)(gutter ? m_CarToRas.CarUrX() : m_UpperRightX); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::UpperRightY(bool gutter) const { return (double)(gutter ? m_CarToRas.CarUrY() : m_UpperRightY); }
+template <typename T, typename bucketT> DensityFilterBase* Renderer<T, bucketT>::GetDensityFilter()			    { return m_DensityFilter.get(); }
+
+/// <summary>
+/// Non-virtual ember wrappers, getters only.
+/// </summary>
+
+template <typename T, typename bucketT> bool              Renderer<T, bucketT>::XaosPresent()         const { return m_Ember.XaosPresent(); }
+template <typename T, typename bucketT> size_t			  Renderer<T, bucketT>::Supersample()         const { return m_Ember.m_Supersample; }
+template <typename T, typename bucketT> size_t			  Renderer<T, bucketT>::PaletteIndex()        const { return m_Ember.PaletteIndex(); }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Time()                const { return m_Ember.m_Time; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Quality()             const { return m_Ember.m_Quality; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::SpatialFilterRadius() const { return m_Ember.m_SpatialFilterRadius; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::PixelsPerUnit()       const { return m_Ember.m_PixelsPerUnit; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Zoom()                const { return m_Ember.m_Zoom; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::CenterX()             const { return m_Ember.m_CenterX; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::CenterY()             const { return m_Ember.m_CenterY; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Rotate()              const { return m_Ember.m_Rotate; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Hue()				  const { return m_Ember.m_Hue; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Brightness()		  const { return m_Ember.m_Brightness; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Gamma()				  const { return m_Ember.m_Gamma; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::Vibrancy()			  const { return m_Ember.m_Vibrancy; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::GammaThresh()		  const { return m_Ember.m_GammaThresh; }
+template <typename T, typename bucketT> T                 Renderer<T, bucketT>::HighlightPower()	  const { return m_Ember.m_HighlightPower; }
+template <typename T, typename bucketT> Color<T>		  Renderer<T, bucketT>::Background()		  const { return m_Ember.m_Background; }
+template <typename T, typename bucketT> const Xform<T>*   Renderer<T, bucketT>::Xforms()			  const { return m_Ember.Xforms(); }
+template <typename T, typename bucketT> Xform<T>*         Renderer<T, bucketT>::NonConstXforms()			{ return m_Ember.NonConstXforms(); }
+template <typename T, typename bucketT> size_t			  Renderer<T, bucketT>::XformCount()          const { return m_Ember.XformCount(); }
+template <typename T, typename bucketT> const Xform<T>*   Renderer<T, bucketT>::FinalXform()          const { return m_Ember.FinalXform(); }
+template <typename T, typename bucketT> Xform<T>*         Renderer<T, bucketT>::NonConstFinalXform()        { return m_Ember.NonConstFinalXform(); }
+template <typename T, typename bucketT> bool              Renderer<T, bucketT>::UseFinalXform()       const { return m_Ember.UseFinalXform(); }
+template <typename T, typename bucketT> const Palette<T>* Renderer<T, bucketT>::GetPalette()          const { return &m_Ember.m_Palette; }
+template <typename T, typename bucketT> ePaletteMode      Renderer<T, bucketT>::PaletteMode()         const { return m_Ember.m_PaletteMode; }
+
+/// <summary>
+/// Virtual ember wrappers overridden from RendererBase, getters only.
+/// </summary>
+
+template <typename T, typename bucketT> size_t Renderer<T, bucketT>::Passes()          const { return m_Ember.m_Passes; }
+template <typename T, typename bucketT> size_t Renderer<T, bucketT>::TemporalSamples() const { return m_Ember.m_TemporalSamples; }
+template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FinalRasW()       const { return m_Ember.m_FinalRasW; }
+template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FinalRasH()       const { return m_Ember.m_FinalRasH; }
+
+/// <summary>
+/// Non-virtual iterator wrappers.
+/// </summary>
+
+template <typename T, typename bucketT> const unsigned char* Renderer<T, bucketT>::XformDistributions()        const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr; }
+template <typename T, typename bucketT> const size_t		 Renderer<T, bucketT>::XformDistributionsSize()    const { return m_Iterator != nullptr ? m_Iterator->XformDistributionsSize() : 0; }
+template <typename T, typename bucketT> Point<T>*            Renderer<T, bucketT>::Samples(size_t threadIndex) const { return threadIndex < m_Samples.size() ? (Point<T>*)m_Samples[threadIndex].data() : nullptr; }
 
 /// <summary>
 /// Non-virtual functions that might be needed by a derived class.
@@ -1926,7 +1433,7 @@ void Renderer<T, bucketT>::PrepFinalAccumVals(Color<T>& background, T& g, T& lin
 	//If they are doing incremental rendering, they can get here without doing a full temporal
 	//sample, which means the values will be zero.
 	vibrancy = m_Vibrancy == 0 ? m_Ember.m_Vibrancy : m_Vibrancy;
-	unsigned int vibGamCount = m_VibGamCount == 0 ? 1 : m_VibGamCount;
+	size_t vibGamCount = m_VibGamCount == 0 ? 1 : m_VibGamCount;
 	T gamma = m_Gamma == 0 ? m_Ember.m_Gamma : m_Gamma;
 	g = T(1.0) / ClampGte<T>(gamma / vibGamCount, T(0.01));//Ensure a divide by zero doesn't occur.
 	linRange = GammaThresh();
@@ -1938,7 +1445,7 @@ void Renderer<T, bucketT>::PrepFinalAccumVals(Color<T>& background, T& g, T& lin
 }
 
 /// <summary>
-/// Miscellaneous functions used only in this class.
+/// Miscellaneous non-virtual functions used only in this class.
 /// </summary>
 
 /// <summary>
@@ -1949,9 +1456,9 @@ void Renderer<T, bucketT>::PrepFinalAccumVals(Color<T>& background, T& g, T& lin
 /// <param name="sampleCount">The number of samples</param>
 /// <param name="palette">The palette to use</param>
 template <typename T, typename bucketT>
-void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCount, const Palette<bucketT>* palette)
+void Renderer<T, bucketT>::Accumulate(Point<T>* samples, size_t sampleCount, const Palette<bucketT>* palette)
 {
-	unsigned int histIndex, intColorIndex, histSize = (unsigned int)m_HistBuckets.size();
+	size_t histIndex, intColorIndex, histSize = m_HistBuckets.size();
 	bucketT colorIndex, colorIndexFrac;
 	const glm::detail::tvec4<bucketT, glm::defaultp>* dmap = &(palette->m_Entries[0]);
 
@@ -1964,7 +1471,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 	//Original used a function called bump_no_overflow(). Just do a straight add because the type will always be float or double.
 	//Doing so gives a 25% speed increase.
 	//Splitting these conditionals into separate loops makes no speed difference.
-	for (unsigned int i = 0; i < sampleCount && !m_Abort; i++)
+	for (size_t i = 0; i < sampleCount && !m_Abort; i++)
 	{
 		if (Rotate() != 0)
 		{
@@ -1999,7 +1506,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 					if (PaletteMode() == PALETTE_LINEAR)
 					{
 						colorIndex = (bucketT)samples[i].m_ColorX * COLORMAP_LENGTH;
-						intColorIndex = (unsigned int)colorIndex;
+						intColorIndex = (size_t)colorIndex;
 
 						if (intColorIndex < 0)
 						{
@@ -2023,7 +1530,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 					}
 					else if (PaletteMode() == PALETTE_STEP)
 					{
-						intColorIndex = Clamp<unsigned int>((unsigned int)(samples[i].m_ColorX * COLORMAP_LENGTH), 0, COLORMAP_LENGTH_MINUS_1);
+						intColorIndex = Clamp<size_t>((size_t)(samples[i].m_ColorX * COLORMAP_LENGTH), 0, COLORMAP_LENGTH_MINUS_1);
 
 						if (samples[i].m_VizAdjusted == 1)
 							m_HistBuckets[histIndex] += dmap[intColorIndex];
@@ -2045,9 +1552,9 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, unsigned int sampleCoun
 /// <param name="j">The row of the bucket</param>
 /// <param name="jj">The offset to add to the row</param>
 template <typename T, typename bucketT>
-void Renderer<T, bucketT>::AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, int i, int ii, int j, int jj)
+void Renderer<T, bucketT>::AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj)
 {
-	if (j + jj >= 0 && j + jj < (int)m_SuperRasH && i + ii >= 0 && i + ii < (int)m_SuperRasW)
+	if (j + jj >= 0 && j + jj < (intmax_t)m_SuperRasH && i + ii >= 0 && i + ii < (intmax_t)m_SuperRasW)
 		m_AccumulatorBuckets[(i + ii) + ((j + jj) * m_SuperRasW)] += bucket;
 }
 
@@ -2089,7 +1596,7 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 
 	Palette<T>::template CalcNewRgb<bucketT>(&bucket[0], ls, HighlightPower(), newRgb);
 
-	for (unsigned int rgbi = 0; rgbi < 3; rgbi++)
+	for (glm::length_t rgbi = 0; rgbi < 3; rgbi++)
 	{
 		a = newRgb[rgbi] + ((T(1.0) - vibrancy) * T(255) * pow(T(bucket[rgbi]), g));
 
@@ -2121,125 +1628,4 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 			correctedChannels[3] = numeric_limits<accumT>::max();//Final accum, 4 channels, but not using transparency. 255 for 8 bpc, 65535 for 16 bpc.
 	}
 }
-
-/// <summary>
-/// Set the m_Iterator member to point to the appropriate
-/// iterator based on whether the ember currently being rendered
-/// contains xaos.
-/// After assigning, initialize the xform selection buffer.
-/// </summary>
-/// <returns>True if assignment and distribution initialization succeeded, else false.</returns>
-template <typename T, typename bucketT>
-bool Renderer<T, bucketT>::AssignIterator()
-{
-	//Setup iterator and distributions.
-	//Both iterator types were setup in the constructor (add more in the future if needed).
-	//So simply assign the pointer to the correct type and re-initialize its distributions
-	//based on the current ember.
-	if (XaosPresent())
-		m_Iterator = m_XaosIterator.get();
-	else
-		m_Iterator = m_StandardIterator.get();
-
-	//Timing t;
-	return m_Iterator->InitDistributions(m_Ember);
-	//t.Toc("Distrib creation");
-}
-
-/// <summary>
-/// Threading control.
-/// </summary>
-
-template <typename T, typename bucketT> void Renderer<T, bucketT>::EnterRender() { m_RenderingCs.Enter(); }
-template <typename T, typename bucketT> void Renderer<T, bucketT>::LeaveRender() { m_RenderingCs.Leave(); }
-
-template <typename T, typename bucketT> void Renderer<T, bucketT>::EnterFinalAccum() { m_FinalAccumCs.Enter(); m_InFinalAccum = true;  }
-template <typename T, typename bucketT> void Renderer<T, bucketT>::LeaveFinalAccum() { m_FinalAccumCs.Leave(); m_InFinalAccum = false; }
-
-template <typename T, typename bucketT> void Renderer<T, bucketT>::EnterResize() { m_ResizeCs.Enter(); }
-template <typename T, typename bucketT> void Renderer<T, bucketT>::LeaveResize() { m_ResizeCs.Leave(); }
-
-template <typename T, typename bucketT> void Renderer<T, bucketT>::Abort()   { m_Abort = true; }
-template <typename T, typename bucketT> bool Renderer<T, bucketT>::Aborted() { return m_Abort; }
-
-template <typename T, typename bucketT> bool Renderer<T, bucketT>::InRender()	  { return m_InRender;	   }
-template <typename T, typename bucketT> bool Renderer<T, bucketT>::InFinalAccum() { return m_InFinalAccum; }
-
-/// <summary>
-/// Renderer properties, getters only.
-/// </summary>
-
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::SuperRasW()              const { return m_SuperRasW;                                                                             }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::SuperRasH()              const { return m_SuperRasH;                                                                             }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::SuperSize()              const { return m_SuperSize;                                                                             }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::FinalBufferSize()        const { return FinalRowSize() * FinalRasH();                                                            }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::FinalRowSize()           const { return FinalRasW() * PixelSize();                                                               }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::FinalDimensions()        const { return FinalRasW() * FinalRasH();                                                               }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::PixelSize()              const { return NumChannels() * BytesPerChannel();                                                       }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::GutterWidth()            const { return m_GutterWidth;                                                                           }
-template <typename T, typename bucketT> unsigned int                 Renderer<T, bucketT>::DensityFilterOffset()    const { return m_DensityFilterOffset;                                                                   }
-template <typename T, typename bucketT> double                       Renderer<T, bucketT>::ScaledQuality()          const { return m_ScaledQuality;                                                                         }
-template <typename T, typename bucketT> T                            Renderer<T, bucketT>::Scale()                  const { return m_Scale;                                                                                 }
-template <typename T, typename bucketT> T                            Renderer<T, bucketT>::PixelsPerUnitX()         const { return m_PixelsPerUnitX;                                                                        }
-template <typename T, typename bucketT> T                            Renderer<T, bucketT>::PixelsPerUnitY()         const { return m_PixelsPerUnitY;                                                                        }
-template <typename T, typename bucketT> double                       Renderer<T, bucketT>::LowerLeftX(bool gutter)  const { return gutter ? m_CarToRas.CarLlX() : m_LowerLeftX;                                             }
-template <typename T, typename bucketT> double                       Renderer<T, bucketT>::LowerLeftY(bool gutter)  const { return gutter ? m_CarToRas.CarLlY() : m_LowerLeftY;                                             }
-template <typename T, typename bucketT> double                       Renderer<T, bucketT>::UpperRightX(bool gutter) const { return gutter ? m_CarToRas.CarUrX() : m_UpperRightX;                                            }
-template <typename T, typename bucketT> double                       Renderer<T, bucketT>::UpperRightY(bool gutter) const { return gutter ? m_CarToRas.CarUrY() : m_UpperRightY;                                            }
-template <typename T, typename bucketT> T                            Renderer<T, bucketT>::K1()                     const { return m_K1;                                                                                    }
-template <typename T, typename bucketT> T                            Renderer<T, bucketT>::K2()                     const { return m_K2;                                                                                    }
-template <typename T, typename bucketT> uint64_t                     Renderer<T, bucketT>::TotalIterCount()	        const { return (uint64_t)((uint64_t)Round(m_ScaledQuality) * (uint64_t)FinalRasW() * (uint64_t)FinalRasH()); }//Use Round() because there can be some roundoff error when interpolating.
-template <typename T, typename bucketT> uint64_t                     Renderer<T, bucketT>::ItersPerTemporalSample() const { return (uint64_t)ceil(double(TotalIterCount()) / double(Passes() * TemporalSamples())); }
-template <typename T, typename bucketT> eProcessState                Renderer<T, bucketT>::ProcessState()           const { return m_ProcessState;                                                                          }
-template <typename T, typename bucketT> eProcessAction               Renderer<T, bucketT>::ProcessAction()          const { return m_ProcessAction;                                                                         }
-template <typename T, typename bucketT> EmberStats                   Renderer<T, bucketT>::Stats()                  const { return m_Stats;                                                                                 }
-template <typename T, typename bucketT> const CarToRas<T>*           Renderer<T, bucketT>::CoordMap()               const { return &m_CarToRas;                                                                             }
-template <typename T, typename bucketT> glm::detail::tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::HistBuckets()		   { return m_HistBuckets.data();                                                               }
-template <typename T, typename bucketT> glm::detail::tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::AccumulatorBuckets() { return m_AccumulatorBuckets.data();                                                        }
-template <typename T, typename bucketT> SpatialFilter<T>*            Renderer<T, bucketT>::GetSpatialFilter()			  { return m_SpatialFilter.get();                                                                   }
-template <typename T, typename bucketT> TemporalFilter<T>*           Renderer<T, bucketT>::GetTemporalFilter()			  { return m_TemporalFilter.get();                                                                  }
-template <typename T, typename bucketT> DensityFilter<T>*            Renderer<T, bucketT>::GetDensityFilter()			  { return m_DensityFilter.get();                                                                   }
-
-/// <summary>
-/// Ember wrappers, getters only.
-/// </summary>
-
-template <typename T, typename bucketT> bool                 Renderer<T, bucketT>::XaosPresent()               { return m_Ember.XaosPresent();         }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::FinalRasW()           const { return m_Ember.m_FinalRasW;           }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::FinalRasH()           const { return m_Ember.m_FinalRasH;           }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::Supersample()         const { return m_Ember.m_Supersample;         }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::Passes()              const { return m_Ember.m_Passes;              }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::TemporalSamples()     const { return m_Ember.m_TemporalSamples;     }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::PaletteIndex()        const { return m_Ember.PaletteIndex();        }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Time()                const { return m_Ember.m_Time;                }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Quality()             const { return m_Ember.m_Quality;             }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::SpatialFilterRadius() const { return m_Ember.m_SpatialFilterRadius; }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::PixelsPerUnit()       const { return m_Ember.m_PixelsPerUnit;       }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Zoom()                const { return m_Ember.m_Zoom;                }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::CenterX()             const { return m_Ember.m_CenterX;             }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::CenterY()             const { return m_Ember.m_CenterY;             }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Rotate()              const { return m_Ember.m_Rotate;              }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Hue()				 const { return m_Ember.m_Hue;                 }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Brightness()			 const { return m_Ember.m_Brightness;          }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Gamma()				 const { return m_Ember.m_Gamma;               }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::Vibrancy()			 const { return m_Ember.m_Vibrancy;            }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::GammaThresh()		 const { return m_Ember.m_GammaThresh;         }
-template <typename T, typename bucketT> T                    Renderer<T, bucketT>::HighlightPower()		 const { return m_Ember.m_HighlightPower;      }
-template <typename T, typename bucketT> Color<T>			 Renderer<T, bucketT>::Background()			 const { return m_Ember.m_Background;          }
-template <typename T, typename bucketT> const Xform<T>*      Renderer<T, bucketT>::Xforms()				 const { return m_Ember.Xforms();              }
-template <typename T, typename bucketT> Xform<T>*            Renderer<T, bucketT>::NonConstXforms()			   { return m_Ember.NonConstXforms();      }
-template <typename T, typename bucketT> unsigned int         Renderer<T, bucketT>::XformCount()          const { return m_Ember.XformCount();          }
-template <typename T, typename bucketT> const Xform<T>*      Renderer<T, bucketT>::FinalXform()          const { return m_Ember.FinalXform();          }
-template <typename T, typename bucketT> Xform<T>*            Renderer<T, bucketT>::NonConstFinalXform()        { return m_Ember.NonConstFinalXform();  }
-template <typename T, typename bucketT> bool                 Renderer<T, bucketT>::UseFinalXform()       const { return m_Ember.UseFinalXform();       }
-template <typename T, typename bucketT> const Palette<T>*    Renderer<T, bucketT>::GetPalette()          const { return &m_Ember.m_Palette;            }
-template <typename T, typename bucketT> ePaletteMode         Renderer<T, bucketT>::PaletteMode()         const { return m_Ember.m_PaletteMode;         }
-
-/// <summary>
-/// Iterator wrappers.
-/// </summary>
-
-template <typename T, typename bucketT> const unsigned char* Renderer<T, bucketT>::XformDistributions()              const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr;  }
-template <typename T, typename bucketT> const unsigned int   Renderer<T, bucketT>::XformDistributionsSize()          const { return m_Iterator != nullptr ? m_Iterator->XformDistributionsSize() : 0; }
-template <typename T, typename bucketT> Point<T>*            Renderer<T, bucketT>::Samples(unsigned int threadIndex) const { return threadIndex < m_Samples.size() ? (Point<T>*)m_Samples[threadIndex].data() : nullptr; }
 }

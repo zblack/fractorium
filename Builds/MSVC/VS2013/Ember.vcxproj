@@ -279,6 +279,7 @@
     <ClInclude Include="..\..\..\Source\Ember\Interpolate.h" />
     <ClInclude Include="..\..\..\Source\Ember\PaletteList.h" />
     <ClInclude Include="..\..\..\Source\Ember\Renderer.h" />
+    <ClInclude Include="..\..\..\Source\Ember\RendererBase.h" />
     <ClInclude Include="..\..\..\Source\Ember\SpatialFilter.h" />
     <ClInclude Include="..\..\..\Source\Ember\Iterator.h" />
     <ClInclude Include="..\..\..\Source\Ember\Palette.h" />
@@ -313,6 +314,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='ReleaseNvidia|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\..\..\Source\Ember\Renderer.cpp" />
+    <ClCompile Include="..\..\..\Source\Ember\RendererBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\libxml2\win32\VC10\libxml2.vcxproj">

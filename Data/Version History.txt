@@ -1,3 +1,35 @@
+0.4.1.3 Beta 10/14/2014
+--User Changes
+	Size is no longer fixed to the window size.
+	Size scaling is done differently in the final render dialog. This fixes several bugs.
+	Remove Xml saving size from settings and options dialog, it no longer applies.
+	Final render can be broken into strips.
+	Set default save path to the desktop if none is found in the settings file.
+	Set default output size to 1920x1080 if none is found in the settings file.
+
+--Bug Fixes
+	Better memory size reporting in final render dialog.
+
+--Code Changes
+	Migrate to C++11, Qt 5.3.1, and Visual Studio 2013.
+	Change most instances of unsigned int to size_t, and int to intmax_t.
+	Add m_OrigPixPerUnit and m_ScaleType to Ember for scaling purposes.
+	Replace some sprintf_s() calls in XmlToEmber with ostringstream.
+	Move more non-templated members into RendererBase.
+	Add CopyVec() overload that takes a per element function pointer.
+	Add vector Memset().
+	Replace '&' with '+' instead of "&amp;" in XmlToEmber for much faster parsing.
+	Break strips rendering out into EmberCommon and call from EmberRender and Fractorium.
+	Make AddAndWriteBuffer() just call WriteBuffer().
+	Make AddAndWriteImage() delete the existing image first before replacing it.
+	Add SetOutputTexture() to RendererCL to support making new textures in response to resize events.
+	Remove multiple return statements in RendererCL, and replace with a bool that tracks results.
+	Add ToDouble(), MakeEnd(), ToString() and Exists() wrappers in Fractorium.
+	Add Size() wrapper in EmberFile.
+	Make QString function arguments const QString&, and string with const string&.
+	Make ShowCritical() wrapper for invoking a message box from another thread.
+	Add combo box to TwoButtonWidget and rename.
+
 0.4.1.2 Beta 08/05/2014
 --User Changes
 	Add --yaxisup and --supersample options for command line programs.

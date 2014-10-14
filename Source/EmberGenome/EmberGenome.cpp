@@ -61,7 +61,7 @@ bool EmberGenome(EmberOptions& opt)
 	bool exactTimeMatch, randomMode, didColor, seqFlag;
 	unsigned int i, j, i0, i1, rep, val, frame, frameCount, count = 0;
 	unsigned int ftime, firstFrame, lastFrame;
-	unsigned int n, tot, totb, totw;
+	size_t n, tot, totb, totw;
 	T avgPix, fractionBlack, fractionWhite, blend, spread, mix0, mix1;
 	string token, filename;
 	ostringstream os, os2;

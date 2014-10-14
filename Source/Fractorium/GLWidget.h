@@ -43,20 +43,22 @@ public:
 	void SetMainWindow(Fractorium* f);
 	bool Init();
 	bool Drawing();
+	GLint MaxTexSize();
 	GLuint OutputTexID();
 
 protected:
-	virtual void initializeGL();
-	virtual void paintGL();
-	virtual void keyPressEvent(QKeyEvent* e);
-	virtual void keyReleaseEvent(QKeyEvent* e);
-	virtual void mousePressEvent(QMouseEvent* e);
-	virtual void mouseReleaseEvent(QMouseEvent* e);
-	virtual void mouseMoveEvent(QMouseEvent* e);
-	virtual void wheelEvent(QWheelEvent* e);
-	virtual void resizeEvent(QResizeEvent* e);
+	virtual void initializeGL() override;
+	virtual void paintGL() override;
+	virtual void keyPressEvent(QKeyEvent* e) override;
+	virtual void keyReleaseEvent(QKeyEvent* e) override;
+	virtual void mousePressEvent(QMouseEvent* e) override;
+	virtual void mouseReleaseEvent(QMouseEvent* e) override;
+	virtual void mouseMoveEvent(QMouseEvent* e) override;
+	virtual void wheelEvent(QWheelEvent* e) override;
+	virtual void resizeEvent(QResizeEvent* e) override;
 
 private:
+	void SetDimensions(int w, int h);
 	bool Allocate(bool force = false);
 	bool Deallocate();
 	void SetViewport();
@@ -67,6 +69,7 @@ private:
 
 	bool m_Init;
 	bool m_Drawing;
+	GLint m_MaxTexSize;
 	GLint m_TexWidth;
 	GLint m_TexHeight;
 	GLint m_ViewWidth;

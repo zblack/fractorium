@@ -15,8 +15,8 @@ namespace EmberCLns
 class EMBERCL_API RendererCLBase
 {
 public:
-	virtual bool ReadFinal(unsigned char* pixels) { return false; }
-	virtual bool ClearFinal() { return false; }
+	virtual bool ReadFinal(unsigned char* pixels) = 0;
+	virtual bool ClearFinal() = 0;
 };
 
 /// <summary>
@@ -36,8 +36,9 @@ public:
 	RendererCL(unsigned int platform = 0, unsigned int device = 0, bool shared = false, GLuint outputTexID = 0);
 	~RendererCL();
 
-	//Ordinary member functions for OpenCL specific tasks.
+	//Non-virtual member functions for OpenCL specific tasks.
 	bool Init(unsigned int platform, unsigned int device, bool shared, GLuint outputTexID);
+	bool SetOutputTexture(GLuint outputTexID);
 	inline unsigned int IterCountPerKernel();
 	inline unsigned int IterBlocksWide();
 	inline unsigned int IterBlocksHigh();
@@ -51,50 +52,51 @@ public:
 	bool ReadHist();
 	bool ReadAccum();
 	bool ReadPoints(vector<PointCL<T>>& vec);
-	virtual bool ReadFinal(unsigned char* pixels);
-	virtual bool ClearFinal();
 	bool ClearHist();
 	bool ClearAccum();
 	bool WritePoints(vector<PointCL<T>>& vec);
 	string IterKernel();
 
-	//Public virtual functions overriden from Renderer.
-	virtual unsigned __int64 MemoryAvailable();
-	virtual bool Ok() const;
-	virtual void NumChannels(unsigned int numChannels);
-	virtual void DumpErrorReport();
-	virtual void ClearErrorReport();
-	virtual unsigned int SubBatchSize() const;
-	virtual unsigned int ThreadCount() const;
-	virtual void ThreadCount(unsigned int threads, const char* seedString = NULL);
-	virtual bool CreateDEFilter(bool& newAlloc);
-	virtual bool CreateSpatialFilter(bool& newAlloc);
-	virtual eRendererType RendererType() const;
-	virtual string ErrorReportString();
-	virtual vector<string> ErrorReport();
+	//Virtual functions overridden from RendererCLBase.
+	virtual bool ReadFinal(unsigned char* pixels);
+	virtual bool ClearFinal();
+
+	//Public virtual functions overridden from Renderer or RendererBase.
+	virtual size_t MemoryAvailable() override;
+	virtual bool Ok() const override;
+	virtual void NumChannels(size_t numChannels) override;
+	virtual void DumpErrorReport() override;
+	virtual void ClearErrorReport() override;
+	virtual size_t SubBatchSize() const override;
+	virtual size_t ThreadCount() const override;
+	virtual bool CreateDEFilter(bool& newAlloc) override;
+	virtual bool CreateSpatialFilter(bool& newAlloc) override;
+	virtual eRendererType RendererType() const override;
+	virtual string ErrorReportString() override;
+	virtual vector<string> ErrorReport() override;
 
 #ifndef TEST_CL
 protected:
 #endif
-	//Protected virtual functions overriden from Renderer.
-	virtual void MakeDmap(T colorScalar);
-	virtual bool Alloc();
-	virtual bool ResetBuckets(bool resetHist = true, bool resetAccum = true);
-	virtual eRenderStatus LogScaleDensityFilter();
-	virtual eRenderStatus GaussianDensityFilter();
-	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset);
-	virtual EmberStats Iterate(unsigned __int64 iterCount, unsigned int pass, unsigned int temporalSample);
+	//Protected virtual functions overridden from Renderer.
+	virtual void MakeDmap(T colorScalar) override;
+	virtual bool Alloc() override;
+	virtual bool ResetBuckets(bool resetHist = true, bool resetAccum = true) override;
+	virtual eRenderStatus LogScaleDensityFilter() override;
+	virtual eRenderStatus GaussianDensityFilter() override;
+	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset) override;
+	virtual EmberStats Iterate(size_t iterCount, size_t pass, size_t temporalSample) override;
 
 private:
 	//Private functions for making and running OpenCL programs.
 	bool BuildIterProgramForEmber(bool doAccum = true);
-	bool RunIter(unsigned __int64 iterCount, unsigned int pass, unsigned int temporalSample, unsigned __int64& itersRan);
+	bool RunIter(size_t iterCount, size_t pass, size_t temporalSample, size_t& itersRan);
 	eRenderStatus RunLogScaleFilter();
 	eRenderStatus RunDensityFilter();
 	eRenderStatus RunFinalAccum();
-	bool ClearBuffer(string bufferName, unsigned int width, unsigned int height, unsigned int elementSize);
+	bool ClearBuffer(const string& bufferName, unsigned int width, unsigned int height, unsigned int elementSize);
 	bool RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int rowParity, unsigned int colParity);
-	int MakeAndGetDensityFilterProgram(unsigned int ss, unsigned int filterWidth);
+	int MakeAndGetDensityFilterProgram(size_t ss, unsigned int filterWidth);
 	int MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale);
 	int MakeAndGetGammaCorrectionProgram();
 
@@ -113,8 +115,9 @@ private:
 	unsigned int m_MaxDEBlockSizeW;
 	unsigned int m_MaxDEBlockSizeH;
 	unsigned int m_WarpSize;
-	unsigned int m_Calls;
+	size_t m_Calls;
 
+	//Buffer names.
 	string m_EmberBufferName;
 	string m_ParVarsBufferName;
 	string m_DistBufferName;
@@ -130,6 +133,7 @@ private:
 	string m_FinalImageName;
 	string m_PointsBufferName;
 
+	//Kernels.
 	string m_IterKernel;
 	
 	OpenCLWrapper m_Wrapper;

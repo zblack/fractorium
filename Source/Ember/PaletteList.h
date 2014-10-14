@@ -32,7 +32,7 @@ public:
 	/// <param name="filename">The full path to the file to read</param>
 	/// <param name="force">If true, override the initialization state and force a read, else observe the initialization state.</param>
 	/// <returns>The initialization state</returns>
-	bool Init(string filename, bool force = false)
+	bool Init(const string& filename, bool force = false)
 	{
 		if (!m_Init || force)
 		{
@@ -93,7 +93,7 @@ public:
 	/// </summary>
 	/// <param name="name">The name of the palette to retrieve</param>
 	/// <returns>A pointer to the palette if found, else nullptr</returns>
-	Palette<T>* GetPaletteByName(string& name)
+	Palette<T>* GetPaletteByName(const string&& name)
 	{
 		for (unsigned int i = 0; i < Count(); i++)
 			if (m_Palettes[i].m_Name == name)

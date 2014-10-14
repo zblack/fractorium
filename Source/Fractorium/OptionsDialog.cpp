@@ -21,11 +21,9 @@ FractoriumOptionsDialog::FractoriumOptionsDialog(FractoriumSettings* settings, Q
 	connect(ui.OpenCLCheckBox, SIGNAL(stateChanged(int)),		 this, SLOT(OnOpenCLCheckBoxStateChanged(int)),		  Qt::QueuedConnection);
 	connect(ui.PlatformCombo,  SIGNAL(currentIndexChanged(int)), this, SLOT(OnPlatformComboCurrentIndexChanged(int)), Qt::QueuedConnection);
 
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlWidthSpin,		      spinHeight, 10, 100000,   50, "", "", true, 1920);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlHeightSpin,	      spinHeight, 10, 100000,   50, "", "", true, 1080);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlTemporalSamplesSpin, spinHeight,  1,	1000,  100, "", "", true, 1000);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlQualitySpin,		  spinHeight,  1,  200000,  50, "", "", true, 1000);
-	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlSupersampleSpin,	  spinHeight,  1,	   4,    1, "", "", true,    2);
+	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlTemporalSamplesSpin, spinHeight,  1,	1000, 100, "", "", true, 1000);
+	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlQualitySpin,		  spinHeight,  1, 200000,  50, "", "", true, 1000);
+	SetupSpinner<SpinBox, int>(table, this, row, 1, m_XmlSupersampleSpin,	  spinHeight,  1,	   4,   1, "", "", true,    2);
 
 	m_IdEdit = new QLineEdit(ui.OptionsIdentityTable);
 	ui.OptionsIdentityTable->setCellWidget(0, 1, m_IdEdit);
@@ -91,8 +89,6 @@ FractoriumOptionsDialog::FractoriumOptionsDialog(FractoriumSettings* settings, Q
 	ui.CpuSubBatchSpin->setValue(m_Settings->CpuSubBatch());
 	ui.OpenCLSubBatchSpin->setValue(m_Settings->OpenCLSubBatch());
 
-	m_XmlWidthSpin->setValue(m_Settings->XmlWidth());
-	m_XmlHeightSpin->setValue(m_Settings->XmlHeight());
 	m_XmlTemporalSamplesSpin->setValue(m_Settings->XmlTemporalSamples());
 	m_XmlQualitySpin->setValue(m_Settings->XmlQuality());
 	m_XmlSupersampleSpin->setValue(m_Settings->XmlSupersample());
@@ -167,8 +163,6 @@ void FractoriumOptionsDialog::accept()
 	m_Settings->OpenCLDEFilter(ui.OpenCLFilteringDERadioButton->isChecked());
 
 	//Xml saving.
-	m_Settings->XmlWidth(m_XmlWidthSpin->value());
-	m_Settings->XmlHeight(m_XmlHeightSpin->value());
 	m_Settings->XmlTemporalSamples(m_XmlTemporalSamplesSpin->value());
 	m_Settings->XmlQuality(m_XmlQualitySpin->value());
 	m_Settings->XmlSupersample(m_XmlSupersampleSpin->value());
@@ -203,8 +197,6 @@ void FractoriumOptionsDialog::reject()
 	ui.OpenCLFilteringDERadioButton->setChecked(m_Settings->OpenCLDEFilter());
 
 	//Xml saving.
-	m_XmlWidthSpin->setValue(m_Settings->XmlWidth());
-	m_XmlHeightSpin->setValue(m_Settings->XmlHeight());
 	m_XmlTemporalSamplesSpin->setValue(m_Settings->XmlTemporalSamples());
 	m_XmlQualitySpin->setValue(m_Settings->XmlQuality());
 	m_XmlSupersampleSpin->setValue(m_Settings->XmlSupersample());

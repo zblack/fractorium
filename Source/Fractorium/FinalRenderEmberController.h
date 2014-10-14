@@ -31,17 +31,18 @@ struct FinalRenderGuiState
 	bool m_KeepAspect;
 	eScaleType m_Scale;
 	QString m_Path;
-	QString m_DoAllExt;
+	QString m_Ext;
 	QString m_Prefix;
 	QString m_Suffix;
 	unsigned int m_PlatformIndex;
 	unsigned int m_DeviceIndex;
 	unsigned int m_ThreadCount;
-	unsigned int m_Width;
-	unsigned int m_Height;
+	double m_WidthScale;
+	double m_HeightScale;
 	double m_Quality;
 	unsigned int m_TemporalSamples;
 	unsigned int m_Supersample;
+	unsigned int m_Strips;
 };
 
 /// <summary>
@@ -55,20 +56,20 @@ class FinalRenderEmberControllerBase : public FractoriumEmberControllerBase
 	friend FractoriumFinalRenderDialog;
 
 public:
-	FinalRenderEmberControllerBase(FractoriumFinalRenderDialog* finalRender);
+	FinalRenderEmberControllerBase(FractoriumFinalRenderDialog* finalRenderDialog);
 	virtual ~FinalRenderEmberControllerBase() { }
 
-	virtual unsigned __int64 SyncAndComputeMemory() { return 0; }
-	virtual QString Name() const { return ""; }
+	virtual void SyncCurrentToGui() { }
+	virtual void SyncGuiToEmbers(size_t widthOverride = 0, size_t heightOverride = 0) { }
+	virtual void SyncCurrentToSizeSpinners(bool scale, bool size) { }
 	virtual void ResetProgress(bool total = true) { }
-	virtual void SetOriginalEmber(Ember<float>& ember) { }
-#ifdef DO_DOUBLE
-	virtual void SetOriginalEmber(Ember<double>& ember) { }
-#endif
+	virtual size_t SyncAndComputeMemory() { return 0; }
 	virtual double OriginalAspect() { return 1; }
+	virtual QString ComposePath(const QString& name) { return ""; }
 
 	void CancelRender();
 	bool CreateRendererFromGUI();
+	void Output(const QString& s);
 
 protected:
 	bool m_Run;
@@ -82,7 +83,7 @@ protected:
 	std::function<void (void)> m_FinalPreviewRenderFunc;
 	
 	FractoriumSettings* m_Settings;
-	FractoriumFinalRenderDialog* m_FinalRender;
+	FractoriumFinalRenderDialog* m_FinalRenderDialog;
 	FinalRenderGuiState m_GuiState;
 	OpenCLWrapper m_Wrapper;
 	CriticalSection m_PreviewCs;
@@ -101,33 +102,36 @@ public:
 	FinalRenderEmberController(FractoriumFinalRenderDialog* finalRender);
 	virtual ~FinalRenderEmberController() { }
 
-	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false);
-	virtual void CopyEmber(Ember<float>& ember);
-	virtual void SetEmberFile(const EmberFile<float>& emberFile);
-	virtual void CopyEmberFile(EmberFile<float>& emberFile);
-	virtual void SetOriginalEmber(Ember<float>& ember);
+	//Virtual functions overridden from FractoriumEmberControllerBase.
+	virtual void SetEmberFile(const EmberFile<float>& emberFile) override;
+	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) override;
 #ifdef DO_DOUBLE
-	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false);
-	virtual void CopyEmber(Ember<double>& ember);
-	virtual void SetEmberFile(const EmberFile<double>& emberFile);
-	virtual void CopyEmberFile(EmberFile<double>& emberFile);
-	virtual void SetOriginalEmber(Ember<double>& ember);
+	virtual void SetEmberFile(const EmberFile<double>& emberFile) override;
+	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) override;
 #endif
-	virtual double OriginalAspect();
-	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs);
-	virtual bool Render();
-	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true);
-	virtual unsigned int SizeOfT() { return sizeof(T); }
-	virtual unsigned __int64 SyncAndComputeMemory();
-	virtual QString Name() const { return QString::fromStdString(m_Ember.m_Name); }
-	virtual void ResetProgress(bool total = true);
-	void CancelPreviewRender();
+	virtual void SetEmber(size_t index) override;
+	virtual bool Render() override;
+	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true) override;
+	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs) override;
+	virtual size_t Index() const override { return m_Ember->m_Index; }
+	virtual unsigned int SizeOfT() const override { return sizeof(T); }
 
+	//Virtual functions overridden from FinalRenderEmberControllerBase.
+	virtual void SyncCurrentToGui() override;
+	virtual void SyncGuiToEmbers(size_t widthOverride = 0, size_t heightOverride = 0) override;
+	virtual void SyncCurrentToSizeSpinners(bool scale, bool size) override;
+	virtual void ResetProgress(bool total = true)  override;
+	virtual size_t SyncAndComputeMemory() override;
+	virtual double OriginalAspect() override { return double(m_Ember->m_OrigFinalRasW) / m_Ember->m_OrigFinalRasH; }
+	virtual QString Name() const override { return QString::fromStdString(m_Ember->m_Name); }
+	virtual QString ComposePath(const QString& name) override;
+	
 protected:
-	void Sync(Ember<T>& ember);
+	void CancelPreviewRender();
+	void RenderComplete(Ember<T>& ember);
+	void SyncGuiToEmber(Ember<T>& ember, size_t widthOverride = 0, size_t heightOverride = 0);
 
-	Ember<T> m_Ember;
-	Ember<T> m_OriginalEmber;
+	Ember<T>* m_Ember;
 	Ember<T> m_PreviewEmber;
 	EmberFile<T> m_EmberFile;
 	EmberToXml<T> m_XmlWriter;

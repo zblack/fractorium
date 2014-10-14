@@ -27,6 +27,7 @@
 #include <QItemDelegate>
 #include <QApplication>
 #include <QSettings>
+#include <QStandardPaths>
 #include <QGLWidget>
 #include <QOpenGLFunctions_2_0.h>
 #include <QtWidgets/QMainWindow>

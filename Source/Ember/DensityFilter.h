@@ -18,7 +18,7 @@ public:
 	DensityFilterBase() { }
 	virtual ~DensityFilterBase() { }
 
-	virtual int FilterWidth() const { return 0; }
+	virtual intmax_t FilterWidth() const { return 0; }
 };
 
 /// <summary>
@@ -42,7 +42,7 @@ public:
 	/// <param name="maxRad">The maximum filter radius</param>
 	/// <param name="curve">The curve of the filter</param>
 	/// <param name="supersample">The supersample of the ember this filter will be used with</param>
-	DensityFilter(T minRad, T maxRad, T curve, unsigned int supersample)
+	DensityFilter(T minRad, T maxRad, T curve, size_t supersample)
 	{
 		m_MinRad = minRad;
 		m_MaxRad = maxRad;
@@ -99,10 +99,10 @@ public:
 	/// <returns>True if success, else false.</returns>
 	bool Create()
 	{
-		int i, j, w;
+		size_t w;
 		int intFilterCount, maxIndex;
 		int rowSize;
-		int filterLoop;
+		size_t filterLoop;
 		int keepThresh = 100;
 		unsigned int filterCoefIndex = 0;
 		T decFilterCount;
@@ -147,8 +147,8 @@ public:
 		//Generate the filter coefficients.
 		for (filterLoop = 0; filterLoop < maxIndex; filterLoop++)
 		{
-			int dej, dek;
-			int coefIndex;
+			intmax_t dej, dek;
+			size_t coefIndex;
 			T filterSum = 0.0;
 			T filterVal;
 			T filterHeight;
@@ -218,9 +218,9 @@ public:
 
 		//This will populate one quadrant of filter indices.
 		//Really only need 1/8th, but that would require a sparse matrix.
-		for (j = 0; j <= m_FilterWidth; j++)
+		for (intmax_t j = 0; j <= m_FilterWidth; j++)
 		{
-			for (i = 0; i <= j; i++, filterCoefIndex++)
+			for (intmax_t i = 0; i <= j; i++, filterCoefIndex++)
 			{
 				if (j == 0 && i == 0)
 				{
@@ -265,7 +265,7 @@ public:
 	/// <returns>The string representation of this density estimation filter</returns>
 	string ToString() const
 	{
-		unsigned int i, j, coefIndex = 0, w = m_FilterWidth + 1;
+		size_t i, j, coefIndex = 0, w = m_FilterWidth + 1;
 		stringstream ss;
 
 		ss
@@ -312,15 +312,15 @@ public:
 	inline T MinRad() const { return m_MinRad; }
 	inline T MaxRad() const { return m_MaxRad; }
 	inline T Curve() const { return m_Curve; }
-	inline unsigned int Supersample() const { return m_Supersample; }
-	inline unsigned int KernelSize() const { return m_KernelSize; }
-	inline unsigned int MaxFilterIndex() const { return m_MaxFilterIndex; }
-	inline unsigned int MaxFilteredCounts() const { return m_MaxFilteredCounts; }
-	virtual int FilterWidth() const override { return m_FilterWidth; }
-	inline unsigned int BufferSize() const { return (unsigned int)m_Widths.size(); }
-	inline unsigned int CoefsSizeBytes() const { return BufferSize() * m_KernelSize * sizeof(T); }
-	inline unsigned int WidthsSizeBytes() const { return BufferSize() * sizeof(T); }
-	inline unsigned int CoefsIndicesSizeBytes() const { return (unsigned int)(m_CoefIndices.size() * sizeof(unsigned int)); }
+	inline size_t Supersample() const { return m_Supersample; }
+	inline size_t KernelSize() const { return m_KernelSize; }
+	inline size_t MaxFilterIndex() const { return m_MaxFilterIndex; }
+	inline size_t MaxFilteredCounts() const { return m_MaxFilteredCounts; }
+	virtual intmax_t FilterWidth() const override { return m_FilterWidth; }
+	inline size_t BufferSize() const { return m_Widths.size(); }
+	inline size_t CoefsSizeBytes() const { return BufferSize() * m_KernelSize * sizeof(T); }
+	inline size_t WidthsSizeBytes() const { return BufferSize() * sizeof(T); }
+	inline size_t CoefsIndicesSizeBytes() const { return (m_CoefIndices.size() * sizeof(m_CoefIndices[0])); }
 	inline const T* Coefs() const { return m_Coefs.data(); }
 	inline const T* Widths() const { return m_Widths.data(); }
 	inline const unsigned int* CoefIndices() const { return m_CoefIndices.data(); }
@@ -329,11 +329,11 @@ private:
 	T m_MinRad;
 	T m_MaxRad;//The original specified filter radius.
 	T m_Curve;
-	unsigned int m_Supersample;
-	unsigned int m_KernelSize;
-	unsigned int m_MaxFilterIndex;
-	unsigned int m_MaxFilteredCounts;
-	int m_FilterWidth;//The new radius after scaling for super sample and rounding. This is what's actually used.
+	size_t m_Supersample;
+	size_t m_KernelSize;
+	size_t m_MaxFilterIndex;
+	size_t m_MaxFilteredCounts;
+	intmax_t m_FilterWidth;//The new radius after scaling for super sample and rounding. This is what's actually used.
 	vector<T> m_Coefs;
 	vector<T> m_Widths;
 	vector<unsigned int> m_CoefIndices;

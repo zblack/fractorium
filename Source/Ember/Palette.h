@@ -39,7 +39,7 @@ public:
 	/// <param name="index">The index in the palette file</param>
 	/// <param name="size">The size of the palette which should be 256</param>
 	/// <param name="xmlPaletteEntries">A pointer to 256 color entries</param>
-	Palette(string name, int index, unsigned int size, v4T* xmlPaletteEntries)
+	Palette(const string& name, int index, unsigned int size, v4T* xmlPaletteEntries)
 	{
 		m_Name = name;
 		m_Index = index;

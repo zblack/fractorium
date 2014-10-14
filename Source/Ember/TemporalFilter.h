@@ -47,9 +47,9 @@ public:
 	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
-	TemporalFilter(eTemporalFilterType filterType, unsigned int passes, unsigned int temporalSamples, T filterWidth)
+	TemporalFilter(eTemporalFilterType filterType, size_t passes, size_t temporalSamples, T filterWidth)
 	{
-		unsigned int i, steps = passes * temporalSamples;
+		size_t i, steps = passes * temporalSamples;
 
 		m_Passes = passes;
 		m_TemporalSamples = temporalSamples;
@@ -117,7 +117,7 @@ public:
 	/// <returns>The string representation of this filter</returns>
 	string ToString() const
 	{
-		unsigned int i;
+		size_t i;
 		stringstream ss;
 
 		ss  << "Temporal Filter:" << endl
@@ -146,8 +146,8 @@ public:
 	/// Accessors.
 	/// </summary>
 	size_t Size() const { return m_Filter.size(); }
-	unsigned int Passes() const { return m_Passes; }
-	unsigned int TemporalSamples() const { return m_TemporalSamples; }
+	size_t Passes() const { return m_Passes; }
+	size_t TemporalSamples() const { return m_TemporalSamples; }
 	T FilterWidth() const { return m_FilterWidth; }
 	T FilterExp() const { return m_FilterExp; }
 	T SumFilt() const { return m_SumFilt; }
@@ -164,7 +164,7 @@ protected:
 	{
 		m_SumFilt = 0;
 
-		for (unsigned int i = 0; i < Size(); i++)
+		for (size_t i = 0; i < Size(); i++)
 		{
 			m_Filter[i] /= maxFilt;
 			m_SumFilt += m_Filter[i];
@@ -176,8 +176,8 @@ protected:
 	T m_SumFilt;//The sum of all filter values.
 	T m_FilterWidth;
 	T m_FilterExp;
-	unsigned int m_Passes;
-	unsigned int m_TemporalSamples;
+	size_t m_Passes;
+	size_t m_TemporalSamples;
 	vector<T> m_Deltas;//Delta vector.
 	vector<T> m_Filter;//Filter vector.
 	eTemporalFilterType m_FilterType;//The type of filter this is.
@@ -198,14 +198,14 @@ public:
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
 	/// <param name="filterExp">The filter exp.</param>
-	ExpTemporalFilter(unsigned int passes, unsigned int temporalSamples, T filterWidth, T filterExp)
+	ExpTemporalFilter(size_t passes, size_t temporalSamples, T filterWidth, T filterExp)
 		: TemporalFilter<T>(BOX_TEMPORAL_FILTER, passes, temporalSamples, filterWidth)
 	{
 		if (Size() > 1)
 		{
 			T slpx, maxFilt = 0;
 
-			for (unsigned int i = 0; i < Size(); i++)
+			for (size_t i = 0; i < Size(); i++)
 			{
 				if (filterExp >= 0)
 					slpx = (T(i) + 1) / Size();
@@ -240,7 +240,7 @@ public:
 	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
-	GaussianTemporalFilter(unsigned int passes, unsigned int temporalSamples, T filterWidth)
+	GaussianTemporalFilter(size_t passes, size_t temporalSamples, T filterWidth)
 		: TemporalFilter<T>(GAUSSIAN_TEMPORAL_FILTER, passes, temporalSamples, filterWidth)
 	{
 		if (Size() > 1)
@@ -248,7 +248,7 @@ public:
 			T maxFilt = 0, halfSteps = T(Size()) / T(2);
 			GaussianFilter<T> gaussian(1, 1);//Just pass dummy values, they are unused in this case.
 
-			for (unsigned int i = 0; i < Size(); i++)
+			for (size_t i = 0; i < Size(); i++)
 			{
 				m_Filter[i] = gaussian.Filter(gaussian.Support() * fabs(i - halfSteps) / halfSteps);
 
@@ -276,12 +276,12 @@ public:
 	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
-	BoxTemporalFilter(unsigned int passes, unsigned int temporalSamples, T filterWidth)
+	BoxTemporalFilter(size_t passes, size_t temporalSamples, T filterWidth)
 		: TemporalFilter<T>(BOX_TEMPORAL_FILTER, passes, temporalSamples, filterWidth)
 	{
 		if (Size() > 1)
 		{
-			for (unsigned int i = 0; i < Size(); i++)
+			for (size_t i = 0; i < Size(); i++)
 				m_Filter[i] = 1;
 
 			FinishFilter(1);
@@ -305,7 +305,7 @@ public:
 	/// <param name="filterWidth">The width of the filter</param>
 	/// <param name="filterExp">The filter exp, only used with Exp filter, otherwise ignored.</param>
 	/// <returns>A pointer to the newly created filter object</returns>
-	static TemporalFilter<T>* Create(eTemporalFilterType filterType, unsigned int passes, unsigned int temporalSamples, T filterWidth, T filterExp = 1)
+	static TemporalFilter<T>* Create(eTemporalFilterType filterType, size_t passes, size_t temporalSamples, T filterWidth, T filterExp = 1)
 	{
 		TemporalFilter<T>* filter = nullptr;
 
@@ -342,7 +342,7 @@ public:
 	/// </summary>
 	/// <param name="filterType">The string name of the filter</param>
 	/// <returns>The filter type enum</returns>
-	static eTemporalFilterType FromString(string filterType)
+	static eTemporalFilterType FromString(const string& filterType)
 	{
 		if (!_stricmp(filterType.c_str(), "box"))
 			return BOX_TEMPORAL_FILTER;

@@ -252,11 +252,12 @@ public:
 		char* bn;
 		const char* xmlPtr;
 		const char* loc = __FUNCTION__;
-		unsigned int emberSize;
+		size_t emberSize;
 		size_t bufSize;
 		xmlDocPtr doc;//Parsed XML document tree.
 		xmlNodePtr rootnode;
 		Locale locale;//Sets and restores on exit.
+		//Timing t;
 		m_ErrorReport.clear();
 
 		//Parse XML string into internal document.
@@ -264,6 +265,7 @@ public:
 		bufSize = strlen(xmlPtr);
 		embers.reserve(bufSize / 2500);//The Xml text for an ember is around 2500 bytes, but can be much more. Pre-allocate to aovid unnecessary resizing.
 		doc = xmlReadMemory(xmlPtr, (int)bufSize, filename, nullptr, XML_PARSE_NONET);//Forbid network access during read.
+		//t.Toc("xmlReadMemory");
 
 		if (doc == nullptr)
 		{
@@ -275,10 +277,12 @@ public:
 		rootnode = xmlDocGetRootElement(doc);
 
 		//Scan for <flame> nodes, starting with this node.
+		//t.Tic();
 		bn = basename((char*)filename);
 		ScanForEmberNodes(rootnode, bn, embers);
 		xmlFreeDoc(doc);
-		emberSize = (unsigned int)embers.size();
+		emberSize = embers.size();
+		//t.Toc("ScanForEmberNodes");
 
 		//Check to see if the first control point or the second-to-last
 		//control point has interpolation="smooth".  This is invalid
@@ -322,6 +326,7 @@ public:
 
 	/// <summary>
 	/// Parse the specified file and place the results in the vector of embers passed in.
+	/// This will strip out ampersands because the Xml parser can't handle them.
 	/// </summary>
 	/// <param name="filename">Full path and filename</param>
 	/// <param name="embers">The newly constructed embers based on what was parsed</param>
@@ -330,7 +335,7 @@ public:
 	{
 		const char* loc = __FUNCTION__;
 		string buf;
-
+		
 		//Ensure palette list is setup first.
 		if (!m_PaletteList.Init())
 		{
@@ -340,11 +345,7 @@ public:
 
 		if (ReadFile(filename, buf))
 		{
-			if (buf.find_first_of('&') != std::string::npos)
-			{
-				FindAndReplace<string>(buf, "&", "&amp;");
-			}
-
+			std::replace(buf.begin(), buf.end(), '&', '+');
 			return Parse((unsigned char*)buf.data(), filename, embers);
 		}
 		else
@@ -459,7 +460,7 @@ public:
 	/// <param name="i">The unsigned 64-bit integer to convert</param>
 	/// <param name="radix">The radix of the integer. Default: 10.</param>
 	/// <returns>The converted string</returns>
-	static string Itos64(uint64_t i, int radix = 10)
+	static string Itos64(size_t i, int radix = 10)
 	{
 		char ch[64];
 
@@ -517,7 +518,7 @@ private:
 				//	m_ErrorReport.push_back(string(loc) + " : Error interpolating missing palette colors");
 
 				currentEmber.CacheXforms();
-				currentEmber.m_Index = (int)embers.size();
+				currentEmber.m_Index = embers.size();
 				currentEmber.m_ParentFilename = parentFileString;
 				embers.push_back(currentEmber);
 			}
@@ -562,7 +563,7 @@ private:
 
 			//First parse out simple float reads.
 			if		(ParseAndAssignFloat(curAtt->name, attStr, "time",                  currentEmber.m_Time,                ret)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "scale",                 currentEmber.m_PixelsPerUnit,       ret)) { }
+			else if (ParseAndAssignFloat(curAtt->name, attStr, "scale",					currentEmber.m_PixelsPerUnit,		ret)) { currentEmber.m_OrigPixPerUnit = currentEmber.m_PixelsPerUnit; }
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "rotate",                currentEmber.m_Rotate,              ret)) { }
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "zoom",                  currentEmber.m_Zoom,                ret)) { }
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "filter",                currentEmber.m_SpatialFilterRadius, ret)) { }
@@ -1481,7 +1482,7 @@ private:
 	}
 
 	/// <summary>
-	/// Wrapper to parse an unsigned int Xml value and convert it to unsigned int.
+	/// Wrapper to parse an int Xml string value and convert it to an int.
 	/// </summary>
 	/// <param name="name">The xml tag to parse</param>
 	/// <param name="attStr">The name of the Xml attribute</param>
@@ -1489,21 +1490,8 @@ private:
 	/// <param name="val">The parsed value</param>
 	/// <param name="b">Bitwise ANDed with true if name matched str and the call to Atoi() succeeded, else false. Used for keeping a running value between successive calls.</param>
 	/// <returns>True if the tag was matched, else false</returns>
-	bool ParseAndAssignInt(const xmlChar* name, const char* attStr, const char* str, unsigned int& val, bool& b)
-	{
-		return ParseAndAssignInt(name, attStr, str, (int&)val, b);
-	}
-
-	/// <summary>
-	/// Wrapper to parse an int Xml value and convert it to int.
-	/// </summary>
-	/// <param name="name">The xml tag to parse</param>
-	/// <param name="attStr">The name of the Xml attribute</param>
-	/// <param name="str">The name of the Xml tag</param>
-	/// <param name="val">The parsed value</param>
-	/// <param name="b">Bitwise ANDed with true if name matched str and the call to Atoi() succeeded, else false. Used for keeping a running value between successive calls.</param>
-	/// <returns>True if the tag was matched, else false</returns>
-	bool ParseAndAssignInt(const xmlChar* name, const char* attStr, const char* str, int& val, bool& b)
+	template <typename intT>
+	bool ParseAndAssignInt(const xmlChar* name, const char* attStr, const char* str, intT& val, bool& b)
 	{
 		bool ret = false;
 		T fval = 0;
@@ -1511,7 +1499,7 @@ private:
 		if (!Compare(name, str))
 		{
 			b &= Atof(attStr, fval);
-			val = (int)fval;
+			val = (intT)fval;
 			ret = true;//Means the strcmp() was right, but doesn't necessarily mean the conversion went ok.
 		}
 

@@ -433,7 +433,7 @@ public:
 	/// </summary>
 	/// <param name="name">The name to search for</param>
 	/// <returns>A pointer to the variation if found, else nullptr.</returns>
-	Variation<T>* GetVariation(string& name)
+	Variation<T>* GetVariation(const string& name)
 	{
 		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_Variations[i]->Name().c_str()))
@@ -449,7 +449,7 @@ public:
 	/// <param name="name">The name of the variation in the list to make a copy of</param>
 	/// <param name="weight">The weight to assign the new copy. Default: 1</param>
 	/// <returns>A pointer to the variation with a matching name, else nullptr.</returns>
-	Variation<T>* GetVariationCopy(string name, T weight = 1) { return MakeCopyWithWeight(GetVariation(name), weight); }
+	Variation<T>* GetVariationCopy(const string& name, T weight = 1) { return MakeCopyWithWeight(GetVariation(name), weight); }
 
 	/// <summary>
 	/// Get a parametric variation at the specified index.
@@ -464,7 +464,7 @@ public:
 	/// </summary>
 	/// <param name="name">The name of the variation in the parametric variations list to retrieve</param>
 	/// <returns>The parametric variation with a matching name, else nullptr.</returns>
-	ParametricVariation<T>* GetParametricVariation(string name)
+	ParametricVariation<T>* GetParametricVariation(const string& name)
 	{
 		for (unsigned int i = 0; i < m_ParametricVariations.size() && m_ParametricVariations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_ParametricVariations[i]->Name().c_str()))
@@ -478,7 +478,7 @@ public:
 	/// </summary>
 	/// <param name="name">The name of the variation whose index is returned</param>
 	/// <returns>The index of the variation with the matching name, else -1</returns>
-	int GetVariationIndex(string name)
+	int GetVariationIndex(const string& name)
 	{
 		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_Variations[i]->Name().c_str()))

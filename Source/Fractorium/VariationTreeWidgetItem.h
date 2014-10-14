@@ -4,7 +4,7 @@
 #include "DoubleSpinBox.h"
 
 /// <summary>
-/// TwoButtonWidget class.
+/// VariationTreeWidgetItem class.
 /// </summary>
 
 /// <summary>

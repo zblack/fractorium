@@ -121,7 +121,7 @@ void Fractorium::OnSoloXformCheckBoxStateChanged(int state)
 	if (state == Qt::Checked)
 	{
 		ui.CurrentXformCombo->setProperty("soloxform", ui.CurrentXformCombo->currentIndex());
-		ui.SoloXformCheckBox->setText("Solo (" + QString::number(ui.CurrentXformCombo->currentIndex() + 1)  + ")");
+		ui.SoloXformCheckBox->setText("Solo (" + ToString(ui.CurrentXformCombo->currentIndex() + 1) + ")");
 	}
 	else if (state == Qt::Unchecked)
 	{

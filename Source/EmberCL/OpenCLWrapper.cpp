@@ -132,7 +132,7 @@ void OpenCLWrapper::ClearPrograms()
 /// <param name="size">The size in bytes of the buffer</param>
 /// <param name="flags">The buffer flags. Default: CL_MEM_READ_WRITE.</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::AddBuffer(string name, size_t size, cl_mem_flags flags)
+bool OpenCLWrapper::AddBuffer(const string& name, size_t size, cl_mem_flags flags)
 {
 	cl_int err;
 	
@@ -153,16 +153,16 @@ bool OpenCLWrapper::AddBuffer(string name, size_t size, cl_mem_flags flags)
 		}
 		else if (GetBufferSize(bufferIndex) != size)//If it did exist, only create and add if the sizes were different.
 		{
-			m_Buffers[bufferIndex] = NamedBuffer(cl::Buffer(m_Context, flags, 0, NULL, &err), "emptybuffer");
+			m_Buffers[bufferIndex] = NamedBuffer(cl::Buffer(m_Context, flags, 0, NULL, &err), "emptybuffer");//First clear out the original so the two don't exist in memory at once.
 
-			cl::Buffer buff(m_Context, flags, size, NULL, &err);
+			cl::Buffer buff(m_Context, flags, size, NULL, &err);//Create the new buffer.
 
 			if (!CheckCL(err, "cl::Buffer()"))
 				return false;
 
-			NamedBuffer nb(buff, name);
+			NamedBuffer nb(buff, name);//Make a named buffer out of the new buffer.
 
-			m_Buffers[bufferIndex] = nb;
+			m_Buffers[bufferIndex] = nb;//Finally, assign.
 		}
 		//If the buffer existed and the sizes were the same, take no action.
 
@@ -182,49 +182,14 @@ bool OpenCLWrapper::AddBuffer(string name, size_t size, cl_mem_flags flags)
 /// <param name="name">The name of the buffer</param>
 /// <param name="data">A pointer to the buffer</param>
 /// <param name="size">The size in bytes of the buffer</param>
+/// <param name="flags">The buffer flags. Default: CL_MEM_READ_WRITE.</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::AddAndWriteBuffer(string name, void* data, size_t size)
+bool OpenCLWrapper::AddAndWriteBuffer(const string& name, void* data, size_t size, cl_mem_flags flags)
 {
-	cl_int err;
 	bool b = false;
 
-	if (m_Init)
-	{
-		int bufferIndex = FindBufferIndex(name);
-
-		//Easy case: totally new buffer, so just create and add.
-		if (bufferIndex == -1)
-		{
-			cl::Buffer buff(m_Context, CL_MEM_READ_WRITE, size, NULL, &err);
-
-			if (!CheckCL(err, "cl::Buffer()"))
-				return b;
-
-			NamedBuffer nb(buff, name);
-
-			m_Buffers.push_back(nb);
-			b = WriteBuffer((unsigned int)m_Buffers.size() - 1, data, size);
-		}
-		else//Harder case: the buffer already exists. Replace or overwrite?
-		{
-			if (GetBufferSize(bufferIndex) == size)//Size was equal, so just copy data without creating a new buffer.
-			{
-				b = WriteBuffer(bufferIndex, data, size);
-			}
-			else//Size was not equal, so create entirely new buffer, replace, and copy data.
-			{
-				cl::Buffer buff(m_Context, CL_MEM_READ_WRITE, size, NULL, &err);
-
-				if (!CheckCL(err, "cl::Buffer()"))
-					return b;
-
-				NamedBuffer nb(buff, name);
-
-				m_Buffers[bufferIndex] = nb;
-				b = WriteBuffer(bufferIndex, data, size);
-			}
-		}
-	}
+	if (AddBuffer(name, size, flags))
+		b = WriteBuffer(name, data, size);
 
 	return b;
 }
@@ -236,7 +201,7 @@ bool OpenCLWrapper::AddAndWriteBuffer(string name, void* data, size_t size)
 /// <param name="data">A pointer to the buffer</param>
 /// <param name="size">The size in bytes of the buffer</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::WriteBuffer(string name, void* data, size_t size)
+bool OpenCLWrapper::WriteBuffer(const string& name, void* data, size_t size)
 {
 	int bufferIndex = FindBufferIndex(name);
 
@@ -274,7 +239,7 @@ bool OpenCLWrapper::WriteBuffer(unsigned int bufferIndex, void* data, size_t siz
 /// <param name="data">A pointer to a buffer to copy the data to</param>
 /// <param name="size">The size in bytes of the buffer</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::ReadBuffer(string name, void* data, size_t size)
+bool OpenCLWrapper::ReadBuffer(const string& name, void* data, size_t size)
 {
 	int bufferIndex = FindBufferIndex(name);
 
@@ -310,7 +275,7 @@ bool OpenCLWrapper::ReadBuffer(unsigned int bufferIndex, void* data, size_t size
 /// </summary>
 /// <param name="name">The name of the buffer to search for</param>
 /// <returns>The index if found, else -1.</returns>
-int OpenCLWrapper::FindBufferIndex(string name)
+int OpenCLWrapper::FindBufferIndex(const string& name)
 {
 	for (unsigned int i = 0; i < m_Buffers.size(); i++)
 		if (m_Buffers[i].m_Name == name)
@@ -324,7 +289,7 @@ int OpenCLWrapper::FindBufferIndex(string name)
 /// </summary>
 /// <param name="name">The name of the buffer to search for</param>
 /// <returns>The size of the buffer if found, else 0.</returns>
-unsigned int OpenCLWrapper::GetBufferSize(string name)
+unsigned int OpenCLWrapper::GetBufferSize(const string& name)
 {
 	unsigned int bufferIndex = FindBufferIndex(name);
 
@@ -369,7 +334,7 @@ void OpenCLWrapper::ClearBuffers()
 /// <param name="shared">True if shared with an OpenGL texture, else false. Default: false.</param>
 /// <param name="texName">The texture ID of the shared OpenGL texture if shared. Default: 0.</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::AddAndWriteImage(string name, cl_mem_flags flags, const cl::ImageFormat& format, ::size_t width, ::size_t height, ::size_t row_pitch, void* data, bool shared, GLuint texName)
+bool OpenCLWrapper::AddAndWriteImage(const string& name, cl_mem_flags flags, const cl::ImageFormat& format, ::size_t width, ::size_t height, ::size_t row_pitch, void* data, bool shared, GLuint texName)
 {
 	cl_int err;
 
@@ -432,10 +397,10 @@ bool OpenCLWrapper::AddAndWriteImage(string name, cl_mem_flags flags, const cl::
 			}
 			else
 			{
-				NamedImage2D namedImage = m_Images[imageIndex];
-
-				if (!CompareImageParams(namedImage.m_Image, flags, format, width, height, row_pitch))
+				if (!CompareImageParams(m_Images[imageIndex].m_Image, flags, format, width, height, row_pitch))
 				{
+					m_Images[imageIndex] = NamedImage2D();//First clear out the original so the two don't exist in memory at once.
+
 					NamedImage2D namedImage(cl::Image2D(m_Context, flags, format, width, height, row_pitch, data, &err), name);
 
 					if (CheckCL(err, "cl::Image2D()"))
@@ -517,7 +482,7 @@ bool OpenCLWrapper::WriteImage2D(unsigned int index, bool shared, ::size_t width
 /// <param name="shared">True if shared with an OpenGL texture, else false.</param>
 /// <param name="data">A pointer to a buffer to copy the data to</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::ReadImage(string name, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data)
+bool OpenCLWrapper::ReadImage(const string& name, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data)
 {
 	if (m_Init)
 	{
@@ -583,7 +548,7 @@ bool OpenCLWrapper::ReadImage(unsigned int imageIndex, ::size_t width, ::size_t 
 /// <param name="name">The name of the image to search for</param>
 /// <param name="shared">True if shared with an OpenGL texture, else false.</param>
 /// <returns>The index if found, else -1.</returns>
-int OpenCLWrapper::FindImageIndex(string name, bool shared)
+int OpenCLWrapper::FindImageIndex(const string& name, bool shared)
 {
 	if (shared)
 	{
@@ -607,7 +572,7 @@ int OpenCLWrapper::FindImageIndex(string name, bool shared)
 /// <param name="name">The name of the image to search for</param>
 /// <param name="shared">True if shared with an OpenGL texture, else false.</param>
 /// <returns>The size of the 2D image if found, else 0.</returns>
-unsigned int OpenCLWrapper::GetImageSize(string name, bool shared)
+unsigned int OpenCLWrapper::GetImageSize(const string& name, bool shared)
 {
 	int imageIndex = FindImageIndex(name, shared);
 	return GetImageSize(imageIndex, shared);
@@ -745,7 +710,7 @@ bool OpenCLWrapper::CreateImage2DGL(IMAGEGL2D& image2DGL, cl_mem_flags flags, GL
 /// </summary>
 /// <param name="name">The name of the image to acquire</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::EnqueueAcquireGLObjects(string name)
+bool OpenCLWrapper::EnqueueAcquireGLObjects(const string& name)
 {
 	int index = FindImageIndex(name, true);
 
@@ -780,7 +745,7 @@ bool OpenCLWrapper::EnqueueAcquireGLObjects(IMAGEGL2D& image)
 /// </summary>
 /// <param name="name">The name of the image to release</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::EnqueueReleaseGLObjects(string name)
+bool OpenCLWrapper::EnqueueReleaseGLObjects(const string& name)
 {
 	int index = FindImageIndex(name, true);
 
@@ -953,7 +918,7 @@ bool OpenCLWrapper::SetImageArg(unsigned int kernelIndex, unsigned int argIndex,
 /// </summary>
 /// <param name="name">The name of the kernel to search for</param>
 /// <returns>The index if found, else -1.</returns>
-int OpenCLWrapper::FindKernelIndex(string name)
+int OpenCLWrapper::FindKernelIndex(const string& name)
 {
 	for (unsigned int i = 0; i < m_Programs.size(); i++)
 		if (m_Programs[i].m_Name == name)

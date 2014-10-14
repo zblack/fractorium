@@ -120,6 +120,7 @@ void GLEmberController<T>::ClearWindow()
 	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_GL->glClearColor(ember->m_Background.r, ember->m_Background.g, ember->m_Background.b, 1.0);
 
+	m_GL->makeCurrent();
 	m_GL->swapBuffers();
 
 	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -159,10 +160,13 @@ void GLWidget::SetMainWindow(Fractorium* f) { m_Fractorium = f; }
 
 bool GLWidget::Init() { return m_Init; }
 bool GLWidget::Drawing() { return m_Drawing; }
+GLint GLWidget::MaxTexSize() { return m_MaxTexSize; }
 GLuint GLWidget::OutputTexID() { return m_OutputTexID; }
 
 /// <summary>
 /// Initialize OpenGL, called once at startup after the main window constructor finishes.
+/// Although it seems an awkward place to put some of this setup code, the dimensions of the
+/// main window and its widgets are not fully initialized before this is called.
 /// Once this is done, the render timer is started after a short delay.
 /// Rendering is then clear to begin.
 /// </summary>
@@ -171,6 +175,20 @@ void GLWidget::initializeGL()
 	if (!m_Init && initializeOpenGLFunctions() && m_Fractorium)
 	{
 		glClearColor(0.0, 0.0, 0.0, 1.0);
+
+		int w = m_Fractorium->ui.GLParentScrollArea->width();
+		int h = m_Fractorium->ui.GLParentScrollArea->height();
+
+		SetDimensions(w, h);
+		m_Fractorium->m_WidthSpin->setValue(w);
+		m_Fractorium->m_HeightSpin->setValue(h);
+
+		glEnable(GL_TEXTURE_2D);
+		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_MaxTexSize);
+		glDisable(GL_TEXTURE_2D);
+
+		m_Fractorium->m_WidthSpin->setMaximum(m_MaxTexSize);
+		m_Fractorium->m_HeightSpin->setMaximum(m_MaxTexSize);
 
 		//Start with a flock of 10 random embers. Can't do this until now because the window wasn't maximized yet, so the sizes would have been off.
 		m_Fractorium->OnActionNewFlock(false);
@@ -193,9 +211,7 @@ void GLWidget::paintGL()
 		RendererBase* renderer = controller->Renderer();
 
 		m_Drawing = true;
-		//renderer->EnterResize();
 		controller->GLController()->DrawImage();
-		//renderer->LeaveResize();//Unlock, may not be necessary.
 		
 		//Affine drawing.
 		bool pre = m_Fractorium->ui.PreAffineGroupBox->isChecked();
@@ -244,23 +260,23 @@ void GLEmberController<T>::DrawImage()
 {
 	RendererBase* renderer = m_FractoriumEmberController->Renderer();
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
-
+	
 	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_GL->glClearColor(ember->m_Background.r, ember->m_Background.g, ember->m_Background.b, 1.0);
 	m_GL->glDisable(GL_DEPTH_TEST);
-
+	
 	renderer->EnterFinalAccum();//Lock, may not be necessary, but just in case.
 	renderer->EnterResize();
 		
-	if (SyncSizes())//Ensure all sizes are correct. If not, do nothing.
+	if (SizesMatch())//Ensure all sizes are correct. If not, do nothing.
 	{
 		vector<unsigned char>* finalImage = m_FractoriumEmberController->FinalImage();
-
+	
 		if (renderer->RendererType() == OPENCL_RENDERER || finalImage)//Final image only matters for CPU renderer.
 			if (renderer->RendererType() == OPENCL_RENDERER || finalImage->size() == renderer->FinalBufferSize())
 				m_GL->DrawQuad();//Output image is drawn here.
 	}
-
+	
 	renderer->LeaveResize();//Unlock, may not be necessary.
 	renderer->LeaveFinalAccum();
 }
@@ -575,7 +591,7 @@ void GLEmberController<T>::MouseMove(QMouseEvent* e)
 	glm::ivec2 mouse(e->x(), e->y());
 	v3T mouseFlipped(e->x(), m_Viewport[3] - e->y(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
-
+	
 	//First check to see if the mouse actually moved.
 	if (mouse == m_MousePos)
 		return;
@@ -650,7 +666,7 @@ void GLEmberController<T>::MouseMove(QMouseEvent* e)
 		//if (m_HoverXform == previousHover)
 		//	draw = false;
 	}
-
+	
 	//Only update if the user was dragging or hovered over a point.
 	//Use repaint() to update immediately for a more responsive feel.
 	if ((m_DragState != DragNone) || draw)
@@ -665,10 +681,10 @@ void GLEmberController<T>::MouseMove(QMouseEvent* e)
 void GLWidget::mouseMoveEvent(QMouseEvent* e)
 {
 	setFocus();//Must do this so that this window gets keyboard events.
-
+	
 	if (GLEmberControllerBase* controller = GLController())
 		controller->MouseMove(e);
-
+	
 	QGLWidget::mouseMoveEvent(e);
 }
 
@@ -711,12 +727,21 @@ void GLWidget::resizeEvent(QResizeEvent* e)
 {
 	if (m_Fractorium)
 	{
-		m_Fractorium->m_WidthSpin->setValue(width());
-		m_Fractorium->m_HeightSpin->setValue(height());
+		//qDebug() << "GLWidget::resizeEvent() : w, h: " << width() << ", " << height() << ". oldsize: " << e->oldSize().width() << ", " << e->oldSize().height();
+		//m_Fractorium->m_WidthSpin->setValue(width());
+		//m_Fractorium->m_HeightSpin->setValue(height());
 
-		if (GLEmberControllerBase* controller = GLController())
-			controller->SyncSizes();//For some reason the base resize can't be called here or else it causes a crash.
+	//	if (GLEmberControllerBase* controller = GLController())
+	//		controller->SyncSizes();//For some reason the base resize can't be called here or else it causes a crash.
 	}
+
+	//QGLWidget::resizeEvent(e);
+}
+
+void GLWidget::SetDimensions(int w, int h)
+{
+	setFixedSize(w, h);
+	m_Fractorium->ui.GLParentScrollAreaContents->setFixedSize(w, h);
 }
 
 /// <summary>
@@ -729,13 +754,22 @@ void GLWidget::resizeEvent(QResizeEvent* e)
 bool GLWidget::Allocate(bool force)
 {
 	bool alloc = false;
+	bool resize = force || m_TexWidth != width() || m_TexHeight != height();
+	bool doIt = resize || m_OutputTexID == 0;
 
-	if (m_OutputTexID == 0)
+	if (doIt)
 	{
 		m_TexWidth = width();
 		m_TexHeight = height();
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+
+		if (resize)
+		{
+			glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
+			Deallocate();
+		}
+
 		glGenTextures(1, &m_OutputTexID);
 		glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
 
@@ -746,28 +780,7 @@ bool GLWidget::Allocate(bool force)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_TexWidth, m_TexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 		alloc = true;
 	}
-	else
-	{
-		if (force || (m_TexWidth != width() || m_TexHeight != height()))
-		{
-			m_TexWidth = width();
-			m_TexHeight = height();
-			glEnable(GL_TEXTURE_2D);
-			glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
-			glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
-			Deallocate();
-			glGenTextures(1, &m_OutputTexID);
-			glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
-
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);//Fractron had this as GL_LINEAR_MIPMAP_LINEAR for OpenCL and Cuda.
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_TexWidth, m_TexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-			alloc = true;
-		}
-	}
-
+	
 	if (alloc)
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
@@ -801,45 +814,33 @@ bool GLWidget::Deallocate()
 /// </summary>
 void GLWidget::SetViewport()
 {
-	if (m_Init && (m_ViewWidth != width() || m_ViewHeight != height()))
+	if (m_Init && (m_ViewWidth != m_TexWidth || m_ViewHeight != m_TexHeight))
 	{
-		glViewport(0, 0, (GLint)width(), (GLint)height());
-		m_ViewWidth = width();
-		m_ViewHeight = height();
+		glViewport(0, 0, (GLint)m_TexWidth, (GLint)m_TexHeight);
+		m_ViewWidth = m_TexWidth;
+		m_ViewHeight = m_TexHeight;
 	}
 }
 
 /// <summary>
-/// Synchronize the size of the renderer output image, the texture, and this window.
-/// They must all match. If the renderer output size doesn't match, then the render
-/// timer is stopped and restarted with a delay.
-/// This will get called once or twice when a resize occurs.
+/// Determine whether the dimensions of the renderer's current ember match
+/// the dimensions of the widget, texture and viewport.
+/// Since this uses the renderer's dimensions, this
+/// must be called after the renderer has set the current ember.
 /// </summary>
 /// <returns>True if all sizes match, else false.</returns>
 template <typename T>
-bool GLEmberController<T>::SyncSizes()
+bool GLEmberController<T>::SizesMatch()
 {
-	if (m_GL->Init())
-	{
-		m_GL->SetViewport();
+	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
 
-		//First make sure the dimensions of the ember match the window size.
-		if (CheckForSizeMismatch(m_GL->width(), m_GL->height()))
-		{
-			if (m_Fractorium)//This will stop the rendering process and start the reset timer.
-				m_Fractorium->Resize();
-
-			return false;
-		}
-
-		//The renderer and window dimensions match, now make sure the dims of the texture match.
-		if (!m_GL->Allocate())
-			return false;
-
-		return true;
-	}
-
-	return false;
+	return (ember &&
+		ember->m_FinalRasW == m_GL->width() &&
+		ember->m_FinalRasH == m_GL->height() &&
+		m_GL->width() == m_GL->m_TexWidth &&
+		m_GL->height() == m_GL->m_TexHeight &&
+		m_GL->m_TexWidth == m_GL->m_ViewWidth &&
+		m_GL->m_TexHeight == m_GL->m_ViewHeight);
 }
 
 /// <summary>

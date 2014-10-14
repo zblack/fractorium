@@ -91,6 +91,7 @@ public:
 		m_FinalRasH			  = ember.m_FinalRasH;
 		m_OrigFinalRasW		  = ember.m_OrigFinalRasW;
 		m_OrigFinalRasH		  = ember.m_OrigFinalRasH;
+		m_OrigPixPerUnit	  = ember.m_OrigPixPerUnit;
 		m_Supersample		  = ember.m_Supersample;
 		m_Passes			  = ember.m_Passes;
 		m_TemporalSamples	  = ember.m_TemporalSamples;
@@ -137,11 +138,12 @@ public:
 		m_ParentFilename	  = ember.m_ParentFilename;
 
 		m_Index		  = ember.m_Index;
+		m_ScaleType	  = ember.ScaleType();
 		m_Palette	  = ember.m_Palette;
 
 		m_Xforms.clear();
 
-		for (unsigned int i = 0; i < ember.XformCount(); i++)
+		for (size_t i = 0; i < ember.XformCount(); i++)
 		{
 			if (Xform<U>* p = ember.GetXform(i))
 			{
@@ -181,6 +183,7 @@ public:
 		m_FinalRasH = 1080;
 		m_OrigFinalRasW = 1920;
 		m_OrigFinalRasH = 1080;
+		m_OrigPixPerUnit = 240;
 		m_Supersample = 1;
 		m_Passes = 1;
 		m_TemporalSamples = 1000;
@@ -233,6 +236,7 @@ public:
 
 		//Internal values.
 		m_Index = 0;
+		m_ScaleType = eScaleType::SCALE_NONE;
 		m_Xforms.reserve(12);
 
 		m_Edits = nullptr;
@@ -253,9 +257,9 @@ public:
 	/// Add the specified number of empty xforms.
 	/// </summary>
 	/// <param name="count">The number of xforms to add</param>
-	void AddXforms(unsigned int count)
+	void AddXforms(size_t count)
 	{
-		for (unsigned int i = 0; i < count; i++)
+		for (size_t i = 0; i < count; i++)
 		{
 			Xform<T> xform;
 
@@ -267,7 +271,7 @@ public:
 	/// Add empty padding xforms until the total xform count is xformPad.
 	/// </summary>
 	/// <param name="xformPad">The total number of xforms to finish with</param>
-	void PadXforms(unsigned int xformPad)
+	void PadXforms(size_t xformPad)
 	{
 		if (xformPad > XformCount())
 			AddXforms(xformPad - XformCount());
@@ -279,7 +283,7 @@ public:
 	/// <param name="xformPad">The total number of xforms if additional padding xforms are desired. Default: 0.</param>
 	/// <param name="doFinal">Whether to copy the final xform. Default: false.</param>
 	/// <returns>The newly constructed ember</returns>
-	Ember<T> Copy(unsigned int xformPad = 0, bool doFinal = false)
+	Ember<T> Copy(size_t xformPad = 0, bool doFinal = false)
 	{
 		Ember<T> ember(*this);
 
@@ -311,7 +315,7 @@ public:
 	/// </summary>
 	/// <param name="i">The index to delete</param>
 	/// <returns>True if success, else false.</returns>
-	bool DeleteXform(unsigned int i)
+	bool DeleteXform(size_t i)
 	{
 		Xform<T>* xform;
 
@@ -320,11 +324,11 @@ public:
 			m_Xforms.erase(m_Xforms.begin() + i);
 
 			//Now shuffle xaos values from i on back by 1 for every xform.
-			for (unsigned int x1 = 0; x1 < XformCount(); x1++)
+			for (size_t x1 = 0; x1 < XformCount(); x1++)
 			{
 				if ((xform = GetXform(x1)))
 				{
-					for (unsigned int x2 = i + 1; x2 <= XformCount(); x2++)//Iterate from the position after the deletion index up to the old count.
+					for (size_t x2 = i + 1; x2 <= XformCount(); x2++)//Iterate from the position after the deletion index up to the old count.
 						xform->SetXaos(x2 - 1, xform->Xaos(x2));
 
 					xform->TruncateXaos();//Make sure no old values are hanging around in case more xforms are added to this ember later.
@@ -342,7 +346,7 @@ public:
 	/// </summary>
 	/// <param name="i">The index to delete</param>
 	/// <returns>True if success, else false.</returns>
-	bool DeleteTotalXform(unsigned int i)
+	bool DeleteTotalXform(size_t i)
 	{
 		if (DeleteXform(i))
 			{ }
@@ -359,7 +363,7 @@ public:
 	/// </summary>
 	/// <param name="i">The index to get</param>
 	/// <returns>A pointer to the xform at the index if successful, else nullptr.</returns>
-	Xform<T>* GetXform(unsigned int i) const
+	Xform<T>* GetXform(size_t i) const
 	{
 		if (i < XformCount())
 			return (Xform<T>*)&m_Xforms[i];
@@ -373,7 +377,7 @@ public:
 	/// <param name="i">The index to get</param>
 	/// <param name="forceFinal">If true, return the final xform when its index is requested even if one is not present</param>
 	/// <returns>A pointer to the xform at the index if successful, else nullptr.</returns>
-	Xform<T>* GetTotalXform(unsigned int i, bool forceFinal = false) const
+	Xform<T>* GetTotalXform(size_t i, bool forceFinal = false) const
 	{
 		if (i < XformCount())
 			return (Xform<T>*)&m_Xforms[i];
@@ -388,13 +392,13 @@ public:
 	/// </summary>
 	/// <param name="xform">A pointer to the xform to find</param>
 	/// <returns>The index of the matched xform if found, else -1.</returns>
-	int GetXformIndex(Xform<T>* xform) const
+	intmax_t GetXformIndex(Xform<T>* xform) const
 	{
-		int index = -1;
+		intmax_t index = -1;
 
-		for (unsigned int i = 0; i < m_Xforms.size(); i++)
+		for (size_t i = 0; i < m_Xforms.size(); i++)
 			if (GetXform(i) == xform)
-				return (int)i;
+				return (intmax_t)i;
 
 		return index;
 	}
@@ -404,13 +408,13 @@ public:
 	/// </summary>
 	/// <param name="xform">A pointer to the xform to find</param>
 	/// <returns>The index of the matched xform if found, else -1.</returns>
-	int GetTotalXformIndex(Xform<T>* xform) const
+	intmax_t GetTotalXformIndex(Xform<T>* xform) const
 	{
-		unsigned int totalXformCount = TotalXformCount();
+		size_t totalXformCount = TotalXformCount();
 
-		for (unsigned int i = 0; i < totalXformCount; i++)
+		for (size_t i = 0; i < totalXformCount; i++)
 			if (GetTotalXform(i) == xform)
-				return (int)i;
+				return (intmax_t)i;
 
 		return -1;
 	}
@@ -449,7 +453,7 @@ public:
 	/// </summary>
 	void DeleteMotionElements()
 	{
-		for (unsigned int i = 0; i < TotalXformCount(); i++)
+		for (size_t i = 0; i < TotalXformCount(); i++)
 			GetTotalXform(i)->DeleteMotionElements();
 	}
 
@@ -458,7 +462,7 @@ public:
 	/// </summary>
 	void CacheXforms()
 	{
-		for (unsigned int i = 0; i < TotalXformCount(); i++)
+		for (size_t i = 0; i < TotalXformCount(); i++)
 		{
 			Xform<T>* xform = GetTotalXform(i);
 
@@ -467,9 +471,13 @@ public:
 		}
 	}
 
+	/// <summary>
+	/// Set the projection function pointer based on the
+	/// values of the 3D fields.
+	/// </summary>
 	void SetProjFunc()
 	{
-		unsigned int projBits = ProjBits();
+		size_t projBits = ProjBits();
 
 		if (!projBits)//No 3D at all, then do nothing.
 		{
@@ -514,11 +522,11 @@ public:
 	/// Determine whether xaos is used in any xform, excluding final.
 	/// </summary>
 	/// <returns>True if any xaos found, else false.</returns>
-	bool XaosPresent()
+	bool XaosPresent() const
 	{
 		bool b = false;
 
-		ForEach(m_Xforms, [&](Xform<T>& xform) { b |= xform.XaosPresent(); });//If at least one entry is not equal to 1, then xaos is present.
+		ForEach(m_Xforms, [&](const Xform<T>& xform) { b |= xform.XaosPresent(); });//If at least one entry is not equal to 1, then xaos is present.
 
 		return b;
 	}
@@ -538,18 +546,39 @@ public:
 	/// <param name="width">New width</param>
 	/// <param name="height">New height</param>
 	/// <param name="onlyScaleIfNewIsSmaller">True to only scale if the new dimensions are smaller than the original, else always scale.</param>
-	void SetSizeAndAdjustScale(unsigned int width, unsigned int height, bool onlyScaleIfNewIsSmaller, eScaleType scaleType)
+	void SetSizeAndAdjustScale(size_t width, size_t height, bool onlyScaleIfNewIsSmaller, eScaleType scaleType)
 	{
-		if ((onlyScaleIfNewIsSmaller && (width < m_FinalRasW || height < m_FinalRasH)) || !onlyScaleIfNewIsSmaller)
+		if ((onlyScaleIfNewIsSmaller && (width < m_OrigFinalRasW || height < m_OrigFinalRasH)) || !onlyScaleIfNewIsSmaller)
 		{
 			if (scaleType == SCALE_WIDTH)
-				m_PixelsPerUnit *= T(width) / T(m_FinalRasW);
+				m_PixelsPerUnit = m_OrigPixPerUnit * (T(width) / T(m_OrigFinalRasW));
 			else if (scaleType == SCALE_HEIGHT)
-				m_PixelsPerUnit *= T(height) / T(m_FinalRasH);
+				m_PixelsPerUnit = m_OrigPixPerUnit * (T(height) / T(m_OrigFinalRasH));
 		}
 
+		m_ScaleType = scaleType;
 		m_FinalRasW = width;
 		m_FinalRasH = height;
+	}
+
+	/// <summary>
+	/// Set the original final output image dimensions to be equal to the current ones.
+	/// </summary>
+	void SyncSize()
+	{
+		m_OrigFinalRasW = m_FinalRasW;
+		m_OrigFinalRasH = m_FinalRasH;
+		m_OrigPixPerUnit = m_PixelsPerUnit;
+	}
+
+	/// <summary>
+	/// Set the current final output image dimensions to be equal to the original ones.
+	/// </summary>
+	void RestoreSize()
+	{
+		m_FinalRasW = m_OrigFinalRasW;
+		m_FinalRasH = m_OrigFinalRasH;
+		m_PixelsPerUnit = m_OrigPixPerUnit;
 	}
 
 	/// <summary>
@@ -586,7 +615,7 @@ public:
 	/// </summary>
 	void GetPresentVariations(vector<Variation<T>*>& variations, bool baseOnly = true) const
 	{
-		unsigned int i = 0, xformIndex = 0, totalVarCount = m_FinalXform.TotalVariationCount();
+		size_t i = 0, xformIndex = 0, totalVarCount = m_FinalXform.TotalVariationCount();
 
 		variations.clear();
 		ForEach(m_Xforms, [&](const Xform<T>& xform) { totalVarCount += xform.TotalVariationCount(); });
@@ -675,7 +704,7 @@ public:
 			return;
 
 		bool allID, final;
-		unsigned int i, j, k, l, maxXformCount, totalXformCount;
+		size_t l, maxXformCount, totalXformCount;
 		T bgAlphaSave = m_Background.a;
 		T coefSave[2] {0, 0};
 		vector<Xform<T>*> xformVec;
@@ -683,15 +712,15 @@ public:
 		//Palette and others
 		if (embers[0].m_PaletteInterp == INTERP_HSV)
 		{
-			for (i = 0; i < 256; i++)
+			for (glm::length_t i = 0; i < 256; i++)
 			{
 				T t[3], s[4] = { 0, 0, 0, 0 };
 
-				for (k = 0; k < size; k++)
+				for (glm::length_t k = 0; k < size; k++)
 				{
 					Palette<T>::RgbToHsv(glm::value_ptr(embers[k].m_Palette[i]), t);
 
-					for (j = 0; j < 3; j++)
+					for (size_t j = 0; j < 3; j++)
 						s[j] += coefs[k] * t[j];
 
 					s[3] += coefs[k] * embers[k].m_Palette[i][3];
@@ -700,16 +729,16 @@ public:
 				Palette<T>::HsvToRgb(s, glm::value_ptr(m_Palette[i]));
 				m_Palette[i][3] = s[3];
 
-				for (j = 0; j < 4; j++)
+				for (glm::length_t j = 0; j < 4; j++)
 					Clamp<T>(m_Palette[i][j], 0, 1);
 			}
 		}
 		else if (embers[0].m_PaletteInterp == INTERP_SWEEP)
 		{
 			//Sweep - not the best option for float indices.
-			for (i = 0; i < 256; i++)
+			for (glm::length_t i = 0; i < 256; i++)
 			{
-				j = (i < (256 * coefs[0])) ? 0 : 1;
+				size_t j = (i < (256 * coefs[0])) ? 0 : 1;
 				m_Palette[i] = embers[j].m_Palette[i];
 			}
 		}
@@ -764,9 +793,9 @@ public:
 		xformVec.reserve(size);
 
 		//Populate the xform list member such that each element is a merge of all of the xforms at that position in all of the embers.
-		for (i = 0; i < totalXformCount; i++)//For each xform to populate.
+		for (size_t i = 0; i < totalXformCount; i++)//For each xform to populate.
 		{
-			for (j = 0; j < size; j++)//For each ember in the list.
+			for (size_t j = 0; j < size; j++)//For each ember in the list.
 			{
 				if (i < embers[j].TotalXformCount())//Xform in this position in this ember.
 				{
@@ -784,7 +813,7 @@ public:
 
 		//Now have a merged list, so interpolate the weight values.
 		//This includes all xforms plus final.
-		for (i = 0; i < totalXformCount; i++)
+		for (size_t i = 0; i < totalXformCount; i++)
 		{
 			Xform<T>* thisXform = GetTotalXform(i);
 
@@ -796,7 +825,7 @@ public:
 				coefs[1] = 1 - coefs[0];
 			}
 
-			for (j = 0; j < thisXform->TotalVariationCount(); j++)//For each variation in this xform.
+			for (size_t j = 0; j < thisXform->TotalVariationCount(); j++)//For each variation in this xform.
 			{
 				Variation<T>* var = thisXform->GetVariation(j);
 				ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var);//Will use below if it's parametric.
@@ -806,7 +835,7 @@ public:
 				if (parVar != nullptr)
 					parVar->Clear();
 
-				for (k = 0; k < size; k++)//For each ember in the list.
+				for (size_t k = 0; k < size; k++)//For each ember in the list.
 				{
 					Xform<T>* tempXform = embers[k].GetTotalXform(i);//Xform in this position in this ember, including final.
 
@@ -867,7 +896,7 @@ public:
 				//Post part.
 				allID = true;
 
-				for (k = 0; k < size; k++)//For each ember in the list.
+				for (size_t k = 0; k < size; k++)//For each ember in the list.
 				{
 					if (i < embers[k].TotalXformCount())//Xform in this position in this ember.
 					{
@@ -896,7 +925,7 @@ public:
 				thisXform->m_Affine.m_Mat = m23T(0);
 				thisXform->m_Post.m_Mat	  = m23T(0);
 
-				for (k = 0; k < size; k++)
+				for (size_t k = 0; k < size; k++)
 				{
 					Xform<T>* tempXform = embers[k].GetTotalXform(i);//Xform in this position in this ember.
 
@@ -930,23 +959,23 @@ public:
 		//Omit final xform from chaos processing.
 		if (Interpolater<T>::AnyXaosPresent(embers, size))
 		{
-			for (i = 0; i < XformCount(); i++)
+			for (size_t i = 0; i < XformCount(); i++)
 			{
 				m_Xforms[i].SetXaos(i, 0);//First make each xform xaos array be maxXformCount elements long and set them to zero.
 
 				//Now fill them with interpolated values.
-				for (j = 0; j < size; j++)//For each ember in the list.
+				for (size_t j = 0; j < size; j++)//For each ember in the list.
 				{
 					Xform<T>* tempXform = embers[j].GetXform(i);
 
-					for (k = 0; k < XformCount(); k++)//For each xaos entry in this xform's xaos array, sum it with the same entry in all of the embers multiplied by the coef for that ember.
+					for (size_t k = 0; k < XformCount(); k++)//For each xaos entry in this xform's xaos array, sum it with the same entry in all of the embers multiplied by the coef for that ember.
 					{
 						m_Xforms[i].SetXaos(k, m_Xforms[i].Xaos(k) + tempXform->Xaos(k) * coefs[j]);
 					}
 				}
 
 				//Make sure no xaos entries for this xform were less than zero.
-				for (k = 0; k < XformCount(); k++)
+				for (size_t k = 0; k < XformCount(); k++)
 					if (m_Xforms[i].Xaos(k) < 0)
 						m_Xforms[i].SetXaos(k, 0);
 			}
@@ -994,7 +1023,7 @@ public:
 	/// <param name="angle">The angle to rotate by</param>
 	void RotateAffines(T angle)
 	{
-		for (unsigned int i = 0; i < XformCount(); i++)//Only look at normal xforms, exclude final.
+		for (size_t i = 0; i < XformCount(); i++)//Only look at normal xforms, exclude final.
 		{
 			//Don't rotate xforms with animate set to 0.
 			if (m_Xforms[i].m_Animate == 0)
@@ -1021,7 +1050,7 @@ public:
 	/// <param name="rand">The random context to use for generating random symmetry</param>
 	void AddSymmetry(int sym, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		int i, k, result = 0;
+		size_t i, k, result = 0;
 		T a;
 
 		if (sym == 0)
@@ -1102,9 +1131,9 @@ public:
 	/// Return a uint with bits set to indicate which kind of projection should be done.
 	/// </summary>
 	/// <param name="onlyScaleIfNewIsSmaller">A uint with bits set for each kind of projection that is needed</param>
-	unsigned int ProjBits()
+	size_t ProjBits()
 	{
-		unsigned int val = 0;
+		size_t val = 0;
 
 		if (m_CamZPos != 0) val |= PROJBITS_ZPOS;
 		if (m_CamPerspective != 0) val |= PROJBITS_PERSP;
@@ -1251,6 +1280,7 @@ public:
 		m_PaletteInterp = INTERP_HSV;
 		m_Index = 0;
 		m_ParentFilename = "";
+		m_ScaleType = eScaleType::SCALE_NONE;
 
 		if (useDefaults)
 		{
@@ -1339,20 +1369,21 @@ public:
 	/// <returns>The string representation of this ember</returns>
 	string ToString() const
 	{
-		unsigned int i;
+		size_t i;
 		ostringstream ss;
 
-		ss << "FinalRasW: " << m_FinalRasW << endl
-		   << "FinalRasH: " << m_FinalRasH << endl
-		   << "OrigRasW: " << m_OrigFinalRasW << endl
-		   << "OrigRasH: " << m_OrigFinalRasH << endl
+		ss << "Final Raster Width: " << m_FinalRasW << endl
+		   << "Final Raster Height: " << m_FinalRasH << endl
+		   << "Original Raster Width: " << m_OrigFinalRasW << endl
+		   << "Original Raster Height: " << m_OrigFinalRasH << endl
 		   << "Supersample: " << m_Supersample << endl
 		   << "Passes: " << m_Passes << endl
-		   << "TemporalSamples: " << m_TemporalSamples << endl
+		   << "Temporal Samples: " << m_TemporalSamples << endl
 		   << "Symmetry: " << m_Symmetry << endl
 
 		   << "Quality: " << m_Quality << endl
-		   << "PixelsPerUnit: " << m_PixelsPerUnit << endl
+		   << "Pixels Per Unit: " << m_PixelsPerUnit << endl
+		   << "Original Pixels Per Unit: " << m_OrigPixPerUnit << endl
 		   << "Zoom: " << m_Zoom << endl
 		   << "ZPos: " << m_CamZPos << endl
 		   << "Perspective: " << m_CamPerspective << endl
@@ -1366,8 +1397,8 @@ public:
 		   << "Brightness: " << m_Brightness << endl
 		   << "Gamma: " << m_Gamma << endl
 		   << "Vibrancy: " << m_Vibrancy << endl
-		   << "GammaThresh: " << m_GammaThresh << endl
-		   << "HighlightPower: " << m_HighlightPower << endl
+		   << "Gamma Threshold: " << m_GammaThresh << endl
+		   << "Highlight Power: " << m_HighlightPower << endl
 		   << "Time: " << m_Time << endl
 		   << "Background: " << m_Background.r << ", " << m_Background.g << ", " << m_Background.b << ", " << m_Background.a << endl
 
@@ -1391,6 +1422,8 @@ public:
 		   //Add palette info here if needed.
 
 		   << "Name: " << m_Name << endl
+		   << "Index: " << m_Index << endl
+		   << "Scale Type: " << m_ScaleType << endl
 		   << "Parent Filename: " << m_ParentFilename << endl
 		   << endl;
 
@@ -1410,34 +1443,36 @@ public:
 	/// </summary>
 	inline const Xform<T>* Xforms() const { return &m_Xforms[0]; }
 	inline Xform<T>* NonConstXforms() { return &m_Xforms[0]; }
-	inline unsigned int XformCount() const { return (unsigned int)m_Xforms.size(); }
+	inline size_t XformCount() const { return m_Xforms.size(); }
 	inline const Xform<T>* FinalXform() const { return &m_FinalXform; }
 	inline Xform<T>* NonConstFinalXform() { return &m_FinalXform; }
 	inline bool UseFinalXform() const { return !m_FinalXform.Empty(); }
-	inline unsigned int TotalXformCount() const { return XformCount() + (UseFinalXform() ? 1 : 0); }
+	inline size_t TotalXformCount() const { return XformCount() + (UseFinalXform() ? 1 : 0); }
 	inline int PaletteIndex() const { return m_Palette.m_Index; }
 	inline T BlurCoef() { return m_BlurCoef; }
+	inline eScaleType ScaleType() const { return m_ScaleType; }
 
 	//The width and height in pixels of the final output image. The size of the histogram and DE filtering buffers will differ from this.
 	//Xml fields: "size".
-	unsigned int m_FinalRasW;
-	unsigned int m_FinalRasH;
-	unsigned int m_OrigFinalRasW;//Keep track of the originals read from the Xml, because...
-	unsigned int m_OrigFinalRasH;//the dimension may change in an editor and the originals are needed for the aspect ratio.
+	size_t m_FinalRasW;
+	size_t m_FinalRasH;
+	size_t m_OrigFinalRasW;//Keep track of the originals read from the Xml, because...
+	size_t m_OrigFinalRasH;//the dimension may change in an editor and the originals are needed for the aspect ratio.
+	T m_OrigPixPerUnit;
 
 	//The multiplier in size of the histogram and DE filtering buffers. Must be at least one, preferrably never larger than 4, only useful at 2.
 	//Xml field: "supersample" or "overample (deprecated)".
-	unsigned int m_Supersample;
+	size_t m_Supersample;
 
 	//Times to run the algorithm while clearing the histogram, but not the filter. Almost always set to 1 and may even be deprecated.
 	//Xml field: "passes".
-	unsigned int m_Passes;
+	size_t m_Passes;
 
 	//When animating, split each pass into this many pieces, each doing a fraction of the total iterations. Each temporal sample
 	//will render an interpolated instance of the ember that is a fraction of the current ember and the next one.
 	//When rendering a single image, this field is always set to 1.
 	//Xml field: "temporal_samples".
-	unsigned int m_TemporalSamples;
+	size_t m_TemporalSamples;
 
 	//Whether or not any symmetry was added. This field is in a bit of a state of conflict right now as flam3 has a severe bug.
 	//Xml field: "symmetry".
@@ -1611,9 +1646,14 @@ public:
 	xmlDocPtr m_Edits;
 
 	//The 0-based position of this ember in the file it was contained in.
-	int m_Index;
+	size_t m_Index;
 
 private:
+	/// <summary>
+	/// The type of scaling used when resizing.
+	/// </summary>
+	eScaleType m_ScaleType;
+
 	/// <summary>
 	/// Interpolation function that takes the address of a member variable of type T as a template parameter.
 	/// This is an alternative to using macros.
@@ -1651,7 +1691,7 @@ private:
 	/// <param name="embers">The list of embers to interpolate</param>
 	/// <param name="coefs">The list of coefficients to interpolate</param>
 	/// <param name="size">The size of the lists, both must match.</param>
-	template <unsigned int Ember<T>::*m>
+	template <size_t Ember<T>::*m>
 	void InterpI(Ember<T>* embers, vector<T>& coefs, size_t size)
 	{
 		T t = 0;
@@ -1659,7 +1699,7 @@ private:
 		for (size_t k = 0; k < size; k++)
 			t += coefs[k] * embers[k].*m;
 
-		this->*m = (int)Rint(t);
+		this->*m = (size_t)Rint(t);
 	}
 
 	/// <summary>
@@ -1672,7 +1712,7 @@ private:
 	/// <param name="coefs">The list of coefficients to interpolate</param>
 	/// <param name="size">The size of the lists, both must match.</param>
 	template <T Xform<T>::*m>
-	void InterpXform(Xform<T>* xform, unsigned int i, Ember<T>* embers, vector<T>& coefs, size_t size)
+	void InterpXform(Xform<T>* xform, size_t i, Ember<T>* embers, vector<T>& coefs, size_t size)
 	{
 		xform->*m = T(0);
 

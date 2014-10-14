@@ -334,7 +334,7 @@ void Fractorium::FillXforms()
 	
 	for (i = 0; i < m_Controller->XformCount(); i++)
 	{
-		combo->addItem(QString::number(i + 1));
+		combo->addItem(ToString(i + 1));
 		combo->setItemIcon(i, m_XformComboIcons[i % XFORM_COLOR_COUNT]);
 	}
 	

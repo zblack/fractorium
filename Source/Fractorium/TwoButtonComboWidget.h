@@ -4,7 +4,7 @@
 #include "DoubleSpinBox.h"
 
 /// <summary>
-/// TwoButtonWidget and SpinnerButtonWidget classes.
+/// TwoButtonComboWidget and SpinnerButtonWidget classes.
 /// </summary>
 
 /// <summary>
@@ -12,7 +12,7 @@
 /// Used for when a layout expects a single widget, but two need to go in its place.
 /// The buttons are public so the caller can easily use them individually.
 /// </summary>
-class TwoButtonWidget : public QWidget
+class TwoButtonComboWidget : public QWidget
 {
 	Q_OBJECT
 
@@ -27,12 +27,15 @@ public:
 	/// <param name="w2">The width of the second button</param>
 	/// <param name="h">The height of both buttons</param>
 	/// <param name="parent">The parent widget</param>
-	TwoButtonWidget(QString caption1, QString caption2, int w1, int w2, int h, QWidget* parent)
+	TwoButtonComboWidget(const QString& caption1, const QString& caption2, QStringList comboStrings, int w1, int w2, int h, QWidget* parent)
 		: QWidget(parent)
 	{
 		QHBoxLayout* layout = new QHBoxLayout(this);
 		m_Button1 = new QPushButton(caption1, parent);
 		m_Button2 = new QPushButton(caption2, parent);
+		m_Combo = new QComboBox(parent);
+
+		m_Combo->addItems(comboStrings);
 
 		if (w1 != -1)
 		{
@@ -50,7 +53,10 @@ public:
 		m_Button1->setMaximumHeight(h);
 		m_Button2->setMinimumHeight(h);
 		m_Button2->setMaximumHeight(h);
+		m_Combo->setMinimumHeight(h - 3);
+		m_Combo->setMaximumHeight(h - 3);
  
+		layout->addWidget(m_Combo);
 		layout->addWidget(m_Button1);
 		layout->addWidget(m_Button2);
 		layout->setAlignment(Qt::AlignLeft);
@@ -62,6 +68,7 @@ public:
 
 	QPushButton* m_Button1;
 	QPushButton* m_Button2;
+	QComboBox* m_Combo;
 };
 
 /// <summary>

@@ -169,7 +169,7 @@ public:
 
 		//Must manually add them via the AddVariation() function so that
 		//the variation's m_IndexInXform member gets properly set to this.
-		for (unsigned int i = 0; i < xform.TotalVariationCount(); i++)
+		for (size_t i = 0; i < xform.TotalVariationCount(); i++)
 		{
 			Variation<T>* var = nullptr;
 
@@ -199,7 +199,7 @@ public:
 	/// </summary>
 	void Init()
 	{
-		static unsigned int count = 0;
+		static size_t count = 0;
 
 		m_Weight = 0;
 		m_ColorSpeed = T(0.5);
@@ -302,7 +302,7 @@ public:
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (unsigned int i = 0; i < variations.size(); i++, count++)
+			for (size_t i = 0; i < variations.size(); i++, count++)
 			{
 				if (count == index)
 				{
@@ -327,7 +327,7 @@ public:
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (unsigned int i = 0; i < variations.size(); i++)
+			for (size_t i = 0; i < variations.size(); i++)
 			{
 				if (variations[i] != nullptr && variations[i]->VariationId() == id)
 				{
@@ -346,13 +346,13 @@ public:
 	/// </summary>
 	/// <param name="name">The name to search for</param>
 	/// <returns>A pointer to the variation if found, else nullptr.</returns>
-	Variation<T>* GetVariationByName(string name) const
+	Variation<T>* GetVariationByName(const string& name) const
 	{
 		Variation<T>* var = nullptr;
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (unsigned int i = 0; i < variations.size(); i++)
+			for (size_t i = 0; i < variations.size(); i++)
 			{
 				if (variations[i] != nullptr && variations[i]->Name() == name)
 				{
@@ -372,13 +372,13 @@ public:
 	/// </summary>
 	/// <param name="var">A pointer to the variation to search for</param>
 	/// <returns>The index of the variation if found, else -1</returns>
-	int GetVariationIndex(Variation<T>* var) const
+	intmax_t GetVariationIndex(Variation<T>* var) const
 	{
-		int count = 0, index = -1;
+		intmax_t count = 0, index = -1;
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (unsigned int i = 0; i < variations.size(); i++, count++)
+			for (size_t i = 0; i < variations.size(); i++, count++)
 			{
 				if (variations[i] == var)
 				{
@@ -404,7 +404,7 @@ public:
 
 		AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (unsigned int i = 0; i < variations.size(); i++)
+			for (size_t i = 0; i < variations.size(); i++)
 			{
 				if (variations[i] != nullptr && variations[i]->VariationId() == id)
 				{
@@ -497,7 +497,7 @@ public:
 	/// </summary>
 	/// <param name="i">The index to set</param>
 	/// <param name="val">The xaos value to set it to</param>
-	void SetXaos(unsigned int i, T val)
+	void SetXaos(size_t i, T val)
 	{
 		if (i < m_Xaos.size())
 		{
@@ -520,7 +520,7 @@ public:
 	bool XaosPresent() const
 	{
 		if (m_ParentEmber)
-			for (unsigned int i = 0; i < m_Xaos.size(); i++)
+			for (size_t i = 0; i < m_Xaos.size(); i++)
 				if (i < m_ParentEmber->XformCount())
 					if (!IsClose<T>(m_Xaos[i], 1))
 						return true;//If at least one entry is not equal to 1, then xaos is present.
@@ -683,15 +683,14 @@ public:
 	/// <param name="blend">The time blending value 0-1</param>
 	void ApplyMotion(Xform<T>& xform, T blend)
 	{
-		unsigned int i, j, k;
 		Xform<T>* mot = xform.m_Motion.data();
 
 		//Loop over the motion elements and add their contribution to the original vals.
-		for (i = 0; i < xform.m_Motion.size(); i++)
+		for (size_t i = 0; i < xform.m_Motion.size(); i++)
 		{
 			//Original only pulls these from the first motion xform which is a bug. Want to pull it from each one.
 			Xform<T>* currentMot = &xform.m_Motion[i];
-			int freq = currentMot->m_MotionFreq;
+			intmax_t freq = currentMot->m_MotionFreq;
 			eMotion func = currentMot->m_MotionFunc;
 
 			//Clamp these to the appropriate range after all are applied.
@@ -703,7 +702,7 @@ public:
 			APPMOT(m_ColorSpeed);
 			APPMOT(m_Animate);
 
-			for (j = 0; j < currentMot->TotalVariationCount(); j++)//For each variation in the motion xform.
+			for (size_t j = 0; j < currentMot->TotalVariationCount(); j++)//For each variation in the motion xform.
 			{
 				Variation<T>* motVar = currentMot->GetVariation(j);//Get the variation, which may or may not be present in this xform.
 				ParametricVariation<T>* motParVar = dynamic_cast<ParametricVariation<T>*>(motVar);
@@ -730,7 +729,7 @@ public:
 					ParamWithName<T>* params = parVar->Params();
 					ParamWithName<T>* motParams = motParVar->Params();
 
-					for (k = 0; k < motParVar->ParamCount(); k++)
+					for (size_t k = 0; k < motParVar->ParamCount(); k++)
 					{
 						if (!motParams[k].IsPrecalc())
 							*(params[k].Param()) += motParams[k].ParamVal() * Interpolater<T>::MotionFuncs(func, freq * blend);
@@ -738,9 +737,9 @@ public:
 				}
 			}
 
-			for (j = 0; j < 2; j++)
+			for (glm::length_t j = 0; j < 2; j++)
 			{
-				for (k = 0; k < 3; k++)
+				for (glm::length_t k = 0; k < 3; k++)
 				{
 					APPMOT(m_Affine.m_Mat[j][k]);
 					APPMOT(m_Post.m_Mat[j][k]);
@@ -762,17 +761,17 @@ public:
 	/// The precalc flags are duplicated in each variation. Each value here
 	/// is true if any of the variations need it precalculated.
 	/// </summary>
-	inline bool NeedPrecalcSumSquares()     const { return m_NeedPrecalcSumSquares;     }
+	inline bool NeedPrecalcSumSquares()     const { return m_NeedPrecalcSumSquares; }
 	inline bool NeedPrecalcSqrtSumSquares() const { return m_NeedPrecalcSqrtSumSquares; }
-	inline bool NeedPrecalcAngles()         const { return m_NeedPrecalcAngles;         }
-	inline bool NeedPrecalcAtanXY()         const { return m_NeedPrecalcAtanXY;         }
-	inline bool NeedPrecalcAtanYX()         const { return m_NeedPrecalcAtanYX;         }
+	inline bool NeedPrecalcAngles()         const { return m_NeedPrecalcAngles; }
+	inline bool NeedPrecalcAtanXY()         const { return m_NeedPrecalcAtanXY; }
+	inline bool NeedPrecalcAtanYX()         const { return m_NeedPrecalcAtanYX; }
 	inline bool NeedAnyPrecalc()            const { return NeedPrecalcSumSquares() || NeedPrecalcSqrtSumSquares() || NeedPrecalcAngles() || NeedPrecalcAtanXY() || NeedPrecalcAtanYX(); }
 	bool HasPost() const { return m_HasPost; }
-	unsigned int PreVariationCount()   const { return (unsigned int)m_PreVariations.size();  }
-	unsigned int VariationCount()      const { return (unsigned int)m_Variations.size();     }
-	unsigned int PostVariationCount()  const { return (unsigned int)m_PostVariations.size(); }
-	unsigned int TotalVariationCount() const { return PreVariationCount() + VariationCount() + PostVariationCount(); }
+	size_t PreVariationCount()   const { return m_PreVariations.size(); }
+	size_t VariationCount()      const { return m_Variations.size(); }
+	size_t PostVariationCount()  const { return m_PostVariations.size(); }
+	size_t TotalVariationCount() const { return PreVariationCount() + VariationCount() + PostVariationCount(); }
 	bool Empty() const { return TotalVariationCount() == 0 && m_Affine.IsID(); }//Use this instead of padding like the original did.
 	T VizAdjusted() const { return m_VizAdjusted; }
 	T ColorSpeedCache() const { return m_ColorSpeedCache; }
@@ -780,7 +779,7 @@ public:
 	const vector<T>& XaosVec() const { return m_Xaos; }
 	Ember<T>* ParentEmber() const { return m_ParentEmber; }
 	void ParentEmber(Ember<T>* ember) { m_ParentEmber = ember; }
-	int IndexInParentEmber() { return m_ParentEmber ? m_ParentEmber->GetTotalXformIndex(this) : -1; }
+	intmax_t IndexInParentEmber() { return m_ParentEmber ? m_ParentEmber->GetTotalXformIndex(this) : -1; }
 
 	/// <summary>
 	/// Set the precalc flags based on whether any variation in the vector needs them.
@@ -1135,7 +1134,7 @@ public:
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (unsigned int i = 0; i < variations.size(); i++)
+			for (size_t i = 0; i < variations.size(); i++)
 				ss << variations[i]->ToString() << endl;
 
 			ss << endl;
@@ -1143,7 +1142,7 @@ public:
 
 		if (XaosPresent())
 		{
-			for (unsigned int i = 0; i < m_Xaos.size(); i++)
+			for (size_t i = 0; i < m_Xaos.size(); i++)
 				ss << m_Xaos[i] << " ";
 
 			ss << endl;
@@ -1207,7 +1206,7 @@ public:
 	T m_Animate;//Whether or not this xform rotates during animation. 0 means stationary, > 0 means rotate. Use T instead of bool so it can be interpolated.
 	T m_Wind[2];
 	eMotion m_MotionFunc;
-	int m_MotionFreq;
+	intmax_t m_MotionFreq;
 	vector<Xform<T>> m_Motion;
 	string m_Name;
 

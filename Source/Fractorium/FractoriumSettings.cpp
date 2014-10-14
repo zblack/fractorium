@@ -17,12 +17,6 @@ FractoriumSettings::FractoriumSettings(QObject* parent)
 /// </summary>
 void FractoriumSettings::EnsureDefaults()
 {
-	if (FinalWidth() == 0)
-		FinalWidth(1920);
-
-	if (FinalHeight() == 0)
-		FinalHeight(1080);
-
 	if (FinalQuality() == 0)
 		FinalQuality(1000);
 
@@ -32,11 +26,8 @@ void FractoriumSettings::EnsureDefaults()
 	if (FinalSupersample() == 0)
 		FinalSupersample(2);
 
-	if (XmlWidth() == 0)
-		XmlWidth(1920);
-
-	if (XmlHeight() == 0)
-		XmlHeight(1080);
+	if (FinalStrips() == 0)
+		FinalStrips(1);
 
 	if (XmlTemporalSamples() == 0)
 		XmlTemporalSamples(1000);
@@ -89,8 +80,19 @@ void FractoriumSettings::EnsureDefaults()
 	if (SaveImageExt() == "")
 		SaveImageExt("Png (*.png)");
 
-	if (FinalDoAllExt() != "jpg" && FinalDoAllExt() != "png")
-		FinalDoAllExt("png");
+	if (FinalExt() != "jpg" && FinalExt() != "png")
+		FinalExt("png");
+
+	QString s = SaveFolder();
+	QDir dir(s);
+
+	if (s.isEmpty() || !dir.exists())
+	{
+		QStringList paths = QStandardPaths::standardLocations(QStandardPaths::DesktopLocation);
+
+		if (!paths.empty())
+			SaveFolder(paths[0]);
+	}
 }
 
 /// <summary>
@@ -170,8 +172,8 @@ void FractoriumSettings::FinalKeepAspect(bool b)			  { setValue(FINALKEEPASPECT,
 unsigned int FractoriumSettings::FinalScale()				  { return value(FINALSCALE).toUInt();			 }
 void FractoriumSettings::FinalScale(unsigned int i)			  { setValue(FINALSCALE, i);					 }
 
-QString FractoriumSettings::FinalDoAllExt()					  { return value(FINALDOALLEXT).toString();	     }
-void FractoriumSettings::FinalDoAllExt(QString s)			  { setValue(FINALDOALLEXT, s);				     }
+QString FractoriumSettings::FinalExt()						  { return value(FINALEXT).toString();			 }
+void FractoriumSettings::FinalExt(const QString& s)				  { setValue(FINALEXT, s);						 }
 															  
 unsigned int FractoriumSettings::FinalPlatformIndex()         { return value(FINALPLATFORMINDEX).toUInt();   }
 void FractoriumSettings::FinalPlatformIndex(unsigned int i)   { setValue(FINALPLATFORMINDEX, i);             }
@@ -182,12 +184,6 @@ void FractoriumSettings::FinalDeviceIndex(unsigned int i)     { setValue(FINALDE
 unsigned int FractoriumSettings::FinalThreadCount()           { return value(FINALTHREADCOUNT).toUInt();     }
 void FractoriumSettings::FinalThreadCount(unsigned int i)     { setValue(FINALTHREADCOUNT, i);               }
 															  
-unsigned int FractoriumSettings::FinalWidth()                 { return value(FINALWIDTH).toUInt();           }
-void FractoriumSettings::FinalWidth(unsigned int i)           { setValue(FINALWIDTH, i);                     }
-															  
-unsigned int FractoriumSettings::FinalHeight()                { return value(FINALHEIGHT).toUInt();          }
-void FractoriumSettings::FinalHeight(unsigned int i)          { setValue(FINALHEIGHT, i);                    }
-															  
 unsigned int FractoriumSettings::FinalQuality()               { return value(FINALQUALITY).toUInt();         }
 void FractoriumSettings::FinalQuality(unsigned int i)         { setValue(FINALQUALITY, i);                   }
 
@@ -197,15 +193,12 @@ void FractoriumSettings::FinalTemporalSamples(unsigned int i) { setValue(FINALTE
 unsigned int FractoriumSettings::FinalSupersample()           { return value(FINALSUPERSAMPLE).toUInt();     }
 void FractoriumSettings::FinalSupersample(unsigned int i)     { setValue(FINALSUPERSAMPLE, i);               }
 
+unsigned int FractoriumSettings::FinalStrips()				  { return value(FINALSTRIPS).toUInt();			 }
+void FractoriumSettings::FinalStrips(unsigned int i)		  { setValue(FINALSTRIPS, i);					 }
+
 /// <summary>
 /// Xml file saving settings.
 /// </summary>
-
-unsigned int FractoriumSettings::XmlWidth()                   { return value(XMLWIDTH).toUInt();             }
-void FractoriumSettings::XmlWidth(unsigned int i)             { setValue(XMLWIDTH, i);                       }
-															  
-unsigned int FractoriumSettings::XmlHeight()                  { return value(XMLHEIGHT).toUInt();            }
-void FractoriumSettings::XmlHeight(unsigned int i)            { setValue(XMLHEIGHT, i);                      }
 															  
 unsigned int FractoriumSettings::XmlTemporalSamples()         { return value(XMLTEMPORALSAMPLES).toUInt();   }
 void FractoriumSettings::XmlTemporalSamples(unsigned int i)   { setValue(XMLTEMPORALSAMPLES, i);             }
@@ -217,32 +210,32 @@ unsigned int FractoriumSettings::XmlSupersample()             { return value(XML
 void FractoriumSettings::XmlSupersample(unsigned int i)       { setValue(XMLSUPERSAMPLE, i);                 }
 													  
 QString FractoriumSettings::Id()                              { return value(IDENTITYID).toString();         }
-void FractoriumSettings::Id(QString s)                        { setValue(IDENTITYID, s);                     }
+void FractoriumSettings::Id(const QString& s)                 { setValue(IDENTITYID, s);                     }
 															  
 QString FractoriumSettings::Url()                             { return value(IDENTITYURL).toString();        }
-void FractoriumSettings::Url(QString s)                       { setValue(IDENTITYURL, s);                    }
+void FractoriumSettings::Url(const QString& s)                { setValue(IDENTITYURL, s);                    }
 															  
 QString FractoriumSettings::Nick()                            { return value(IDENTITYNICK).toString();       }
-void FractoriumSettings::Nick(QString s)                      { setValue(IDENTITYNICK, s);                   }
+void FractoriumSettings::Nick(const QString& s)               { setValue(IDENTITYNICK, s);                   }
 
 /// <summary>
 /// General operations settings.
 /// </summary>
 
 QString FractoriumSettings::OpenFolder()					  { return value(OPENFOLDER).toString();		 }
-void FractoriumSettings::OpenFolder(QString s)				  { setValue(OPENFOLDER, s);					 }
+void FractoriumSettings::OpenFolder(const QString& s)		  { setValue(OPENFOLDER, s);					 }
 															  											   
 QString FractoriumSettings::SaveFolder()					  { return value(SAVEFOLDER).toString();		 }
-void FractoriumSettings::SaveFolder(QString s)				  { setValue(SAVEFOLDER, s);					 }
+void FractoriumSettings::SaveFolder(const QString& s)		  { setValue(SAVEFOLDER, s);					 }
 															  
 QString FractoriumSettings::OpenXmlExt()					  { return value(OPENXMLEXT).toString();		 }
-void FractoriumSettings::OpenXmlExt(QString s)				  { setValue(OPENXMLEXT, s);					 }
+void FractoriumSettings::OpenXmlExt(const QString& s)		  { setValue(OPENXMLEXT, s);					 }
 															  
 QString FractoriumSettings::SaveXmlExt()					  { return value(SAVEXMLEXT).toString();		 }
-void FractoriumSettings::SaveXmlExt(QString s)				  { setValue(SAVEXMLEXT, s);					 }
+void FractoriumSettings::SaveXmlExt(const QString& s)		  { setValue(SAVEXMLEXT, s);					 }
 															  
 QString FractoriumSettings::OpenImageExt()					  { return value(OPENIMAGEEXT).toString();	     }
-void FractoriumSettings::OpenImageExt(QString s)			  { setValue(OPENIMAGEEXT, s);				     }
+void FractoriumSettings::OpenImageExt(const QString& s)		  { setValue(OPENIMAGEEXT, s);				     }
 															  											     
 QString FractoriumSettings::SaveImageExt()					  { return value(SAVEIMAGEEXT).toString();	     }
-void FractoriumSettings::SaveImageExt(QString s)			  { setValue(SAVEIMAGEEXT, s);				     }
+void FractoriumSettings::SaveImageExt(const QString& s)		  { setValue(SAVEIMAGEEXT, s);				     }

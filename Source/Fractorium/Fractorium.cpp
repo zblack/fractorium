@@ -166,18 +166,6 @@ Fractorium::~Fractorium()
 }
 
 /// <summary>
-/// Stop the render timer and start the delayed restart timer.
-/// This is a massive hack because Qt has no way of detecting when a resize event
-/// is started and stopped. Detecting if mouse buttons down is also not an option
-/// because the documentation says it gives the wrong result.
-/// </summary>
-void Fractorium::Resize()
-{
-	if (!QCoreApplication::closingDown())
-		m_Controller->DelayedStartRenderTimer();
-}
-
-/// <summary>
 /// Set the coordinate text in the status bar.
 /// </summary>
 /// <param name="x">The raster x coordinate</param>
@@ -198,11 +186,9 @@ void Fractorium::SetCoordinateStatus(int x, int y, float worldX, float worldY)
 template <typename T>
 void FractoriumEmberController<T>::ApplyXmlSavingTemplate(Ember<T>& ember)
 {
-	ember.m_FinalRasW       = m_Fractorium->m_Settings->XmlWidth();
-	ember.m_FinalRasH       = m_Fractorium->m_Settings->XmlHeight();
-	ember.m_TemporalSamples = m_Fractorium->m_Settings->XmlTemporalSamples();
 	ember.m_Quality         = m_Fractorium->m_Settings->XmlQuality();
 	ember.m_Supersample     = m_Fractorium->m_Settings->XmlSupersample();
+	ember.m_TemporalSamples = m_Fractorium->m_Settings->XmlTemporalSamples();
 }
 
 /// <summary>
@@ -260,11 +246,13 @@ void Fractorium::dockLocationChanged(Qt::DockWidgetArea area)
 /// </summary>
 
 /// <summary>
-/// Resize event, just pass to base.
+/// Resize event, change width and height double click values to match the window size.
 /// </summary>
 /// <param name="e">The event</param>
 void Fractorium::resizeEvent(QResizeEvent* e)
 {
+	m_WidthSpin->DoubleClickNonZero(ui.GLParentScrollArea->width());
+	m_HeightSpin->DoubleClickNonZero(ui.GLParentScrollArea->height());
 	QMainWindow::resizeEvent(e);
 }
 
@@ -362,7 +350,7 @@ void Fractorium::dropEvent(QDropEvent* e)
 void Fractorium::SetupCombo(QTableWidget* table, const QObject* receiver, int& row, int col, StealthComboBox*& comboBox, vector<string>& vals, const char* signal, const char* slot, Qt::ConnectionType connectionType)
 {
 	comboBox = new StealthComboBox(table);
-	ForEach(vals, [&](string s) { comboBox->addItem(s.c_str()); });
+	ForEach(vals, [&](const string& s) { comboBox->addItem(s.c_str()); });
 	table->setCellWidget(row, col, comboBox);
 	connect(comboBox, signal, receiver, slot, connectionType);
 	row++;
@@ -425,7 +413,7 @@ QStringList Fractorium::SetupOpenXmlDialog()
 /// </summary>
 /// <param name="defaultFilename">The default filename to populate the text box with</param>
 /// <returns>The filename selected</returns>
-QString Fractorium::SetupSaveXmlDialog(QString defaultFilename)
+QString Fractorium::SetupSaveXmlDialog(const QString& defaultFilename)
 {
 	//Lazy instantiate since it takes a long time.
 	if (!m_FileDialog)
@@ -463,7 +451,7 @@ QString Fractorium::SetupSaveXmlDialog(QString defaultFilename)
 /// </summary>
 /// <param name="defaultFilename">The default filename to populate the text box with</param>
 /// <returns>The filename selected</returns>
-QString Fractorium::SetupSaveImageDialog(QString defaultFilename)
+QString Fractorium::SetupSaveImageDialog(const QString& defaultFilename)
 {
 	//Lazy instantiate since it takes a long time.
 	if (!m_FileDialog)
@@ -502,7 +490,7 @@ QString Fractorium::SetupSaveImageDialog(QString defaultFilename)
 /// Setup and show the save folder dialog.
 /// This will perform lazy instantiation.
 /// </summary>
-/// <returns>The folder selected</returns>
+/// <returns>The folder selected, with '/' appended to the end</returns>
 QString Fractorium::SetupSaveFolderDialog()
 {
 	//Lazy instantiate since it takes a long time.
@@ -528,9 +516,26 @@ QString Fractorium::SetupSaveFolderDialog()
 	m_FolderDialog->setDirectory(m_Settings->SaveFolder());
 
 	if (m_FolderDialog->exec() == QDialog::Accepted)
-		filename = m_FolderDialog->selectedFiles().value(0);
+	{
+		filename = MakeEnd(m_FolderDialog->selectedFiles().value(0), '/');
+	}
 
 	return filename;
+}
+
+/// <summary>
+/// Thin wrapper around QMessageBox::critical() to allow it to be invoked from another thread.
+/// </summary>
+void Fractorium::ShowCritical(const QString& title, const QString& text, bool invokeRequired)
+{
+	if (!invokeRequired)
+	{
+		QMessageBox::critical(this, title, text);
+	}
+	else
+	{
+		QMetaObject::invokeMethod(this, "ShowCritical", Qt::QueuedConnection, Q_ARG(const QString&, title), Q_ARG(const QString&, text), Q_ARG(bool, false));
+	}
 }
 
 /// <summary>

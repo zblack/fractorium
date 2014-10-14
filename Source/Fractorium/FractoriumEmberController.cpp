@@ -65,7 +65,7 @@ FractoriumEmberControllerBase::~FractoriumEmberControllerBase()
 /// <param name="fractorium">Pointer to the main window.</param>
 template <typename T>
 FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
-		: FractoriumEmberControllerBase(fractorium)
+	: FractoriumEmberControllerBase(fractorium)
 {
 	m_PreviewRun = false;
 	m_PreviewRunning = false;
@@ -79,7 +79,6 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 
 	m_PreviewRenderer->Callback(NULL);
 	m_PreviewRenderer->NumChannels(4);
-	m_PreviewRenderer->ReclaimOnResize(true);
 	m_PreviewRenderer->EarlyClip(m_Fractorium->m_Settings->EarlyClip());
 	m_PreviewRenderer->YAxisUp(m_Fractorium->m_Settings->YAxisUp());
 	m_PreviewRenderer->SetEmber(m_Ember);//Give it an initial ember, will be updated many times later.
@@ -98,7 +97,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 
 		if (QTreeWidgetItem* top = tree->topLevelItem(0))
 		{
-			for (size_t i = start; m_PreviewRun && i < end && i < m_EmberFile.m_Embers.size(); i++)
+			for (size_t i = start; m_PreviewRun && i < end && i < m_EmberFile.Size(); i++)
 			{
 				Ember<T> ember = m_EmberFile.m_Embers[i];
 
@@ -144,20 +143,37 @@ FractoriumEmberController<T>::~FractoriumEmberController() { }
 /// Note that some precision will be lost when going from double to float.
 /// </summary>
 template <typename T> void FractoriumEmberController<T>::SetEmber(const Ember<float>& ember, bool verbatim) { SetEmberPrivate<float>(ember, verbatim); }
-template <typename T> void FractoriumEmberController<T>::CopyEmber(Ember<float>& ember) { ember = m_Ember; }
+template <typename T> void FractoriumEmberController<T>::CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation) { ember = m_Ember; perEmberOperation(ember); }
 template <typename T> void FractoriumEmberController<T>::SetEmberFile(const EmberFile<float>& emberFile) { m_EmberFile = emberFile; }
-template <typename T> void FractoriumEmberController<T>::CopyEmberFile(EmberFile<float>& emberFile) { emberFile = m_EmberFile; }
+template <typename T> void FractoriumEmberController<T>::CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation)
+{
+	emberFile.m_Filename = m_EmberFile.m_Filename;
+	CopyVec(emberFile.m_Embers, m_EmberFile.m_Embers, perEmberOperation);
+}
+
 template <typename T> void FractoriumEmberController<T>::SetTempPalette(const Palette<float>& palette) { m_TempPalette = palette; }
 template <typename T> void FractoriumEmberController<T>::CopyTempPalette(Palette<float>& palette) { palette = m_TempPalette; }
 #ifdef DO_DOUBLE
 template <typename T> void FractoriumEmberController<T>::SetEmber(const Ember<double>& ember, bool verbatim) { SetEmberPrivate<double>(ember, verbatim); }
-template <typename T> void FractoriumEmberController<T>::CopyEmber(Ember<double>& ember) { ember = m_Ember; }
+template <typename T> void FractoriumEmberController<T>::CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation) { ember = m_Ember; perEmberOperation(ember); }
 template <typename T> void FractoriumEmberController<T>::SetEmberFile(const EmberFile<double>& emberFile) { m_EmberFile = emberFile; }
-template <typename T> void FractoriumEmberController<T>::CopyEmberFile(EmberFile<double>& emberFile) { emberFile = m_EmberFile; }
+template <typename T> void FractoriumEmberController<T>::CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation)
+{
+	emberFile.m_Filename = m_EmberFile.m_Filename;
+	CopyVec(emberFile.m_Embers, m_EmberFile.m_Embers, perEmberOperation);
+}
+
 template <typename T> void FractoriumEmberController<T>::SetTempPalette(const Palette<double>& palette) { m_TempPalette = palette; }
 template <typename T> void FractoriumEmberController<T>::CopyTempPalette(Palette<double>& palette) { palette = m_TempPalette; }
 #endif
 template <typename T> Ember<T>* FractoriumEmberController<T>::CurrentEmber() { return &m_Ember; }
+
+template <typename T>
+void FractoriumEmberController<T>::ConstrainDimensions(Ember<T>& ember)
+{
+	ember.m_FinalRasW = std::min<int>(m_Fractorium->ui.GLDisplay->MaxTexSize(), ember.m_FinalRasW);
+	ember.m_FinalRasH = std::min<int>(m_Fractorium->ui.GLDisplay->MaxTexSize(), ember.m_FinalRasH);
+}
 
 /// <summary>
 /// Set the ember at the specified index from the currently opened file as the current Ember.
@@ -168,7 +184,7 @@ template <typename T> Ember<T>* FractoriumEmberController<T>::CurrentEmber() { r
 template <typename T>
 void FractoriumEmberController<T>::SetEmber(size_t index)
 {
-	if (index < m_EmberFile.m_Embers.size())
+	if (index < m_EmberFile.Size())
 	{
 		if (QTreeWidgetItem* top = m_Fractorium->ui.LibraryTree->topLevelItem(0))
 		{
@@ -235,7 +251,7 @@ void FractoriumEmberController<T>::SetEmberPrivate(const Ember<U>& ember, bool v
 
 	if (!verbatim)
 	{
-		m_Ember.SetSizeAndAdjustScale(m_Fractorium->ui.GLDisplay->width(), m_Fractorium->ui.GLDisplay->height(), true, SCALE_WIDTH);
+		//m_Ember.SetSizeAndAdjustScale(m_Fractorium->ui.GLDisplay->width(), m_Fractorium->ui.GLDisplay->height(), true, SCALE_WIDTH);
 		m_Ember.m_TemporalSamples = 1;//Change once animation is supported.
 		m_Ember.m_Quality = m_Fractorium->m_QualitySpin->value();
 		m_Ember.m_Supersample = m_Fractorium->m_SupersampleSpin->value();

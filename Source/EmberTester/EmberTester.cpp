@@ -94,7 +94,7 @@ string GetEmberCLKernelString(Ember<float>& ember, bool iter, bool log, bool de,
 	return os.str();
 }
 
-void MakeTestAllVarsRegPrePostComboFile(string filename)
+void MakeTestAllVarsRegPrePostComboFile(const string& filename)
 {
 	EmberToXml<float> writer;
 	vector<Ember<float>> embers;
@@ -1322,7 +1322,7 @@ void TestOperations()
 	vector<Variation<T>*> varVec;
 
 	//stringVec.push_back("%");
-	//varVec = FindVarsWith<T>(stringVec);
+	//varVec = FindVarsWith<T>(Vec);
 	//
 	//for (size_t i = 0; i < varVec.size(); i++)
 	//{

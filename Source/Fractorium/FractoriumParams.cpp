@@ -45,8 +45,8 @@ void Fractorium::InitParamsUI()
 	//Geometry.
 	row = 0;
 	table = ui.GeometryTable;
-	SetupSpinner<SpinBox, int>		   (table, this, row, 1, m_WidthSpin,       spinHeight,    10,  100000,     50, SIGNAL(valueChanged(int)),    SLOT(OnWidthChanged(int)));
-	SetupSpinner<SpinBox, int>		   (table, this, row, 1, m_HeightSpin,      spinHeight,    10,  100000,     50, SIGNAL(valueChanged(int)),    SLOT(OnHeightChanged(int)));
+	SetupSpinner<SpinBox, int>		   (table, this, row, 1, m_WidthSpin,		spinHeight,	   10,	  2048,		50, SIGNAL(valueChanged(int)),	  SLOT(OnWidthChanged(int)),		  true,  width(),  width(),  width());
+	SetupSpinner<SpinBox, int>		   (table, this, row, 1, m_HeightSpin,		spinHeight,	   10,	  2048,		50, SIGNAL(valueChanged(int)),	  SLOT(OnHeightChanged(int)),		  true, height(), height(), height());
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_CenterXSpin,     spinHeight, -dmax,    dmax,   0.05, SIGNAL(valueChanged(double)), SLOT(OnCenterXChanged(double)),     true,	  0,   0,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_CenterYSpin,     spinHeight, -dmax,    dmax,   0.05, SIGNAL(valueChanged(double)), SLOT(OnCenterYChanged(double)),     true,	  0,   0,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_ScaleSpin,       spinHeight,    10,    dmax,     20, SIGNAL(valueChanged(double)), SLOT(OnScaleChanged(double)),	      true, 240, 240, 240);
@@ -57,8 +57,8 @@ void Fractorium::InitParamsUI()
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_PitchSpin,       spinHeight,  -180,     180,      1, SIGNAL(valueChanged(double)), SLOT(OnPitchChanged(double)),       true,	  0,  45,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_YawSpin,         spinHeight,  -180,     180,      1, SIGNAL(valueChanged(double)), SLOT(OnYawChanged(double)),         true,	  0,  45,	0);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_DepthBlurSpin,   spinHeight,  -100,     100,   0.01, SIGNAL(valueChanged(double)), SLOT(OnDepthBlurChanged(double)),   true,	  0,   1,	0);
-	m_WidthSpin->setEnabled(false);//Will programatically change these to match the window size, but the user should never be allowed to.
-	m_HeightSpin->setEnabled(false);
+
+	//Set w/h max values.
 	m_CenterXSpin->setDecimals(3);
 	m_CenterYSpin->setDecimals(3);
 	m_ZPosSpin->setDecimals(3);
@@ -178,9 +178,9 @@ void FractoriumEmberController<T>::BackgroundChanged(const QColor& color)
 		QTableWidget* colorTable = m_Fractorium->ui.ColorTable;
 		colorTable->item(itemRow, 1)->setBackgroundColor(color);
 
-		QString r = QString::number(color.red());
-		QString g = QString::number(color.green());
-		QString b = QString::number(color.blue());
+		QString r = ToString(color.red());
+		QString g = ToString(color.green());
+		QString b = ToString(color.blue());
 
 		int threshold = 105;
 		int delta = (color.red()   * 0.299) + //Magic numbers gotten from a Stack Overflow post.
@@ -218,14 +218,16 @@ void Fractorium::OnPaletteModeComboCurrentIndexChanged(int index) { m_Controller
 /// Dimensions are set automatically to match the dimensions of GLWidget.
 /// </summary>
 /// <param name="d">Ignored</param>
-void Fractorium::OnWidthChanged(int d) { }
+template <typename T> void FractoriumEmberController<T>::WidthChanged(unsigned int i) { Update([&] { m_Ember.m_FinalRasW = i; }); }
+void Fractorium::OnWidthChanged(int i) { m_Controller->WidthChanged(i); }
 
 /// <summary>
 /// Placeholder, do nothing.
 /// Dimensions are set automatically to match the dimensions of GLWidget.
 /// </summary>
 /// <param name="d">Ignored</param>
-void Fractorium::OnHeightChanged(int d) { }
+template <typename T> void FractoriumEmberController<T>::HeightChanged(unsigned int i) { Update([&] { m_Ember.m_FinalRasH = i; }); }
+void Fractorium::OnHeightChanged(int i) { m_Controller->HeightChanged(i); }
 
 /// <summary>
 /// Set the x offset applied to the center of the image.

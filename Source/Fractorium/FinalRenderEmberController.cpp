@@ -9,14 +9,14 @@
 /// It passes a pointer to the main window to the base and initializes members.
 /// </summary>
 /// <param name="finalRender">Pointer to the final render dialog</param>
-FinalRenderEmberControllerBase::FinalRenderEmberControllerBase(FractoriumFinalRenderDialog* finalRender)
-	: FractoriumEmberControllerBase(finalRender->m_Fractorium)
+FinalRenderEmberControllerBase::FinalRenderEmberControllerBase(FractoriumFinalRenderDialog* finalRenderDialog)
+	: FractoriumEmberControllerBase(finalRenderDialog->m_Fractorium)
 {
 	m_Run = false;
 	m_PreviewRun = false;
 	m_ImageCount = 0;
 	m_FinishedImageCount = 0;
-	m_FinalRender = finalRender;
+	m_FinalRenderDialog = finalRenderDialog;
 	m_Settings = m_Fractorium->m_Settings;
 }
 
@@ -55,7 +55,7 @@ void FinalRenderEmberControllerBase::CancelRender()
 		while (m_Result.isRunning())
 			QApplication::processEvents();
 
-		m_FinalRender->ui.FinalRenderTextOutput->append("Render canceled.");
+		m_FinalRenderDialog->ui.FinalRenderTextOutput->append("Render canceled.");
 	}
 }
 
@@ -66,12 +66,21 @@ void FinalRenderEmberControllerBase::CancelRender()
 /// <returns>True if a valid renderer is created or if no action is taken, else false.</returns>
 bool FinalRenderEmberControllerBase::CreateRendererFromGUI()
 {
-	bool useOpenCL = m_Wrapper.CheckOpenCL() && m_FinalRender->OpenCL();
+	bool useOpenCL = m_Wrapper.CheckOpenCL() && m_FinalRenderDialog->OpenCL();
 
 	return CreateRenderer(useOpenCL ? OPENCL_RENDERER : CPU_RENDERER,
-						  m_FinalRender->PlatformIndex(),
-						  m_FinalRender->DeviceIndex(),
+						  m_FinalRenderDialog->PlatformIndex(),
+						  m_FinalRenderDialog->DeviceIndex(),
 						  false);//Not shared.
+}
+
+/// <summary>
+/// Thin wrapper around invoking a call to append text to the output.
+/// </summary>
+/// <param name="s">The string to append</param>
+void FinalRenderEmberControllerBase::Output(const QString& s)
+{
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(const QString&, s));
 }
 
 /// <summary>
@@ -86,7 +95,6 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 	m_FinalPreviewRenderer = auto_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
 	m_FinalPreviewRenderer->Callback(NULL);
 	m_FinalPreviewRenderer->NumChannels(4);
-	m_FinalPreviewRenderer->ReclaimOnResize(true);
 
 	m_FinalPreviewRenderFunc = [&]()
 	{
@@ -94,38 +102,43 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_PreviewRun = true;
 		m_FinalPreviewRenderer->Abort();
 
-		QLabel* widget = m_FinalRender->ui.FinalRenderPreviewLabel;
-		unsigned int maxDim = 100u;
+		QLabel* widget = m_FinalRenderDialog->ui.FinalRenderPreviewLabel;
+		size_t maxDim = 100;
 		T scalePercentage;
 
 		//Determine how to scale the scaled ember to fit in the label with a max of 100x100.
-		if (m_Ember.m_FinalRasW >= m_Ember.m_FinalRasH)
-			scalePercentage = T(maxDim) / m_Ember.m_FinalRasW;
+		if (m_Ember->m_FinalRasW >= m_Ember->m_FinalRasH)
+			scalePercentage = T(maxDim) / m_Ember->m_FinalRasW;
 		else
-			scalePercentage = T(maxDim) / m_Ember.m_FinalRasH;
+			scalePercentage = T(maxDim) / m_Ember->m_FinalRasH;
 
-		m_PreviewEmber = m_Ember;		
+		m_PreviewEmber = *m_Ember;
 		m_PreviewEmber.m_Quality = 100;
 		m_PreviewEmber.m_TemporalSamples = 1;
-		m_PreviewEmber.m_FinalRasW = min(maxDim, unsigned int(scalePercentage * m_Ember.m_FinalRasW));
-		m_PreviewEmber.m_FinalRasH = min(maxDim, unsigned int(scalePercentage * m_Ember.m_FinalRasH));
-		m_PreviewEmber.m_PixelsPerUnit = scalePercentage * m_Ember.m_PixelsPerUnit;
+		m_PreviewEmber.m_FinalRasW = max<size_t>(1, min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasW)));//Ensure neither is zero.
+		m_PreviewEmber.m_FinalRasH = max<size_t>(1, min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasH)));
+		m_PreviewEmber.m_PixelsPerUnit = scalePercentage * m_Ember->m_PixelsPerUnit;
 
-		while (!m_FinalPreviewRenderer->Aborted() || m_FinalPreviewRenderer->InRender())
-			QApplication::processEvents();
-
-		m_FinalPreviewRenderer->EarlyClip(m_FinalRender->EarlyClip());
-		m_FinalPreviewRenderer->YAxisUp(m_FinalRender->YAxisUp());
-		m_FinalPreviewRenderer->Transparency(m_FinalRender->Transparency());
+		m_FinalPreviewRenderer->EarlyClip(m_FinalRenderDialog->EarlyClip());
+		m_FinalPreviewRenderer->YAxisUp(m_FinalRenderDialog->YAxisUp());
+		m_FinalPreviewRenderer->Transparency(m_FinalRenderDialog->Transparency());
 		m_FinalPreviewRenderer->SetEmber(m_PreviewEmber);
+		m_FinalPreviewRenderer->PrepFinalAccumVector(m_PreviewFinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 
-		if (m_FinalPreviewRenderer->Run(m_PreviewFinalImage) == RENDER_OK)
-		{
-			QImage image(m_PreviewEmber.m_FinalRasW, m_PreviewEmber.m_FinalRasH, QImage::Format_RGBA8888);//The label wants RGBA.
-			memcpy(image.scanLine(0), m_PreviewFinalImage.data(), m_PreviewFinalImage.size() * sizeof(m_PreviewFinalImage[0]));//Memcpy the data in.
-			QPixmap pixmap = QPixmap::fromImage(image);
-			QMetaObject::invokeMethod(widget, "setPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pixmap));
-		}
+		unsigned int strips = VerifyStrips(m_PreviewEmber.m_FinalRasH, m_FinalRenderDialog->Strips(),
+		[&](const string& s) { }, [&](const string& s) { }, [&](const string& s) { });
+
+		StripsRender<T>(m_FinalPreviewRenderer.get(), m_PreviewEmber, m_PreviewFinalImage, 0, strips, m_FinalRenderDialog->YAxisUp(),
+			[&](size_t strip) { },//Pre strip.
+			[&](size_t strip) { },//Post strip.
+			[&](size_t strip) { },//Error.
+			[&](Ember<T>& finalEmber)//Final strip.
+			{
+				QImage image(finalEmber.m_FinalRasW, finalEmber.m_FinalRasH, QImage::Format_RGBA8888);//The label wants RGBA.
+				memcpy(image.scanLine(0), m_PreviewFinalImage.data(), finalEmber.m_FinalRasW * finalEmber.m_FinalRasH * 4);//Memcpy the data in.
+				QPixmap pixmap = QPixmap::fromImage(image);
+				QMetaObject::invokeMethod(widget, "setPixmap", Qt::QueuedConnection, Q_ARG(QPixmap, pixmap));
+			});
 
 		m_PreviewRun = false;
 		m_PreviewCs.Leave();
@@ -136,50 +149,53 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 	//If it finishes successfully, delete the backup file.
 	m_FinalRenderFunc = [&]()
 	{
-		size_t i;
-
 		m_Run = true;
-		m_TotalTimer.Tic();//Begin timing for progress.
-		m_GuiState = m_FinalRender->State();//Cache render settings from the GUI before running.
-		m_FinishedImageCount = 0;
-
-		QFileInfo original(m_GuiState.m_Path);
-		QString backup = original.absolutePath() + QDir::separator() + m_GuiState.m_Prefix + original.completeBaseName() + m_GuiState.m_Suffix + "_backup.flame";
-
-		QMetaObject::invokeMethod(m_Fractorium, "OnActionSaveCurrentToOpenedFile", Qt::QueuedConnection, Q_ARG(bool, true));//First, save the current ember back to its opened file.
-		m_Fractorium->m_Controller->CopyEmber(m_Ember);
-		m_Fractorium->m_Controller->CopyEmberFile(m_EmberFile);//Copy the whole file, will take about 0.2ms per ember in the file.
+		m_TotalTimer.Tic();//Begin timing for progress of all operations.
+		size_t i;
+		m_GuiState = m_FinalRenderDialog->State();//Cache render settings from the GUI before running.
+		bool doAll = m_GuiState.m_DoAll && m_EmberFile.Size() > 1;
+		unsigned int currentStripForProgress = 0;//Sort of a hack to get the strip value to the progress function.
+		QString path = doAll ? ComposePath(QString::fromStdString(m_EmberFile.m_Embers[0].m_Name)) : ComposePath(Name());
+		QString backup = path + "_backup.flame";
 
 		//Save backup Xml.
-		if (m_GuiState.m_DoAll && m_EmberFile.m_Embers.size() > 1)
+		if (doAll)
 			m_XmlWriter.Save(backup.toStdString().c_str(), m_EmberFile.m_Embers, 0, true, false, true);
 		else
-			m_XmlWriter.Save(backup.toStdString().c_str(), m_Ember, 0, true, false, true);
+			m_XmlWriter.Save(backup.toStdString().c_str(), *m_Ember, 0, true, false, true);
 
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "setText", Qt::QueuedConnection, Q_ARG(QString, "Begin rendering..."));
+		m_FinishedImageCount = 0;
 		m_Renderer->EarlyClip(m_GuiState.m_EarlyClip);
 		m_Renderer->YAxisUp(m_GuiState.m_YAxisUp);
 		m_Renderer->ThreadCount(m_GuiState.m_ThreadCount);
 		m_Renderer->Transparency(m_GuiState.m_Transparency);
+		m_Renderer->m_ProgressParameter = (void*)&currentStripForProgress;
 
-		if (m_GuiState.m_Path.endsWith(".png", Qt::CaseInsensitive) || m_Renderer->RendererType() == OPENCL_RENDERER)
+		if (path.endsWith(".png", Qt::CaseInsensitive) || m_Renderer->RendererType() == OPENCL_RENDERER)//This is creating the wrong thing.//TODO
 			m_Renderer->NumChannels(4);
 		else
 			m_Renderer->NumChannels(3);
 
+		m_GuiState.m_Strips = VerifyStrips(m_Ember->m_FinalRasH, m_GuiState.m_Strips,
+		[&](const string& s) { Output(QString::fromStdString(s)); },//Greater than height.
+		[&](const string& s) { Output(QString::fromStdString(s)); },//Mod height != 0.
+		[&](const string& s) { Output(QString::fromStdString(s) + "\n"); });//Final strips value to be set.
+
 		//The rendering process is different between doing a single image, and doing multiple.
-		if (m_GuiState.m_DoAll && m_EmberFile.m_Embers.size() > 1)
+		if (doAll)
 		{
-			m_ImageCount = m_EmberFile.m_Embers.size();
+			m_ImageCount = m_EmberFile.Size();
 			ResetProgress();
 
 			//Different action required for rendering as animation or not.
 			if (m_GuiState.m_DoSequence)
 			{
+				Ember<T>* firstEmber = &m_EmberFile.m_Embers[0];
+
 				//Need to loop through and set all w, h, q, ts, ss and t vals.
-				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
+				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
-					Sync(m_EmberFile.m_Embers[i]);
+					SyncGuiToEmber(m_EmberFile.m_Embers[i], firstEmber->m_FinalRasW, firstEmber->m_FinalRasH);
 					
 					if (i > 0)
 					{
@@ -194,60 +210,84 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 					m_EmberFile.m_Embers[i].m_TemporalSamples = m_GuiState.m_TemporalSamples;
 				}
 
+				//Not supporting strips with motion blur.
+				//Shouldn't be a problem because animations will be at max 4k x 4k which will take about 1.1GB
+				//even when using double precision, which most cards at the time of this writing already exceed.
+				m_GuiState.m_Strips = 1;
 				m_Renderer->SetEmber(m_EmberFile.m_Embers);//Copy all embers to the local storage inside the renderer.
 
 				//Render each image, cancelling if m_Run ever gets set to false.
-				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
+				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
+					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name)));
 					m_Renderer->Reset();//Have to manually set this since the ember is not set each time through.
-					m_RenderTimer.Tic();//Toc() is called in the progress function.
+					m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 
-					if (m_Renderer->Run(m_FinalImage, i) != RENDER_OK)
+					StripsRender<T>(m_Renderer.get(), m_EmberFile.m_Embers[i], m_FinalImage, i, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
+					[&](size_t strip) { currentStripForProgress = strip; },//Pre strip.
+					[&](size_t strip) { m_Stats = m_Renderer->Stats(); },//Post strip.
+					[&](size_t strip)//Error.
 					{
-						QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, "Renderering failed.\n"));
-						m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRender->ui.FinalRenderTextOutput, false);
-					}
+						Output("Renderering failed.\n");
+						m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRenderDialog->ui.FinalRenderTextOutput, false);//Internally calls invoke.
+					},
+					[&](Ember<T>& finalEmber) { RenderComplete(finalEmber); });//Final strip.
 				}
 			}
 			else//Render all images, but not as an animation sequence (without temporal samples motion blur).
 			{
-				//Copy widget values to all embers
-				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
+				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
-					Sync(m_EmberFile.m_Embers[i]);
 					m_EmberFile.m_Embers[i].m_TemporalSamples = 1;//No temporal sampling.
 				}
 
 				//Render each image, cancelling if m_Run ever gets set to false.
-				for (i = 0; i < m_EmberFile.m_Embers.size() && m_Run; i++)
+				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
+					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name)));
 					m_Renderer->SetEmber(m_EmberFile.m_Embers[i]);
-					m_RenderTimer.Tic();//Toc() is called in the progress function.
+					m_Renderer->PrepFinalAccumVector(m_FinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
+					m_Stats.Clear();
+					Memset(m_FinalImage);
+					m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 
-					if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
+					StripsRender<T>(m_Renderer.get(), m_EmberFile.m_Embers[i], m_FinalImage, 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
+					[&](size_t strip) { currentStripForProgress = strip; },//Pre strip.
+					[&](size_t strip) { m_Stats += m_Renderer->Stats(); },//Post strip.
+					[&](size_t strip)//Error.
 					{
-						QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, "Renderering failed.\n"));
-						m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRender->ui.FinalRenderTextOutput, false);
-					}
+						Output("Renderering failed.\n");
+						m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRenderDialog->ui.FinalRenderTextOutput, false);//Internally calls invoke.
+					},
+					[&](Ember<T>& finalEmber) { RenderComplete(finalEmber); });//Final strip.
 				}
 			}
 		}
 		else//Render a single image.
 		{
 			m_ImageCount = 1;
-			Sync(m_Ember);
 			ResetProgress();
-			m_Ember.m_TemporalSamples = 1;
-			m_Renderer->SetEmber(m_Ember);
-			memset(m_FinalImage.data(), 0, m_FinalImage.size() * sizeof(m_FinalImage[0]));
-			m_RenderTimer.Tic();//Toc() is called in the progress function.
-
-			if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
+			m_Ember->m_TemporalSamples = 1;
+			m_Renderer->SetEmber(*m_Ember);
+			m_Renderer->PrepFinalAccumVector(m_FinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
+			m_Stats.Clear();
+			Memset(m_FinalImage);
+			Output(ComposePath(QString::fromStdString(m_Ember->m_Name)));
+			m_RenderTimer.Tic();//Toc() is called in RenderComplete().
+			
+			StripsRender<T>(m_Renderer.get(), *m_Ember, m_FinalImage, 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
+			[&](size_t strip) { currentStripForProgress = strip; },//Pre strip.
+			[&](size_t strip) { m_Stats += m_Renderer->Stats(); },//Post strip.
+			[&](size_t strip)//Error.
 			{
-				QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, "Renderering failed.\n"));
-				m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRender->ui.FinalRenderTextOutput, false);
-			}
+				Output("Renderering failed.\n");
+				m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRenderDialog->ui.FinalRenderTextOutput, false);//Internally calls invoke.
+			},
+			[&](Ember<T>& finalEmber) { RenderComplete(finalEmber); });//Final strip.
 		}
+
+		QString totalTimeString = "All renders completed in: " + QString::fromStdString(m_TotalTimer.Format(m_TotalTimer.Toc())) + ".";
+		Output(totalTimeString);
 
 		QFile::remove(backup);
 		m_Run = false;
@@ -255,123 +295,60 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 }
 
 /// <summary>
+/// Virtual functions overridden from FractoriumEmberControllerBase.
+/// </summary>
+
+/// <summary>
 /// Setters for embers and ember files which convert between float and double types.
 /// These are used to preserve the current ember/file when switching between renderers.
 /// Note that some precision will be lost when going from double to float.
 /// </summary>
-template <typename T> void FinalRenderEmberController<T>::SetEmber(const Ember<float>& ember, bool verbatim) { m_Ember = ember; }
-template <typename T> void FinalRenderEmberController<T>::CopyEmber(Ember<float>& ember) { ember = m_Ember; }
-template <typename T> void FinalRenderEmberController<T>::SetEmberFile(const EmberFile<float>& emberFile) { m_EmberFile = emberFile; }
-template <typename T> void FinalRenderEmberController<T>::CopyEmberFile(EmberFile<float>& emberFile) { emberFile = m_EmberFile; }
-template <typename T> void FinalRenderEmberController<T>::SetOriginalEmber(Ember<float>& ember) { m_OriginalEmber = ember; }
-template <typename T> double FinalRenderEmberController<T>::OriginalAspect() { return double(m_OriginalEmber.m_OrigFinalRasW) / m_OriginalEmber.m_OrigFinalRasH; }
+template <typename T> void FinalRenderEmberController<T>::SetEmberFile(const EmberFile<float>& emberFile)
+{
+	m_EmberFile = emberFile;
+
+	if (m_EmberFile.Size())
+		m_Ember = &(m_EmberFile.m_Embers[0]);
+}
+template <typename T> void FinalRenderEmberController<T>::CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation)
+{
+	emberFile.m_Filename = m_EmberFile.m_Filename;
+	CopyVec(emberFile.m_Embers, m_EmberFile.m_Embers, perEmberOperation);
+}
+
 #ifdef DO_DOUBLE
-template <typename T> void FinalRenderEmberController<T>::SetEmber(const Ember<double>& ember, bool verbatim) { m_Ember = ember; }
-template <typename T> void FinalRenderEmberController<T>::CopyEmber(Ember<double>& ember) { ember = m_Ember; }
-template <typename T> void FinalRenderEmberController<T>::SetEmberFile(const EmberFile<double>& emberFile) { m_EmberFile = emberFile; }
-template <typename T> void FinalRenderEmberController<T>::CopyEmberFile(EmberFile<double>& emberFile) { emberFile = m_EmberFile; }
-template <typename T> void FinalRenderEmberController<T>::SetOriginalEmber(Ember<double>& ember) { m_OriginalEmber = ember; }
+template <typename T> void FinalRenderEmberController<T>::SetEmberFile(const EmberFile<double>& emberFile)
+{
+	m_EmberFile = emberFile;
+
+	if (m_EmberFile.Size())
+		m_Ember = &(m_EmberFile.m_Embers[0]);
+}
+template <typename T> void FinalRenderEmberController<T>::CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation)
+{
+	emberFile.m_Filename = m_EmberFile.m_Filename;
+	CopyVec(emberFile.m_Embers, m_EmberFile.m_Embers, perEmberOperation);
+}
 #endif
 
 /// <summary>
-/// Progress function.
-/// Take special action to sync options upon finishing.
+/// Set the ember at the specified index from the currently opened file as the current Ember.
+/// Clears the undo state.
+/// Resets the rendering process.
 /// </summary>
-/// <param name="ember">The ember currently being rendered</param>
-/// <param name="foo">An extra dummy parameter</param>
-/// <param name="fraction">The progress fraction from 0-100</param>
-/// <param name="stage">The stage of iteration. 1 is iterating, 2 is density filtering, 2 is final accumulation.</param>
-/// <param name="etaMs">The estimated milliseconds to completion of the current stage</param>
-/// <returns>0 if the user has clicked cancel, else 1 to continue rendering.</returns>
+/// <param name="index">The index in the file from which to retrieve the ember</param>
 template <typename T>
-int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs)
+void FinalRenderEmberController<T>::SetEmber(size_t index)
 {
-	static int count = 0;
-	int intFract = (int)fraction;
-
-	if (stage == 0)
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
-	else if (stage == 1)
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
-	else if (stage == 2)
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
-
-	//Finished, so take special action.
-	if (stage == 2 && intFract == 100)
+	if (index < m_EmberFile.Size())
 	{
-		string renderTimeString = m_RenderTimer.Format(m_RenderTimer.Toc()), totalTimeString;
-		QString status, filename = m_GuiState.m_Path;
-		QFileInfo original(filename);
-		EmberStats stats = m_Renderer->Stats();
-		QString iters = QLocale(QLocale::English).toString(stats.m_Iters);
-		QString itersPerSec = QLocale(QLocale::English).toString(unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)));
-
-		if (m_GuiState.m_DoAll && m_EmberFile.m_Embers.size() > 1)
-			filename = original.absolutePath() + QDir::separator() + m_GuiState.m_Prefix + QString::fromStdString(m_EmberFile.m_Embers[m_FinishedImageCount].m_Name) + m_GuiState.m_Suffix + "." + m_GuiState.m_DoAllExt;
-		else
-			filename = original.absolutePath() + QDir::separator() + m_GuiState.m_Prefix + original.completeBaseName() + m_GuiState.m_Suffix + "." + original.suffix();
-
-		filename = EmberFile<T>::UniqueFilename(filename);
-
-		//Save whatever options were specified on the GUI to the settings.
-		m_Settings->FinalEarlyClip(m_GuiState.m_EarlyClip);
-		m_Settings->FinalYAxisUp(m_GuiState.m_YAxisUp);
-		m_Settings->FinalTransparency(m_GuiState.m_Transparency);
-		m_Settings->FinalOpenCL(m_GuiState.m_OpenCL);
-		m_Settings->FinalDouble(m_GuiState.m_Double);
-		m_Settings->FinalPlatformIndex(m_GuiState.m_PlatformIndex);
-		m_Settings->FinalDeviceIndex(m_GuiState.m_DeviceIndex);
-		m_Settings->FinalSaveXml(m_GuiState.m_SaveXml);
-		m_Settings->FinalDoAll(m_GuiState.m_DoAll);
-		m_Settings->FinalDoSequence(m_GuiState.m_DoSequence);
-		m_Settings->FinalKeepAspect(m_GuiState.m_KeepAspect);
-		m_Settings->FinalScale(m_GuiState.m_Scale);
-		m_Settings->FinalDoAllExt(m_GuiState.m_DoAllExt);
-		m_Settings->FinalThreadCount(m_GuiState.m_ThreadCount);
-		m_Settings->FinalWidth(m_GuiState.m_Width);
-		m_Settings->FinalHeight(m_GuiState.m_Height);
-		m_Settings->FinalQuality(m_GuiState.m_Quality);
-		m_Settings->FinalTemporalSamples(m_GuiState.m_TemporalSamples);
-		m_Settings->FinalSupersample(m_GuiState.m_Supersample);
-		SaveCurrentRender(filename);
-		
-		if (m_GuiState.m_SaveXml)
-		{
-			QFileInfo xmlFileInfo(filename);//Create another one in case it was modified for batch rendering.
-			QString newPath = xmlFileInfo.absolutePath() + QDir::separator() + xmlFileInfo.completeBaseName() + ".flame";
-			xmlDocPtr tempEdit = ember.m_Edits;
-
-			ember.m_Edits = m_XmlWriter.CreateNewEditdoc(&ember, NULL, "edit", m_Settings->Nick().toStdString(), m_Settings->Url().toStdString(), m_Settings->Id().toStdString(), "", 0, 0);
-			m_XmlWriter.Save(newPath.toStdString().c_str(), ember, 0, true, false, true);//Note that the ember passed is used, rather than m_Ember because it's what was actually rendered.
-
-			if (tempEdit != NULL)
-				xmlFreeDoc(tempEdit);
-		}
-
-		m_FinishedImageCount++;
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));//Just to be safe.
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTotalProgress,   "setValue", Qt::QueuedConnection, Q_ARG(int, int(((float)m_FinishedImageCount / (float)m_ImageCount) * 100)));
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderImageCountLabel, "setText",  Qt::QueuedConnection, Q_ARG(QString, QString::number(m_FinishedImageCount) + " / " + QString::number(m_ImageCount)));
-
-		status = "Image " + QString::number(m_FinishedImageCount) + ":\nPure render time: " + QString::fromStdString(renderTimeString);
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, status));
-
-		totalTimeString = m_TotalTimer.Format(m_TotalTimer.Toc());
-		status = "Total render time: " + QString::fromStdString(totalTimeString) + "\nTotal iters: " + iters + "\nIters/second: " + itersPerSec + "\n";
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "append", Qt::QueuedConnection, Q_ARG(QString, status));
-		QMetaObject::invokeMethod(m_FinalRender, "MoveCursorToEnd", Qt::QueuedConnection);
-
-		if (m_FinishedImageCount != m_ImageCount)
-		{
-			ResetProgress(false);
-		}
+		m_Ember = &(m_EmberFile.m_Embers[index]);
+		SyncCurrentToGui();
 	}
-
-	QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTextOutput, "update", Qt::QueuedConnection);
-	QApplication::processEvents();
-	return m_Run ? 1 : 0;
+	else
+	{
+		m_Ember = &(m_EmberFile.m_Embers[0]);//Should never happen.
+	}
 }
 
 /// <summary>
@@ -382,17 +359,17 @@ int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doub
 template<typename T>
 bool FinalRenderEmberController<T>::Render()
 {
-	QString filename = m_FinalRender->Path();
+	QString filename = m_FinalRenderDialog->Path();
 
 	if (filename == "")
 	{
-		QMessageBox::critical(m_FinalRender, "File Error", "Please enter a valid path and filename for the output.");
+		m_Fractorium->ShowCritical("File Error", "Please enter a valid path and filename for the output.");
 		return false;
 	}
 
 	if (CreateRendererFromGUI())
 	{
-		m_FinalRender->ui.FinalRenderTextOutput->clear();
+		m_FinalRenderDialog->ui.FinalRenderTextOutput->setText("Preparing all parameters.\n");
 
 		//Note that a Qt thread must be used, rather than a tbb task.
 		//This is because tbb does a very poor job of allocating thread resources
@@ -422,8 +399,7 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 {
 	bool ok = true;
 	vector<string> errorReport;
-	QString filename = m_FinalRender->Path();
-	unsigned int channels = filename.endsWith(".png", Qt::CaseInsensitive) ? 4 : 3;
+	unsigned int channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;
 
 	CancelRender();
 
@@ -441,14 +417,14 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 		m_Device = device;
 		m_OutputTexID = 0;//Don't care about tex ID when doing final render.
 		m_Shared = shared;
-		
+
 		m_Renderer = auto_ptr<EmberNs::RendererBase>(::CreateRenderer<T, T>(renderType, platform, device, shared, m_OutputTexID, emberReport));
 		errorReport = emberReport.ErrorReport();
 
 		if (!errorReport.empty())
 		{
 			ok = false;
-			QMessageBox::critical(m_Fractorium, "Renderer Creation Error", "Could not create requested renderer, fallback CPU renderer created. See info tab for details.");
+			m_Fractorium->ShowCritical("Renderer Creation Error", "Could not create requested renderer, fallback CPU renderer created. See info tab for details.");
 			m_Fractorium->ErrorReportToQTextEdit(errorReport, m_Fractorium->ui.InfoRenderingTextEdit);
 		}
 	}
@@ -460,50 +436,109 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 
 		m_Renderer->Callback(this);
 		m_Renderer->NumChannels(channels);
-		m_Renderer->ReclaimOnResize(true);
-		m_Renderer->EarlyClip(m_FinalRender->EarlyClip());
-		m_Renderer->YAxisUp(m_FinalRender->YAxisUp());
-		m_Renderer->ThreadCount(m_FinalRender->ThreadCount());
-		m_Renderer->Transparency(m_FinalRender->Transparency());
+		m_Renderer->EarlyClip(m_FinalRenderDialog->EarlyClip());
+		m_Renderer->YAxisUp(m_FinalRenderDialog->YAxisUp());
+		m_Renderer->ThreadCount(m_FinalRenderDialog->ThreadCount());
+		m_Renderer->Transparency(m_FinalRenderDialog->Transparency());
 	}
 	else
 	{
 		ok = false;
-		QMessageBox::critical(m_FinalRender, "Renderer Creation Error", "Could not create renderer, aborting. See info tab for details.");
+		m_Fractorium->ShowCritical("Renderer Creation Error", "Could not create renderer, aborting. See info tab for details.");
 	}
 
 	return ok;
 }
 
 /// <summary>
-/// Set various parameters in the renderer and current ember with the values
-/// specified in the widgets and compute the amount of memory required to render.
-/// This includes the memory needed for the final output image.
+/// Progress function.
+/// Take special action to sync options upon finishing.
 /// </summary>
-/// <returns>If successful, memory required in bytes, else zero.</returns>
+/// <param name="ember">The ember currently being rendered</param>
+/// <param name="foo">An extra dummy parameter</param>
+/// <param name="fraction">The progress fraction from 0-100</param>
+/// <param name="stage">The stage of iteration. 1 is iterating, 2 is density filtering, 2 is final accumulation.</param>
+/// <param name="etaMs">The estimated milliseconds to completion of the current stage</param>
+/// <returns>0 if the user has clicked cancel, else 1 to continue rendering.</returns>
 template <typename T>
-unsigned __int64 FinalRenderEmberController<T>::SyncAndComputeMemory()
+int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs)
 {
-	if (m_Renderer.get())
-	{
-		bool b = false;
-		QString filename = m_FinalRender->Path();
-		unsigned int channels = filename.endsWith(".png", Qt::CaseInsensitive) ? 4 : 3;//4 channels for Png, else 3.
+	static int count = 0;
+	unsigned int strip = *((unsigned int*)m_Renderer->m_ProgressParameter);
+	double fracPerStrip = ceil(100.0 / m_GuiState.m_Strips);
+	double stripsfrac = ceil(fracPerStrip * strip) + ceil(fraction / m_GuiState.m_Strips);
+	int intFract = (int)stripsfrac;
 
-		Sync(m_Ember);
-		m_Renderer->SetEmber(m_Ember);
-		m_Renderer->CreateSpatialFilter(b);
-		m_Renderer->CreateTemporalFilter(b);
-		m_Renderer->NumChannels(channels);
-		m_Renderer->ComputeBounds();
-		CancelPreviewRender();
-		//m_FinalPreviewResult = QtConcurrent::run(m_PreviewRenderFunc);
-		//while (!m_FinalPreviewResult.isRunning()) { QApplication::processEvents(); }//Wait for it to start up.
-		m_FinalPreviewRenderFunc();
-		return m_Renderer->MemoryRequired(true);
+	if (stage == 0)
+		QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
+	else if (stage == 1)
+		QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
+	else if (stage == 2)
+		QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderAccumProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
+
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTextOutput, "update", Qt::QueuedConnection);
+	//QApplication::processEvents();
+	return m_Run ? 1 : 0;
+}
+
+/// <summary>
+/// Virtual functions overridden from FinalRenderEmberControllerBase.
+/// </summary>
+
+/// <summary>
+/// Copy current ember values to widgets.
+/// </summary>
+template <typename T>
+void FinalRenderEmberController<T>::SyncCurrentToGui()
+{
+	SyncCurrentToSizeSpinners(true, true);
+	m_FinalRenderDialog->ui.FinalRenderCurrentSpin->setSuffix("  " + Name());
+	m_FinalRenderDialog->Scale(m_Ember->ScaleType());
+	m_FinalRenderDialog->m_QualitySpin->SetValueStealth(m_Ember->m_Quality);
+	m_FinalRenderDialog->m_SupersampleSpin->SetValueStealth(m_Ember->m_Supersample);
+	m_FinalRenderDialog->Path(ComposePath(EmberFile<T>::UniqueFilename(Name())));
+}
+
+/// <summary>
+/// Copy GUI values to either the current ember, or all embers in the file
+/// depending on whether Render All is checked.
+/// </summary>
+/// <param name="widthOverride">Width override to use instead of scaling the original width</param>
+/// <param name="heightOverride">Height override to use instead of scaling the original height</param>
+template <typename T>
+void FinalRenderEmberController<T>::SyncGuiToEmbers(size_t widthOverride, size_t heightOverride)
+{
+	if (m_FinalRenderDialog->ApplyToAll())
+	{
+		for (size_t i = 0; i < m_EmberFile.Size(); i++)
+			SyncGuiToEmber(m_EmberFile.m_Embers[i], widthOverride, heightOverride);
+	}
+	else
+	{
+		SyncGuiToEmber(*m_Ember, widthOverride, heightOverride);
+	}
+}
+
+/// <summary>
+/// Set values for scale spinners based on the ratio of the original dimensions to the current dimensions
+/// of the current ember. Also update the size suffix text.
+/// </summary>
+/// <param name="scale">Whether to update the scale values</param>
+/// <param name="size">Whether to update the size suffix text</param>
+template <typename T>
+void FinalRenderEmberController<T>::SyncCurrentToSizeSpinners(bool scale, bool size)
+{
+	if (scale)
+	{
+		m_FinalRenderDialog->m_WidthScaleSpin->SetValueStealth((double)m_Ember->m_FinalRasW / m_Ember->m_OrigFinalRasW);//Work backward to determine the scale.
+		m_FinalRenderDialog->m_HeightScaleSpin->SetValueStealth((double)m_Ember->m_FinalRasH / m_Ember->m_OrigFinalRasH);
 	}
 
-	return 0;
+	if (size)
+	{
+		m_FinalRenderDialog->m_WidthScaleSpin->setSuffix(" (" + ToString(m_Ember->m_FinalRasW) + ")");
+		m_FinalRenderDialog->m_HeightScaleSpin->setSuffix(" (" + ToString(m_Ember->m_FinalRasH) + ")");
+	}
 }
 
 /// <summary>
@@ -515,15 +550,67 @@ void FinalRenderEmberController<T>::ResetProgress(bool total)
 {
 	if (total)
 	{
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderImageCountLabel, "setText",  Qt::QueuedConnection, Q_ARG(QString, "0 / " + QString::number(m_ImageCount)));
-		QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderTotalProgress,   "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
+		QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderImageCountLabel, "setText",  Qt::QueuedConnection, Q_ARG(const QString&, "0 / " + ToString(m_ImageCount)));
+		QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTotalProgress,   "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
 	}
 
-	QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
-	QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
-	QMetaObject::invokeMethod(m_FinalRender->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderAccumProgress,     "setValue", Qt::QueuedConnection, Q_ARG(int, 0));
 }
 
+/// <summary>
+/// Set various parameters in the renderer and current ember with the values
+/// specified in the widgets and compute the amount of memory required to render.
+/// This includes the memory needed for the final output image.
+/// </summary>
+/// <returns>If successful, memory required in bytes, else zero.</returns>
+template <typename T>
+size_t FinalRenderEmberController<T>::SyncAndComputeMemory()
+{
+	if (m_Renderer.get())
+	{
+		bool b = false;
+		unsigned int channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;//4 channels for Png, else 3.
+
+		SyncGuiToEmbers();
+		m_Renderer->SetEmber(*m_Ember);
+		m_Renderer->CreateSpatialFilter(b);
+		m_Renderer->CreateTemporalFilter(b);
+		m_Renderer->NumChannels(channels);
+		m_Renderer->ComputeBounds();
+		CancelPreviewRender();
+		m_FinalPreviewRenderFunc();
+		return m_Renderer->MemoryRequired(m_FinalRenderDialog->Strips(), true);
+	}
+
+	return 0;
+}
+
+/// <summary>
+/// Compose a final output path given a base name.
+/// This includes the base path, the prefix, the name, the suffix and the
+/// extension.
+/// </summary>
+/// <param name="name">The base filename to compose a full path for</param>
+/// <returns>The fully composed path</returns>
+template <typename T>
+QString FinalRenderEmberController<T>::ComposePath(const QString& name)
+{
+	QString path = MakeEnd(m_Settings->SaveFolder(), '/');//Base path.
+	QString full = path + m_FinalRenderDialog->Prefix() + name + m_FinalRenderDialog->Suffix() + "." + m_FinalRenderDialog->Ext();
+
+	return full;
+}
+
+/// <summary>
+/// Non-virtual functions declared in FinalRenderEmberController<T>.
+/// </summary>
+
+/// <summary>
+/// Stop the preview renderer.
+/// This is meant to only be called programatically and never by the user.
+/// </summary>
 template <typename T>
 void FinalRenderEmberController<T>::CancelPreviewRender()
 {
@@ -535,22 +622,104 @@ void FinalRenderEmberController<T>::CancelPreviewRender()
 }
 
 /// <summary>
+/// Action to take when rendering an image completes.
+/// </summary>
+/// <param name="ember">The ember currently being rendered</param>
+template<typename T>
+void FinalRenderEmberController<T>::RenderComplete(Ember<T>& ember)
+{
+	string renderTimeString = m_RenderTimer.Format(m_RenderTimer.Toc()), totalTimeString;
+	QString status, filename = ComposePath(EmberFile<T>::UniqueFilename(QString::fromStdString(ember.m_Name)));
+	QString itersString = ToString(m_Stats.m_Iters);
+	QString itersPerSecString = ToString(size_t(m_Stats.m_Iters / (m_Stats.m_IterMs / 1000.0)));
+
+	//Save whatever options were specified on the GUI to the settings.
+	m_Settings->FinalEarlyClip(m_GuiState.m_EarlyClip);
+	m_Settings->FinalYAxisUp(m_GuiState.m_YAxisUp);
+	m_Settings->FinalTransparency(m_GuiState.m_Transparency);
+	m_Settings->FinalOpenCL(m_GuiState.m_OpenCL);
+	m_Settings->FinalDouble(m_GuiState.m_Double);
+	m_Settings->FinalPlatformIndex(m_GuiState.m_PlatformIndex);
+	m_Settings->FinalDeviceIndex(m_GuiState.m_DeviceIndex);
+	m_Settings->FinalSaveXml(m_GuiState.m_SaveXml);
+	m_Settings->FinalDoAll(m_GuiState.m_DoAll);
+	m_Settings->FinalDoSequence(m_GuiState.m_DoSequence);
+	m_Settings->FinalKeepAspect(m_GuiState.m_KeepAspect);
+	m_Settings->FinalScale(m_GuiState.m_Scale);
+	m_Settings->FinalExt(m_GuiState.m_Ext);
+	m_Settings->FinalThreadCount(m_GuiState.m_ThreadCount);
+	m_Settings->FinalQuality(m_GuiState.m_Quality);
+	m_Settings->FinalTemporalSamples(m_GuiState.m_TemporalSamples);
+	m_Settings->FinalSupersample(m_GuiState.m_Supersample);
+	m_Settings->FinalStrips(m_GuiState.m_Strips);
+	SaveCurrentRender(filename, false);//Don't pull from the card, the rendering process already did it.
+
+	if (m_GuiState.m_SaveXml)
+	{
+		QFileInfo xmlFileInfo(filename);//Create another one in case it was modified for batch rendering.
+		QString newPath = xmlFileInfo.absolutePath() + '/' + xmlFileInfo.completeBaseName() + ".flame";
+		xmlDocPtr tempEdit = ember.m_Edits;
+
+		ember.m_Edits = m_XmlWriter.CreateNewEditdoc(&ember, NULL, "edit", m_Settings->Nick().toStdString(), m_Settings->Url().toStdString(), m_Settings->Id().toStdString(), "", 0, 0);
+		m_XmlWriter.Save(newPath.toStdString().c_str(), ember, 0, true, false, true);//Note that the ember passed is used, rather than m_Ember because it's what was actually rendered.
+
+		if (tempEdit != NULL)
+			xmlFreeDoc(tempEdit);
+	}
+
+	m_FinishedImageCount++;
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));//Just to be safe.
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderAccumProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, 100));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTotalProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, int(((float)m_FinishedImageCount / (float)m_ImageCount) * 100)));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderImageCountLabel, "setText", Qt::QueuedConnection, Q_ARG(const QString&, ToString(m_FinishedImageCount) + " / " + ToString(m_ImageCount)));
+
+	status = "Pure render time: " + QString::fromStdString(renderTimeString);
+	Output(status);
+
+	totalTimeString = m_RenderTimer.Format(m_RenderTimer.Toc());
+	status = "Total time: " + QString::fromStdString(totalTimeString) + "\nTotal iters: " + itersString + "\nIters/second: " + itersPerSecString + "\n";
+	Output(status);
+	QMetaObject::invokeMethod(m_FinalRenderDialog, "MoveCursorToEnd", Qt::QueuedConnection);
+
+	if (m_FinishedImageCount != m_ImageCount)
+	{
+		ResetProgress(false);
+	}
+
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTextOutput, "update", Qt::QueuedConnection);
+}
+
+/// <summary>
 /// Copy widget values to the ember passed in.
 /// </summary>
 /// <param name="ember">The ember whose values will be modified</param>
+/// <param name="widthOverride">Width override to use instead of scaling the original width</param>
+/// <param name="heightOverride">Height override to use instead of scaling the original height</param>
 template <typename T>
-void FinalRenderEmberController<T>::Sync(Ember<T>& ember)
+void FinalRenderEmberController<T>::SyncGuiToEmber(Ember<T>& ember, size_t widthOverride, size_t heightOverride)
 {
-	int w = m_FinalRender->m_WidthSpin->value();
-	int h = m_FinalRender->m_HeightSpin->value();
+	size_t w;
+	size_t h;
 
-	ember.m_FinalRasW = m_OriginalEmber.m_OrigFinalRasW;//Scale is always in terms of the original dimensions of the ember in the editor.
-	ember.m_FinalRasH = m_OriginalEmber.m_OrigFinalRasH;
-	ember.m_PixelsPerUnit = m_OriginalEmber.m_PixelsPerUnit;
-	ember.SetSizeAndAdjustScale(w, h, false, m_FinalRender->Scale());
-	ember.m_Quality = m_FinalRender->m_QualitySpin->value();
-	ember.m_Supersample = m_FinalRender->m_SupersampleSpin->value();
+	if (widthOverride && heightOverride)
+	{
+		w = widthOverride;
+		h = heightOverride;
+	}
+	else
+	{
+		double wScale = m_FinalRenderDialog->m_WidthScaleSpin->value();
+		double hScale = m_FinalRenderDialog->m_HeightScaleSpin->value();
 
-	if (m_FinalRender->ui.FinalRenderDoSequenceCheckBox->isChecked())
-		ember.m_TemporalSamples = m_FinalRender->m_TemporalSamplesSpin->value();
+		w = ember.m_OrigFinalRasW * wScale;
+		h = ember.m_OrigFinalRasH * hScale;
+	}
+
+	w = max<size_t>(w, 10);
+	h = max<size_t>(h, 10);
+
+	ember.SetSizeAndAdjustScale(w, h, false, m_FinalRenderDialog->Scale());
+	ember.m_Quality = m_FinalRenderDialog->m_QualitySpin->value();
+	ember.m_Supersample = m_FinalRenderDialog->m_SupersampleSpin->value();
 }

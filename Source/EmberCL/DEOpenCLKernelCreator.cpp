@@ -85,7 +85,7 @@ template <typename T> string DEOpenCLKernelCreator<T>::LogScaleAssignDEEntryPoin
 /// <param name="filterWidth">Filter width</param>
 /// <returns>The kernel source</returns>
 template <typename T>
-string DEOpenCLKernelCreator<T>::GaussianDEKernel(unsigned int ss, unsigned int filterWidth)
+string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, unsigned int filterWidth)
 {
 	if ((typeid(T) == typeid(double)) || (filterWidth > MaxDEFilterSize()))//Type double does not use cache.
 	{
@@ -120,7 +120,7 @@ string DEOpenCLKernelCreator<T>::GaussianDEKernel(unsigned int ss, unsigned int 
 /// <param name="filterWidth">Filter width</param>
 /// <returns>The name of the density estimation filtering entry point kernel function</returns>
 template <typename T>
-string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(unsigned int ss, unsigned int filterWidth)
+string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(size_t ss, unsigned int filterWidth)
 {
 	if ((typeid(T) == typeid(double)) || (filterWidth > MaxDEFilterSize()))//Type double does not use cache.
 	{
@@ -292,7 +292,7 @@ string DEOpenCLKernelCreator<T>::CreateLogScaleAssignDEKernelString()
 /// <param name="ss">The supersample being used</param>
 /// <returns>The kernel string</returns>
 template <typename T>
-string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(unsigned int ss)
+string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 {
 	bool doSS = ss > 1;
 	bool doScf = !(ss & 1);
@@ -552,7 +552,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(unsigned int ss)
 /// <param name="ss">The supersample being used</param>
 /// <returns>The kernel string</returns>
 template <typename T>
-string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(unsigned int ss)
+string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 {
 	bool doSS = ss > 1;
 	bool doScf = !(ss & 1);

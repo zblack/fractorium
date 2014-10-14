@@ -115,7 +115,7 @@ public:
 	/// Add string to report.
 	/// </summary>
 	/// <param name="s">The string to add</param>
-	virtual void AddToReport(string s) { m_ErrorReport.push_back(s); }
+	virtual void AddToReport(const string& s) { m_ErrorReport.push_back(s); }
 
 	/// <summary>
 	/// Add a vector of strings to report.
@@ -138,7 +138,7 @@ public:
 	{
 		stringstream ss;
 
-		ForEach(errorReport, [&](string s) { ss << s << endl; });
+		ForEach(errorReport, [&](const string& s) { ss << s << endl; });
 
 		return ss.str();
 	}
@@ -218,7 +218,28 @@ static void CopyVec(vector<T>& dest, const vector<U>& source)
 	dest.resize(source.size());
 
 	for (size_t i = 0; i < source.size(); i++)
-		dest[i] = T(source[i]);//Valid assignment operator between T and U types must be defined somewhere.
+		dest[i] = (T)source[i];//Valid assignment operator between T and U types must be defined somewhere.
+}
+
+/// <summary>
+/// Clear dest and copy all of the elements of vector source with elements of type U to the vector
+/// dest with elements of type T.
+/// Call a function on each element after it's been copied.
+/// </summary>
+/// <param name="dest">The vector of type T to copy to</param>
+/// <param name="source">The vector of type U to copy from</param>
+/// <param name="perElementOperation">A function to call on each element after it's copied</param>
+template <typename T, typename U>
+static void CopyVec(vector<T>& dest, const vector<U>& source, std::function<void(T& t)> perElementOperation)
+{
+	dest.clear();
+	dest.resize(source.size());
+
+	for (size_t i = 0; i < source.size(); i++)
+	{
+		dest[i] = (T)source[i];//Valid assignment operator between T and U types must be defined somewhere.
+		perElementOperation(dest[i]);
+	}
 }
 
 /// <summary>
@@ -244,6 +265,18 @@ static void ClearVec(vector<T*>& vec, bool arrayDelete = false)
 	}
 
 	vec.clear();
+}
+
+/// <summary>
+/// Thin wrapper around passing a vector to memset() to relieve
+/// the caller of having to pass the size.
+/// </summary>
+/// <param name="vec">The vector to memset</param>
+/// <param name="val">The value to set each element to, default 0.</param>
+template<typename T>
+static inline void Memset(vector<T>& vec, int val = 0)
+{
+	memset((void*)vec.data(), val, vec.size() * sizeof(vec[0]));
 }
 
 /// <summary>
@@ -761,7 +794,7 @@ static string ToUpper(const string& str)
 /// <param name="str">The string to trim</param>
 /// <param name="ch">The character to trim. Default: space.</param>
 /// <returns>The trimmed string</returns>
-static string Trim(string& str, char ch = ' ')
+static string Trim(const string& str, char ch = ' ')
 {
 	string ret;
 

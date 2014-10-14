@@ -30,15 +30,14 @@
 #define FINALDOSEQUENCE	     "finalrender/dosequence"
 #define FINALKEEPASPECT		 "finalrender/keepaspect"
 #define FINALSCALE			 "finalrender/scale"
-#define FINALDOALLEXT	     "finalrender/doallext"
+#define FINALEXT			 "finalrender/ext"
 #define FINALPLATFORMINDEX   "finalrender/platformindex"
 #define FINALDEVICEINDEX     "finalrender/deviceindex"
 #define FINALTHREADCOUNT     "finalrender/threadcount"
-#define FINALWIDTH		     "finalrender/width"
-#define FINALHEIGHT		     "finalrender/height"
 #define FINALQUALITY	     "finalrender/quality"
 #define FINALTEMPORALSAMPLES "finalrender/temporalsamples"
 #define FINALSUPERSAMPLE     "finalrender/supersample"
+#define FINALSTRIPS		     "finalrender/strips"
 
 #define XMLWIDTH			 "xml/width"
 #define XMLHEIGHT			 "xml/height"
@@ -139,8 +138,8 @@ public:
 	unsigned int FinalScale();
 	void FinalScale(unsigned int i);
 	
-	QString FinalDoAllExt();
-	void FinalDoAllExt(QString s);
+	QString FinalExt();
+	void FinalExt(const QString& s);
 
 	unsigned int FinalPlatformIndex();
 	void FinalPlatformIndex(unsigned int b);
@@ -151,12 +150,6 @@ public:
 	unsigned int FinalThreadCount();
 	void FinalThreadCount(unsigned int b);
 
-	unsigned int FinalWidth();
-	void FinalWidth(unsigned int i);
-
-	unsigned int FinalHeight();
-	void FinalHeight(unsigned int i);
-
 	unsigned int FinalQuality();
 	void FinalQuality(unsigned int i);
 
@@ -166,11 +159,8 @@ public:
 	unsigned int FinalSupersample();
 	void FinalSupersample(unsigned int i);
 
-	unsigned int XmlWidth();
-	void XmlWidth(unsigned int i);
-
-	unsigned int XmlHeight();
-	void XmlHeight(unsigned int i);
+	unsigned int FinalStrips();
+	void FinalStrips(unsigned int i);
 
 	unsigned int XmlTemporalSamples();
 	void XmlTemporalSamples(unsigned int i);
@@ -182,29 +172,29 @@ public:
 	void XmlSupersample(unsigned int i);
 
 	QString OpenFolder();
-	void OpenFolder(QString s);
+	void OpenFolder(const QString& s);
 
 	QString SaveFolder();
-	void SaveFolder(QString s);
+	void SaveFolder(const QString& s);
 
 	QString OpenXmlExt();
-	void OpenXmlExt(QString s);
+	void OpenXmlExt(const QString& s);
 
 	QString SaveXmlExt();
-	void SaveXmlExt(QString s);
+	void SaveXmlExt(const QString& s);
 
 	QString OpenImageExt();
-	void OpenImageExt(QString s);
+	void OpenImageExt(const QString& s);
 
 	QString SaveImageExt();
-	void SaveImageExt(QString s);
+	void SaveImageExt(const QString& s);
 
 	QString Id();
-	void Id(QString s);
+	void Id(const QString& s);
 
 	QString Url();
-	void Url(QString s);
+	void Url(const QString& s);
 
 	QString Nick();
-	void Nick(QString s);
+	void Nick(const QString& s);
 };

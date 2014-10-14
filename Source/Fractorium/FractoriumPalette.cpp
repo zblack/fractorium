@@ -37,7 +37,7 @@ void Fractorium::InitPaletteUI()
 /// <param name="s">The full path to the palette file</param>
 /// <returns>True if successful, else false.</returns>
 template <typename T>
-bool FractoriumEmberController<T>::InitPaletteTable(string s)
+bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
 {
 	QTableWidget* paletteTable = m_Fractorium->ui.PaletteListTable;
 	QTableWidget* palettePreviewTable = m_Fractorium->ui.PalettePreviewTable;
@@ -93,7 +93,7 @@ bool FractoriumEmberController<T>::InitPaletteTable(string s)
 		vector<string> errors = m_PaletteList.ErrorReport();
 
 		m_Fractorium->ErrorReportToQTextEdit(errors, m_Fractorium->ui.InfoFileOpeningTextEdit);
-		QMessageBox::critical(m_Fractorium, "Palette Read Error", "Could not load palette file, all images will be black. See info tab for details.");
+		m_Fractorium->ShowCritical("Palette Read Error", "Could not load palette file, all images will be black. See info tab for details.");
 	}
 
 	return false;

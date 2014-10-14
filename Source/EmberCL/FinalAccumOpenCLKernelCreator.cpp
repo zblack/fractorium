@@ -63,7 +63,7 @@ template <typename T> string FinalAccumOpenCLKernelCreator<T>::FinalAccumLateCli
 /// <param name="transparency">True if channels equals 4 and using transparency, else false.</param>
 /// <returns>The name of the gamma correction entry point kernel function</returns>
 template <typename T>
-string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionEntryPoint(unsigned int channels, bool transparency)
+string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionEntryPoint(size_t channels, bool transparency)
 {
 	bool alphaCalc = ((channels > 3) && transparency);
 	return alphaCalc ? m_GammaCorrectionWithAlphaCalcEntryPoint : m_GammaCorrectionWithoutAlphaCalcEntryPoint;
@@ -76,7 +76,7 @@ string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionEntryPoint(unsigned int 
 /// <param name="transparency">True if channels equals 4 and using transparency, else false.</param>
 /// <returns>The gamma correction kernel string</returns>
 template <typename T>
-string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionKernel(unsigned int channels, bool transparency)
+string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionKernel(size_t channels, bool transparency)
 {
 	bool alphaCalc = ((channels > 3) && transparency);
 	return alphaCalc ? m_GammaCorrectionWithAlphaCalcKernel : m_GammaCorrectionWithoutAlphaCalcKernel;
@@ -92,7 +92,7 @@ string FinalAccumOpenCLKernelCreator<T>::GammaCorrectionKernel(unsigned int chan
 /// <param name="alphaScale">Storage for the alpha scale value used in the kernel. 255 if transparency is true, else 0.</param>
 /// <returns>The name of the final accumulation entry point kernel function</returns>
 template <typename T>
-string FinalAccumOpenCLKernelCreator<T>::FinalAccumEntryPoint(bool earlyClip, unsigned int channels, bool transparency, T& alphaBase, T& alphaScale)
+string FinalAccumOpenCLKernelCreator<T>::FinalAccumEntryPoint(bool earlyClip, size_t channels, bool transparency, T& alphaBase, T& alphaScale)
 {
 	bool alphaCalc = ((channels > 3) && transparency);
 	bool alphaAccum = channels > 3;
@@ -135,7 +135,7 @@ string FinalAccumOpenCLKernelCreator<T>::FinalAccumEntryPoint(bool earlyClip, un
 /// <param name="transparency">True if channels equals 4 and using transparency, else false.</param>
 /// <returns>The final accumulation kernel string</returns>
 template <typename T>
-string FinalAccumOpenCLKernelCreator<T>::FinalAccumKernel(bool earlyClip, unsigned int channels, bool transparency)
+string FinalAccumOpenCLKernelCreator<T>::FinalAccumKernel(bool earlyClip, size_t channels, bool transparency)
 {
 	bool alphaCalc = (channels > 3 && transparency);
 	bool alphaAccum = channels > 3;
@@ -172,7 +172,7 @@ string FinalAccumOpenCLKernelCreator<T>::FinalAccumKernel(bool earlyClip, unsign
 /// <param name="transparency">True if channels equals 4 and using transparency, else false.</param>
 /// <returns>The final accumulation kernel string</returns>
 template <typename T>
-string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool earlyClip, unsigned int channels, bool transparency)
+string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool earlyClip, size_t channels, bool transparency)
 {
 	return CreateFinalAccumKernelString(earlyClip, (channels > 3 && transparency), channels > 3);
 }

@@ -61,7 +61,7 @@ public:
 	/// </summary>
 	/// <param name="palettePath">The full path and filename of the palette file</param>
 	/// <param name="renderer">A pre-constructed renderer to use. The caller should not delete this.</param>
-	SheepTools(string palettePath, Renderer<T, bucketT>* renderer)
+	SheepTools(const string& palettePath, Renderer<T, bucketT>* renderer)
 	{
 		Timing t;
 
@@ -113,10 +113,10 @@ public:
 	/// <param name="ember">The ember whose xforms will be truncated</param>
 	/// <param name="maxVars">The maximum number of variations each xform can have</param>
 	/// <returns>A string describing what was done</returns>
-	string TruncateVariations(Ember<T>& ember, unsigned int maxVars)
+	string TruncateVariations(Ember<T>& ember, size_t maxVars)
 	{
-		int smallest;
-		unsigned int i, j, numVars;
+		intmax_t smallest;
+		size_t i, j, numVars;
 		T sv = 0;
 		ostringstream os;
 
@@ -188,7 +188,8 @@ public:
 	/// <returns>A string describing what was done</returns>
 	string Mutate(Ember<T>& ember, eMutateMode mode, vector<eVariationId>& useVars, int sym, T speed)
 	{
-		unsigned int i, j, k, x, done, modXform;
+		bool done = false;
+		size_t modXform;
 		char ministr[32];
 		T randSelect;
 		ostringstream os;
@@ -226,14 +227,14 @@ public:
 				//Create a random flame, and use the variations to replace those in the original.
 				Random(mutation, useVars, sym, ember.TotalXformCount());
 
-				for (i = 0; i < ember.TotalXformCount(); i++)
+				for (size_t i = 0; i < ember.TotalXformCount(); i++)
 				{
 					Xform<T>* xform1 = ember.GetTotalXform(i);
 					Xform<T>* xform2 = mutation.GetTotalXform(i);
 
 					if (xform1 && xform2)
 					{
-						for (j = 0; j < xform1->TotalVariationCount(); j++)
+						for (size_t j = 0; j < xform1->TotalVariationCount(); j++)
 						{
 							Variation<T>* var1 = xform1->GetVariation(j);
 							Variation<T>* var2 = xform2->GetVariationById(var1->VariationId());
@@ -242,10 +243,10 @@ public:
 							{
 								xform1->ClearAndDeleteVariations();
 
-								for (k = 0; k < xform2->TotalVariationCount(); k++)
+								for (size_t k = 0; k < xform2->TotalVariationCount(); k++)
 									xform1->AddVariation(xform2->GetVariation(k)->Copy());
 
-								done = 1;
+								done = true;
 							}
 						}
 					}
@@ -271,8 +272,8 @@ public:
 			}
 			else
 			{
-				for (i = 0; i < 2; i++)
-					for (j = 0; j < 3; j++)
+				for (glm::length_t i = 0; i < 2; i++)
+					for (glm::length_t j = 0; j < 3; j++)
 						xform1->m_Affine.m_Mat[i][j] = xform2->m_Affine.m_Mat[i][j];
 			}
 		}
@@ -283,13 +284,13 @@ public:
 		}
 		else if (mode == MUTATE_POST_XFORMS)
 		{
+			bool same = (m_Rand.Rand() & 3) > 0;//25% chance of using the same post for all of them.
 			unsigned int b = 1 + m_Rand.Rand() % 6;
-			unsigned int same = m_Rand.Rand() & 3;//25% chance of using the same post for all of them.
 
-			sprintf_s(ministr, 32, "(%d%s)", b, (same > 0) ? " same" : "");
+			sprintf_s(ministr, 32, "(%d%s)", b, same ? " same" : "");
 			os << "mutate post xforms " << ministr;
 
-			for (i = 0; i < ember.TotalXformCount(); i++)
+			for (size_t i = 0; i < ember.TotalXformCount(); i++)
 			{
 				int copy = (i > 0) && same;
 				Xform<T>* xform = ember.GetTotalXform(i);
@@ -405,7 +406,7 @@ public:
 		}
 		else if (mode == MUTATE_DELETE_XFORM)
 		{
-			unsigned int nx = m_Rand.Rand() % ember.TotalXformCount();
+			size_t nx = m_Rand.Rand() % ember.TotalXformCount();
 			os << "mutate delete xform " << nx;
 
 			if (ember.TotalXformCount() > 1)
@@ -417,13 +418,13 @@ public:
 			Random(mutation, useVars, sym, ember.TotalXformCount());
 
 			//Change all the coefs by a fraction of the random.
-			for (x = 0; x < ember.TotalXformCount(); x++)
+			for (size_t x = 0; x < ember.TotalXformCount(); x++)
 			{
 				Xform<T>* xform1 = ember.GetTotalXform(x);
 				Xform<T>* xform2 = mutation.GetTotalXform(x);
 
-				for (i = 0; i < 2; i++)
-					for (j = 0; j < 3; j++)
+				for (glm::length_t i = 0; i < 2; i++)
+					for (glm::length_t j = 0; j < 3; j++)
 						xform1->m_Affine.m_Mat[i][j] += speed * xform2->m_Affine.m_Mat[i][j];
 
 				//Eventually, mutate the parametric variation parameters here.
@@ -443,7 +444,8 @@ public:
 	/// <returns>A string describing what was done</returns>
 	string Cross(Ember<T>& ember0, Ember<T>& ember1, Ember<T>& emberOut, int crossMode)
 	{
-		unsigned int i, rb;
+		unsigned int rb;
+		size_t i;
 		T t;
 		ostringstream os;
 		char ministr[32];
@@ -579,7 +581,8 @@ public:
 		if (m_Rand.Frand01<T>() < T(0.4))
 		{
 			//Select the starting parent.
-			unsigned int ci, startParent = m_Rand.RandBit();
+			size_t ci;
+			unsigned int startParent = m_Rand.RandBit();
 
 			os << " cmap_cross " << startParent << ":";
 
@@ -617,14 +620,15 @@ public:
 	/// <param name="useVars">A list of variations to use. If empty, any variation can be used.</param>
 	/// <param name="sym">The symmetry type to use from -2 to 2</param>
 	/// <param name="specXforms">The number of xforms to use. If 0, a quasi random count is used.</param>
-	void Random(Ember<T>& ember, vector<eVariationId>& useVars, int sym, int specXforms)
+	void Random(Ember<T>& ember, vector<eVariationId>& useVars, int sym, size_t specXforms)
 	{
 		bool postid, addfinal = false;
 		int var, samed, multid, samepost;
-		unsigned int i, j, k, n, varCount = (unsigned int)m_VariationList.Size();
+		glm::length_t i, j, k, n;
+		size_t varCount = m_VariationList.Size();
 		Palette<T> palette;
 
-		static unsigned int xformDistrib[] =
+		static size_t xformDistrib[] =
 		{
 			2, 2, 2, 2,
 			3, 3, 3, 3,
@@ -853,8 +857,8 @@ public:
 	T TryColors(Ember<T>& ember, int colorResolution)
 	{
 		unsigned char* p;
-		unsigned int i, hits = 0, res = colorResolution;
-		unsigned int pixTotal, res3 = res * res * res;
+		size_t i, hits = 0, res = colorResolution;
+		size_t pixTotal, res3 = res * res * res;
 		T scalar;
 		Ember<T> adjustedEmber = ember;
 
@@ -865,8 +869,8 @@ public:
 		//Scale the image so that the total number of pixels is ~10,000.
 		pixTotal = ember.m_FinalRasW * ember.m_FinalRasH;
 		scalar = sqrt(T(10000) / pixTotal);
-		adjustedEmber.m_FinalRasW = (unsigned int)(ember.m_FinalRasW  * scalar);
-		adjustedEmber.m_FinalRasH = (unsigned int)(ember.m_FinalRasH  * scalar);
+		adjustedEmber.m_FinalRasW = (size_t)(ember.m_FinalRasW  * scalar);
+		adjustedEmber.m_FinalRasH = (size_t)(ember.m_FinalRasH  * scalar);
 		adjustedEmber.m_PixelsPerUnit *= scalar;
 		adjustedEmber.m_Passes = 1;
 		adjustedEmber.m_TemporalSamples = 1;
@@ -887,6 +891,7 @@ public:
 
 		m_Hist.resize(res3);
 		memset(m_Hist.data(), 0, res3);
+		
 		p = m_FinalImage.data();
 
 		for (i = 0; i < m_Renderer->FinalDimensions(); i++)
@@ -913,7 +918,7 @@ public:
 	/// <param name="changePalette">Change palette if true, else don't</param>
 	void ChangeColors(Ember<T>& ember, bool changePalette)
 	{
-		unsigned int i;
+		size_t i;
 		Xform<T>* xform0;
 		Xform<T>* xform1;
 
@@ -966,13 +971,13 @@ public:
 	/// <param name="ember">The ember to get a random xform from</param>
 	/// <param name="excluded">Optionally exclude an xform. Pass -1 to include all for consideration.</param>
 	/// <returns>The random xform if successful, else nullptr.</returns>
-	Xform<T>* RandomXform(Ember<T>& ember, int excluded)
+	Xform<T>* RandomXform(Ember<T>& ember, intmax_t excluded)
 	{
-		int ntries = 0;
+		size_t ntries = 0;
 
 		while (ntries++ < 100)
 		{
-			int i = m_Rand.Rand() % ember.TotalXformCount();
+			size_t i = m_Rand.Rand() % ember.TotalXformCount();
 
 			if (i != excluded)
 			{
@@ -1000,7 +1005,7 @@ public:
 		//Insert motion magic here :
 		//If there are motion elements, modify the contents of
 		//the result xforms before rotate is called.
-		for (unsigned int i = 0; i < ember.TotalXformCount(); i++)
+		for (size_t i = 0; i < ember.TotalXformCount(); i++)
 		{
 			Xform<T>* xform1 = ember.GetTotalXform(i);
 			Xform<T>* xform2 = rotated.GetTotalXform(i);
@@ -1024,7 +1029,7 @@ public:
 	/// <param name="seqFlag">True if embers points to the first or last ember in the entire sequence, else false.</param>
 	void Edge(Ember<T>* embers, Ember<T>& result, T blend, bool seqFlag)
 	{
-		unsigned int i, si;
+		size_t i, si;
 		Ember<T> spun[2], prealign[2];
 
 		//Insert motion magic here :
@@ -1160,7 +1165,7 @@ public:
 	void ApplyTemplate(Ember<T>& ember, Ember<T>& templ)
 	{
 		//Check for invalid values - only replace those with valid ones.
-		for (unsigned int i = 0; i < 3; i++)
+		for (glm::length_t i = 0; i < 3; i++)
 			if (templ.m_Background[i] >= 0)
 				ember.m_Background[i] = templ.m_Background[i];
 
@@ -1280,9 +1285,9 @@ public:
 	/// <param name="bmin">The bmin[0] and bmin[1] will be the minimum x and y values.</param>
 	/// <param name="bmax">The bmax[0] and bmax[1] will be the maximum x and y values.</param>
 	/// <returns>The number of iterations ran</returns>
-	uint64_t EstimateBoundingBox(Ember<T>& ember, T eps, unsigned int samples, T* bmin, T* bmax)
+	size_t EstimateBoundingBox(Ember<T>& ember, T eps, size_t samples, T* bmin, T* bmax)
 	{
-		unsigned int i, lowTarget, highTarget;
+		size_t i, lowTarget, highTarget;
 		T min[2], max[2];
 
 		if (ember.XaosPresent())
@@ -1293,7 +1298,7 @@ public:
 		m_Iterator->InitDistributions(ember);
 		m_Samples.resize(samples);
 
-		uint64_t bv = m_Iterator->Iterate(ember, samples, 20, m_Samples.data(), m_Rand);//Use a special fuse of 20, all other calls to this will use 15, or 100.
+		size_t bv = m_Iterator->Iterate(ember, samples, 20, m_Samples.data(), m_Rand);//Use a special fuse of 20, all other calls to this will use 15, or 100.
 
 		if (bv / T(samples) > eps)
 			eps = 3 * bv / T(samples);
@@ -1301,7 +1306,7 @@ public:
 		if (eps > T(0.3))
 			eps = T(0.3);
 
-		lowTarget = (int)(samples * eps);
+		lowTarget = (size_t)(samples * eps);
 		highTarget = samples - lowTarget;
 
 		min[0] = min[1] =  1e10;

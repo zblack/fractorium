@@ -1336,8 +1336,8 @@ public:
 	eVariationAssignType AssignType() const { return m_AssignType; }
 	const Xform<T>* ParentXform() const { return m_Xform; }
 	void ParentXform(Xform<T>* xform) { m_Xform = xform; }
-	int IndexInXform() { return m_Xform ? m_Xform->GetVariationIndex(this) : -1; }
-	int XformIndexInEmber() { return m_Xform ? m_Xform->IndexInParentEmber() : -1; }
+	intmax_t IndexInXform() { return m_Xform ? m_Xform->GetVariationIndex(this) : -1; }
+	intmax_t XformIndexInEmber() { return m_Xform ? m_Xform->IndexInParentEmber() : -1; }
 
 	T m_Weight;//The weight of the variation.
 
@@ -1822,7 +1822,7 @@ public:
 	/// Accessors.
 	/// </summary>
 	ParamWithName<T>* Params() { return &m_Params[0]; }
-	unsigned int ParamCount() { return (unsigned int)m_Params.size(); }
+	size_t ParamCount() { return m_Params.size(); }
 	const vector<ParamWithName<T>>& ParamsVec() const { return m_Params; }
 
 protected:

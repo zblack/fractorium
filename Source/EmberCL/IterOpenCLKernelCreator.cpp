@@ -46,7 +46,7 @@ template <typename T>
 string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, string& parVarDefines, bool lockAccum, bool doAccum)
 {
 	bool doublePrecision = typeid(T) == typeid(double);
-	unsigned int i, v, varIndex, varCount, totalXformCount = ember.TotalXformCount();
+	size_t i, v, varIndex, varCount, totalXformCount = ember.TotalXformCount();
 	ostringstream kernelIterBody, xformFuncs, os;
 	vector<Variation<T>*> variations;
 
@@ -57,7 +57,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 	for (i = 0; i < totalXformCount; i++)
 	{
 		Xform<T>* xform = ember.GetTotalXform(i);
-		unsigned int totalVarCount = xform->TotalVariationCount();
+		size_t totalVarCount = xform->TotalVariationCount();
 		bool needPrecalcSumSquares = false;
 		bool needPrecalcSqrtSumSquares = false;
 		bool needPrecalcAngles = false;
@@ -395,7 +395,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		
 		if (ember.UseFinalXform())
 		{
-			unsigned int finalIndex = ember.TotalXformCount() - 1;
+			size_t finalIndex = ember.TotalXformCount() - 1;
 
 			//CPU takes an extra step here to preserve the opacity of the randomly selected xform, rather than the final xform's opacity.
 			//The same thing takes place here automatically because secondPoint.m_LastXfUsed is used below to retrieve the opacity when accumulating.
@@ -564,7 +564,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 ///
 /// The variations the use these #defines by first looking up the index of the
 /// xform they belong to in the parent ember and generating the OpenCL string based on that
-/// in their overriden OpenCLString() functions.
+/// in their overridden OpenCLString() functions.
 /// Template argument expected to be float or double.
 /// </summary>
 /// <param name="ember">The ember to create the values from</param>
@@ -574,7 +574,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 template <typename T>
 void IterOpenCLKernelCreator<T>::ParVarIndexDefines(Ember<T>& ember, pair<string, vector<T>>& params, bool doVals, bool doString)
 {
-	unsigned int i, j, k, size = 0, xformCount = ember.TotalXformCount();
+	size_t i, j, k, size = 0, xformCount = ember.TotalXformCount();
 	Xform<T>* xform;
 	ostringstream os;
 
@@ -585,7 +585,7 @@ void IterOpenCLKernelCreator<T>::ParVarIndexDefines(Ember<T>& ember, pair<string
 	{
 		if (xform = ember.GetTotalXform(i))
 		{
-			unsigned int varCount = xform->TotalVariationCount();
+			size_t varCount = xform->TotalVariationCount();
 
 			for (j = 0; j < varCount; j++)
 			{
@@ -632,7 +632,7 @@ void IterOpenCLKernelCreator<T>::ParVarIndexDefines(Ember<T>& ember, pair<string
 template <typename T>
 bool IterOpenCLKernelCreator<T>::IsBuildRequired(Ember<T>& ember1, Ember<T>& ember2)
 {
-	unsigned int i, j, xformCount = ember1.TotalXformCount();
+	size_t i, j, xformCount = ember1.TotalXformCount();
 	
 	if (xformCount != ember2.TotalXformCount())
 		return true;
@@ -653,7 +653,7 @@ bool IterOpenCLKernelCreator<T>::IsBuildRequired(Ember<T>& ember1, Ember<T>& emb
 	{
 		Xform<T>* xform1 = ember1.GetTotalXform(i);
 		Xform<T>* xform2 = ember2.GetTotalXform(i);
-		unsigned int varCount = xform1->TotalVariationCount();
+		size_t varCount = xform1->TotalVariationCount();
 
 		if (xform1->HasPost() != xform2->HasPost())
 			return true;
@@ -706,7 +706,7 @@ string IterOpenCLKernelCreator<T>::CreateZeroizeKernelString()
 template <typename T>
 string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 {
-	unsigned int projBits = ember.ProjBits();
+	size_t projBits = ember.ProjBits();
 	ostringstream os;
 
 	if (projBits)

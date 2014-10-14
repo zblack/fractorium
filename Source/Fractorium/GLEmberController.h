@@ -60,7 +60,7 @@ public:
 	virtual void MouseRelease(QMouseEvent* e) { }
 	virtual void MouseMove(QMouseEvent* e) { }
 	virtual void Wheel(QWheelEvent* e) { }
-	virtual bool SyncSizes() { return false; }
+	virtual bool SizesMatch() { return false; }
 	virtual bool CheckForSizeMismatch(int w, int h) { return true; }
 	virtual void QueryMatrices(bool print) { }
 
@@ -86,16 +86,16 @@ class GLEmberController : public GLEmberControllerBase
 public:
 	GLEmberController(Fractorium* fractorium, GLWidget* glWidget, FractoriumEmberController<T>* controller);
 	virtual ~GLEmberController();
-	virtual void DrawImage();
-	virtual void DrawAffines(bool pre, bool post);
-	virtual void ClearWindow();
-	virtual void MousePress(QMouseEvent* e);
-	virtual void MouseRelease(QMouseEvent* e);
-	virtual void MouseMove(QMouseEvent* e);
-	virtual void Wheel(QWheelEvent* e);
-	virtual void QueryMatrices(bool print);
-	virtual bool SyncSizes();
-	virtual bool CheckForSizeMismatch(int w, int h);
+	virtual void DrawImage() override;
+	virtual void DrawAffines(bool pre, bool post) override;
+	virtual void ClearWindow() override;
+	virtual void MousePress(QMouseEvent* e) override;
+	virtual void MouseRelease(QMouseEvent* e) override;
+	virtual void MouseMove(QMouseEvent* e) override;
+	virtual void Wheel(QWheelEvent* e) override;
+	virtual void QueryMatrices(bool print) override;
+	virtual bool SizesMatch() override;
+	virtual bool CheckForSizeMismatch(int w, int h) override;
 
 	T CalcScale();
 	T CalcRotation();

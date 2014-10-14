@@ -40,7 +40,7 @@ public:
 	/// <param name="start">Whether a new file is to be started</param>
 	/// <param name="finish">Whether an existing file is to be ended</param>
 	/// <returns>True if successful, else false</returns>
-	bool Save(string filename, Ember<T>& ember, unsigned int printEditDepth, bool doEdits, bool intPalette, bool hexPalette, bool append = false, bool start = false, bool finish = false)
+	bool Save(const string& filename, Ember<T>& ember, size_t printEditDepth, bool doEdits, bool intPalette, bool hexPalette, bool append = false, bool start = false, bool finish = false)
 	{
 		vector<Ember<T>> vec;
 
@@ -61,7 +61,7 @@ public:
 	/// <param name="start">Whether a new file is to be started</param>
 	/// <param name="finish">Whether an existing file is to be ended</param>
 	/// <returns>True if successful, else false</returns>
-	bool Save(string filename, vector<Ember<T>>& embers, unsigned int printEditDepth, bool doEdits, bool intPalette, bool hexPalette, bool append = false, bool start = false, bool finish = false)
+	bool Save(const string& filename, vector<Ember<T>>& embers, size_t printEditDepth, bool doEdits, bool intPalette, bool hexPalette, bool append = false, bool start = false, bool finish = false)
 	{
 		bool b = false;
 		string temp;
@@ -124,9 +124,9 @@ public:
 	/// <param name="intPalette">If true use integers instead of floating point numbers when embedding a non-hex formatted palette, else use floating point numbers.</param>
 	/// <param name="hexPalette">If true, embed a hexadecimal palette instead of Xml Color tags, else use Xml color tags.</param>
 	/// <returns>The Xml string representation of the passed in ember</returns>
-	string ToString(Ember<T>& ember, string extraAttributes, unsigned int printEditDepth, bool doEdits, bool intPalette, bool hexPalette = true)
+	string ToString(Ember<T>& ember, string extraAttributes, size_t printEditDepth, bool doEdits, bool intPalette, bool hexPalette = true)
 	{
-		unsigned int i, j;
+		size_t i, j;
 		string s;
 		ostringstream os;
 		vector<Variation<T>*> variations;
@@ -144,7 +144,7 @@ public:
 			os << " zoom=\"" << ember.m_Zoom << "\"";
 
 		os << " rotate=\"" << ember.m_Rotate << "\"";
-		os << " supersample=\"" << max(1u, ember.m_Supersample) << "\"";
+		os << " supersample=\"" << max<size_t>(1, ember.m_Supersample) << "\"";
 		os << " filter=\"" << ember.m_SpatialFilterRadius << "\"";
 
 		os << " filter_shape=\"" << ToLower(SpatialFilterCreator<T>::ToString(ember.m_SpatialFilterType)) << "\"";
@@ -227,7 +227,7 @@ public:
 
 				for (j = 0; j < 8; j++)
 				{
-					int idx = 8 * i + j;
+					size_t idx = 8 * i + j;
 
 					os << hex << setw(2) << setfill('0') << (int)Rint(ember.m_Palette[idx][0] * 255);
 					os << hex << setw(2) << setfill('0') << (int)Rint(ember.m_Palette[idx][1] * 255);
@@ -295,13 +295,13 @@ public:
 	xmlDocPtr CreateNewEditdoc(Ember<T>* parent0, Ember<T>* parent1, string action, string nick, string url, string id, string comment, int sheepGen = 0, int sheepId = 0)
 	{
 		char timeString[128];
-		char buffer[128];
-		char commentString[128];
 		time_t myTime;
+		string s;
 		xmlDocPtr commentDoc = nullptr;
 		xmlDocPtr doc = xmlNewDoc(XC "1.0");
 		xmlNodePtr rootNode = nullptr, node = nullptr, nodeCopy = nullptr;
 		xmlNodePtr rootComment = nullptr;
+		ostringstream os;
 
 		//Create the root node, called "edit".
 		rootNode = xmlNewNode(nullptr, XC "edit");
@@ -342,25 +342,32 @@ public:
 			node = xmlNewChild(rootNode, nullptr, XC "sheep", nullptr);
 
 			//Create the sheep attributes.
-			sprintf_s(buffer, 128, "%d", sheepGen);
-			xmlNewProp(node, XC "generation", XC buffer);
+			os << sheepGen;
+			s = os.str();
+			xmlNewProp(node, XC "generation", XC s.c_str());
+			os.str("");
 
-			sprintf_s(buffer, 128, "%d", sheepId);
-			xmlNewProp(node, XC "id", XC buffer);
+			os << sheepId;
+			s = os.str();
+			xmlNewProp(node, XC "id", XC s.c_str());
+			os.str("");
 		}
 
 		//Check for the parents.
 		//If parent 0 not specified, this is a randomly generated genome.
 		if (parent0)
 		{
+			os << parent0->m_Index;
+			s = os.str();
+
 			if (parent0->m_Edits)
 			{
 				//Copy the node from the parent.
 				node = xmlDocGetRootElement(parent0->m_Edits);
 				nodeCopy = xmlCopyNode(node, 1);
 				AddFilenameWithoutAmpersand(nodeCopy, parent0->m_ParentFilename);
-				sprintf_s(buffer, 128, "%d", parent0->m_Index);
-				xmlNewProp(nodeCopy, XC "index", XC buffer);
+				
+				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
 				xmlAddChild(rootNode, nodeCopy);
 			}
 			else
@@ -368,21 +375,24 @@ public:
 				//Insert a (parent has no edit) message.
 				nodeCopy = xmlNewChild(rootNode, nullptr, XC "edit", nullptr);
 				AddFilenameWithoutAmpersand(nodeCopy, parent0->m_ParentFilename);
-				sprintf_s(buffer, 128, "%d", parent0->m_Index);
-				xmlNewProp(nodeCopy, XC "index", XC buffer);
+				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
 			}
+
+			os.str("");
 		}
 
 		if (parent1)
 		{
+			os << parent1->m_Index;
+			s = os.str();
+
 			if (parent1->m_Edits)
 			{
 				//Copy the node from the parent.
 				node = xmlDocGetRootElement(parent1->m_Edits);
 				nodeCopy = xmlCopyNode(node, 1);
 				AddFilenameWithoutAmpersand(nodeCopy, parent1->m_ParentFilename);
-				sprintf_s(buffer, 128, "%d", parent1->m_Index);
-				xmlNewProp(nodeCopy, XC "index", XC buffer);
+				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
 				xmlAddChild(rootNode, nodeCopy);
 			}
 			else
@@ -390,22 +400,25 @@ public:
 				//Insert a (parent has no edit) message.
 				nodeCopy = xmlNewChild(rootNode, nullptr, XC "edit",nullptr);
 				AddFilenameWithoutAmpersand(nodeCopy, parent1->m_ParentFilename);
-				sprintf_s(buffer, 128, "%d", parent1->m_Index);
-				xmlNewProp(nodeCopy, XC "index", XC buffer);
+				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
 			}
+
+			os.str("");
 		}
 
 		//Comment string:
 		//This one's hard, since the comment string must be treated as
-		//a valid XML document.  Create a new document using the comment
+		//a valid XML document. Create a new document using the comment
 		//string as the in-memory document, and then copy all children of
 		//the root node into the edit structure
 		//Parsing the comment string should be done once and then copied
 		//for each new edit doc, but that's for later.
 		if (comment != "")
 		{
-			sprintf_s(commentString, 128, "<comm>%s</comm>", comment.c_str());
-			commentDoc = xmlReadMemory(commentString, (int)strlen(commentString), "comment.env", nullptr, XML_PARSE_NONET);
+			os << "<comm>" << comment << "</comm>";
+			s = os.str();
+			commentDoc = xmlReadMemory(s.c_str(), (int)s.length(), "comment.env", nullptr, XML_PARSE_NONET);
+			os.str("");
 
 			//Check for errors.
 			if (commentDoc != nullptr)
@@ -429,7 +442,7 @@ public:
 			}
 		}
 
-		//Return the xml doc.
+		//Return the Xml doc.
 		return doc;
 	}
 
@@ -442,9 +455,9 @@ private:
 	/// <param name="isFinal">True if the xform is the final xform in the ember, else false.</param>
 	/// <param name="doMotion">If true, include motion elements in the Xml string, else omit.</param>
 	/// <returns>The Xml string representation of the passed in xform</returns>
-	string ToString(Xform<T>& xform, unsigned int xformCount, bool isFinal, bool doMotion)
+	string ToString(Xform<T>& xform, size_t xformCount, bool isFinal, bool doMotion)
 	{
-		unsigned int i, j;
+		size_t i, j;
 		ostringstream os;
 
 		if (doMotion)
@@ -561,13 +574,13 @@ private:
 	/// <param name="formatting">If true, include newlines and tabs, else don't.</param>
 	/// <param name="printEditDepth">How deep the edit depth goes</param>
 	/// <returns>The edit node Xml string</returns>
-	string ToString(xmlNodePtr editNode, unsigned int tabs, bool formatting, unsigned int printEditDepth)
+	string ToString(xmlNodePtr editNode, size_t tabs, bool formatting, size_t printEditDepth)
 	{
 		bool indentPrinted = false;
 		const char* tabString = "   ", *attStr;
 		const char* editString = "edit";
 		const char* sheepString = "sheep";
-		unsigned int ti;//, editOrSheep = 0;
+		size_t ti;//, editOrSheep = 0;
 		xmlAttrPtr attPtr = nullptr, curAtt = nullptr;
 		xmlNodePtr childPtr = nullptr, curChild = nullptr;
 		ostringstream os;

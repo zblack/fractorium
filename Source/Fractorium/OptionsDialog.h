@@ -46,8 +46,6 @@ private:
 
 	Ui::OptionsDialog ui;
 	OpenCLWrapper m_Wrapper;
-	SpinBox* m_XmlWidthSpin;
-	SpinBox* m_XmlHeightSpin;
 	SpinBox* m_XmlTemporalSamplesSpin;
 	SpinBox* m_XmlQualitySpin;
 	SpinBox* m_XmlSupersampleSpin;

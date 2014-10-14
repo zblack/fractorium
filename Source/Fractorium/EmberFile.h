@@ -77,6 +77,14 @@ public:
 	}
 
 	/// <summary>
+	/// Thin wrapper to get the size of the vector of embers.
+	/// </summary>
+	size_t Size()
+	{
+		return m_Embers.size();
+	}
+
+	/// <summary>
 	/// Ensure all ember names are unique.
 	/// </summary>
 	void MakeNamesUnique()
@@ -89,7 +97,7 @@ public:
 			{
 				if (i != j && m_Embers[i].m_Name == m_Embers[j].m_Name)
 				{
-					m_Embers[j].m_Name = m_Embers[j].m_Name + "_" + QString::number(++x).toStdString();
+					m_Embers[j].m_Name = m_Embers[j].m_Name + "_" + ToString(++x).toStdString();
 					j = 0;
 				}
 			}
@@ -109,7 +117,7 @@ public:
 	/// Ensures a given input filename is unique by appending a count to the end.
 	/// </summary>
 	/// <returns>The passed in name if it was unique, else a uniquely made name.</returns>
-	static QString UniqueFilename(QString& filename)
+	static QString UniqueFilename(const QString& filename)
 	{
 		if (!QFile::exists(filename))
 			return filename;
@@ -117,13 +125,13 @@ public:
 		int counter = 2;
 		QString newPath;
 		QFileInfo original(filename);
-		QString path = original.absolutePath() + QDir::separator();
+		QString path = original.absolutePath() + '/';
 		QString base = original.completeBaseName();
 		QString extension = original.suffix();
 		
 		do
 		{
-			newPath = path + base + "_" + QString::number(counter++) + "." + extension;		
+			newPath = path + base + "_" + ToString(counter++) + "." + extension;
 		}
 		while (QFile::exists(newPath));
 		
@@ -138,7 +146,7 @@ public:
 	/// <returns>The default ember name</returns>
 	static QString DefaultEmberName(unsigned int i)
 	{
-		return DefaultFilename() + "-" + QString::number(i);
+		return DefaultFilename() + "-" + ToString(i);
 	}
 
 	QString m_Filename;

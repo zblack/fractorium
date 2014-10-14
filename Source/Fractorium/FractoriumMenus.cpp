@@ -61,9 +61,10 @@ void FractoriumEmberController<T>::NewFlock(unsigned int count)
 	{
 		m_SheepTools->Random(ember);
 		ParamsToEmber(ember);
+		ember.m_Index = i;
 		ember.m_OrigFinalRasW = ember.m_FinalRasW;
 		ember.m_OrigFinalRasH = ember.m_FinalRasH;
-		ember.m_Name = m_EmberFile.m_Filename.toStdString() + "-" + QString::number(i + 1).toStdString();
+		ember.m_Name = m_EmberFile.m_Filename.toStdString() + "-" + ToString(i + 1).toStdString();
 		m_EmberFile.m_Embers.push_back(ember);
 	}
 
@@ -102,11 +103,12 @@ void FractoriumEmberController<T>::NewEmptyFlameInCurrentFile()
 	xform.m_ColorX = m_Rand.Frand01<T>();
 	ember.AddXform(xform);
 	ember.m_Palette = *m_PaletteList.GetPalette(-1);
-	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.m_Embers.size() + 1).toStdString();
+	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.Size() + 1).toStdString();
+	ember.m_Index = m_EmberFile.Size();
 	m_EmberFile.m_Embers.push_back(ember);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
 	m_EmberFile.MakeNamesUnique();
 	UpdateLibraryTree();
-	SetEmber(m_EmberFile.m_Embers.size() - 1);
+	SetEmber(m_EmberFile.Size() - 1);
 }
 
 void Fractorium::OnActionNewEmptyFlameInCurrentFile(bool checked) { m_Controller->NewEmptyFlameInCurrentFile(); }
@@ -126,11 +128,12 @@ void FractoriumEmberController<T>::NewRandomFlameInCurrentFile()
 	ParamsToEmber(ember);
 	ember.m_OrigFinalRasW = ember.m_FinalRasW;
 	ember.m_OrigFinalRasH = ember.m_FinalRasH;
-	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.m_Embers.size() + 1).toStdString();
+	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.Size() + 1).toStdString();
+	ember.m_Index = m_EmberFile.Size();
 	m_EmberFile.m_Embers.push_back(ember);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
 	m_EmberFile.MakeNamesUnique();
 	UpdateLibraryTree();
-	SetEmber(m_EmberFile.m_Embers.size() - 1);
+	SetEmber(m_EmberFile.Size() - 1);
 }
 
 void Fractorium::OnActionNewRandomFlameInCurrentFile(bool checked) { m_Controller->NewRandomFlameInCurrentFile(); }
@@ -146,11 +149,12 @@ void FractoriumEmberController<T>::CopyFlameInCurrentFile()
 	Ember<T> ember = m_Ember;
 
 	StopPreviewRender();
-	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.m_Embers.size() + 1).toStdString();
+	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.Size() + 1).toStdString();
+	ember.m_Index = m_EmberFile.Size();
 	m_EmberFile.m_Embers.push_back(ember);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
 	m_EmberFile.MakeNamesUnique();
 	UpdateLibraryTree();
-	SetEmber(m_EmberFile.m_Embers.size() - 1);
+	SetEmber(m_EmberFile.Size() - 1);
 }
 
 void Fractorium::OnActionCopyFlameInCurrentFile(bool checked) { m_Controller->CopyFlameInCurrentFile(); }
@@ -168,7 +172,7 @@ void Fractorium::OnActionCopyFlameInCurrentFile(bool checked) { m_Controller->Co
 /// <param name="filenames">A list of full paths and filenames</param>
 /// <param name="append">True to append the embers in the new files to the end of the currently open embers, false to clear and replace them</param>
 template <typename T>
-void FractoriumEmberController<T>::OpenAndPrepFiles(QStringList filenames, bool append)
+void FractoriumEmberController<T>::OpenAndPrepFiles(const QStringList& filenames, bool append)
 {
 	if (!filenames.empty())
 	{
@@ -176,25 +180,24 @@ void FractoriumEmberController<T>::OpenAndPrepFiles(QStringList filenames, bool 
 		EmberFile<T> emberFile;
 		XmlToEmber<T> parser;
 		vector<Ember<T>> embers;
-		unsigned int previousSize = append ? m_EmberFile.m_Embers.size() : 0;
+		unsigned int previousSize = append ? m_EmberFile.Size() : 0;
 
 		StopPreviewRender();
 		emberFile.m_Filename = filenames[0];
 
-		foreach (QString filename, filenames)
+		foreach(const QString& filename, filenames)
 		{
 			embers.clear();
 
 			if (parser.Parse(filename.toStdString().c_str(), embers) && !embers.empty())
 			{
-				//Disregard whatever size was specified in the file and fit it to the output window size.
 				for (i = 0; i < embers.size(); i++)
 				{
-					embers[i].SetSizeAndAdjustScale(m_Fractorium->ui.GLDisplay->width(), m_Fractorium->ui.GLDisplay->height(), true, SCALE_WIDTH);
+					ConstrainDimensions(embers[i]);//Do not exceed the max texture size.
 
 					//Also ensure it has a name.
 					if (embers[i].m_Name == "" || embers[i].m_Name == "No name")
-						embers[i].m_Name = QString::number(i).toStdString();
+						embers[i].m_Name = ToString(i).toStdString();
 
 					embers[i].m_Quality = m_Fractorium->m_QualitySpin->value();
 					embers[i].m_Supersample = m_Fractorium->m_SupersampleSpin->value();
@@ -208,7 +211,7 @@ void FractoriumEmberController<T>::OpenAndPrepFiles(QStringList filenames, bool 
 				vector<string> errors = parser.ErrorReport();
 
 				m_Fractorium->ErrorReportToQTextEdit(errors, m_Fractorium->ui.InfoFileOpeningTextEdit);
-				QMessageBox::critical(m_Fractorium, "Open Failed", "Could not open file, see info tab for details.");
+				m_Fractorium->ShowCritical("Open Failed", "Could not open file, see info tab for details.");
 			}
 		}
 		
@@ -223,7 +226,7 @@ void FractoriumEmberController<T>::OpenAndPrepFiles(QStringList filenames, bool 
 			m_EmberFile = emberFile;
 
 		//Resync indices and names.
-		for (i = 0; i < m_EmberFile.m_Embers.size(); i++)
+		for (i = 0; i < m_EmberFile.Size(); i++)
 			m_EmberFile.m_Embers[i].m_Index = i;
 
 		m_EmberFile.MakeNamesUnique();
@@ -261,7 +264,7 @@ void FractoriumEmberController<T>::SaveCurrentAsXml()
 	}
 	else
 	{
-		if (m_EmberFile.m_Embers.size() == 1)
+		if (m_EmberFile.Size() == 1)
 			filename = m_Fractorium->SetupSaveXmlDialog(m_EmberFile.m_Filename);//If only one ember present, just use parent filename.
 		else
 			filename = m_Fractorium->SetupSaveXmlDialog(QString::fromStdString(m_Ember.m_Name));//More than one ember present, use individual ember name.
@@ -287,7 +290,7 @@ void FractoriumEmberController<T>::SaveCurrentAsXml()
 			m_LastSaveCurrent = filename;
 		}
 		else
-			QMessageBox::critical(m_Fractorium, "Save Failed", "Could not save file, try saving to a different folder.");
+			m_Fractorium->ShowCritical("Save Failed", "Could not save file, try saving to a different folder.");
 	}
 }
 
@@ -318,7 +321,7 @@ void FractoriumEmberController<T>::SaveEntireFileAsXml()
 		SaveCurrentToOpenedFile();//Save the current ember back to the opened file before writing to disk.
 		emberFile = m_EmberFile;
 
-		for (size_t i = 0; i < emberFile.m_Embers.size(); i++)
+		for (size_t i = 0; i < emberFile.Size(); i++)
 			ApplyXmlSavingTemplate(emberFile.m_Embers[i]);
 
 		if (writer.Save(filename.toStdString().c_str(), emberFile.m_Embers, 0, true, false, true))
@@ -327,7 +330,7 @@ void FractoriumEmberController<T>::SaveEntireFileAsXml()
 			s->SaveFolder(fileInfo.canonicalPath());
 		}
 		else
-			QMessageBox::critical(m_Fractorium, "Save Failed", "Could not save file, try saving to a different folder.");
+			m_Fractorium->ShowCritical("Save Failed", "Could not save file, try saving to a different folder.");
 	}
 }
 
@@ -339,9 +342,9 @@ void Fractorium::OnActionSaveEntireFileAsXml(bool checked) { m_Controller->SaveE
 /// <param name="checked">Ignored</param>
 void Fractorium::OnActionSaveCurrentScreen(bool checked)
 {
-	QString filename = SetupSaveImageDialog(QString::fromStdString(m_Controller->Name()));
+	QString filename = SetupSaveImageDialog(m_Controller->Name());
 
-	m_Controller->SaveCurrentRender(filename);
+	m_Controller->SaveCurrentRender(filename, true);
 }
 
 /// <summary>
@@ -354,9 +357,10 @@ void FractoriumEmberController<T>::SaveCurrentToOpenedFile()
 	size_t i;
 	bool fileFound = false;
 
-	for (i = 0; i < m_EmberFile.m_Embers.size(); i++)
+	for (i = 0; i < m_EmberFile.Size(); i++)
 	{
-		if (m_Ember.m_Name == m_EmberFile.m_Embers[i].m_Name)
+		if ((m_Ember.m_Name == m_EmberFile.m_Embers[i].m_Name) &&//Check both to be extra sure.
+			(m_Ember.m_Index == m_EmberFile.m_Embers[i].m_Index))
 		{
 			m_EmberFile.m_Embers[i] = m_Ember;
 			fileFound = true;
@@ -450,8 +454,6 @@ void FractoriumEmberController<T>::CopyXml()
 	EmberToXml<T> emberToXml;
 	FractoriumSettings* settings = m_Fractorium->m_Settings;
 
-	ember.m_FinalRasW       = settings->XmlWidth();
-	ember.m_FinalRasH       = settings->XmlHeight();
 	ember.m_Quality         = settings->XmlQuality();
 	ember.m_Supersample     = settings->XmlSupersample();
 	ember.m_TemporalSamples = settings->XmlTemporalSamples();
@@ -473,16 +475,11 @@ void FractoriumEmberController<T>::CopyAllXml()
 
 	os << "<flames>\n";
 
-	for (size_t i = 0; i < m_EmberFile.m_Embers.size(); i++)
+	for (size_t i = 0; i < m_EmberFile.Size(); i++)
 	{
 		Ember<T> ember = m_EmberFile.m_Embers[i];
 
-		ember.m_FinalRasW       = settings->XmlWidth();
-		ember.m_FinalRasH       = settings->XmlHeight();
-		ember.m_Quality         = settings->XmlQuality();
-		ember.m_Supersample     = settings->XmlSupersample();
-		ember.m_TemporalSamples = settings->XmlTemporalSamples();
-
+		ApplyXmlSavingTemplate(ember);
 		os << emberToXml.ToString(ember, "", 0, false, false, true);
 	}
 
@@ -502,7 +499,7 @@ void Fractorium::OnActionCopyAllXml(bool checked) { m_Controller->CopyAllXml(); 
 template <typename T>
 void FractoriumEmberController<T>::PasteXmlAppend()
 {
-	unsigned int i, previousSize = m_EmberFile.m_Embers.size();
+	unsigned int i, previousSize = m_EmberFile.Size();
 	string s, errors;
 	XmlToEmber<T> parser;
 	vector<Ember<T>> embers;
@@ -524,20 +521,19 @@ void FractoriumEmberController<T>::PasteXmlAppend()
 
 	if (errors != "")
 	{
-		QMessageBox::critical(m_Fractorium, "Paste Error", QString::fromStdString(errors));
+		m_Fractorium->ShowCritical("Paste Error", QString::fromStdString(errors));
 	}
 
 	if (!embers.empty())
 	{
 		for (i = 0; i < embers.size(); i++)
 		{
-			//Disregard whatever size was specified in the file and fit it to the output window size.
-			embers[i].m_Index = m_EmberFile.m_Embers.size();
-			embers[i].SetSizeAndAdjustScale(m_Fractorium->ui.GLDisplay->width(), m_Fractorium->ui.GLDisplay->height(), true, SCALE_WIDTH);
+			embers[i].m_Index = m_EmberFile.Size();
+			ConstrainDimensions(embers[i]);//Do not exceed the max texture size.
 		
 			//Also ensure it has a name.
 			if (embers[i].m_Name == "" || embers[i].m_Name == "No name")
-				embers[i].m_Name = QString::number(embers[i].m_Index).toStdString();
+				embers[i].m_Name = ToString(embers[i].m_Index).toStdString();
 
 			m_EmberFile.m_Embers.push_back(embers[i]);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
 		}
@@ -581,20 +577,19 @@ void FractoriumEmberController<T>::PasteXmlOver()
 
 	if (errors != "")
 	{
-		QMessageBox::critical(m_Fractorium, "Paste Error", QString::fromStdString(errors));
+		m_Fractorium->ShowCritical("Paste Error", QString::fromStdString(errors));
 	}
 
-	if (!m_EmberFile.m_Embers.empty())
+	if (m_EmberFile.Size())
 	{
-		for (i = 0; i < m_EmberFile.m_Embers.size(); i++)
+		for (i = 0; i < m_EmberFile.Size(); i++)
 		{
-			//Disregard whatever size was specified in the file and fit it to the output window size.
 			m_EmberFile.m_Embers[i].m_Index = i;
-			m_EmberFile.m_Embers[i].SetSizeAndAdjustScale(m_Fractorium->ui.GLDisplay->width(), m_Fractorium->ui.GLDisplay->height(), true, SCALE_WIDTH);
+			ConstrainDimensions(m_EmberFile.m_Embers[i]);//Do not exceed the max texture size.
 		
 			//Also ensure it has a name.
 			if (m_EmberFile.m_Embers[i].m_Name == "" || m_EmberFile.m_Embers[i].m_Name == "No name")
-				m_EmberFile.m_Embers[i].m_Name = QString::number(m_EmberFile.m_Embers[i].m_Index).toStdString();
+				m_EmberFile.m_Embers[i].m_Name = ToString(m_EmberFile.m_Embers[i].m_Index).toStdString();
 		}
 	}
 	else
@@ -729,6 +724,7 @@ void Fractorium::OnActionFinalRender(bool checked)
 {
 	//First completely stop what the current rendering process is doing.
 	m_Controller->DeleteRenderer();//Delete the renderer, but not the controller.
+	OnActionSaveCurrentToOpenedFile(true);//Save whatever was edited back to the current open file.
 	m_RenderStatusLabel->setText("Renderer stopped.");
 	m_FinalRenderDialog->show();
 }

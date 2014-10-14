@@ -71,7 +71,6 @@ public:
 	void SetCenter(float x, float y);
 	void SetRotation(double rot, bool stealth);
 	void SetScale(double scale);
-	void Resize();
 	void SetCoordinateStatus(int x, int y, float worldX, float worldY);
 
 	//Xforms.
@@ -230,6 +229,7 @@ public slots:
 	void StartRenderTimer();
 	void IdleTimer();
 	bool ControllersOk();
+	void ShowCritical(const QString& title, const QString& text, bool invokeRequired = false);
 
 	//Can't have a template function be a slot.
 	void SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<unsigned char>& v, unsigned int width, unsigned int height);
@@ -243,11 +243,11 @@ public:
 	static int FlipDet(Affine2D<float>& affine);
 
 protected:
-	virtual void resizeEvent(QResizeEvent* e);
-	virtual void closeEvent(QCloseEvent* e);
-	virtual void dragEnterEvent(QDragEnterEvent* e);
-	virtual void dragMoveEvent(QDragMoveEvent* e);
-	virtual void dropEvent(QDropEvent* e);
+	virtual void resizeEvent(QResizeEvent* e) override;
+	virtual void closeEvent(QCloseEvent* e) override;
+	virtual void dragEnterEvent(QDragEnterEvent* e) override;
+	virtual void dragMoveEvent(QDragMoveEvent* e) override;
+	virtual void dropEvent(QDropEvent* e) override;
 
 private:
 	void InitMenusUI();
@@ -294,8 +294,8 @@ private:
 	
 	//Dialogs.
 	QStringList SetupOpenXmlDialog();
-	QString SetupSaveXmlDialog(QString defaultFilename);
-	QString SetupSaveImageDialog(QString defaultFilename);
+	QString SetupSaveXmlDialog(const QString& defaultFilename);
+	QString SetupSaveImageDialog(const QString& defaultFilename);
 	QString SetupSaveFolderDialog();
 	QColorDialog* m_ColorDialog;
 	FractoriumFinalRenderDialog* m_FinalRenderDialog;
@@ -459,6 +459,53 @@ static QWidget* SetTabOrder(QWidget* parent, QWidget* w1, QWidget* w2)
 {
 	parent->setTabOrder(w1, w2);
 	return w2;
+}
+
+/// <summary>
+/// Wrapper around QLocale::system().toDouble().
+/// </summary>
+/// <param name="s">The string to convert</param>
+/// <param name="ok">Pointer to boolean which stores the success value of the conversion</param>
+/// <returns>The converted value if successful, else 0.</returns>
+static double ToDouble(const QString &s, bool *ok)
+{
+	return QLocale::system().toDouble(s, ok);
+}
+
+/// <summary>
+/// Wrapper around QLocale::system().toString().
+/// </summary>
+/// <param name="s">The value to convert</param>
+/// <returns>The string value if successful, else "".</returns>
+template <typename T>
+static QString ToString(T val)
+{
+	return QLocale::system().toString(val);
+}
+
+/// <summary>
+/// Force a QString to end with the specified value.
+/// </summary>
+/// <param name="s">The string to append a suffix to</param>
+/// <param name="e">The suffix to append</param>
+/// <returns>The original string value if it already ended in e, else the original value appended with e.</returns>
+template <typename T>
+static QString MakeEnd(const QString& s, T e)
+{
+	if (!s.endsWith(e))
+		return s + e;
+	else
+		return s;
+}
+
+/// <summary>
+/// Check if a path is not empty and exists on the file system.
+/// </summary>
+/// <param name="s">The path to check</param>
+/// <returns>True if s was not empty and existed, else false.</returns>
+static bool Exists(const QString& s)
+{
+	 return s != "" && QDir(s).exists();
 }
 
 //template void Fractorium::SetupSpinner<SpinBox, int>         (QTableWidget* table, const QObject* receiver, int& row, int col, SpinBox*& spinBox, int height, int min, int max, int step, const char* signal, const char* slot, bool incRow, int val, int doubleClickZero, int doubleClickNonZero);

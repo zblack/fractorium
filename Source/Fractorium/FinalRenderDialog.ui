@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>519</width>
-    <height>813</height>
+    <height>862</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -64,7 +64,7 @@
         <x>0</x>
         <y>0</y>
         <width>507</width>
-        <height>801</height>
+        <height>850</height>
        </rect>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -85,137 +85,6 @@
        </property>
        <item>
         <layout class="QGridLayout" name="gridLayout" columnstretch="0,0">
-         <item row="5" column="0">
-          <widget class="QGroupBox" name="FinalRenderScaleGroupBox">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>The scaling to perform from the editor to the final rendered image</string>
-           </property>
-           <property name="title">
-            <string>Scale</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout_2">
-            <property name="leftMargin">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>6</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="FinalRenderScaleNoneRadioButton">
-              <property name="text">
-               <string>None</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="FinalRenderScaleWidthRadioButton">
-              <property name="text">
-               <string>Width</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="FinalRenderScaleHeightRadioButton">
-              <property name="text">
-               <string>Height</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="5" column="1">
-          <widget class="QGroupBox" name="FinalRenderExtensionGroupBox">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>110</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>16777215</width>
-             <height>40</height>
-            </size>
-           </property>
-           <property name="toolTip">
-            <string>The image type to save the final output as when rendering all open flames</string>
-           </property>
-           <property name="title">
-            <string>Render All Extension</string>
-           </property>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <property name="leftMargin">
-             <number>6</number>
-            </property>
-            <property name="topMargin">
-             <number>4</number>
-            </property>
-            <property name="rightMargin">
-             <number>4</number>
-            </property>
-            <property name="bottomMargin">
-             <number>6</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="FinalRenderJpgRadioButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Jpg</string>
-              </property>
-              <property name="checked">
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="FinalRenderPngRadioButton">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="text">
-               <string>Png</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="FinalRenderEarlyClipCheckBox">
            <property name="toolTip">
@@ -226,49 +95,6 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="1">
-          <widget class="QCheckBox" name="FinalRenderSaveXmlCheckBox">
-           <property name="toolTip">
-            <string>Save an Xml parameter file for each flame rendered</string>
-           </property>
-           <property name="text">
-            <string>Save Xml</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1">
-          <widget class="QCheckBox" name="FinalRenderKeepAspectCheckBox">
-           <property name="toolTip">
-            <string>Maintain the aspect ratio between width and height to be equal to base width and base height</string>
-           </property>
-           <property name="text">
-            <string>Keep Aspect Ratio</string>
-           </property>
-           <property name="checked">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QCheckBox" name="FinalRenderDoSequenceCheckBox">
-           <property name="toolTip">
-            <string>Use temporal samples value to achieve motion blur effect between flames</string>
-           </property>
-           <property name="text">
-            <string>Render as Animation Sequence</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QCheckBox" name="FinalRenderDoAllCheckBox">
-           <property name="toolTip">
-            <string>Render all open flames instead of just the current one</string>
-           </property>
-           <property name="text">
-            <string>Render All</string>
-           </property>
-          </widget>
-         </item>
          <item row="1" column="0">
           <widget class="QCheckBox" name="FinalRenderYAxisUpCheckBox">
            <property name="toolTip">
@@ -276,16 +102,6 @@
            </property>
            <property name="text">
             <string>Positive Y Up</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0">
-          <widget class="QCheckBox" name="FinalRenderDoublePrecisionCheckBox">
-           <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: use 64-bit double precision numbers (slower, but better image quality).&lt;/p&gt;&lt;p&gt;Unchecked: use 32-bit single precision numbers (faster, but worse image quality).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-           </property>
-           <property name="text">
-            <string>Use Double Precision</string>
            </property>
           </widget>
          </item>
@@ -309,50 +125,119 @@
            </property>
           </widget>
          </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="FinalRenderDoublePrecisionCheckBox">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Checked: use 64-bit double precision numbers (slower, but better image quality).&lt;/p&gt;&lt;p&gt;Unchecked: use 32-bit single precision numbers (faster, but worse image quality).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+           <property name="text">
+            <string>Use Double Precision</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="FinalRenderSaveXmlCheckBox">
+           <property name="toolTip">
+            <string>Save an Xml parameter file for each flame rendered</string>
+           </property>
+           <property name="text">
+            <string>Save Xml</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QCheckBox" name="FinalRenderDoAllCheckBox">
+           <property name="toolTip">
+            <string>Render all open flames instead of just the current one</string>
+           </property>
+           <property name="text">
+            <string>Render All</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QCheckBox" name="FinalRenderDoSequenceCheckBox">
+           <property name="toolTip">
+            <string>Use temporal samples value to achieve motion blur effect between flames</string>
+           </property>
+           <property name="text">
+            <string>Render as Animation Sequence</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
-        <widget class="QLabel" name="FinalRenderPreviewLabel">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="sizeConstraint">
+          <enum>QLayout::SetNoConstraint</enum>
          </property>
-         <property name="minimumSize">
-          <size>
-           <width>100</width>
-           <height>100</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>100</width>
-           <height>100</height>
-          </size>
-         </property>
-         <property name="sizeIncrement">
-          <size>
-           <width>1</width>
-           <height>1</height>
-          </size>
-         </property>
-         <property name="frameShape">
-          <enum>QFrame::NoFrame</enum>
-         </property>
-         <property name="lineWidth">
-          <number>0</number>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="textFormat">
-          <enum>Qt::PlainText</enum>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignCenter</set>
-         </property>
-        </widget>
+         <item row="0" column="0">
+          <widget class="QLabel" name="FinalRenderPreviewLabel">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>100</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>100</height>
+            </size>
+           </property>
+           <property name="sizeIncrement">
+            <size>
+             <width>1</width>
+             <height>1</height>
+            </size>
+           </property>
+           <property name="frameShape">
+            <enum>QFrame::NoFrame</enum>
+           </property>
+           <property name="lineWidth">
+            <number>0</number>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="textFormat">
+            <enum>Qt::PlainText</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="FinalRenderCurrentSpin">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="prefix">
+            <string/>
+           </property>
+           <property name="minimum">
+            <number>1</number>
+           </property>
+           <property name="maximum">
+            <number>999999999</number>
+           </property>
+           <property name="value">
+            <number>1</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <widget class="QComboBox" name="FinalRenderPlatformCombo">
@@ -421,7 +306,256 @@
         </widget>
        </item>
        <item>
-        <widget class="TableWidget" name="FinalRenderGeometryTable">
+        <widget class="QCheckBox" name="FinalRenderApplyToAllCheckBox">
+         <property name="toolTip">
+          <string>Apply current operation to all flames</string>
+         </property>
+         <property name="text">
+          <string>Apply Parameters to All</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="FinalRenderSizeGroupBox">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>91</height>
+          </size>
+         </property>
+         <property name="title">
+          <string>Size</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="leftMargin">
+           <number>6</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>6</number>
+          </property>
+          <property name="bottomMargin">
+           <number>4</number>
+          </property>
+          <property name="horizontalSpacing">
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>0</number>
+          </property>
+          <item row="0" column="0">
+           <widget class="QTableWidget" name="FinalRenderSizeTable">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>44</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>44</height>
+             </size>
+            </property>
+            <property name="focusPolicy">
+             <enum>Qt::NoFocus</enum>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Panel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Plain</enum>
+            </property>
+            <property name="verticalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="horizontalScrollBarPolicy">
+             <enum>Qt::ScrollBarAlwaysOff</enum>
+            </property>
+            <property name="editTriggers">
+             <set>QAbstractItemView::NoEditTriggers</set>
+            </property>
+            <property name="tabKeyNavigation">
+             <bool>false</bool>
+            </property>
+            <property name="selectionMode">
+             <enum>QAbstractItemView::NoSelection</enum>
+            </property>
+            <property name="verticalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="horizontalScrollMode">
+             <enum>QAbstractItemView::ScrollPerPixel</enum>
+            </property>
+            <property name="showGrid">
+             <bool>true</bool>
+            </property>
+            <property name="wordWrap">
+             <bool>false</bool>
+            </property>
+            <property name="rowCount">
+             <number>2</number>
+            </property>
+            <property name="columnCount">
+             <number>2</number>
+            </property>
+            <attribute name="horizontalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderDefaultSectionSize">
+             <number>85</number>
+            </attribute>
+            <attribute name="horizontalHeaderHighlightSections">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="horizontalHeaderMinimumSectionSize">
+             <number>35</number>
+            </attribute>
+            <attribute name="horizontalHeaderStretchLastSection">
+             <bool>true</bool>
+            </attribute>
+            <attribute name="verticalHeaderVisible">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderDefaultSectionSize">
+             <number>22</number>
+            </attribute>
+            <attribute name="verticalHeaderHighlightSections">
+             <bool>false</bool>
+            </attribute>
+            <attribute name="verticalHeaderMinimumSectionSize">
+             <number>22</number>
+            </attribute>
+            <row>
+             <property name="text">
+              <string>Width Scale</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>Height Scale</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>Field</string>
+             </property>
+            </column>
+            <column/>
+            <item row="0" column="0">
+             <property name="text">
+              <string>Width Scale</string>
+             </property>
+            </item>
+            <item row="0" column="1">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+            <item row="1" column="0">
+             <property name="text">
+              <string>Height Scale</string>
+             </property>
+            </item>
+            <item row="1" column="1">
+             <property name="text">
+              <string/>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QGroupBox" name="FinalRenderScaleGroupBox">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>45</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>The scaling to perform from the editor to the final rendered image</string>
+            </property>
+            <property name="title">
+             <string>Scale Type</string>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="topMargin">
+              <number>4</number>
+             </property>
+             <property name="rightMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>4</number>
+             </property>
+             <property name="spacing">
+              <number>4</number>
+             </property>
+             <item row="0" column="1">
+              <widget class="QRadioButton" name="FinalRenderScaleWidthRadioButton">
+               <property name="text">
+                <string>Width</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QRadioButton" name="FinalRenderScaleHeightRadioButton">
+               <property name="text">
+                <string>Height</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QRadioButton" name="FinalRenderScaleNoneRadioButton">
+               <property name="text">
+                <string>None</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="FinalRenderKeepAspectCheckBox">
+            <property name="toolTip">
+             <string>Maintain the aspect ratio between width and height to be equal to base width and base height</string>
+            </property>
+            <property name="text">
+             <string>Keep Aspect Ratio</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="TableWidget" name="FinalRenderParamsTable">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -431,13 +565,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>200</height>
+           <height>178</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>200</height>
+           <height>178</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -523,19 +657,6 @@
          </attribute>
          <row>
           <property name="text">
-           <string>Width</string>
-          </property>
-          <property name="toolTip">
-           <string/>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>Height</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
            <string>Quality</string>
           </property>
          </row>
@@ -547,6 +668,11 @@
          <row>
           <property name="text">
            <string>Supersample</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
+           <string>Strips</string>
           </property>
          </row>
          <row>
@@ -581,10 +707,10 @@
          </column>
          <item row="0" column="0">
           <property name="text">
-           <string>Width</string>
+           <string>Quality</string>
           </property>
           <property name="toolTip">
-           <string>The width in pixels of the final output image</string>
+           <string>The quality in iterations per pixel of the final output image</string>
           </property>
          </item>
          <item row="0" column="1">
@@ -594,10 +720,10 @@
          </item>
          <item row="1" column="0">
           <property name="text">
-           <string>Height</string>
+           <string>Temporal Samples</string>
           </property>
           <property name="toolTip">
-           <string>The height in pixels of the final output image</string>
+           <string>The number of interpolated renders to do for each flame when rendering as an animation sequence</string>
           </property>
          </item>
          <item row="1" column="1">
@@ -607,10 +733,10 @@
          </item>
          <item row="2" column="0">
           <property name="text">
-           <string>Quality</string>
+           <string>Supersample</string>
           </property>
           <property name="toolTip">
-           <string>The quality in iterations per pixel of the final output image</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number to multiply the dimensions of the histogram and density filtering buffer by to achieve anti-aliasing.&lt;/p&gt;&lt;p&gt;Use this very sparingly as it increases the required memory by n squared.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </item>
          <item row="2" column="1">
@@ -620,10 +746,7 @@
          </item>
          <item row="3" column="0">
           <property name="text">
-           <string>Temporal Samples</string>
-          </property>
-          <property name="toolTip">
-           <string>The number of interpolated renders to do for each flame when rendering as an animation sequence</string>
+           <string>Strips</string>
           </property>
          </item>
          <item row="3" column="1">
@@ -633,10 +756,10 @@
          </item>
          <item row="4" column="0">
           <property name="text">
-           <string>Supersample</string>
+           <string>Memory Usage</string>
           </property>
           <property name="toolTip">
-           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The number to multiply the dimensions of the histogram and density filtering buffer by to achieve anti-aliasing.&lt;/p&gt;&lt;p&gt;Use this very sparingly as it increases the required memory by n squared.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           <string>The amount of memory including the final output image required to perform this render</string>
           </property>
          </item>
          <item row="4" column="1">
@@ -646,23 +769,23 @@
          </item>
          <item row="5" column="0">
           <property name="text">
-           <string>Memory Usage</string>
-          </property>
-          <property name="toolTip">
-           <string>The amount of memory including the final output image required to perform this render</string>
-          </property>
-         </item>
-         <item row="5" column="1">
-          <property name="text">
-           <string>0</string>
-          </property>
-         </item>
-         <item row="6" column="0">
-          <property name="text">
            <string>Output</string>
           </property>
           <property name="toolTip">
            <string>The output file path for rendering a single flame, or folder location for rendering multiple flames</string>
+          </property>
+         </item>
+         <item row="5" column="1">
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item row="6" column="0">
+          <property name="text">
+           <string>Prefix</string>
+          </property>
+          <property name="toolTip">
+           <string>The prefix to attach to all image filenames</string>
           </property>
          </item>
          <item row="6" column="1">
@@ -672,26 +795,13 @@
          </item>
          <item row="7" column="0">
           <property name="text">
-           <string>Prefix</string>
-          </property>
-          <property name="toolTip">
-           <string>The prefix to attach to all image filenames</string>
-          </property>
-         </item>
-         <item row="7" column="1">
-          <property name="text">
-           <string/>
-          </property>
-         </item>
-         <item row="8" column="0">
-          <property name="text">
            <string>Suffix</string>
           </property>
           <property name="toolTip">
            <string>The suffix to attach to all image filenames</string>
           </property>
          </item>
-         <item row="8" column="1">
+         <item row="7" column="1">
           <property name="text">
            <string/>
           </property>
@@ -933,20 +1043,10 @@
   <tabstop>FinalRenderYAxisUpCheckBox</tabstop>
   <tabstop>FinalRenderTransparencyCheckBox</tabstop>
   <tabstop>FinalRenderOpenCLCheckBox</tabstop>
-  <tabstop>FinalRenderDoublePrecisionCheckBox</tabstop>
-  <tabstop>FinalRenderSaveXmlCheckBox</tabstop>
-  <tabstop>FinalRenderDoAllCheckBox</tabstop>
-  <tabstop>FinalRenderDoSequenceCheckBox</tabstop>
-  <tabstop>FinalRenderKeepAspectCheckBox</tabstop>
-  <tabstop>FinalRenderScaleNoneRadioButton</tabstop>
-  <tabstop>FinalRenderScaleWidthRadioButton</tabstop>
-  <tabstop>FinalRenderScaleHeightRadioButton</tabstop>
-  <tabstop>FinalRenderJpgRadioButton</tabstop>
-  <tabstop>FinalRenderPngRadioButton</tabstop>
   <tabstop>FinalRenderPlatformCombo</tabstop>
   <tabstop>FinalRenderDeviceCombo</tabstop>
   <tabstop>FinalRenderThreadCountSpin</tabstop>
-  <tabstop>FinalRenderGeometryTable</tabstop>
+  <tabstop>FinalRenderParamsTable</tabstop>
   <tabstop>FinalRenderTextOutput</tabstop>
   <tabstop>StartRenderButton</tabstop>
   <tabstop>StopRenderButton</tabstop>

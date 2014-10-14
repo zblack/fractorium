@@ -24,7 +24,7 @@ void Fractorium::UpdateHistogramBounds()
 		ui.InfoBoundsLabelW->setText(QString(m_WString));
 		ui.InfoBoundsLabelH->setText(QString(m_HString));
 
-		ui.InfoBoundsTable->item(0, 1)->setText(QString::number(r->GutterWidth()));
+		ui.InfoBoundsTable->item(0, 1)->setText(ToString(r->GutterWidth()));
 
 		if (r->GetDensityFilter())
 		{
@@ -54,5 +54,5 @@ void Fractorium::ErrorReportToQTextEdit(vector<string>& errors, QTextEdit* textE
 		QMetaObject::invokeMethod(textEdit, "clear", Qt::QueuedConnection);
 
 	for (size_t i = 0; i < errors.size(); i++)
-		QMetaObject::invokeMethod(textEdit, "append", Qt::QueuedConnection, Q_ARG(QString, QString::fromStdString(errors[i]) + "\n"));
+		QMetaObject::invokeMethod(textEdit, "append", Qt::QueuedConnection, Q_ARG(const QString&, QString::fromStdString(errors[i]) + "\n"));
 }

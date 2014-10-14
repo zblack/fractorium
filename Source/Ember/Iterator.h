@@ -58,7 +58,7 @@ public:
 	/// Accessors.
 	/// </summary>
 	const unsigned char* XformDistributions() const { return m_XformDistributions.empty() ? nullptr : &m_XformDistributions[0]; }
-	const unsigned int   XformDistributionsSize() const { return (unsigned int)m_XformDistributions.size(); }
+	const size_t   XformDistributionsSize() const { return m_XformDistributions.size(); }
 
 	/// <summary>
 	/// Virtual empty iteration function that will be overidden in derived iterator classes.
@@ -69,7 +69,7 @@ public:
 	/// <param name="samples">The buffer to store the output points</param>
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
-	virtual unsigned int Iterate(Ember<T>& ember, unsigned int count, unsigned int skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { return 0; }
+	virtual size_t Iterate(Ember<T>& ember, size_t count, size_t skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { return 0; }
 
 	/// <summary>
 	/// Initialize the xform selection vector by normalizing the weights of all xforms and
@@ -85,8 +85,8 @@ public:
 	/// <returns>True if success, else false.</returns>
 	bool InitDistributions(Ember<T>& ember)
 	{
-		unsigned int i;
-		unsigned int distribCount = ember.XaosPresent() ? (unsigned int)ember.XformCount() + 1 : 1;
+		size_t i;
+		size_t distribCount = ember.XaosPresent() ? ember.XformCount() + 1 : 1;
 		const Xform<T>* xforms = ember.Xforms();
 
 		if (m_XformDistributions.size() < CHOOSE_XFORM_GRAIN * distribCount)
@@ -95,7 +95,7 @@ public:
 		if (m_XformDistributions.size() < CHOOSE_XFORM_GRAIN * distribCount)
 			return false;
 
-		for (unsigned int distrib = 0; distrib < distribCount; distrib++)
+		for (size_t distrib = 0; distrib < distribCount; distrib++)
 		{
 			T totalDensity = 0;
 
@@ -115,7 +115,7 @@ public:
 			//only the first xform will get used.
 
 			//Calculate how much of a fraction of a the total density each element represents.
-			unsigned int j = 0;
+			size_t j = 0;
 			T tempDensity = 0, currentDensityLimit = 0, densityPerElement = totalDensity / CHOOSE_XFORM_GRAIN;
 
 			//Assign xform indices in order to each element of m_XformDistributions.
@@ -135,7 +135,7 @@ public:
 				while (tempDensity < currentDensityLimit && j < CHOOSE_XFORM_GRAIN)
 				{
 					//printf("offset = %d, xform = %d, running sum = %f\n", j, i, tempDensity);
-					m_XformDistributions[(distrib * CHOOSE_XFORM_GRAIN) + j] = i;
+					m_XformDistributions[(distrib * CHOOSE_XFORM_GRAIN) + j] = (unsigned char)i;
 					tempDensity += densityPerElement;
 					j++;
 				}
@@ -181,9 +181,9 @@ protected:
 	/// <param name="point">The point which initially had the bad values and which will store the newly computed values</param>
 	/// <param name="rand">The random context this iterator is using</param>
 	/// <returns>True if a good value was computed within 5 tries, else false</returns>
-	inline bool DoBadVals(Xform<T>* xforms, unsigned int& badVals, Point<T>* point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	inline bool DoBadVals(Xform<T>* xforms, size_t& badVals, Point<T>* point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		unsigned int xformIndex, consec = 0;
+		size_t xformIndex, consec = 0;
 		Point<T> firstBadPoint;
 
 		while (consec < 5)
@@ -246,9 +246,9 @@ protected:
 	/// <param name="index">The index to retrieve</param>
 	/// <param name="distribOffset">When xaos is prsent, the index of the previous xform used. Default: 0 (xaos not present).</param>
 	/// <returns></returns>
-	unsigned int NextXformFromIndex(unsigned int index, unsigned int distribOffset = 0)
+	size_t NextXformFromIndex(size_t index, size_t distribOffset = 0)
 	{
-		return (unsigned int)m_XformDistributions[(index % CHOOSE_XFORM_GRAIN) + (CHOOSE_XFORM_GRAIN * distribOffset)];
+		return (size_t)m_XformDistributions[(index % CHOOSE_XFORM_GRAIN) + (CHOOSE_XFORM_GRAIN * distribOffset)];
 	}
 
 	vector<unsigned char> m_XformDistributions;
@@ -278,9 +278,9 @@ public:
 	/// <param name="samples">The buffer to store the output points</param>
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
-	virtual unsigned int Iterate(Ember<T>& ember, unsigned int count, unsigned int skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual size_t Iterate(Ember<T>& ember, size_t count, size_t skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		unsigned int i, badVals = 0;
+		size_t i, badVals = 0;
 		Point<T> tempPoint, p1;
 		Xform<T>* xforms = ember.NonConstXforms();
 
@@ -401,9 +401,9 @@ public:
 	/// <param name="point">The point which initially had the bad values and which will store the newly computed values</param>
 	/// <param name="rand">The random context this iterator is using</param>
 	/// <returns>True if a good value was computed within 5 tries, else false</returns>
-	inline bool DoBadVals(Xform<T>* xforms, unsigned int& xformIndex, unsigned int lastXformUsed, unsigned int& badVals, Point<T>* point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	inline bool DoBadVals(Xform<T>* xforms, size_t& xformIndex, size_t lastXformUsed, size_t& badVals, Point<T>* point, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		unsigned int consec = 0;
+		size_t consec = 0;
 		Point<T> firstBadPoint;
 
 		while (consec < 5)
@@ -442,11 +442,11 @@ public:
 	/// <param name="samples">The buffer to store the output points</param>
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
-	virtual unsigned int Iterate(Ember<T>& ember, unsigned int count, unsigned int skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual size_t Iterate(Ember<T>& ember, size_t count, size_t skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	{
-		unsigned int i, xformIndex;
-		unsigned int lastXformUsed = 0;
-		unsigned int badVals = 0;
+		size_t i, xformIndex;
+		size_t lastXformUsed = 0;
+		size_t badVals = 0;
 		Point<T> tempPoint, p1;
 		Xform<T>* xforms = ember.NonConstXforms();
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1173</width>
-    <height>988</height>
+    <width>1214</width>
+    <height>983</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,107 +32,143 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <widget class="GLWidget" name="GLDisplay">
-   <property name="palette">
-    <palette>
-     <active>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </active>
-     <inactive>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>255</red>
-         <green>255</green>
-         <blue>255</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </inactive>
-     <disabled>
-      <colorrole role="Base">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </brush>
-      </colorrole>
-      <colorrole role="Window">
-       <brush brushstyle="SolidPattern">
-        <color alpha="255">
-         <red>240</red>
-         <green>240</green>
-         <blue>240</blue>
-        </color>
-       </brush>
-      </colorrole>
-     </disabled>
-    </palette>
+  <widget class="QScrollArea" name="GLParentScrollArea">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
    </property>
-   <property name="cursor">
-    <cursorShape>ArrowCursor</cursorShape>
+   <property name="frameShape">
+    <enum>QFrame::NoFrame</enum>
    </property>
-   <property name="mouseTracking">
+   <property name="frameShadow">
+    <enum>QFrame::Raised</enum>
+   </property>
+   <property name="widgetResizable">
     <bool>true</bool>
    </property>
-   <property name="focusPolicy">
-    <enum>Qt::StrongFocus</enum>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
-   <property name="acceptDrops">
-    <bool>true</bool>
-   </property>
-   <property name="autoFillBackground">
-    <bool>false</bool>
-   </property>
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="leftMargin">
-     <number>6</number>
+   <widget class="QWidget" name="GLParentScrollAreaContents">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>0</y>
+      <width>930</width>
+      <height>942</height>
+     </rect>
     </property>
-    <property name="topMargin">
-     <number>6</number>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
     </property>
-    <property name="rightMargin">
-     <number>6</number>
-    </property>
-    <property name="bottomMargin">
-     <number>6</number>
-    </property>
-   </layout>
+    <widget class="GLWidget" name="GLDisplay" native="true">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>914</width>
+       <height>824</height>
+      </rect>
+     </property>
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="palette">
+      <palette>
+       <active>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </active>
+       <inactive>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>255</red>
+           <green>255</green>
+           <blue>255</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </inactive>
+       <disabled>
+        <colorrole role="Base">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </brush>
+        </colorrole>
+        <colorrole role="Window">
+         <brush brushstyle="SolidPattern">
+          <color alpha="255">
+           <red>240</red>
+           <green>240</green>
+           <blue>240</blue>
+          </color>
+         </brush>
+        </colorrole>
+       </disabled>
+      </palette>
+     </property>
+     <property name="cursor">
+      <cursorShape>ArrowCursor</cursorShape>
+     </property>
+     <property name="mouseTracking">
+      <bool>true</bool>
+     </property>
+     <property name="focusPolicy">
+      <enum>Qt::StrongFocus</enum>
+     </property>
+     <property name="acceptDrops">
+      <bool>true</bool>
+     </property>
+     <property name="autoFillBackground">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1173</width>
+     <width>1214</width>
      <height>21</height>
     </rect>
    </property>
@@ -140,7 +176,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <property name="toolTipsVisible" stdset="0">
+    <property name="toolTipsVisible">
      <bool>true</bool>
     </property>
     <addaction name="ActionNewFlock"/>
@@ -167,7 +203,7 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <property name="toolTipsVisible" stdset="0">
+    <property name="toolTipsVisible">
      <bool>true</bool>
     </property>
     <addaction name="ActionAddReflectiveSymmetry"/>
@@ -189,7 +225,7 @@
     <property name="title">
      <string>&amp;Edit</string>
     </property>
-    <property name="toolTipsVisible" stdset="0">
+    <property name="toolTipsVisible">
      <bool>true</bool>
     </property>
     <addaction name="ActionUndo"/>
@@ -382,7 +418,7 @@
               <x>0</x>
               <y>0</y>
               <width>252</width>
-              <height>857</height>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -485,8 +521,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>252</width>
-              <height>857</height>
+              <width>98</width>
+              <height>847</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2781,8 +2817,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>238</width>
-                  <height>752</height>
+                  <width>118</width>
+                  <height>597</height>
                  </rect>
                 </property>
                 <property name="palette">
@@ -4952,8 +4988,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>256</width>
-              <height>861</height>
+              <width>105</width>
+              <height>684</height>
              </rect>
             </property>
             <property name="sizePolicy">

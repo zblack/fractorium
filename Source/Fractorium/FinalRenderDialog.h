@@ -3,7 +3,7 @@
 #include "ui_FinalRenderDialog.h"
 #include "SpinBox.h"
 #include "DoubleSpinBox.h"
-#include "TwoButtonWidget.h"
+#include "TwoButtonComboWidget.h"
 #include "FractoriumSettings.h"
 #include "FinalRenderEmberController.h"
 
@@ -53,21 +53,24 @@ public:
 	bool DoAll();
 	bool DoSequence();
 	bool KeepAspect();
+	bool ApplyToAll();
 	eScaleType Scale();
 	void Scale(eScaleType scale);
-	QString DoAllExt();
+	QString Ext();
 	QString Path();
-	void Path(QString s);
+	void Path(const QString& s);
 	QString Prefix();
 	QString Suffix();
+	unsigned int Current();
 	unsigned int PlatformIndex();
 	unsigned int DeviceIndex();
 	unsigned int ThreadCount();
-	unsigned int Width();
-	unsigned int Height();
+	double WidthScale();
+	double HeightScale();
 	double Quality();
 	unsigned int TemporalSamples();
 	unsigned int Supersample();
+	unsigned int Strips();
 	FinalRenderGuiState State();
 
 public Q_SLOTS:
@@ -77,17 +80,24 @@ public Q_SLOTS:
 	void OnTransparencyCheckBoxStateChanged(int state);
 	void OnOpenCLCheckBoxStateChanged(int state);
 	void OnDoublePrecisionCheckBoxStateChanged(int state);
-	void OnPlatformComboCurrentIndexChanged(int index);
 	void OnDoAllCheckBoxStateChanged(int state);
+	void OnDoSequenceCheckBoxStateChanged(int state);
+	void OnFinalRenderCurrentSpinChanged(int d);
+	void OnPlatformComboCurrentIndexChanged(int index);
+	void OnApplyAllCheckBoxStateChanged(int state);
+	void OnFinalRenderWidthScaleChanged(double d);
+	void OnFinalRenderHeightScaleChanged(double d);
 	void OnKeepAspectCheckBoxStateChanged(int state);
 	void OnScaleRadioButtonChanged(bool checked);
-	void OnWidthChanged(int d);
-	void OnHeightChanged(int d);
 	void OnQualityChanged(double d);
 	void OnTemporalSamplesChanged(int d);
 	void OnSupersampleChanged(int d);
+	void OnStripsChanged(int d);
 	void OnFileButtonClicked(bool checked);
 	void OnShowFolderButtonClicked(bool checked);
+	void OnFinalRenderExtIndexChanged(int d);
+	void OnFinalRenderPrefixChanged(const QString& s);
+	void OnFinalRenderSuffixChanged(const QString& s);
 	void OnRenderClicked(bool checked);
 	void OnCancelRenderClicked(bool checked);
 
@@ -97,15 +107,19 @@ protected:
 
 private:
 	bool CreateControllerFromGUI(bool createRenderer);
-	void SetMemory();
+	bool SetMemory();
 	
+	int m_MemoryCellIndex;
+	int m_PathCellIndex;
 	OpenCLWrapper m_Wrapper;
 	Timing m_RenderTimer;
-	SpinBox* m_WidthSpin;
-	SpinBox* m_HeightSpin;
+	DoubleSpinBox* m_WidthScaleSpin;
+	DoubleSpinBox* m_HeightScaleSpin;
 	DoubleSpinBox* m_QualitySpin;
 	SpinBox* m_TemporalSamplesSpin;
 	SpinBox* m_SupersampleSpin;
+	SpinBox* m_StripsSpin;
+	TwoButtonComboWidget* m_Tbcw;
 	QLineEdit* m_PrefixEdit;
 	QLineEdit* m_SuffixEdit;
 	FractoriumSettings* m_Settings;

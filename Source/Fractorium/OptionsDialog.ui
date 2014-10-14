@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>300</width>
-    <height>411</height>
+    <height>347</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,13 +19,13 @@
   <property name="minimumSize">
    <size>
     <width>300</width>
-    <height>411</height>
+    <height>347</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
     <width>300</width>
-    <height>411</height>
+    <height>347</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -67,7 +67,7 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout">
        <property name="verticalSpacing">
-        <number>6</number>
+        <number>4</number>
        </property>
        <property name="leftMargin">
         <number>6</number>
@@ -79,7 +79,7 @@
         <number>6</number>
        </property>
        <property name="bottomMargin">
-        <number>6</number>
+        <number>4</number>
        </property>
        <item row="0" column="0">
         <widget class="QCheckBox" name="EarlyClipCheckBox">
@@ -324,13 +324,13 @@ in interactive mode for each mouse movement</string>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>122</height>
+           <height>66</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>122</height>
+           <height>66</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -400,27 +400,17 @@ in interactive mode for each mouse movement</string>
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>24</number>
+          <number>22</number>
          </attribute>
          <attribute name="verticalHeaderHighlightSections">
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>24</number>
+          <number>22</number>
          </attribute>
          <attribute name="verticalHeaderStretchLastSection">
           <bool>false</bool>
          </attribute>
-         <row>
-          <property name="text">
-           <string>Width</string>
-          </property>
-         </row>
-         <row>
-          <property name="text">
-           <string>Height</string>
-          </property>
-         </row>
          <row>
           <property name="text">
            <string>Temporal Samples</string>
@@ -448,7 +438,7 @@ in interactive mode for each mouse movement</string>
          </column>
          <item row="0" column="0">
           <property name="text">
-           <string>Width</string>
+           <string>Temporal Samples</string>
           </property>
           <property name="flags">
            <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
@@ -461,7 +451,7 @@ in interactive mode for each mouse movement</string>
          </item>
          <item row="1" column="0">
           <property name="text">
-           <string>Height</string>
+           <string>Quality</string>
           </property>
           <property name="flags">
            <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
@@ -474,39 +464,13 @@ in interactive mode for each mouse movement</string>
          </item>
          <item row="2" column="0">
           <property name="text">
-           <string>Temporal Samples</string>
-          </property>
-          <property name="flags">
-           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-          </property>
-         </item>
-         <item row="2" column="1">
-          <property name="text">
-           <string>0</string>
-          </property>
-         </item>
-         <item row="3" column="0">
-          <property name="text">
-           <string>Quality</string>
-          </property>
-          <property name="flags">
-           <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
-          </property>
-         </item>
-         <item row="3" column="1">
-          <property name="text">
-           <string>0</string>
-          </property>
-         </item>
-         <item row="4" column="0">
-          <property name="text">
            <string>Supersample</string>
           </property>
           <property name="flags">
            <set>ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
           </property>
          </item>
-         <item row="4" column="1">
+         <item row="2" column="1">
           <property name="text">
            <string>0</string>
           </property>
@@ -543,13 +507,13 @@ in interactive mode for each mouse movement</string>
          <property name="minimumSize">
           <size>
            <width>120</width>
-           <height>74</height>
+           <height>66</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>74</height>
+           <height>66</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -619,13 +583,13 @@ in interactive mode for each mouse movement</string>
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderDefaultSectionSize">
-          <number>24</number>
+          <number>22</number>
          </attribute>
          <attribute name="verticalHeaderHighlightSections">
           <bool>false</bool>
          </attribute>
          <attribute name="verticalHeaderMinimumSectionSize">
-          <number>24</number>
+          <number>22</number>
          </attribute>
          <attribute name="verticalHeaderStretchLastSection">
           <bool>false</bool>

@@ -39,7 +39,7 @@ public:
 	/// <param name="rasW">The width in pixels of the raster image/histogram</param>
 	/// <param name="rasH">The height in pixels of the raster image/histogram</param>
 	/// <param name="aspectRatio">The aspect ratio, generally 1</param>
-	CarToRas(T carLlX, T carLlY, T carUrX, T carUrY, unsigned int rasW, unsigned int rasH, T aspectRatio)
+	CarToRas(T carLlX, T carLlY, T carUrX, T carUrY, size_t rasW, size_t rasH, T aspectRatio)
 	{
 		Init(carLlX, carLlY, carUrX, carUrY, rasW, rasH, aspectRatio);
 	}
@@ -113,7 +113,7 @@ public:
 	/// <param name="rasW">The width in pixels of the raster image/histogram</param>
 	/// <param name="rasH">The height in pixels of the raster image/histogram</param>
 	/// <param name="aspectRatio">The aspect ratio, generally 1</param>
-	void Init(T carLlX, T carLlY, T carUrX, T carUrY, unsigned int rasW, unsigned int rasH, T aspectRatio)
+	void Init(T carLlX, T carLlY, T carUrX, T carUrY, size_t rasW, size_t rasH, T aspectRatio)
 	{
 		m_RasWidth = rasW;
 		m_RasHeight = rasH;
@@ -156,10 +156,10 @@ public:
 	/// <param name="cartY">The cartesian y</param>
 	/// <param name="rasX">The converted raster x</param>
 	/// <param name="rasY">The converted raster y</param>
-	inline void Convert(T cartX, T cartY, unsigned int& rasX, unsigned int& rasY)
+	inline void Convert(T cartX, T cartY, size_t& rasX, size_t& rasY)
 	{
-		rasX = (unsigned int)(m_PixPerImageUnitW * cartX - m_RasLlX);
-		rasY = (unsigned int)(m_RasLlY - (m_PixPerImageUnitH * cartY));
+		rasX = (size_t)(m_PixPerImageUnitW * cartX - m_RasLlX);
+		rasY = (size_t)(m_RasLlY - (m_PixPerImageUnitH * cartY));
 	}
 
 	/// <summary>
@@ -173,9 +173,9 @@ public:
 	/// <param name="cartX">The cartesian x</param>
 	/// <param name="cartY">The cartesian y</param>
 	/// <param name="singleBufferIndex">The converted single raster buffer index</param>
-	inline void Convert(T cartX, T cartY, unsigned int& singleBufferIndex)
+	inline void Convert(T cartX, T cartY, size_t& singleBufferIndex)
 	{
-		singleBufferIndex = (unsigned int)(m_PixPerImageUnitW * cartX - m_RasLlX) + (m_RasWidth * (unsigned int)(m_PixPerImageUnitH * cartY - m_RasLlY));
+		singleBufferIndex = (size_t)(m_PixPerImageUnitW * cartX - m_RasLlX) + (m_RasWidth * (size_t)(m_PixPerImageUnitH * cartY - m_RasLlY));
 	}
 
 	/// <summary>
@@ -190,9 +190,9 @@ public:
 	/// </summary>
 	/// <param name="point">The cartesian y</param>
 	/// <param name="singleBufferIndex">The converted single raster buffer index</param>
-	inline void Convert(Point<T>& point, unsigned int& singleBufferIndex)
+	inline void Convert(Point<T>& point, size_t& singleBufferIndex)
 	{
-		singleBufferIndex = (unsigned int)(m_PixPerImageUnitW * point.m_X - m_RasLlX) + (m_RasWidth * (unsigned int)(m_PixPerImageUnitH * point.m_Y - m_RasLlY));
+		singleBufferIndex = (size_t)(m_PixPerImageUnitW * point.m_X - m_RasLlX) + (m_RasWidth * (size_t)(m_PixPerImageUnitH * point.m_Y - m_RasLlY));
 	}
 
 	/// <summary>
@@ -221,8 +221,8 @@ public:
 	/// <summary>
 	/// Accessors.
 	/// </summary>
-	inline unsigned int RasWidth() const { return m_RasWidth; }
-	inline unsigned int RasHeight() const { return m_RasHeight; }
+	inline size_t RasWidth() const { return m_RasWidth; }
+	inline size_t RasHeight() const { return m_RasHeight; }
 	inline T OneRow() const { return m_OneRow; }
 	inline T OneCol() const { return m_OneCol; }
 	inline T PixPerImageUnitW() const { return m_PixPerImageUnitW; }
@@ -239,7 +239,7 @@ public:
 	inline T PadCarUrY() const { return m_PadCarUrY; }
 
 private:
-	unsigned int m_RasWidth, m_RasHeight;//The width and height of the raster image.
+	size_t m_RasWidth, m_RasHeight;//The width and height of the raster image.
 	T m_OneRow;//The distance that one raster row represents in the cartesian plane.
 	T m_OneCol;//The distance that one raster column represents in the cartesian plane.
 	T m_PixPerImageUnitW;//The number of columns in the raster plane that a horizontal distance of 1 in the cartesian plane represents. The higher the number, the more zoomed in.

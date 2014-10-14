@@ -27,7 +27,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t t = xform->m_VariationWeights[" << varIndex << "] / sqrt(precalcSumSquares + 1.0);\n"
@@ -77,7 +77,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string n         = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -187,7 +187,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string bwrapsCellsize   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -347,7 +347,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 
@@ -423,7 +423,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string blurZoomLength = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -485,7 +485,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string blurPixelizeSize  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -575,7 +575,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string x0  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -731,7 +731,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string scale        = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -819,7 +819,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string blurLinearLength = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -886,7 +886,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string v = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -992,7 +992,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = vOut.y = 0;\n"
@@ -1024,7 +1024,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = vOut.y = 0;\n"
@@ -1056,7 +1056,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = vOut.y = 0;\n"
@@ -1097,7 +1097,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n";
 
@@ -1147,7 +1147,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t angle = MwcNext01(mwc) * M_2PI;\n"
@@ -1190,7 +1190,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t r2 = xform->m_VariationWeights[" << varIndex << "] / Zeps(precalcSumSquares + SQR(vIn.z));\n"
@@ -1231,7 +1231,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string cx  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1317,7 +1317,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string pi  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1412,7 +1412,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string c    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1529,7 +1529,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string a = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1599,7 +1599,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string x    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1727,7 +1727,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string hole    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -1840,7 +1840,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string hole    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2028,7 +2028,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t avgr = xform->m_VariationWeights[" << varIndex << "] * (sqrt(SQR(vIn.y) + SQR(vIn.x + 1)) / sqrt(SQR(vIn.y) + SQR(vIn.x - 1)));\n"
@@ -2074,7 +2074,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string real = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2161,7 +2161,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string rootFace = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2232,7 +2232,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t a = M_2PI / (precalcSqrtSumSquares + 1);\n"
@@ -2283,7 +2283,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string five   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -2362,7 +2362,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string sc     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2470,7 +2470,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string v2 = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -2616,7 +2616,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t x = LRint(vIn.x);\n"
@@ -2719,7 +2719,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string a      = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2786,7 +2786,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string p    = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2882,7 +2882,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string p  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -2977,7 +2977,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string p  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3066,7 +3066,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string p   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3190,7 +3190,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string p   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3292,7 +3292,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string p   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3401,7 +3401,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string v = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -3469,7 +3469,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string a     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3568,7 +3568,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string power        = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3651,7 +3651,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string c     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3749,7 +3749,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string c     = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -3852,7 +3852,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string parity = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -4019,7 +4019,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string in       = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -4158,7 +4158,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string c1r = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -4257,7 +4257,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string r   = "parVars[" + ToUpper(m_Params[i++].Name())  + index;
@@ -4371,7 +4371,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string powx = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -4528,7 +4528,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string t3 = "parVars[" + ToUpper(m_Params[i++].Name())  + index;
@@ -4640,7 +4640,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string frequency = "parVars[" + ToUpper(m_Params[i++].Name())  + index;
@@ -4770,7 +4770,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string shiftX = "parVars[" + ToUpper(m_Params[i++].Name())  + index;
@@ -4892,7 +4892,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string ampX  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -4996,7 +4996,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string distort = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -5064,7 +5064,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t r = xform->m_VariationWeights[" << varIndex << "];\n"
@@ -5109,7 +5109,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string vvar2 = "parVars[" + ToUpper(m_Params[i++].Name()) + index;//Precalcs only, no params.
@@ -5180,7 +5180,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string freqX  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -5295,7 +5295,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string angle = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -5404,7 +5404,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string a = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -5475,7 +5475,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string weight01 = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
@@ -5528,7 +5528,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * sin(vIn.x) * (cosh(vIn.y) + 1.0) * Sqr(sin(vIn.x));\n"
@@ -5563,7 +5563,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss;
-		int varIndex = IndexInXform();
+		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
 		   << "\t\treal_t d = xform->m_VariationWeights[" << varIndex << "] / precalcSumSquares;\n"
@@ -5616,7 +5616,7 @@ public:
 	virtual string OpenCLString() override
 	{
 		ostringstream ss, ss2;
-		int i = 0, varIndex = IndexInXform();
+		intmax_t i = 0, varIndex = IndexInXform();
 		ss2 << "_" << XformIndexInEmber() << "]";
 		string index = ss2.str();
 		string r          = "parVars[" + ToUpper(m_Params[i++].Name()) + index;

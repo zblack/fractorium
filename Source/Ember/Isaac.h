@@ -32,10 +32,10 @@
 /// </summary>
 
 #ifndef __ISAAC64
-   typedef unsigned long int ISAAC_INT;
+   typedef unsigned int ISAAC_INT;
    const ISAAC_INT GOLDEN_RATIO = ISAAC_INT(0x9e3779b9);
 #else
-	typedef uint64_t ISAAC_INT;
+	typedef size_t ISAAC_INT;
 	const ISAAC_INT GOLDEN_RATIO = ISAAC_INT(0x9e3779b97f4a7c13);
 #endif
 

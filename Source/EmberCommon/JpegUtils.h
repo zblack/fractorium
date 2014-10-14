@@ -12,10 +12,10 @@
 /// <param name="width">Width of the image in pixels</param>
 /// <param name="height">Height of the image in pixels</param>
 /// <returns>True if success, else false</returns>
-static bool WritePpm(const char* filename, unsigned char* image, int width, int height)
+static bool WritePpm(const char* filename, unsigned char* image, size_t width, size_t height)
 {
 	bool b = false;
-	unsigned int size = width * height * 3;
+	size_t size = width * height * 3;
 	FILE* file;
 
 	if (fopen_s(&file, filename, "wb") == 0)
@@ -44,7 +44,7 @@ static bool WritePpm(const char* filename, unsigned char* image, int width, int 
 /// <param name="url">Url of the author</param>
 /// <param name="nick">Nickname of the author</param>
 /// <returns>True if success, else false</returns>
-static bool WriteJpeg(const char* filename, unsigned char* image, unsigned int width, unsigned int height, int quality, bool enableComments, EmberImageComments& comments, string id, string url, string nick)
+static bool WriteJpeg(const char* filename, unsigned char* image, size_t width, size_t height, int quality, bool enableComments, EmberImageComments& comments, string id, string url, string nick)
 {
 	bool b = false;
 	FILE* file;
@@ -70,8 +70,8 @@ static bool WriteJpeg(const char* filename, unsigned char* image, unsigned int w
 		jpeg_stdio_dest(&info, file);
 		info.in_color_space = JCS_RGB;
 		info.input_components = 3;
-		info.image_width = width;
-		info.image_height = height;
+		info.image_width = (JDIMENSION)width;
+		info.image_height = (JDIMENSION)height;
 		jpeg_set_defaults(&info);
 		jpeg_set_quality(&info, quality, TRUE);
 		jpeg_start_compress(&info, TRUE);
@@ -135,7 +135,7 @@ static bool WriteJpeg(const char* filename, unsigned char* image, unsigned int w
 /// <param name="url">Url of the author</param>
 /// <param name="nick">Nickname of the author</param>
 /// <returns>True if success, else false</returns>
-static bool WritePng(const char* filename, unsigned char* image, unsigned int width, unsigned int height, int bytesPerChannel, bool enableComments, EmberImageComments& comments, string id, string url, string nick)
+static bool WritePng(const char* filename, unsigned char* image, size_t width, size_t height, size_t bytesPerChannel, bool enableComments, EmberImageComments& comments, string id, string url, string nick)
 {
 	bool b = false;
 	FILE* file;
@@ -197,7 +197,7 @@ static bool WritePng(const char* filename, unsigned char* image, unsigned int wi
 
 		png_init_io(png_ptr, file);
 
-		png_set_IHDR(png_ptr, info_ptr, width, height, 8 * bytesPerChannel,
+		png_set_IHDR(png_ptr, info_ptr, (png_uint_32)width, (png_uint_32)height, 8 * (png_uint_32)bytesPerChannel,
 			PNG_COLOR_TYPE_RGBA,
 			PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_BASE,
@@ -232,17 +232,17 @@ static bool WritePng(const char* filename, unsigned char* image, unsigned int wi
 /// <param name="height">The height.</param>
 /// <param name="newSize">The size of the new buffer created</param>
 /// <returns>The converted buffer if successful, else NULL.</returns>
-static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, int width, int height, long& newSize)
+static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, size_t width, size_t height, size_t& newSize)
 {
 	if (NULL == buffer || width == 0 || height == 0)
 		return NULL;
 		
-	int padding = 0;
-	int scanlinebytes = width * 3;
+	size_t padding = 0;
+	size_t scanlinebytes = width * 3;
 	while ((scanlinebytes + padding ) % 4 != 0) 
 		padding++;
 
-	int psw = scanlinebytes + padding;
+	size_t psw = scanlinebytes + padding;
 
 	newSize = height * psw;
 	BYTE* newBuf = new BYTE[newSize];
@@ -251,12 +251,12 @@ static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, int width, int height, long& ne
 	{
 		memset (newBuf, 0, newSize);
 
-		long bufpos = 0;   
-		long newpos = 0;
+		size_t bufpos = 0;
+		size_t newpos = 0;
 
-		for (int y = 0; y < height; y++)
+		for (size_t y = 0; y < height; y++)
 		{
-			for (int x = 0; x < 3 * width; x += 3)
+			for (size_t x = 0; x < 3 * width; x += 3)
 			{
 				bufpos = y * 3 * width + x;     // position in original buffer
 				newpos = (height - y - 1) * psw + x; // position in padded buffer
@@ -286,11 +286,11 @@ static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, int width, int height, long& ne
 /// <param name="height">Height of the image in pixels</param>
 /// <param name="paddedSize">Padded size, greater than or equal to total image size.</param>
 /// <returns>True if success, else false</returns>
-static bool SaveBmp(const char* filename, BYTE* image, int width, int height, long paddedSize)
+static bool SaveBmp(const char* filename, BYTE* image, size_t width, size_t height, size_t paddedSize)
 {
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER info;
-	unsigned long bwritten;
+	DWORD bwritten;
 	HANDLE file;
 	memset (&bmfh, 0, sizeof (BITMAPFILEHEADER));
 	memset (&info, 0, sizeof (BITMAPINFOHEADER));
@@ -298,12 +298,12 @@ static bool SaveBmp(const char* filename, BYTE* image, int width, int height, lo
 	bmfh.bfType = 0x4d42;       // 0x4d42 = 'BM'
 	bmfh.bfReserved1 = 0;
 	bmfh.bfReserved2 = 0;
-	bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + paddedSize;
+	bmfh.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + (DWORD)paddedSize;
 	bmfh.bfOffBits = 0x36;
 
 	info.biSize = sizeof(BITMAPINFOHEADER);
-	info.biWidth = width;
-	info.biHeight = height;
+	info.biWidth = (LONG)width;
+	info.biHeight = (LONG)height;
 	info.biPlanes = 1;	
 	info.biBitCount = 24;
 	info.biCompression = BI_RGB;	
@@ -331,7 +331,7 @@ static bool SaveBmp(const char* filename, BYTE* image, int width, int height, lo
 		return false;
 	}
 
-	if (WriteFile(file, image, paddedSize, &bwritten, NULL) == false)
+	if (WriteFile(file, image, (DWORD)paddedSize, &bwritten, NULL) == false)
 	{	
 		CloseHandle(file);
 		return false;
@@ -349,10 +349,10 @@ static bool SaveBmp(const char* filename, BYTE* image, int width, int height, lo
 /// <param name="width">Width of the image in pixels</param>
 /// <param name="height">Height of the image in pixels</param>
 /// <returns>True if success, else false</returns>
-static bool WriteBmp(const char* filename, unsigned char* image, int width, int height)
+static bool WriteBmp(const char* filename, unsigned char* image, size_t width, size_t height)
 {
 	bool b = false;
-	long newSize;
+	size_t newSize;
 	auto_ptr<BYTE> bgrBuf(ConvertRGBToBMPBuffer(image, width, height, newSize));
 
 	if (bgrBuf.get())

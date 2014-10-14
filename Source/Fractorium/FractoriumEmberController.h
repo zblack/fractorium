@@ -41,16 +41,16 @@ public:
 
 	//Embers.
 	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false) { }
-	virtual void CopyEmber(Ember<float>& ember) { }
+	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) { }
 	virtual void SetEmberFile(const EmberFile<float>& emberFile) { }
-	virtual void CopyEmberFile(EmberFile<float>& emberFile) { }
+	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) { }
 	virtual void SetTempPalette(const Palette<float>& palette) { }
 	virtual void CopyTempPalette(Palette<float>& palette) { }
 #ifdef DO_DOUBLE
 	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false) { }
-	virtual void CopyEmber(Ember<double>& ember) { }
+	virtual void CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) { }
 	virtual void SetEmberFile(const EmberFile<double>& emberFile) { }
-	virtual void CopyEmberFile(EmberFile<double>& emberFile) { }
+	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) { }
 	virtual void SetTempPalette(const Palette<double>& palette) { }
 	virtual void CopyTempPalette(Palette<double>& palette) { }
 #endif
@@ -62,14 +62,15 @@ public:
 	virtual void DeleteCurrentXform() { }
 	virtual void AddFinalXform() { }
 	virtual bool UseFinalXform() { return false; }
-	virtual size_t XformCount() { return 0; }
-	virtual size_t TotalXformCount() { return 0; }
-	virtual string Name() { return ""; }
-	virtual void Name(string s) { }
-	virtual unsigned int FinalRasW() { return 0; }
+	virtual size_t XformCount() const { return 0; }
+	virtual size_t TotalXformCount() const { return 0; }
+	virtual QString Name() const { return ""; }
+	virtual void Name(const string& s) { }
+	virtual unsigned int FinalRasW() const { return 0; }
 	virtual void FinalRasW(unsigned int w) { }
-	virtual unsigned int FinalRasH() { return 0; }
+	virtual unsigned int FinalRasH() const { return 0; }
 	virtual void FinalRasH(unsigned int h) { }
+	virtual size_t Index() const { return 0; }
 	virtual void AddSymmetry(int sym, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { }
 	virtual void CalcNormalizedWeights() { }
 
@@ -78,7 +79,7 @@ public:
 	virtual void NewEmptyFlameInCurrentFile() { }
 	virtual void NewRandomFlameInCurrentFile() { }
 	virtual void CopyFlameInCurrentFile() { }
-	virtual void OpenAndPrepFiles(QStringList filenames, bool append) { }
+	virtual void OpenAndPrepFiles(const QStringList& filenames, bool append) { }
 	virtual void SaveCurrentAsXml() { }
 	virtual void SaveEntireFileAsXml() { }
 	virtual void SaveCurrentToOpenedFile() { }
@@ -106,6 +107,8 @@ public:
 	virtual void VibrancyChanged(double d) { }
 	virtual void HighlightPowerChanged(double d) { }
 	virtual void PaletteModeChanged(unsigned int i) { }
+	virtual void WidthChanged(unsigned int i) { }
+	virtual void HeightChanged(unsigned int i) { }
 	virtual void CenterXChanged(double d) { }
 	virtual void CenterYChanged(double d) { }
 	virtual void ScaleChanged(double d) { }
@@ -165,7 +168,7 @@ public:
 	virtual void ClearXaos() { }
 
 	//Palette.
-	virtual bool InitPaletteTable(string s) { return false; }
+	virtual bool InitPaletteTable(const string& s) { return false; }
 	virtual void ApplyPaletteToEmber() { }
 	virtual void PaletteAdjust() { }
 	virtual QRgb GetQRgbFromPaletteIndex(unsigned int i) { return QRgb(); }
@@ -185,7 +188,7 @@ public:
 	//Rendering/progress.
 	virtual bool Render() { return false; }
 	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true) { return false; }
-	virtual unsigned int SizeOfT() { return 0; }
+	virtual unsigned int SizeOfT() const { return 0; }
 	virtual void ClearUndo() { }
 	virtual GLEmberControllerBase* GLController() { return NULL; }
 	bool RenderTimerRunning();
@@ -195,7 +198,7 @@ public:
 	void Shutdown();
 	void UpdateRender(eProcessAction action = FULL_RENDER);
 	void DeleteRenderer();
-	void SaveCurrentRender(QString filename);
+	void SaveCurrentRender(const QString& filename, bool forcePull);
 	RendererBase* Renderer() { return m_Renderer.get(); }
 	vector<unsigned char>* FinalImage() { return &m_FinalImage; }
 	vector<unsigned char>* PreviewFinalImage() { return &m_PreviewFinalImage; }
@@ -219,6 +222,7 @@ protected:
 	eEditUndoState m_EditState;
 	GLuint m_OutputTexID;
 	Timing m_RenderElapsedTimer;
+	EmberStats m_Stats;
 	QImage m_FinalPaletteImage;
 	QString m_LastSaveAll;
 	QString m_LastSaveCurrent;
@@ -247,161 +251,165 @@ public:
 	virtual ~FractoriumEmberController();
 
 	//Embers.
-	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false);
-	virtual void CopyEmber(Ember<float>& ember);
-	virtual void SetEmberFile(const EmberFile<float>& emberFile);
-	virtual void CopyEmberFile(EmberFile<float>& emberFile);
-	virtual void SetTempPalette(const Palette<float>& palette);
-	virtual void CopyTempPalette(Palette<float>& palette);
+	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false) override;
+	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) override;
+	virtual void SetEmberFile(const EmberFile<float>& emberFile) override;
+	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) override;
+	virtual void SetTempPalette(const Palette<float>& palette) override;
+	virtual void CopyTempPalette(Palette<float>& palette) override;
 #ifdef DO_DOUBLE
-	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false);
-	virtual void CopyEmber(Ember<double>& ember);
-	virtual void SetEmberFile(const EmberFile<double>& emberFile);
-	virtual void CopyEmberFile(EmberFile<double>& emberFile);
-	virtual void SetTempPalette(const Palette<double>& palette);
-	virtual void CopyTempPalette(Palette<double>& palette);
+	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false) override;
+	virtual void CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) override;
+	virtual void SetEmberFile(const EmberFile<double>& emberFile) override;
+	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) override;
+	virtual void SetTempPalette(const Palette<double>& palette) override;
+	virtual void CopyTempPalette(Palette<double>& palette) override;
 #endif
-	virtual void SetEmber(size_t index);
-	virtual void Clear() { }
-	virtual void AddXform();
-	virtual void DuplicateXform();
-	virtual void ClearCurrentXform();
-	virtual void DeleteCurrentXform();
-	virtual void AddFinalXform();
-	virtual bool UseFinalXform() { return m_Ember.UseFinalXform(); }
+	virtual void SetEmber(size_t index) override;
+	virtual void Clear() override { }
+	virtual void AddXform() override;
+	virtual void DuplicateXform() override;
+	virtual void ClearCurrentXform() override;
+	virtual void DeleteCurrentXform() override;
+	virtual void AddFinalXform() override;
+	virtual bool UseFinalXform() override { return m_Ember.UseFinalXform(); }
 	//virtual bool IsFinal(unsigned int i) { return false; }
-	virtual size_t XformCount() { return m_Ember.XformCount(); }
-	virtual size_t TotalXformCount() { return m_Ember.TotalXformCount(); }
-	virtual string Name() { return m_Ember.m_Name; }
-	virtual void Name(string s) { m_Ember.m_Name = s; }
-	virtual unsigned int FinalRasW() { return m_Ember.m_FinalRasW; }
-	virtual void FinalRasW(unsigned int w) { m_Ember.m_FinalRasW = w; }
-	virtual unsigned int FinalRasH() { return m_Ember.m_FinalRasH; }
-	virtual void FinalRasH(unsigned int h) { m_Ember.m_FinalRasH = h; }
-	virtual void AddSymmetry(int sym, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { m_Ember.AddSymmetry(sym, rand); }
-	virtual void CalcNormalizedWeights() { m_Ember.CalcNormalizedWeights(m_NormalizedWeights); }
+	virtual size_t XformCount() const override { return m_Ember.XformCount(); }
+	virtual size_t TotalXformCount() const override { return m_Ember.TotalXformCount(); }
+	virtual QString Name() const override { return QString::fromStdString(m_Ember.m_Name); }
+	virtual void Name(const string& s) override { m_Ember.m_Name = s; }
+	virtual unsigned int FinalRasW() const override { return m_Ember.m_FinalRasW; }
+	virtual void FinalRasW(unsigned int w) override { m_Ember.m_FinalRasW = w; }
+	virtual unsigned int FinalRasH() const override { return m_Ember.m_FinalRasH; }
+	virtual void FinalRasH(unsigned int h) override { m_Ember.m_FinalRasH = h; }
+	virtual size_t Index() const override { return m_Ember.m_Index; }
+	virtual void AddSymmetry(int sym, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override { m_Ember.AddSymmetry(sym, rand); }
+	virtual void CalcNormalizedWeights() override { m_Ember.CalcNormalizedWeights(m_NormalizedWeights); }
+	void ConstrainDimensions(Ember<T>& ember);
 	Ember<T>* CurrentEmber();
 
 	//Menu.
-	virtual void NewFlock(unsigned int count);
-	virtual void NewEmptyFlameInCurrentFile();
-	virtual void NewRandomFlameInCurrentFile();
-	virtual void CopyFlameInCurrentFile();
-	virtual void OpenAndPrepFiles(QStringList filenames, bool append);
-	virtual void SaveCurrentAsXml();
-	virtual void SaveEntireFileAsXml();
-	virtual void SaveCurrentToOpenedFile();
-	virtual void Undo();
-	virtual void Redo();
-	virtual void CopyXml();
-	virtual void CopyAllXml();
-	virtual void PasteXmlAppend();
-	virtual void PasteXmlOver();
-	virtual void AddReflectiveSymmetry();
-	virtual void AddRotationalSymmetry();
-	virtual void AddBothSymmetry();
-	virtual void Flatten();
-	virtual void Unflatten();
-	virtual void ClearFlame();
+	virtual void NewFlock(unsigned int count) override;
+	virtual void NewEmptyFlameInCurrentFile() override;
+	virtual void NewRandomFlameInCurrentFile() override;
+	virtual void CopyFlameInCurrentFile() override;
+	virtual void OpenAndPrepFiles(const QStringList& filenames, bool append) override;
+	virtual void SaveCurrentAsXml() override;
+	virtual void SaveEntireFileAsXml() override;
+	virtual void SaveCurrentToOpenedFile() override;
+	virtual void Undo() override;
+	virtual void Redo() override;
+	virtual void CopyXml() override;
+	virtual void CopyAllXml() override;
+	virtual void PasteXmlAppend() override;
+	virtual void PasteXmlOver() override;
+	virtual void AddReflectiveSymmetry() override;
+	virtual void AddRotationalSymmetry() override;
+	virtual void AddBothSymmetry() override;
+	virtual void Flatten() override;
+	virtual void Unflatten() override;
+	virtual void ClearFlame() override;
 
 	//Toolbar.
 
 	//Params.
-	virtual void SetCenter(double x, double y);
-	virtual void FillParamTablesAndPalette();
-	virtual void BrightnessChanged(double d);
-	virtual void GammaChanged(double d);
-	virtual void GammaThresholdChanged(double d);
-	virtual void VibrancyChanged(double d);
-	virtual void HighlightPowerChanged(double d);
-	virtual void PaletteModeChanged(unsigned int i);
-	virtual void CenterXChanged(double d);
-	virtual void CenterYChanged(double d);
-	virtual void ScaleChanged(double d);
-	virtual void ZoomChanged(double d);
-	virtual void RotateChanged(double d);
-	virtual void ZPosChanged(double d);
-	virtual void PerspectiveChanged(double d);
-	virtual void PitchChanged(double d);
-	virtual void YawChanged(double d);
-	virtual void DepthBlurChanged(double d);
-	virtual void SpatialFilterWidthChanged(double d);
-	virtual void SpatialFilterTypeChanged(const QString& text);
-	virtual void TemporalFilterWidthChanged(double d);
-	virtual void TemporalFilterTypeChanged(const QString& text);
-	virtual void DEFilterMinRadiusWidthChanged(double d);
-	virtual void DEFilterMaxRadiusWidthChanged(double d);
-	virtual void DEFilterCurveWidthChanged(double d);
-	virtual void PassesChanged(int d);
-	virtual void TemporalSamplesChanged(int d);
-	virtual void QualityChanged(double d);
-	virtual void SupersampleChanged(int d);
-	virtual void AffineInterpTypeChanged(int index);
-	virtual void InterpTypeChanged(int index);
-	virtual void BackgroundChanged(const QColor& col);
+	virtual void SetCenter(double x, double y) override;
+	virtual void FillParamTablesAndPalette() override;
+	virtual void BrightnessChanged(double d) override;
+	virtual void GammaChanged(double d) override;
+	virtual void GammaThresholdChanged(double d) override;
+	virtual void VibrancyChanged(double d) override;
+	virtual void HighlightPowerChanged(double d) override;
+	virtual void PaletteModeChanged(unsigned int i) override;
+	virtual void WidthChanged(unsigned int i) override;
+	virtual void HeightChanged(unsigned int i) override;
+	virtual void CenterXChanged(double d) override;
+	virtual void CenterYChanged(double d) override;
+	virtual void ScaleChanged(double d) override;
+	virtual void ZoomChanged(double d) override;
+	virtual void RotateChanged(double d) override;
+	virtual void ZPosChanged(double d) override;
+	virtual void PerspectiveChanged(double d) override;
+	virtual void PitchChanged(double d) override;
+	virtual void YawChanged(double d) override;
+	virtual void DepthBlurChanged(double d) override;
+	virtual void SpatialFilterWidthChanged(double d) override;
+	virtual void SpatialFilterTypeChanged(const QString& text) override;
+	virtual void TemporalFilterWidthChanged(double d) override;
+	virtual void TemporalFilterTypeChanged(const QString& text) override;
+	virtual void DEFilterMinRadiusWidthChanged(double d) override;
+	virtual void DEFilterMaxRadiusWidthChanged(double d) override;
+	virtual void DEFilterCurveWidthChanged(double d) override;
+	virtual void PassesChanged(int d) override;
+	virtual void TemporalSamplesChanged(int d) override;
+	virtual void QualityChanged(double d) override;
+	virtual void SupersampleChanged(int d) override;
+	virtual void AffineInterpTypeChanged(int index) override;
+	virtual void InterpTypeChanged(int index) override;
+	virtual void BackgroundChanged(const QColor& col) override;
 
 	//Xforms.
-	virtual void CurrentXformComboChanged(int index);
-	virtual void XformWeightChanged(double d);
-	virtual void EqualizeWeights();
-	virtual void XformNameChanged(int row, int col);
+	virtual void CurrentXformComboChanged(int index) override;
+	virtual void XformWeightChanged(double d) override;
+	virtual void EqualizeWeights() override;
+	virtual void XformNameChanged(int row, int col) override;
 	void FillWithXform(Xform<T>* xform);
 	Xform<T>* CurrentXform();
 
 	//Xforms Affine.
-	virtual void AffineSetHelper(double d, int index, bool pre);
-	virtual void FlipCurrentXform(bool horizontal, bool vertical, bool pre);
-	virtual void RotateCurrentXformByAngle(double angle, bool pre);
-	virtual void MoveCurrentXform(double x, double y, bool pre);
-	virtual void ScaleCurrentXform(double scale, bool pre);
-	virtual void ResetCurrentXformAffine(bool pre);
+	virtual void AffineSetHelper(double d, int index, bool pre) override;
+	virtual void FlipCurrentXform(bool horizontal, bool vertical, bool pre) override;
+	virtual void RotateCurrentXformByAngle(double angle, bool pre) override;
+	virtual void MoveCurrentXform(double x, double y, bool pre) override;
+	virtual void ScaleCurrentXform(double scale, bool pre) override;
+	virtual void ResetCurrentXformAffine(bool pre) override;
 	void FillAffineWithXform(Xform<T>* xform, bool pre);
 
 	//Xforms Color.
-	virtual void XformColorIndexChanged(double d, bool updateRender);
-	virtual void XformScrollColorIndexChanged(int d);
-	virtual void XformColorSpeedChanged(double d);
-	virtual void XformOpacityChanged(double d);
-	virtual void XformDirectColorChanged(double d);
+	virtual void XformColorIndexChanged(double d, bool updateRender) override;
+	virtual void XformScrollColorIndexChanged(int d) override;
+	virtual void XformColorSpeedChanged(double d) override;
+	virtual void XformOpacityChanged(double d) override;
+	virtual void XformDirectColorChanged(double d) override;
 	void FillColorWithXform(Xform<T>* xform);
 
 	//Xforms Variations.
-	virtual void SetupVariationTree();
-	virtual void ClearVariationsTree();
-	virtual void VariationSpinBoxValueChanged(double d);
+	virtual void SetupVariationTree() override;
+	virtual void ClearVariationsTree() override;
+	virtual void VariationSpinBoxValueChanged(double d) override;
 	void FillVariationTreeWithXform(Xform<T>* xform);
 
 	//Xforms Xaos.
-	virtual void FillXaosWithCurrentXform();
-	virtual QString MakeXaosNameString(unsigned int i);
-	virtual void XaosChanged(DoubleSpinBox* sender);
-	virtual void ClearXaos();
+	virtual void FillXaosWithCurrentXform() override;
+	virtual QString MakeXaosNameString(unsigned int i) override;
+	virtual void XaosChanged(DoubleSpinBox* sender) override;
+	virtual void ClearXaos() override;
 
 	//Palette.
-	virtual bool InitPaletteTable(string s);
-	virtual void ApplyPaletteToEmber();
-	virtual void PaletteAdjust();
-	virtual QRgb GetQRgbFromPaletteIndex(unsigned int i) { return QRgb(); }
-	virtual void PaletteCellClicked(int row, int col);
+	virtual bool InitPaletteTable(const string& s) override;
+	virtual void ApplyPaletteToEmber() override;
+	virtual void PaletteAdjust() override;
+	virtual QRgb GetQRgbFromPaletteIndex(unsigned int i) override { return QRgb(); }
+	virtual void PaletteCellClicked(int row, int col) override;
 
 	//Library.
-	virtual void SyncNames();
-	virtual void FillLibraryTree(int selectIndex = -1);
-	virtual void UpdateLibraryTree();
-	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col);
-	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col);
-	virtual void RenderPreviews(unsigned int start = UINT_MAX, unsigned int end = UINT_MAX);
-	virtual void StopPreviewRender();
+	virtual void SyncNames() override;
+	virtual void FillLibraryTree(int selectIndex = -1) override;
+	virtual void UpdateLibraryTree() override;
+	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) override;
+	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) override;
+	virtual void RenderPreviews(unsigned int start = UINT_MAX, unsigned int end = UINT_MAX) override;
+	virtual void StopPreviewRender() override;
 
 	//Info.
 
 	//Rendering/progress.
-	virtual bool Render();
-	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true);
-	virtual unsigned int SizeOfT() { return sizeof(T); }
-	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs);
-	virtual void ClearUndo();
-	virtual GLEmberControllerBase* GLController() { return m_GLController.get(); }
+	virtual bool Render() override;
+	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true) override;
+	virtual unsigned int SizeOfT() const override { return sizeof(T); }
+	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs) override;
+	virtual void ClearUndo() override;
+	virtual GLEmberControllerBase* GLController() override { return m_GLController.get(); }
 
 private:
 	//Embers.
@@ -424,6 +432,7 @@ private:
 	//Rendering/progress.
 	void Update(std::function<void (void)> func, bool updateRender = true, eProcessAction action = FULL_RENDER);
 	void UpdateCurrentXform(std::function<void (Xform<T>*)> func, bool updateRender = true, eProcessAction action = FULL_RENDER);
+	bool SyncSizes();
 
 	//Templated members.
 	bool m_PreviewRun;

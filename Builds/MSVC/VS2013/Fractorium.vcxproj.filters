@@ -133,15 +133,6 @@
     <ClCompile Include="..\..\..\Source\Fractorium\GLEmberController.cpp">
       <Filter>Controllers</Filter>
     </ClCompile>
-    <ClCompile Include="GeneratedFiles\Debug\moc_TwoButtonWidget.cpp">
-      <Filter>Generated Files\Debug</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\Release\moc_TwoButtonWidget.cpp">
-      <Filter>Generated Files\Release</Filter>
-    </ClCompile>
-    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_TwoButtonWidget.cpp">
-      <Filter>Generated Files\ReleaseNvidia</Filter>
-    </ClCompile>
     <ClCompile Include="GeneratedFiles\Debug\moc_TableWidget.cpp">
       <Filter>Generated Files\Debug</Filter>
     </ClCompile>
@@ -230,6 +221,15 @@
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
     <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_AboutDialog.cpp">
+      <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_TwoButtonComboWidget.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_TwoButtonComboWidget.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_TwoButtonComboWidget.cpp">
       <Filter>Generated Files\ReleaseNvidia</Filter>
     </ClCompile>
   </ItemGroup>
@@ -323,7 +323,7 @@
     <CustomBuild Include="..\..\..\Source\Fractorium\FractoriumSettings.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
-    <CustomBuild Include="..\..\..\Source\Fractorium\TwoButtonWidget.h">
+    <CustomBuild Include="..\..\..\Source\Fractorium\TwoButtonComboWidget.h">
       <Filter>Widgets</Filter>
     </CustomBuild>
   </ItemGroup>

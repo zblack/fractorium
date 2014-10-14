@@ -102,14 +102,14 @@ void FractoriumEmberControllerBase::DeleteRenderer()
 }
 
 /// <summary>
-/// Save the current contents of the GL window to a file.
+/// Save the current render results to a file.
 /// This could benefit from QImageWriter, however it's compression capabilities are
 /// severely lacking. A Png file comes out larger than a bitmap, so instead use the
 /// Png and Jpg wrapper functions from the command line programs.
 /// This will embed the id, url and nick fields from the options in the image comments.
 /// </summary>
 /// <param name="filename">The full path and filename</param>
-void FractoriumEmberControllerBase::SaveCurrentRender(QString filename)
+void FractoriumEmberControllerBase::SaveCurrentRender(const QString& filename, bool forcePull)
 {
 	if (filename != "")
 	{
@@ -124,13 +124,20 @@ void FractoriumEmberControllerBase::SaveCurrentRender(QString filename)
 		FractoriumSettings* settings = m_Fractorium->m_Settings;
 		RendererCLBase* rendererCL = dynamic_cast<RendererCLBase*>(m_Renderer.get());
 
-		if (rendererCL && m_Renderer->PrepFinalAccumVector(m_FinalImage))
+		if (forcePull && rendererCL && m_Renderer->PrepFinalAccumVector(m_FinalImage))
 		{
 			if (!rendererCL->ReadFinal(m_FinalImage.data()))
 			{
-				QMessageBox::critical(m_Fractorium, "GPU Read Error", "Could not read image from the GPU, aborting image save.");
+				m_Fractorium->ShowCritical("GPU Read Error", "Could not read image from the GPU, aborting image save.", true);
 				return;
 			}
+		}
+
+		//Ensure dimensions are valid.
+		if (m_FinalImage.size() < (width * height * m_Renderer->NumChannels() * m_Renderer->BytesPerChannel()))
+		{
+			m_Fractorium->ShowCritical("Save Failed", "Dimensions didn't match, not saving.", true);
+			return;
 		}
 
 		data = m_FinalImage.data();//Png and channels = 4.
@@ -146,7 +153,7 @@ void FractoriumEmberControllerBase::SaveCurrentRender(QString filename)
 		string id = settings->Id().toStdString();
 		string url = settings->Url().toStdString();
 		string nick = settings->Nick().toStdString();
-		EmberImageComments comments = m_Renderer->ImageComments(0, false, true);
+		EmberImageComments comments = m_Renderer->ImageComments(m_Stats, 0, false, true);
 
 		if (suffix == "png")
 			b = WritePng(s.c_str(), data, width, height, 1, true, comments, id, url, nick);
@@ -155,12 +162,15 @@ void FractoriumEmberControllerBase::SaveCurrentRender(QString filename)
 		else if (suffix == "bmp")
 			b = WriteBmp(s.c_str(), data, width, height);
 		else
-			QMessageBox::critical(m_Fractorium, "Save Failed", "Unrecognized format " + suffix + ", not saving.");
+		{
+			m_Fractorium->ShowCritical("Save Failed", "Unrecognized format " + suffix + ", not saving.", true);
+			return;
+		}
 
 		if (b)
 			settings->SaveFolder(fileInfo.canonicalPath());
 		else
-			QMessageBox::critical(m_Fractorium, "Save Failed", "Could not save file, try saving to a different folder.");
+			m_Fractorium->ShowCritical("Save Failed", "Could not save file, try saving to a different folder.", true);
 	}
 }
 
@@ -242,26 +252,55 @@ void FractoriumEmberController<T>::ClearUndo()
 }
 
 /// <summary>
+/// The hierarchy/order of sizes is like so:
+/// Ember
+///		GL Widget
+///			Texture (passed to RendererCL)
+///				Viewport
+/// Since this uses m_GL->SizesMatch(), which uses the renderer's dimensions, this
+/// must be called after the renderer has set the current ember.
+/// </summary>
+/// <returns>True if dimensions had to be resized due to a mismatch, else false.</returns>
+template <typename T>
+bool FractoriumEmberController<T>::SyncSizes()
+{
+	bool changed = false;
+	GLWidget* gl = m_Fractorium->ui.GLDisplay;
+	RendererCL<T>* rendererCL;
+
+	if (!m_GLController->SizesMatch())
+	{
+		m_GLController->ClearWindow();
+		gl->SetDimensions(m_Ember.m_FinalRasW, m_Ember.m_FinalRasH);
+		gl->Allocate();
+		gl->SetViewport();
+
+		if (m_Renderer->RendererType() == OPENCL_RENDERER && (rendererCL = (RendererCL<T>*)m_Renderer.get()))
+			rendererCL->SetOutputTexture(gl->OutputTexID());
+
+		changed = true;
+	}
+
+	return changed;
+}
+
+/// <summary>
 /// The main rendering function.
 /// Called whenever the event loop is idle.
 /// </summary>
+/// <returns>True if nothing went wrong, else false.</returns>
 template <typename T>
 bool FractoriumEmberController<T>::Render()
 {
-	bool success = true;
-
 	m_Rendering = true;
+
+	bool success = true;
 	GLWidget* gl = m_Fractorium->ui.GLDisplay;
+	RendererCL<T>* rendererCL;
 	eProcessAction action = CondenseAndClearProcessActions();
 
-	//Set dimensions first.
-	if ((m_Ember.m_FinalRasW != gl->width() ||
-		 m_Ember.m_FinalRasH != gl->height()))
-	{
-		m_Ember.SetSizeAndAdjustScale(gl->width(), gl->height(), false, SCALE_WIDTH);
-		m_Fractorium->m_ScaleSpin->SetValueStealth(m_Ember.m_PixelsPerUnit);
-		action = FULL_RENDER;
-	}
+	if (m_Renderer->RendererType() == OPENCL_RENDERER)
+		rendererCL = (RendererCL<T>*)m_Renderer.get();
 
 	//Force temporal samples to always be 1. Perhaps change later when animation is implemented.
 	m_Ember.m_TemporalSamples = 1;
@@ -291,6 +330,13 @@ bool FractoriumEmberController<T>::Render()
 				m_Ember.GetTotalXform(i)->m_Opacity = m_TempOpacities[i];
 			}
 		}
+	}
+
+	//Ensure sizes are equal and if not, update dimensions.
+	if (SyncSizes())
+	{
+		action = FULL_RENDER;
+		return true;
 	}
 
 	//Determining if a completely new rendering process is being started.
@@ -332,11 +378,11 @@ bool FractoriumEmberController<T>::Render()
 			if (ProcessState() == ACCUM_DONE)
 			{
 				EmberStats stats = m_Renderer->Stats();
+				QString iters = ToString(stats.m_Iters);
+				QString scaledQuality = ToString((unsigned int)m_Renderer->ScaledQuality());
+				string renderTime = m_RenderElapsedTimer.Format(m_RenderElapsedTimer.Toc());
 
 				m_Fractorium->m_ProgressBar->setValue(100);
-				QString iters = QLocale(QLocale::English).toString(stats.m_Iters);
-				QString scaledQuality = QString::number((unsigned int)m_Renderer->ScaledQuality());
-				string renderTime = m_RenderElapsedTimer.Format(m_RenderElapsedTimer.Toc());
 
 				//Only certain status can be reported with OpenCL.
 				if (m_Renderer->RendererType() == OPENCL_RENDERER)
@@ -346,8 +392,8 @@ bool FractoriumEmberController<T>::Render()
 				else
 				{
 					double percent = (double)stats.m_Badvals / (double)stats.m_Iters;
-					QString badVals = QLocale(QLocale::English).toString(stats.m_Badvals);
-					QString badPercent = QLocale(QLocale::English).toString(percent * 100, 'f', 2);
+					QString badVals = ToString(stats.m_Badvals);
+					QString badPercent = QLocale::system().toString(percent * 100, 'f', 2);
 
 					m_Fractorium->m_RenderStatusLabel->setText("Iters: " + iters + ". Scaled quality: " + scaledQuality + ". Bad values: " + badVals + " (" + badPercent + "%). Total time: " + QString::fromStdString(renderTime));
 				}
@@ -385,7 +431,7 @@ bool FractoriumEmberController<T>::Render()
 				
 				//Uncomment for debugging kernel build and execution errors.
 				//m_Fractorium->ui.InfoRenderingTextEdit->setText(QString::fromStdString(m_Fractorium->m_Wrapper.DumpInfo()));
-				//if (RendererCL<T>* rendererCL = dynamic_cast<RendererCL<T>*>(m_Renderer.get()))
+				//if (rendererCL)
 				//	m_Fractorium->ui.InfoRenderingTextEdit->setText(QString::fromStdString(rendererCL->IterKernel()));
 			}
 		}
@@ -404,11 +450,10 @@ bool FractoriumEmberController<T>::Render()
 				m_Rendering = false;
 				StopRenderTimer(true);
 				m_Fractorium->m_RenderStatusLabel->setText("Rendering failed 3 or more times, stopping all rendering, see info tab. Try changing renderer types.");
-				
-				memset(m_FinalImage.data(), 0, m_FinalImage.size());
+				Memset(m_FinalImage);
 		
-				if (m_Renderer->RendererType() == OPENCL_RENDERER)
-					((RendererCL<T>*)m_Renderer.get())->ClearFinal();
+				if (rendererCL)
+					rendererCL->ClearFinal();
 
 				m_GLController->ClearWindow();
 			}
@@ -461,7 +506,7 @@ bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsi
 		else
 		{
 			ok = false;
-			QMessageBox::critical(m_Fractorium, "Renderer Creation Error", "Could not create requested renderer, fallback CPU renderer created. See info tab for details.");
+			m_Fractorium->ShowCritical("Renderer Creation Error", "Could not create requested renderer, fallback CPU renderer created. See info tab for details.");
 			m_Fractorium->ErrorReportToQTextEdit(errorReport, m_Fractorium->ui.InfoRenderingTextEdit);
 		}
 	}
@@ -503,7 +548,7 @@ bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsi
 	else
 	{
 		ok = false;
-		QMessageBox::critical(m_Fractorium, "Renderer Creation Error", "Creating a basic CPU renderer failed, something is catastrophically wrong. Exiting program.");
+		m_Fractorium->ShowCritical("Renderer Creation Error", "Creating a basic CPU renderer failed, something is catastrophically wrong. Exiting program.");
 		QApplication::quit();
 	}
 
@@ -525,7 +570,7 @@ bool Fractorium::CreateRendererFromOptions()
 						 m_Settings->DeviceIndex()))
 	{
 		//If using OpenCL, will only get here if creating RendererCL failed, but creating a backup CPU Renderer succeeded.
-		QMessageBox::critical(this, "Renderer Creation Error", "Error creating renderer, most likely a GPU problem. Using CPU instead.");
+		ShowCritical("Renderer Creation Error", "Error creating renderer, most likely a GPU problem. Using CPU instead.");
 		m_Settings->OpenCL(false);
 		m_OptionsDialog->ui.OpenCLCheckBox->setChecked(false);
 		m_FinalRenderDialog->ui.FinalRenderOpenCLCheckBox->setChecked(false);

@@ -46,13 +46,13 @@ public:
 	string FinalAccumLateClipWithAlphaCalcWithAlphaAccumEntryPoint();
 	string FinalAccumLateClipWithoutAlphaCalcWithAlphaAccumKernel();
 	string FinalAccumLateClipWithoutAlphaCalcWithAlphaAccumEntryPoint();
-	string GammaCorrectionEntryPoint(unsigned int channels, bool transparency);
-	string GammaCorrectionKernel(unsigned int channels, bool transparency);
-	string FinalAccumEntryPoint(bool earlyClip, unsigned int channels, bool transparency, T& alphaBase, T& alphaScale);
-	string FinalAccumKernel(bool earlyClip, unsigned int channels, bool transparency);
+	string GammaCorrectionEntryPoint(size_t channels, bool transparency);
+	string GammaCorrectionKernel(size_t channels, bool transparency);
+	string FinalAccumEntryPoint(bool earlyClip, size_t channels, bool transparency, T& alphaBase, T& alphaScale);
+	string FinalAccumKernel(bool earlyClip, size_t channels, bool transparency);
 
 private:
-	string CreateFinalAccumKernelString(bool earlyClip, unsigned int channels, bool transparency);
+	string CreateFinalAccumKernelString(bool earlyClip, size_t channels, bool transparency);
 	string CreateGammaCorrectionKernelString(bool alphaCalc);
 
 	string CreateFinalAccumKernelString(bool earlyClip, bool alphaCalc, bool alphaAccum);

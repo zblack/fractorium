@@ -213,7 +213,7 @@ void Fractorium::OnRotateCButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreRotateCButton;
 	QComboBox* combo = pre ? ui.PreRotateCombo : ui.PostRotateCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 
 	if (ok)
 		m_Controller->RotateCurrentXformByAngle(d, pre);
@@ -230,7 +230,7 @@ void Fractorium::OnRotateCcButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreRotateCcButton;
 	QComboBox* combo = pre ? ui.PreRotateCombo : ui.PostRotateCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 
 	if (ok)
 		m_Controller->RotateCurrentXformByAngle(-d, pre);
@@ -267,7 +267,7 @@ void Fractorium::OnMoveUpButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreMoveUpButton;
 	QComboBox* combo = pre ? ui.PreMoveCombo : ui.PostMoveCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
 		m_Controller->MoveCurrentXform(0, d, pre);
@@ -284,7 +284,7 @@ void Fractorium::OnMoveDownButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreMoveDownButton;
 	QComboBox* combo = pre ? ui.PreMoveCombo : ui.PostMoveCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
 		m_Controller->MoveCurrentXform(0, -d, pre);
@@ -301,7 +301,7 @@ void Fractorium::OnMoveLeftButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreMoveLeftButton;
 	QComboBox* combo = pre ? ui.PreMoveCombo : ui.PostMoveCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
 		m_Controller->MoveCurrentXform(-d, 0, pre);
@@ -318,7 +318,7 @@ void Fractorium::OnMoveRightButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreMoveRightButton;
 	QComboBox* combo = pre ? ui.PreMoveCombo : ui.PostMoveCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
 		m_Controller->MoveCurrentXform(d, 0, pre);
@@ -356,7 +356,7 @@ void Fractorium::OnScaleDownButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreScaleDownButton;
 	QComboBox* combo = pre ? ui.PreScaleCombo : ui.PostScaleCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
 		m_Controller->ScaleCurrentXform(1.0 / (d / 100.0), pre);
@@ -373,7 +373,7 @@ void Fractorium::OnScaleUpButtonClicked(bool checked)
 	bool ok;
 	bool pre = sender() == ui.PreScaleUpButton;
 	QComboBox* combo = pre ? ui.PreScaleCombo : ui.PostScaleCombo;
-	double d = combo->currentText().toDouble(&ok);
+	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
 		m_Controller->ScaleCurrentXform(d / 100.0, pre);

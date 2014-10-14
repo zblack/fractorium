@@ -62,9 +62,9 @@ QString FractoriumEmberController<T>::MakeXaosNameString(unsigned int i)
 		if (i != -1)
 		{
 			if (m_Fractorium->ui.XaosToRadio->isChecked())
-				name = QString("From ") + QString::number(curr) + QString(" To ") + QString::number(i);
+				name = QString("From ") + ToString(curr) + QString(" To ") + ToString(i);
 			else
-				name = QString("From ") + QString::number(i) + QString(" To ") + QString::number(curr);
+				name = QString("From ") + ToString(i) + QString(" To ") + ToString(curr);
 
 			//if (xform->m_Name != "")
 			//	name = name + " (" + QString::fromStdString(xform->m_Name) + ")";

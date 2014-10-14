@@ -28,9 +28,9 @@ bool EmberRender(EmberOptions& opt)
 	Timing t;
 	bool writeSuccess = false;
 	unsigned char* finalImagep;
-	unsigned int i, channels, strip, strips, realHeight, origHeight;
-	size_t stripOffset;
-	T centerY, centerBase, zoomScale, floatStripH;
+	size_t i, channels;
+	size_t strips;
+	size_t iterCount;
 	string filename;
 	ostringstream os;
 	vector<Ember<T>> embers;
@@ -188,6 +188,7 @@ bool EmberRender(EmberOptions& opt)
 			embers[i].m_FinalRasH = 1080;
 		}
 
+		stats.Clear();
 		renderer->SetEmber(embers[i]);
 		renderer->PrepFinalAccumVector(finalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 
@@ -197,40 +198,17 @@ bool EmberRender(EmberOptions& opt)
 		}
 		else
 		{
-			strips = CalcStrips((double)renderer->MemoryRequired(false), (double)renderer->MemoryAvailable(), opt.UseMem());
+			strips = CalcStrips((double)renderer->MemoryRequired(1, true), (double)renderer->MemoryAvailable(), opt.UseMem());
 
 			if (strips > 1)
 				VerbosePrint("Setting strips to " << strips << " with specified memory usage of " << opt.UseMem());
 		}
 
-		if (strips > embers[i].m_FinalRasH)
-		{
-			cout << "Cannot have more strips than rows: " << opt.Strips() << " > " << embers[i].m_FinalRasH << ". Setting strips = rows." << endl;
-			opt.Strips(strips = embers[i].m_FinalRasH);
-		}
+		strips = VerifyStrips(embers[i].m_FinalRasH, strips,
+			[&](const string& s) { cout << s << endl; },//Greater than height.
+			[&](const string& s) { cout << s << endl; },//Mod height != 0.
+			[&](const string& s) { cout << s << endl; });//Final strips value to be set.
 
-		if (embers[i].m_FinalRasH % strips != 0)
-		{
-			cout << "A strips value of " << strips << " does not divide evenly into a height of " << embers[i].m_FinalRasH;
-			
-			strips = NextHighestEvenDiv(embers[i].m_FinalRasH, strips);
-
-			if (strips == 1)//No higher divisor, check for a lower one.
-				strips = NextLowestEvenDiv(embers[i].m_FinalRasH, strips);
-
-			cout << ". Setting strips to " << strips << "." << endl;
-		}
-
-		embers[i].m_Quality *= strips;
-		realHeight = embers[i].m_FinalRasH;
-		floatStripH = T(embers[i].m_FinalRasH) / T(strips);
-		embers[i].m_FinalRasH = (unsigned int)ceil(floatStripH);
-		centerY = embers[i].m_CenterY;
-		zoomScale = pow(T(2), embers[i].m_Zoom);
-		centerBase = centerY - ((strips - 1) * floatStripH) / (2 * embers[i].m_PixelsPerUnit * zoomScale);
-		
-		if (strips > 1)
-			randVec = renderer->RandVec();
 		//For testing incremental renderer.
 		//int sb = 1;
 		//bool resume = false, success = false;
@@ -242,104 +220,84 @@ bool EmberRender(EmberOptions& opt)
 		//}
 		//while (success && renderer->ProcessState() != ACCUM_DONE);
 
-		for (strip = 0; strip < strips; strip++)
+		StripsRender<T>(renderer.get(), embers[i], finalImage, 0, strips, opt.YAxisUp(),
+		[&](size_t strip)//Pre strip.
 		{
-			stripOffset = (size_t)embers[i].m_FinalRasH * strip * renderer->FinalRowSize();
-			embers[i].m_CenterY = centerBase + embers[i].m_FinalRasH * T(strip) / (embers[i].m_PixelsPerUnit * zoomScale);
-
-			if ((embers[i].m_FinalRasH * (strip + 1)) > realHeight)
-			{
-				origHeight = embers[i].m_FinalRasH;
-				embers[i].m_FinalRasH = realHeight - origHeight * strip;
-				embers[i].m_CenterY -= (origHeight - embers[i].m_FinalRasH) * T(0.5) / (embers[i].m_PixelsPerUnit * zoomScale);
-			}
+			if (opt.Verbose() && (strips > 1) && strip > 0)
+				cout << endl;
 
 			if (strips > 1)
-			{
-				renderer->RandVec(randVec);//Use the same vector of ISAAC rands for each strip.
-				renderer->SetEmber(embers[i]);//Set one final time after modifications for strips.
-
-				if (opt.Verbose() && (strips > 1) && strip > 0)
-					cout << endl;
-
 				VerbosePrint("Strip = " << (strip + 1) << "/" << strips);
-			}
-
-			if ((renderer->Run(finalImage, 0, 0, false, stripOffset) != RENDER_OK) || renderer->Aborted() || finalImage.empty())
-			{
-				cout << "Error: image rendering failed, skipping to next image." << endl;
-				renderer->DumpErrorReport();//Something went wrong, print errors.
-				break;//Exit strips loop, resume next iter in embers loop.
-			}
-
-			progress->Clear();
-
-			//Original wrote every strip as a full image which could be very slow with many large images.
-			//Only write once all strips for this image are finished.
-			if (strip == strips - 1)
-			{
-				if (!opt.Out().empty())
-				{
-					filename = opt.Out();
-				}
-				else if (opt.NameEnable() && !embers[i].m_Name.empty())
-				{
-					filename = opt.Prefix() + embers[i].m_Name + opt.Suffix() + "." + opt.Format();
-				}
-				else
-				{
-					ostringstream ssLocal;
-
-					ssLocal << opt.Prefix() << setfill('0') << setw(5) << i << opt.Suffix() << "." << opt.Format();
-					filename = ssLocal.str();
-				}
-
-				writeSuccess = false;
-				comments = renderer->ImageComments(opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
-				stats = renderer->Stats();
-				os.str("");
-				os << comments.m_NumIters << " / " << renderer->TotalIterCount() << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters/(double)renderer->TotalIterCount() * 100) << "%)";
-
-				VerbosePrint("\nIters ran/requested: " + os.str());
-				VerbosePrint("Bad values: " << stats.m_Badvals);
-				VerbosePrint("Render time: " + t.Format(stats.m_RenderMs));
-				VerbosePrint("Pure iter time: " + t.Format(stats.m_IterMs));
-				VerbosePrint("Iters/sec: " << unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
-				VerbosePrint("Writing " + filename);
-
-				if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
-				{
-					RgbaToRgb(finalImage, vecRgb, renderer->FinalRasW(), realHeight);
-
-					finalImagep = vecRgb.data();
-				}
-				else
-				{
-					finalImagep = finalImage.data();
-				}
-
-				if (opt.Format() == "png")
-					writeSuccess = WritePng(filename.c_str(), finalImagep, renderer->FinalRasW(), realHeight, opt.BitsPerChannel() / 8, opt.PngComments(), comments, opt.Id(), opt.Url(), opt.Nick());
-				else if (opt.Format() == "jpg")
-					writeSuccess = WriteJpeg(filename.c_str(), finalImagep, renderer->FinalRasW(), realHeight, opt.JpegQuality(), opt.JpegComments(), comments, opt.Id(), opt.Url(), opt.Nick());
-				else if (opt.Format() == "ppm")
-					writeSuccess = WritePpm(filename.c_str(), finalImagep, renderer->FinalRasW(), realHeight);
-				else if (opt.Format() == "bmp")
-					writeSuccess = WriteBmp(filename.c_str(), finalImagep, renderer->FinalRasW(), realHeight);
-
-				if (!writeSuccess)
-					cout << "Error writing " << filename << endl;
-			}
-		}
-		
-		//Restore the ember values to their original values.
-		if (strips > 1)
+		},
+		[&](size_t strip)//Post strip.
 		{
-			embers[i].m_Quality /= strips;
-			embers[i].m_FinalRasH = realHeight;
-			embers[i].m_CenterY = centerY;
-			memset(finalImage.data(), 0, finalImage.size());
-		}
+			progress->Clear();
+			stats += renderer->Stats();
+		},
+		[&](size_t strip)//Error.
+		{
+			cout << "Error: image rendering failed, skipping to next image." << endl;
+			renderer->DumpErrorReport();//Something went wrong, print errors.
+		},
+		//Final strip.
+		//Original wrote every strip as a full image which could be very slow with many large images.
+		//Only write once all strips for this image are finished.
+		[&](Ember<T>& finalEmber)
+		{
+			if (!opt.Out().empty())
+			{
+				filename = opt.Out();
+			}
+			else if (opt.NameEnable() && !finalEmber.m_Name.empty())
+			{
+				filename = opt.Prefix() + finalEmber.m_Name + opt.Suffix() + "." + opt.Format();
+			}
+			else
+			{
+				ostringstream ssLocal;
+
+				ssLocal << opt.Prefix() << setfill('0') << setw(5) << i << opt.Suffix() << "." << opt.Format();
+				filename = ssLocal.str();
+			}
+
+			//TotalIterCount() is actually using ScaledQuality() which does not get reset upon ember assignment,
+			//so it ends up using the correct value for quality * strips.
+			writeSuccess = false;
+			iterCount = renderer->TotalIterCount();
+			comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
+			os.str("");
+			os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << (((double)stats.m_Iters / (double)iterCount) * 100) << "%)";
+
+			VerbosePrint("\nIters ran/requested: " + os.str());
+			VerbosePrint("Bad values: " << stats.m_Badvals);
+			VerbosePrint("Render time: " + t.Format(stats.m_RenderMs));
+			VerbosePrint("Pure iter time: " + t.Format(stats.m_IterMs));
+			VerbosePrint("Iters/sec: " << unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
+			VerbosePrint("Writing " + filename);
+
+			if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
+			{
+				RgbaToRgb(finalImage, vecRgb, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH);
+
+				finalImagep = vecRgb.data();
+			}
+			else
+			{
+				finalImagep = finalImage.data();
+			}
+
+			if (opt.Format() == "png")
+				writeSuccess = WritePng(filename.c_str(), finalImagep, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH, opt.BitsPerChannel() / 8, opt.PngComments(), comments, opt.Id(), opt.Url(), opt.Nick());
+			else if (opt.Format() == "jpg")
+				writeSuccess = WriteJpeg(filename.c_str(), finalImagep, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH, opt.JpegQuality(), opt.JpegComments(), comments, opt.Id(), opt.Url(), opt.Nick());
+			else if (opt.Format() == "ppm")
+				writeSuccess = WritePpm(filename.c_str(), finalImagep, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH);
+			else if (opt.Format() == "bmp")
+				writeSuccess = WriteBmp(filename.c_str(), finalImagep, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH);
+
+			if (!writeSuccess)
+				cout << "Error writing " << filename << endl;
+		});
 
 		if (opt.EmberCL() && opt.DumpKernel())
 			cout << "Iteration kernel: \n" << ((RendererCL<T>*)renderer.get())->IterKernel() << endl;

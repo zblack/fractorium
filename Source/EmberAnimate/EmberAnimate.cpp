@@ -297,8 +297,8 @@ bool EmberAnimate(EmberOptions& opt)
 		}
 		
 		writeSuccess = false;
-		comments = renderer->ImageComments(opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 		stats = renderer->Stats();
+		comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 		os.str("");
 		os << comments.m_NumIters << " / " << renderer->TotalIterCount() << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters/(double)renderer->TotalIterCount() * 100) << "%)";
 

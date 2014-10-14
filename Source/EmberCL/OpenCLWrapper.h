@@ -111,32 +111,32 @@ public:
 	void ClearPrograms();
 
 	//Buffers.
-	bool AddBuffer(string name, size_t size, cl_mem_flags flags = CL_MEM_READ_WRITE);
-	bool AddAndWriteBuffer(string name, void* data, size_t size);
-	bool WriteBuffer(string name, void* data, size_t size);
+	bool AddBuffer(const string& name, size_t size, cl_mem_flags flags = CL_MEM_READ_WRITE);
+	bool AddAndWriteBuffer(const string& name, void* data, size_t size, cl_mem_flags flags = CL_MEM_READ_WRITE);
+	bool WriteBuffer(const string& name, void* data, size_t size);
 	bool WriteBuffer(unsigned int bufferIndex, void* data, size_t size);
-	bool ReadBuffer(string name, void* data, size_t size);
+	bool ReadBuffer(const string& name, void* data, size_t size);
 	bool ReadBuffer(unsigned int bufferIndex, void* data, size_t size);
-	int FindBufferIndex(string name);
-	unsigned int GetBufferSize(string name);
+	int FindBufferIndex(const string& name);
+	unsigned int GetBufferSize(const string& name);
 	unsigned int GetBufferSize(unsigned int bufferIndex);
 	void ClearBuffers();
 
 	//Images.
-	bool AddAndWriteImage(string name, cl_mem_flags flags, const cl::ImageFormat& format, ::size_t width, ::size_t height, ::size_t row_pitch, void* data = NULL, bool shared = false, GLuint texName = 0);
+	bool AddAndWriteImage(const string& name, cl_mem_flags flags, const cl::ImageFormat& format, ::size_t width, ::size_t height, ::size_t row_pitch, void* data = NULL, bool shared = false, GLuint texName = 0);
 	bool WriteImage2D(unsigned int index, bool shared, ::size_t width, ::size_t height, ::size_t row_pitch, void* data);
-	bool ReadImage(string name, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data);
+	bool ReadImage(const string& name, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data);
 	bool ReadImage(unsigned int imageIndex, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data);
-	int FindImageIndex(string name, bool shared);
-	unsigned int GetImageSize(string name, bool shared);
+	int FindImageIndex(const string& name, bool shared);
+	unsigned int GetImageSize(const string& name, bool shared);
 	unsigned int GetImageSize(unsigned int imageIndex, bool shared);
 	bool CompareImageParams(cl::Image& image, cl_mem_flags flags, const cl::ImageFormat& format, ::size_t width, ::size_t height, ::size_t row_pitch);
 	void ClearImages(bool shared);
 	bool CreateImage2D(cl::Image2D& image2D, cl_mem_flags flags, cl::ImageFormat format, ::size_t width, ::size_t height, ::size_t row_pitch = 0, void* data = NULL);
 	bool CreateImage2DGL(IMAGEGL2D& image2DGL, cl_mem_flags flags, GLenum target, GLint miplevel, GLuint texobj);
-	bool EnqueueAcquireGLObjects(string name);
+	bool EnqueueAcquireGLObjects(const string& name);
 	bool EnqueueAcquireGLObjects(IMAGEGL2D& image);
-	bool EnqueueReleaseGLObjects(string name);
+	bool EnqueueReleaseGLObjects(const string& name);
 	bool EnqueueReleaseGLObjects(IMAGEGL2D& image);
 	bool EnqueueAcquireGLObjects(const VECTOR_CLASS<cl::Memory>* memObjects = NULL);
 	bool EnqueueReleaseGLObjects(const VECTOR_CLASS<cl::Memory>* memObjects = NULL);
@@ -170,7 +170,7 @@ public:
 	}
 
 	//Kernels.
-	int FindKernelIndex(string name);
+	int FindKernelIndex(const string& name);
 	bool RunKernel(unsigned int kernelIndex, unsigned int totalGridWidth, unsigned int totalGridHeight, unsigned int totalGridDepth, unsigned int blockWidth, unsigned int blockHeight, unsigned int blockDepth);
 
 	//Info.

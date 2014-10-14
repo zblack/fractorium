@@ -39,8 +39,8 @@ public:
 	string LogScaleSumDEEntryPoint();
 	string LogScaleAssignDEKernel();
 	string LogScaleAssignDEEntryPoint();
-	string GaussianDEKernel(unsigned int ss, unsigned int filterWidth);
-	string GaussianDEEntryPoint(unsigned int ss, unsigned int filterWidth);
+	string GaussianDEKernel(size_t ss, unsigned int filterWidth);
+	string GaussianDEEntryPoint(size_t ss, unsigned int filterWidth);
 
 	//Miscellaneous static functions.
 	static unsigned int MaxDEFilterSize();
@@ -51,8 +51,8 @@ private:
 	//Kernel creators.
 	string CreateLogScaleSumDEKernelString();
 	string CreateLogScaleAssignDEKernelString();
-	string CreateGaussianDEKernel(unsigned int ss);
-	string CreateGaussianDEKernelNoLocalCache(unsigned int ss);
+	string CreateGaussianDEKernel(size_t ss);
+	string CreateGaussianDEKernelNoLocalCache(size_t ss);
 
 	string m_LogScaleSumDEKernel;
 	string m_LogScaleSumDEEntryPoint;

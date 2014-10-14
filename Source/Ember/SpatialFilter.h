@@ -51,7 +51,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	SpatialFilter(eSpatialFilterType filterType, T support, T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	SpatialFilter(eSpatialFilterType filterType, T support, T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 	{
 		m_FilterType = filterType;
 		m_Support = support;
@@ -152,7 +152,7 @@ public:
 	/// <returns>The string representation of this filter</returns>
 	string ToString() const
 	{
-		unsigned int i;
+		size_t i;
 		stringstream ss;
 
 		ss
@@ -179,9 +179,9 @@ public:
 	/// </summary>
 	void Apply() { }
 	inline int FinalFilterWidth() const { return m_FinalFilterWidth; }
-	inline unsigned int Supersample() const { return m_Supersample; }
-	inline unsigned int BufferSize() const { return (unsigned int)m_Filter.size(); }
-	inline unsigned int BufferSizeBytes() const { return BufferSize() * sizeof(T); }
+	inline size_t Supersample() const { return m_Supersample; }
+	inline size_t BufferSize() const { return m_Filter.size(); }
+	inline size_t BufferSizeBytes() const { return BufferSize() * sizeof(T); }
 	inline T Support() const { return m_Support; }
 	inline T FilterRadius() const { return m_FilterRadius; }
 	inline T PixelAspectRatio() const { return m_PixelAspectRatio; }
@@ -231,7 +231,7 @@ private:
 	}
 
 	int m_FinalFilterWidth;//The final width that the filter ends up being.
-	unsigned int m_Supersample;//The supersample value of the ember using this filter to render.
+	size_t m_Supersample;//The supersample value of the ember using this filter to render.
 	T m_Support;//Extra value.
 	T m_FilterRadius;//The requested filter radius.
 	T m_PixelAspectRatio;//The aspect ratio of the ember using this filter to render, usually 1.
@@ -253,7 +253,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	GaussianFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	GaussianFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(GAUSSIAN_SPATIAL_FILTER, T(1.5), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -281,7 +281,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	HermiteFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	HermiteFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(HERMITE_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -316,7 +316,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	BoxFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	BoxFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BOX_SPATIAL_FILTER, T(0.5), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -347,7 +347,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	TriangleFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	TriangleFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(TRIANGLE_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -381,7 +381,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	BellFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	BellFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BELL_SPATIAL_FILTER, T(1.5), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -422,7 +422,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	BsplineFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	BsplineFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BSPLINE_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -467,7 +467,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	Lanczos3Filter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	Lanczos3Filter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(LANCZOS3_SPATIAL_FILTER, T(3.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -501,7 +501,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	Lanczos2Filter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	Lanczos2Filter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(LANCZOS2_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -535,7 +535,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	MitchellFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	MitchellFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(MITCHELL_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -588,7 +588,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	BlackmanFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	BlackmanFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(BLACKMAN_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -616,7 +616,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	CatromFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	CatromFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(CATROM_SPATIAL_FILTER, T(2.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -659,7 +659,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	HammingFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	HammingFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(HAMMING_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -687,7 +687,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	HanningFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	HanningFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(HANNING_SPATIAL_FILTER, T(1.0), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -715,7 +715,7 @@ public:
 	/// <param name="filterRadius">The filter radius</param>
 	/// <param name="superSample">The supersample of the ember being rendered</param>
 	/// <param name="pixelAspectRatio">The pixel aspect ratio being used to render. Default: 1.</param>
-	QuadraticFilter(T filterRadius, unsigned int superSample, T pixelAspectRatio = T(1.0))
+	QuadraticFilter(T filterRadius, size_t superSample, T pixelAspectRatio = T(1.0))
 		: SpatialFilter<T>(QUADRATIC_SPATIAL_FILTER, T(1.5), filterRadius, superSample, pixelAspectRatio) { }
 
 	/// <summary>
@@ -756,7 +756,7 @@ public:
 	/// <param name="superSample">The supersample value of the ember using this filter to render</param>
 	/// <param name="pixelAspectRatio">The aspect ratio of the ember using this filter to render. Default: 1.</param>
 	/// <returns>A pointer to the newly created filter object</returns>
-	static SpatialFilter<T>* Create(eSpatialFilterType filterType, T filterRadius, unsigned int superSample, T pixelAspectRatio = 1)
+	static SpatialFilter<T>* Create(eSpatialFilterType filterType, T filterRadius, size_t superSample, T pixelAspectRatio = 1)
 	{
 		SpatialFilter<T>* filter = nullptr;
 
@@ -829,7 +829,7 @@ public:
 	/// </summary>
 	/// <param name="filterType">The string name of the filter</param>
 	/// <returns>The filter type enum</returns>
-	static eSpatialFilterType FromString(string filterType)
+	static eSpatialFilterType FromString(const string& filterType)
 	{
 		if (!_stricmp(filterType.c_str(), "Gaussian"))
 			return GAUSSIAN_SPATIAL_FILTER;
