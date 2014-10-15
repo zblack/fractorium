@@ -1,0 +1,314 @@
+# depslib dependency file v1.0
+1413384022 source:/home/heretic/Dev/fractorium/Source/Ember/Affine2D.cpp
+	"EmberPch.h"
+	"Affine2D.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/EmberPch.h
+	<SDKDDKVer.h>
+	<windows.h>
+	<libgen.h>
+	<unistd.h>
+	<algorithm>
+	<chrono>
+	<complex>
+	<cstdint>
+	<fstream>
+	<functional>
+	<inttypes.h>
+	<iostream>
+	<iomanip>
+	<limits>
+	<malloc.h>
+	<math.h>
+	<memory>
+	<numeric>
+	<ostream>
+	<sstream>
+	<sys/types.h>
+	<sys/stat.h>
+	<thread>
+	<time.h>
+	<vector>
+	"libxml/parser.h"
+	"libxml2/libxml/parser.h"
+	"tbb/task_group.h"
+	"tbb/parallel_for.h"
+	"tbb/task_scheduler_init.h"
+	"glm/glm.hpp"
+	"glm/gtc/matrix_transform.hpp"
+	"glm/gtc/type_ptr.hpp"
+	"glm/gtx/string_cast.hpp"
+
+1402664682 /usr/include/libxml2/libxml/parser.h
+	<stdarg.h>
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+	<libxml/dict.h>
+	<libxml/hash.h>
+	<libxml/valid.h>
+	<libxml/entities.h>
+	<libxml/xmlerror.h>
+	<libxml/xmlstring.h>
+	<libxml/encoding.h>
+	<libxml/xmlIO.h>
+	<libxml/globals.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlversion.h
+	<libxml/xmlexports.h>
+	<ansidecl.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlexports.h
+
+1402664682 /usr/include/libxml2/libxml/tree.h
+	<stdio.h>
+	<limits.h>
+	<libxml/xmlversion.h>
+	<libxml/xmlstring.h>
+	<libxml/xmlregexp.h>
+	<libxml/xmlmemory.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlstring.h
+	<stdarg.h>
+	<libxml/xmlversion.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlregexp.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+	<libxml/dict.h>
+
+1402664682 /usr/include/libxml2/libxml/dict.h
+	<limits.h>
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlmemory.h
+	<stdio.h>
+	<libxml/xmlversion.h>
+	<libxml/threads.h>
+	<libxml/globals.h>
+
+1402664682 /usr/include/libxml2/libxml/threads.h
+	<libxml/xmlversion.h>
+	<libxml/globals.h>
+
+1402664682 /usr/include/libxml2/libxml/globals.h
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/xmlerror.h>
+	<libxml/SAX.h>
+	<libxml/SAX2.h>
+	<libxml/xmlmemory.h>
+	<libxml/threads.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlerror.h
+	<libxml/parser.h>
+
+1402664682 /usr/include/libxml2/libxml/SAX.h
+	<stdio.h>
+	<stdlib.h>
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/xlink.h>
+
+1402664682 /usr/include/libxml2/libxml/xlink.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+
+1402664682 /usr/include/libxml2/libxml/SAX2.h
+	<stdio.h>
+	<stdlib.h>
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/xlink.h>
+
+1402664682 /usr/include/libxml2/libxml/hash.h
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/dict.h>
+
+1402664682 /usr/include/libxml2/libxml/valid.h
+	<libxml/xmlversion.h>
+	<libxml/xmlerror.h>
+	<libxml/tree.h>
+	<libxml/list.h>
+	<libxml/xmlautomata.h>
+	<libxml/xmlregexp.h>
+
+1402664682 /usr/include/libxml2/libxml/list.h
+	<libxml/xmlversion.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlautomata.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+	<libxml/xmlregexp.h>
+
+1402664682 /usr/include/libxml2/libxml/entities.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+
+1402664682 /usr/include/libxml2/libxml/encoding.h
+	<libxml/xmlversion.h>
+	<iconv.h>
+	<unicode/ucnv.h>
+	<libxml/tree.h>
+
+1402664682 /usr/include/libxml2/libxml/xmlIO.h
+	<stdio.h>
+	<libxml/xmlversion.h>
+	<libxml/globals.h>
+	<libxml/tree.h>
+	<libxml/parser.h>
+	<libxml/encoding.h>
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Affine2D.h
+	"Utils.h"
+
+1413385950 /home/heretic/Dev/fractorium/Source/Ember/Utils.h
+	"Isaac.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Isaac.h
+	"EmberDefines.h"
+
+1413385406 /home/heretic/Dev/fractorium/Source/Ember/EmberDefines.h
+	"EmberPch.h"
+
+1413384022 source:/home/heretic/Dev/fractorium/Source/Ember/DllMain.cpp
+	"EmberPch.h"
+
+1413384022 source:/home/heretic/Dev/fractorium/Source/Ember/Ember.cpp
+	"EmberPch.h"
+	"EmberDefines.h"
+	"Isaac.h"
+	"Ember.h"
+	"Utils.h"
+	"Iterator.h"
+	"Palette.h"
+	"PaletteList.h"
+	"Point.h"
+	"Variation.h"
+	"Variations01.h"
+	"Variations02.h"
+	"Variations03.h"
+	"Variations04.h"
+	"Variations05.h"
+	"VariationsDC.h"
+	"VariationList.h"
+	"Affine2D.h"
+	"Xform.h"
+	"EmberToXml.h"
+	"XmlToEmber.h"
+	"SpatialFilter.h"
+	"DensityFilter.h"
+	"TemporalFilter.h"
+	"Interpolate.h"
+	"Renderer.h"
+	"Timing.h"
+	"SheepTools.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Ember.h
+	"Xform.h"
+	"PaletteList.h"
+	"SpatialFilter.h"
+	"TemporalFilter.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/Xform.h
+	"VariationList.h"
+	"Interpolate.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/VariationList.h
+	"Variations01.h"
+	"Variations02.h"
+	"Variations03.h"
+	"Variations04.h"
+	"Variations05.h"
+	"VariationsDC.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/Variations01.h
+	"Variation.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Variation.h
+	"Point.h"
+	"Isaac.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Point.h
+	"EmberDefines.h"
+	"Affine2D.h"
+	"Timing.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Timing.h
+	"EmberDefines.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/Variations02.h
+	"Variation.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/Variations03.h
+	"Variation.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/Variations04.h
+	"Variation.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/Variations05.h
+	"Variation.h"
+
+1413384023 /home/heretic/Dev/fractorium/Source/Ember/VariationsDC.h
+	"Variation.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Interpolate.h
+	"Ember.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/PaletteList.h
+	"Palette.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Palette.h
+	"Utils.h"
+	"Isaac.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/SpatialFilter.h
+	"EmberDefines.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/TemporalFilter.h
+	"EmberDefines.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Iterator.h
+	"Ember.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/EmberToXml.h
+	"Utils.h"
+	"PaletteList.h"
+	"VariationList.h"
+	"Ember.h"
+
+1413385813 /home/heretic/Dev/fractorium/Source/Ember/XmlToEmber.h
+	"Utils.h"
+	"PaletteList.h"
+	"VariationList.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/DensityFilter.h
+	"SpatialFilter.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/Renderer.h
+	"RendererBase.h"
+	"Iterator.h"
+	"SpatialFilter.h"
+	"TemporalFilter.h"
+	"Interpolate.h"
+	"CarToRas.h"
+	"EmberToXml.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/RendererBase.h
+	"Utils.h"
+	"Ember.h"
+	"DensityFilter.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/CarToRas.h
+	"Point.h"
+
+1413384022 /home/heretic/Dev/fractorium/Source/Ember/SheepTools.h
+	"EmberDefines.h"
+	"Isaac.h"
+	"VariationList.h"
+	"Renderer.h"
+
+1413384022 source:/home/heretic/Dev/fractorium/Source/Ember/EmberPch.cpp
+	"EmberPch.h"
+

@@ -118,7 +118,7 @@ void Renderer<T, bucketT>::ComputeBounds()
 {
 	size_t maxDEFilterWidth = 0;
 
-	m_GutterWidth = ClampGte((m_SpatialFilter->FinalFilterWidth() - Supersample()) / 2, 0ULL);
+	m_GutterWidth = ClampGte((m_SpatialFilter->FinalFilterWidth() - Supersample()) / 2, size_t(0));
 
 	//Check the size of the density estimation filter.
 	//If the radius of the density estimation filter is greater than the
@@ -373,8 +373,8 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	pass = (resume ? m_LastPass : 0);
 
 	//Make sure values are within valid range.
-	ClampGteRef(m_Ember.m_Passes, 1ULL);
-	ClampGteRef(m_Ember.m_Supersample, 1ULL);
+	ClampGteRef(m_Ember.m_Passes, size_t(1));
+	ClampGteRef(m_Ember.m_Supersample, size_t(1));
 
 	//Make sure to get most recent update since loop won't be entered to call Interp().
 	//Vib, gam and background are normally summed for each temporal sample. However if iteration is skipped, make sure to get the latest.
@@ -883,16 +883,16 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 	bool scf = !(Supersample() & 1);
 	intmax_t ss = Floor<T>(Supersample() / T(2));
 	T scfact = pow(Supersample() / (Supersample() + T(1.0)), T(2.0));
-	
+
 	size_t threads = m_ThreadsToUse;
 	size_t startRow = Supersample() - 1;
 	size_t endRow = m_SuperRasH - (Supersample() - 1);//Original did + which is most likely wrong.
 	intmax_t startCol = Supersample() - 1;
 	intmax_t endCol = m_SuperRasW - (Supersample() - 1);
 	size_t chunkSize = (size_t)ceil(double(endRow - startRow) / double(threads));
-	
+
 	//parallel_for scales very well, dividing the work almost perfectly among all processors.
-	parallel_for(0ULL, threads, [&] (size_t threadIndex)
+	parallel_for(size_t(0), threads, [&] (size_t threadIndex)
 	{
 		size_t pixelNumber = 0;
 		int localStartRow = (int)min(startRow + (threadIndex * chunkSize), endRow - 1);
@@ -900,7 +900,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 		size_t pixelsThisThread = size_t(localEndRow - localStartRow) * m_SuperRasW;
 		double lastPercent = 0;
 		glm::detail::tvec4<bucketT, glm::defaultp> logScaleBucket;
-	
+
 		for (intmax_t j = localStartRow; (j < localEndRow) && !m_Abort; j++)
 		{
 			size_t bucketRowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
@@ -908,20 +908,20 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 			const glm::detail::tvec4<bucketT, glm::defaultp>* buckets = m_HistBuckets.data();
 			const T* filterCoefs = m_DensityFilter->Coefs();
 			const T* filterWidths = m_DensityFilter->Widths();
-	
+
 			for (intmax_t i = startCol; i < endCol; i++)
 			{
 				intmax_t ii, jj, arrFilterWidth;
 				size_t filterSelectInt, filterCoefIndex;
 				T filterSelect = 0;
 				bucket = buckets + bucketRowStart + i;
-	
+
 				//Don't do anything if there's no hits here. Must also put this first to avoid dividing by zero below.
 				if (bucket->a == 0)
 					continue;
-	
+
 				T cacheLog = (m_K1 * log(T(1.0) + bucket->a * m_K2)) / bucket->a;//Caching this calculation gives a 30% speedup.
-	
+
 				if (ss == 0)
 				{
 					filterSelect = bucket->a;
@@ -935,33 +935,33 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 					intmax_t densityBoxRightX = (i + min(ss, (intmax_t)m_SuperRasW - i - 1));
 					intmax_t densityBoxTopY = (j - min(j, ss));
 					intmax_t densityBoxBottomY = (j + min(ss, (intmax_t)m_SuperRasH - j - 1));
-	
+
 					//Count density in ssxss area.
 					//Original went one col at a time, which is cache inefficient. Go one row at at time here for a slight speedup.
 					for (jj = densityBoxTopY; jj <= densityBoxBottomY; jj++)
 						for (ii = densityBoxLeftX; ii <= densityBoxRightX; ii++)
 							filterSelect += buckets[ii + (jj * m_SuperRasW)].a;//Original divided by 255 in every iteration. Omit here because colors are already in the range of [0..1].
 				}
-	
+
 				//Scale if supersample > 1 for equal iters.
 				if (scf)
 					filterSelect *= scfact;
-	
+
 				if (filterSelect > m_DensityFilter->MaxFilteredCounts())
 					filterSelectInt = m_DensityFilter->MaxFilterIndex();
 				else if (filterSelect <= DE_THRESH)
 					filterSelectInt = (size_t)ceil(filterSelect) - 1;
 				else
 					filterSelectInt = DE_THRESH + (size_t)Floor<T>(pow(filterSelect - DE_THRESH, m_DensityFilter->Curve()));
-	
+
 				//If the filter selected below the min specified clamp it to the min.
 				if (filterSelectInt > m_DensityFilter->MaxFilterIndex())
 					filterSelectInt = m_DensityFilter->MaxFilterIndex();
-	
+
 				//Only have to calculate the values for ~1/8 of the square.
 				filterCoefIndex = filterSelectInt * m_DensityFilter->KernelSize();
 				arrFilterWidth = (intmax_t)ceil(filterWidths[filterSelectInt]) - 1;
-	
+
 				for (jj = 0; jj <= arrFilterWidth; jj++)
 				{
 					for (ii = 0; ii <= jj; ii++, filterCoefIndex++)
@@ -969,12 +969,12 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 						//Skip if coef is 0.
 						if (filterCoefs[filterCoefIndex] == 0)
 							continue;
-	
+
 						T logScale = filterCoefs[filterCoefIndex] * cacheLog;
-	
+
 						//Original first assigned the fields, then scaled them. Combine into a single step for a 1% optimization.
 						logScaleBucket = (*bucket * bucketT(logScale));
-	
+
 						if (jj == 0 && ii == 0)
 						{
 							AddToAccum(logScaleBucket, i, ii, j, jj);
@@ -1008,28 +1008,28 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 					}
 				}
 			}
-	
+
 			if (m_Callback && threadIndex == 0)
 			{
 				pixelNumber += m_SuperRasW;
 				double percent = (double(pixelNumber) / double(pixelsThisThread)) * 100.0;
 				double percentDiff = percent - lastPercent;
 				double toc = localTime.Toc();
-	
+
 				if (percentDiff >= 10 || (toc > 1000 && percentDiff >= 1))
 				{
 					double etaMs = ((100.0 - percent) / percent) * totalTime.Toc();
-	
+
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 1, etaMs))
 						Abort();
-	
+
 					lastPercent = percent;
 					localTime.Tic();
 				}
 			}
 		}
 	});
-	
+
 	if (m_Callback && !m_Abort)
 		m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0);
 
@@ -1078,7 +1078,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 	//The original does it this way as well and it's roughly 11 times faster to do it this way than inline below with each pixel.
 	if (EarlyClip())
 	{
-		parallel_for(0ULL, m_SuperRasH, [&] (size_t j)
+		parallel_for(size_t(0), m_SuperRasH, [&] (size_t j)
 		{
 			size_t rowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
 
@@ -1099,7 +1099,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 	//otherwise artifacts that resemble page tearing will occur in an interactive run. It's
 	//critical to never exit this loop prematurely.
 	//for (size_t j = 0; j < FinalRasH(); j++)//Keep around for debugging.
-	parallel_for(0ULL, FinalRasH(), [&](size_t j)
+	parallel_for(size_t(0), FinalRasH(), [&](size_t j)
 	{
 		Color<bucketT> newBucket;
 		size_t pixelsRowStart = (m_YAxisUp ? ((FinalRasH() - j) - 1) : j) * FinalRowSize();//Pull out of inner loop for optimization.
@@ -1234,7 +1234,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t pass, size_t t
 		threadIndex = i;
 		m_TaskGroup.run([&, threadIndex] () {
 #else
-	parallel_for(0ULL, m_ThreadsToUse, [&] (size_t threadIndex)
+	parallel_for(size_t(0), m_ThreadsToUse, [&] (size_t threadIndex)
 	{
 #endif
 		Timing t;
