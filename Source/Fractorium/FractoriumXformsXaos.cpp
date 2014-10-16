@@ -8,6 +8,7 @@ void Fractorium::InitXformsXaosUI()
 {
 	connect(ui.XaosToRadio, SIGNAL(toggled(bool)), this, SLOT(OnXaosFromToToggled(bool)), Qt::QueuedConnection);
 	connect(ui.ClearXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnClearXaosButtonClicked(bool)), Qt::QueuedConnection);
+	connect(ui.RandomXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnRandomXaosButtonClicked(bool)), Qt::QueuedConnection);
 }
 
 /// <summary>
@@ -160,6 +161,7 @@ void Fractorium::FillXaosTable()
 	w = SetTabOrder(this, w, ui.XaosToRadio);
 	w = SetTabOrder(this, w, ui.XaosFromRadio);
 	w = SetTabOrder(this, w, ui.ClearXaosButton);
+	w = SetTabOrder(this, w, ui.RandomXaosButton);
 }
 
 /// <summary>
@@ -182,3 +184,35 @@ void FractoriumEmberController<T>::ClearXaos()
 }
 
 void Fractorium::OnClearXaosButtonClicked(bool checked) { m_Controller->ClearXaos(); }
+
+/// <summary>
+/// Set all xaos values to random numbers.
+/// There is a 50% chance they're set to 0 or 1, and
+/// 50% that they're 0-3.
+/// </summary>
+/// <param name="checked">Ignored</param>
+template <typename T>
+void FractoriumEmberController<T>::RandomXaos()
+{
+	UpdateCurrentXform([&](Xform<T>* xform)
+	{
+		for (size_t i = 0; i < m_Ember.XformCount(); i++)
+		{
+			if (Xform<T>* xform = m_Ember.GetXform(i))
+			{
+				for (size_t j = 0; j < m_Ember.XformCount(); j++)
+				{
+					if (m_Rand.RandBit())
+						xform->SetXaos(j, (T)m_Rand.RandBit());
+					else
+						xform->SetXaos(j, m_Rand.Frand<T>(0, 3));
+				}
+			}
+		}
+	});
+
+	//If current is final, it will update when they change to a non-final xform.
+	FillXaosWithCurrentXform();
+}
+
+void Fractorium::OnRandomXaosButtonClicked(bool checked) { m_Controller->RandomXaos(); }

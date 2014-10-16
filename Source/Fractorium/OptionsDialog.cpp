@@ -34,10 +34,6 @@ FractoriumOptionsDialog::FractoriumOptionsDialog(FractoriumSettings* settings, Q
 	m_NickEdit = new QLineEdit(ui.OptionsIdentityTable);
 	ui.OptionsIdentityTable->setCellWidget(2, 1, m_NickEdit);
 
-	//QWidget::setTabOrder(m_IdEdit, m_UrlEdit);
-	//QWidget::setTabOrder(m_UrlEdit, m_NickEdit);
-	//QWidget::setTabOrder(m_NickEdit, m_IdEdit);
-
 	m_IdEdit->setText(m_Settings->Id());
 	m_UrlEdit->setText(m_Settings->Url());
 	m_NickEdit->setText(m_Settings->Nick());

@@ -166,6 +166,7 @@ public:
 	virtual QString MakeXaosNameString(unsigned int i) { return ""; }
 	virtual void XaosChanged(DoubleSpinBox* sender) { }
 	virtual void ClearXaos() { }
+	virtual void RandomXaos() { }
 
 	//Palette.
 	virtual bool InitPaletteTable(const string& s) { return false; }
@@ -384,6 +385,7 @@ public:
 	virtual QString MakeXaosNameString(unsigned int i) override;
 	virtual void XaosChanged(DoubleSpinBox* sender) override;
 	virtual void ClearXaos() override;
+	virtual void RandomXaos() override;
 
 	//Palette.
 	virtual bool InitPaletteTable(const string& s) override;

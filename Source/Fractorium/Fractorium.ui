@@ -521,8 +521,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>847</height>
+              <width>252</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2817,8 +2817,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>118</width>
-                  <height>597</height>
+                  <width>238</width>
+                  <height>747</height>
                  </rect>
                 </property>
                 <property name="palette">
@@ -4371,7 +4371,10 @@ SpinBox
             <attribute name="title">
              <string>Xaos</string>
             </attribute>
-            <layout class="QVBoxLayout" name="verticalLayout_16">
+            <layout class="QVBoxLayout" name="verticalLayout_2">
+             <property name="spacing">
+              <number>4</number>
+             </property>
              <property name="leftMargin">
               <number>6</number>
              </property>
@@ -4534,6 +4537,12 @@ SpinBox
              </item>
              <item>
               <widget class="QGroupBox" name="XaosFromToGroupBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="title">
                 <string>Direction</string>
                </property>
@@ -4543,7 +4552,7 @@ SpinBox
                <property name="flat">
                 <bool>false</bool>
                </property>
-               <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
                 <property name="leftMargin">
                  <number>6</number>
                 </property>
@@ -4577,14 +4586,28 @@ SpinBox
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="ClearXaosButton">
-               <property name="toolTip">
-                <string>Set all xaos values in all xforms to 1</string>
-               </property>
-               <property name="text">
-                <string>Clear Xaos</string>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QPushButton" name="ClearXaosButton">
+                 <property name="toolTip">
+                  <string>Set all xaos values in all xforms to 1</string>
+                 </property>
+                 <property name="text">
+                  <string>Clear Xaos</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="RandomXaosButton">
+                 <property name="toolTip">
+                  <string>Randomize all xaos values in all xforms</string>
+                 </property>
+                 <property name="text">
+                  <string>Random Xaos</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>
@@ -4988,8 +5011,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>105</width>
-              <height>684</height>
+              <width>256</width>
+              <height>856</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -5833,7 +5856,6 @@ SpinBox
   <tabstop>InfoRenderingTextEdit</tabstop>
   <tabstop>PreAffineGroupBox</tabstop>
   <tabstop>scrollArea_4</tabstop>
-  <tabstop>ClearXaosButton</tabstop>
   <tabstop>InfoBoundsGroupBox</tabstop>
   <tabstop>XaosFromRadio</tabstop>
   <tabstop>XaosToRadio</tabstop>

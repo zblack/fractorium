@@ -215,6 +215,7 @@ public slots:
 	void OnXaosChanged(double d);
 	void OnXaosFromToToggled(bool checked);
 	void OnClearXaosButtonClicked(bool checked);
+	void OnRandomXaosButtonClicked(bool checked);
 
 	//Palette.
 	void OnPaletteAdjust(int d);
