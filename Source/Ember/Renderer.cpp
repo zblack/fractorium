@@ -244,6 +244,8 @@ bool Renderer<T, bucketT>::CreateSpatialFilter(bool& newAlloc)
 	{
 		m_SpatialFilter = unique_ptr<SpatialFilter<T>>(
 			SpatialFilterCreator<T>::Create(m_Ember.m_SpatialFilterType, m_Ember.m_SpatialFilterRadius, m_Ember.m_Supersample, m_PixelAspectRatio));
+
+		m_Ember.m_SpatialFilterRadius = m_SpatialFilter->FilterRadius();//It may have been changed internally if it was too small, so ensure they're synced.
 		newAlloc = true;
 	}
 

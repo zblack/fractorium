@@ -105,45 +105,51 @@ public:
 	/// </summary>
 	void Create()
 	{
-		T fw = T(2.0) * m_Support * m_Supersample * m_FilterRadius / m_PixelAspectRatio;
-		T adjust, ii, jj;
-
-		int fwidth = ((int)fw) + 1;
-		int i, j;
-
-		//Make sure the filter kernel has same parity as oversample.
-		if ((fwidth ^ m_Supersample) & 1)
-			fwidth++;
-
-		//Calculate the coordinate scaling factor for the kernel values.
-		if (fw > 0.0)
-			adjust = m_Support * fwidth / fw;
-		else
-			adjust = T(1.0);
-
-		m_Filter.resize(fwidth * fwidth);
-
-		//Fill in the coefs.
-		for (i = 0; i < fwidth; i++)
+		do
 		{
-			for (j = 0; j < fwidth; j++)
+			T fw = T(2.0) * m_Support * m_Supersample * m_FilterRadius / m_PixelAspectRatio;
+			T adjust, ii, jj;
+
+			int fwidth = ((int)fw) + 1;
+			int i, j;
+
+			//Make sure the filter kernel has same parity as oversample.
+			if ((fwidth ^ m_Supersample) & 1)
+				fwidth++;
+
+			//Calculate the coordinate scaling factor for the kernel values.
+			if (fw > 0.0)
+				adjust = m_Support * fwidth / fw;
+			else
+				adjust = T(1.0);
+
+			m_Filter.resize(fwidth * fwidth);
+
+			//Fill in the coefs.
+			for (i = 0; i < fwidth; i++)
 			{
-				//Calculate the function inputs for the kernel function.
-				ii = ((T(2.0) * i + T(1.0)) / T(fwidth) - T(1.0)) * adjust;
-				jj = ((T(2.0) * j + T(1.0)) / T(fwidth) - T(1.0)) * adjust;
+				for (j = 0; j < fwidth; j++)
+				{
+					//Calculate the function inputs for the kernel function.
+					ii = ((T(2.0) * i + T(1.0)) / T(fwidth) - T(1.0)) * adjust;
+					jj = ((T(2.0) * j + T(1.0)) / T(fwidth) - T(1.0)) * adjust;
 
-				//Adjust for aspect ratio.
-				jj /= m_PixelAspectRatio;
+					//Adjust for aspect ratio.
+					jj /= m_PixelAspectRatio;
 
-				m_Filter[i + j * fwidth] = Filter(ii) * Filter(jj);//Call virtual Filter(), implemented in specific derived filter classes.
+					m_Filter[i + j * fwidth] = Filter(ii) * Filter(jj);//Call virtual Filter(), implemented in specific derived filter classes.
+				}
 			}
-		}
 
-		//Normalize, and return a bad value if the values were too small.
-		if (!Normalize())
-			m_FinalFilterWidth = -1;
-		else
-			m_FinalFilterWidth = fwidth;
+			//Attempt to normalize, and increase the filter width if the values were too small.
+			if (!Normalize())
+			{
+				m_FinalFilterWidth = fwidth;
+				break;
+			}
+			
+			m_FilterRadius += T(0.01);//Values were too small.
+		} while (1);
 	}
 
 	/// <summary>

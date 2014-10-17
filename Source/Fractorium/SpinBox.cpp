@@ -107,26 +107,26 @@ bool SpinBox::eventFilter(QObject* o, QEvent* e)
 {
 	if (e->type() == QMouseEvent::MouseButtonPress && isEnabled())
 	{
-		QPoint pt;
-
-		if (QMouseEvent* me = (QMouseEvent*)e)
-			pt = me->localPos().toPoint();
-
-		int pos = lineEdit()->cursorPositionAt(pt);
-
-		if (lineEdit()->selectedText() != "")
-		{
-			lineEdit()->deselect();
-			lineEdit()->setCursorPosition(pos);
-			return true;
-		}
-		else if (m_Select)
-		{
-			lineEdit()->setCursorPosition(pos);
-			selectAll();
-			m_Select = false;
-			return true;
-		}
+		//QPoint pt;
+		//
+		//if (QMouseEvent* me = (QMouseEvent*)e)
+		//	pt = me->localPos().toPoint();
+		//
+		//int pos = lineEdit()->cursorPositionAt(pt);
+		//
+		//if (lineEdit()->selectedText() != "")
+		//{
+		//	lineEdit()->deselect();
+		//	lineEdit()->setCursorPosition(pos);
+		//	return true;
+		//}
+		//else if (m_Select)
+		//{
+		//	lineEdit()->setCursorPosition(pos);
+		//	selectAll();
+		//	m_Select = false;
+		//	return true;
+		//}
 	}
 	else if (m_DoubleClick && e->type() == QMouseEvent::MouseButtonDblClick && isEnabled())
 	{
@@ -153,7 +153,7 @@ bool SpinBox::eventFilter(QObject* o, QEvent* e)
 		}
 	}
 
-	return false;
+	return QSpinBox::eventFilter(o, e);
 }
 
 /// <summary>
@@ -162,7 +162,7 @@ bool SpinBox::eventFilter(QObject* o, QEvent* e)
 /// <param name="e">The event</param>
 void SpinBox::focusInEvent(QFocusEvent* e)
 {
-	lineEdit()->setReadOnly(false);
+	//lineEdit()->setReadOnly(false);
 	QSpinBox::focusInEvent(e);
 }
 
@@ -175,8 +175,8 @@ void SpinBox::focusInEvent(QFocusEvent* e)
 /// <param name="e">The event</param>
 void SpinBox::focusOutEvent(QFocusEvent* e)
 {
-	 lineEdit()->deselect();//Clear selection when leaving.
-	 lineEdit()->setReadOnly(true);//Clever hack to clear the cursor when leaving.
+	 //lineEdit()->deselect();//Clear selection when leaving.
+	 //lineEdit()->setReadOnly(true);//Clever hack to clear the cursor when leaving.
 	 QSpinBox::focusOutEvent(e);
 }
 
@@ -187,8 +187,8 @@ void SpinBox::focusOutEvent(QFocusEvent* e)
 /// <param name="e">The event</param>
 void SpinBox::enterEvent(QEvent* e)
 {
-	m_Select = true;
-	setFocus();
+	//m_Select = true;
+	//setFocus();
 	QSpinBox::enterEvent(e);
 }
 
@@ -199,7 +199,7 @@ void SpinBox::enterEvent(QEvent* e)
 /// <param name="e">The event</param>
 void SpinBox::leaveEvent(QEvent* e)
 {
-	m_Select = false;
-	clearFocus();
+	//m_Select = false;
+	//clearFocus();
 	QSpinBox::leaveEvent(e);
 }

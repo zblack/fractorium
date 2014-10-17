@@ -56,6 +56,12 @@ public:
 
 		if (m_MaxRad < m_MinRad)
 			m_MaxRad = m_MinRad + 1;
+
+		//Ensure it's valid.
+		while (!Valid())
+		{
+			m_Curve += T(0.1);
+		}
 	}
 
 	/// <summary>

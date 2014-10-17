@@ -33,13 +33,21 @@ void Fractorium::InitXformsAffineUI()
 	SetupAffineSpinner(table, this, 2, 0, m_PostO1Spin, spinHeight, affineMin, affineMax, affineStep, affinePrec, SIGNAL(valueChanged(double)), SLOT(OnO1Changed(double)));
 	SetupAffineSpinner(table, this, 2, 1, m_PostO2Spin, spinHeight, affineMin, affineMax, affineStep, affinePrec, SIGNAL(valueChanged(double)), SLOT(OnO2Changed(double)));
 
-	ui.PreRotateCombo->setValidator(new QDoubleValidator(ui.PreRotateCombo));
-	ui.PreMoveCombo->setValidator(	new QDoubleValidator(ui.PreMoveCombo));
-	ui.PreScaleCombo->setValidator(	new QDoubleValidator(ui.PreScaleCombo));
+	QDoubleValidator* preRotateVal = new QDoubleValidator(ui.PreRotateCombo); preRotateVal->setLocale(QLocale::system());
+	QDoubleValidator* preMoveVal   = new QDoubleValidator(ui.PreMoveCombo);   preMoveVal->setLocale(QLocale::system());
+	QDoubleValidator* preScaleVal  = new QDoubleValidator(ui.PreScaleCombo);  preScaleVal->setLocale(QLocale::system());
 
-	ui.PostRotateCombo->setValidator(new QDoubleValidator(ui.PostRotateCombo));
-	ui.PostMoveCombo->setValidator(	 new QDoubleValidator(ui.PostMoveCombo));
-	ui.PostScaleCombo->setValidator( new QDoubleValidator(ui.PostScaleCombo));
+	QDoubleValidator* postRotateVal = new QDoubleValidator(ui.PostRotateCombo); postRotateVal->setLocale(QLocale::system());
+	QDoubleValidator* postMoveVal   = new QDoubleValidator(ui.PostMoveCombo);   postMoveVal->setLocale(QLocale::system());
+	QDoubleValidator* postScaleVal  = new QDoubleValidator(ui.PostScaleCombo);  postScaleVal->setLocale(QLocale::system());
+
+	ui.PreRotateCombo->setValidator(preRotateVal);
+	ui.PreMoveCombo->setValidator(preMoveVal);
+	ui.PreScaleCombo->setValidator(preScaleVal);
+
+	ui.PostRotateCombo->setValidator(postRotateVal);
+	ui.PostMoveCombo->setValidator(postMoveVal);
+	ui.PostScaleCombo->setValidator(postScaleVal);
 
 	connect(ui.PreFlipHorizontalButton,    SIGNAL(clicked(bool)), this, SLOT(OnFlipHorizontalButtonClicked(bool)),			  Qt::QueuedConnection);
 	connect(ui.PreFlipVerticalButton,      SIGNAL(clicked(bool)), this, SLOT(OnFlipVerticalButtonClicked(bool)),			  Qt::QueuedConnection);

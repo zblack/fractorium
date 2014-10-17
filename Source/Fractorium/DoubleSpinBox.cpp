@@ -117,26 +117,26 @@ bool DoubleSpinBox::eventFilter(QObject* o, QEvent* e)
 {
 	if (e->type() == QMouseEvent::MouseButtonPress && isEnabled())
 	{
-		QPoint pt;
-
-		if (QMouseEvent* me = (QMouseEvent*)e)
-			pt = me->localPos().toPoint();
-
-		int pos = lineEdit()->cursorPositionAt(pt);
-
-		if (lineEdit()->selectedText() != "")
-		{
-			lineEdit()->deselect();
-			lineEdit()->setCursorPosition(pos);
-			return true;
-		}
-		else if (m_Select)
-		{
-			lineEdit()->setCursorPosition(pos);
-			selectAll();
-			m_Select = false;
-			return true;
-		}
+	//	QPoint pt;
+	//
+	//	if (QMouseEvent* me = (QMouseEvent*)e)
+	//		pt = me->localPos().toPoint();
+	//
+	//	int pos = lineEdit()->cursorPositionAt(pt);
+	//
+	//	if (lineEdit()->selectedText() != "")
+	//	{
+	//		lineEdit()->deselect();
+	//		lineEdit()->setCursorPosition(pos);
+	//		return true;
+	//	}
+	//	else if (m_Select)
+	//	{
+	//		lineEdit()->setCursorPosition(pos);
+	//		selectAll();
+	//		m_Select = false;
+	//		return true;
+	//	}
 	}
 	else if (m_DoubleClick && e->type() == QMouseEvent::MouseButtonDblClick && isEnabled())
 	{
@@ -172,7 +172,7 @@ bool DoubleSpinBox::eventFilter(QObject* o, QEvent* e)
 /// <param name="e">The event</param>
 void DoubleSpinBox::focusInEvent(QFocusEvent* e)
 {
-	lineEdit()->setReadOnly(false);
+	//lineEdit()->setReadOnly(false);
 	QDoubleSpinBox::focusInEvent(e);
 }
 
@@ -185,8 +185,8 @@ void DoubleSpinBox::focusInEvent(QFocusEvent* e)
 /// <param name="e">The event</param>
 void DoubleSpinBox::focusOutEvent(QFocusEvent* e)
 {
-	 lineEdit()->deselect();//Clear selection when leaving.
-	 lineEdit()->setReadOnly(true);//Clever hack to clear the cursor when leaving.
+	 //lineEdit()->deselect();//Clear selection when leaving.
+	 //lineEdit()->setReadOnly(true);//Clever hack to clear the cursor when leaving.
 	 QDoubleSpinBox::focusOutEvent(e);
 }
 
@@ -197,8 +197,8 @@ void DoubleSpinBox::focusOutEvent(QFocusEvent* e)
 /// <param name="e">The event</param>
 void DoubleSpinBox::enterEvent(QEvent* e)
 {
-	m_Select = true;
-	setFocus();
+	//m_Select = true;
+	//setFocus();
 	QDoubleSpinBox::enterEvent(e);
 }
 
@@ -209,7 +209,7 @@ void DoubleSpinBox::enterEvent(QEvent* e)
 /// <param name="e">The event</param>
 void DoubleSpinBox::leaveEvent(QEvent* e)
 {
-	m_Select = false;
-	clearFocus();
+	//m_Select = false;
+	//clearFocus();
 	QDoubleSpinBox::leaveEvent(e);
 }
