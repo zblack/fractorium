@@ -335,7 +335,7 @@ public:
 	{
 		const char* loc = __FUNCTION__;
 		string buf;
-		
+
 		//Ensure palette list is setup first.
 		if (!m_PaletteList.Init())
 		{
@@ -632,7 +632,7 @@ private:
 			}
 			else if (!Compare(curAtt->name, "size"))
 			{
-				if (sscanf_s(attStr, "%u %u", &currentEmber.m_FinalRasW, &currentEmber.m_FinalRasH) != 2)
+				if (sscanf_s(attStr, "%lu %lu", &currentEmber.m_FinalRasW, &currentEmber.m_FinalRasH) != 2)
 				{
 					m_ErrorReport.push_back(string(loc) + " : Invalid size attribute " + string(attStr));
 					xmlFree(attStr);

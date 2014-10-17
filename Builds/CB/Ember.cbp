@@ -120,6 +120,8 @@
 		<Unit filename="../../Source/Ember/Point.h" />
 		<Unit filename="../../Source/Ember/Renderer.cpp" />
 		<Unit filename="../../Source/Ember/Renderer.h" />
+		<Unit filename="../../Source/Ember/RendererBase.cpp" />
+		<Unit filename="../../Source/Ember/RendererBase.h" />
 		<Unit filename="../../Source/Ember/SheepTools.h" />
 		<Unit filename="../../Source/Ember/SpatialFilter.h" />
 		<Unit filename="../../Source/Ember/TemporalFilter.h" />
