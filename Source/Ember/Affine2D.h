@@ -69,7 +69,6 @@ public:
 	}
 
 	bool operator == (const Affine2D<T>& affine);
-	Affine2D<T>& operator * (const Affine2D<T>& affine);
 	v2T operator * (const v2T& v);
 
 	void MakeID();

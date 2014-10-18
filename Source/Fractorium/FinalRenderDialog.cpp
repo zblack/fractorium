@@ -55,6 +55,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_StripsSpin,			spinHeight,	 1,	  64,  1, SIGNAL(valueChanged(int)),    SLOT(OnStripsChanged(int)),		     true,    1,	1,	  1);
 
 	m_MemoryCellIndex = row++;//Memory usage.
+	m_ItersCellIndex = row++;//Iters.
 	m_PathCellIndex = row;
 
 	QStringList comboList;
@@ -698,7 +699,10 @@ bool FractoriumFinalRenderDialog::SetMemory()
 {
 	if (isVisible() && CreateControllerFromGUI(true))
 	{
-		ui.FinalRenderParamsTable->item(m_MemoryCellIndex, 1)->setText(ToString(m_Controller->SyncAndComputeMemory()));
+		pair<size_t, size_t> p = m_Controller->SyncAndComputeMemory();
+
+		ui.FinalRenderParamsTable->item(m_MemoryCellIndex, 1)->setText(ToString(p.first));
+		ui.FinalRenderParamsTable->item(m_ItersCellIndex, 1)->setText(ToString(p.second));
 		return true;
 	}
 

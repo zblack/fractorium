@@ -565,13 +565,13 @@
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>178</height>
+           <height>198</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>178</height>
+           <height>198</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -682,6 +682,11 @@
          </row>
          <row>
           <property name="text">
+           <string>Iterations</string>
+          </property>
+         </row>
+         <row>
+          <property name="text">
            <string>Output</string>
           </property>
          </row>
@@ -769,23 +774,20 @@
          </item>
          <item row="5" column="0">
           <property name="text">
-           <string>Output</string>
-          </property>
-          <property name="toolTip">
-           <string>The output file path for rendering a single flame, or folder location for rendering multiple flames</string>
+           <string>Iterations</string>
           </property>
          </item>
          <item row="5" column="1">
           <property name="text">
-           <string/>
+           <string>0</string>
           </property>
          </item>
          <item row="6" column="0">
           <property name="text">
-           <string>Prefix</string>
+           <string>Output</string>
           </property>
           <property name="toolTip">
-           <string>The prefix to attach to all image filenames</string>
+           <string>The output file path for rendering a single flame, or folder location for rendering multiple flames</string>
           </property>
          </item>
          <item row="6" column="1">
@@ -795,13 +797,26 @@
          </item>
          <item row="7" column="0">
           <property name="text">
+           <string>Prefix</string>
+          </property>
+          <property name="toolTip">
+           <string>The prefix to attach to all image filenames</string>
+          </property>
+         </item>
+         <item row="7" column="1">
+          <property name="text">
+           <string/>
+          </property>
+         </item>
+         <item row="8" column="0">
+          <property name="text">
            <string>Suffix</string>
           </property>
           <property name="toolTip">
            <string>The suffix to attach to all image filenames</string>
           </property>
          </item>
-         <item row="7" column="1">
+         <item row="8" column="1">
           <property name="text">
            <string/>
           </property>

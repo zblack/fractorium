@@ -142,7 +142,7 @@ public:
 			}
 
 			//Attempt to normalize, and increase the filter width if the values were too small.
-			if (!Normalize())
+			if (Normalize())
 			{
 				m_FinalFilterWidth = fwidth;
 				break;

@@ -713,7 +713,7 @@ void GLWidget::wheelEvent(QWheelEvent* e)
 	if (GLEmberControllerBase* controller = GLController())
 		controller->Wheel(e);
 	
-	QGLWidget::wheelEvent(e);
+	//Do not call QGLWidget::wheelEvent(e) because this should only affect the scale and not the position of the scroll bars.
 }
 
 /// <summary>
@@ -727,17 +727,15 @@ void GLWidget::resizeEvent(QResizeEvent* e)
 {
 	if (m_Fractorium)
 	{
-		//qDebug() << "GLWidget::resizeEvent() : w, h: " << width() << ", " << height() << ". oldsize: " << e->oldSize().width() << ", " << e->oldSize().height();
-		//m_Fractorium->m_WidthSpin->setValue(width());
-		//m_Fractorium->m_HeightSpin->setValue(height());
-
-	//	if (GLEmberControllerBase* controller = GLController())
-	//		controller->SyncSizes();//For some reason the base resize can't be called here or else it causes a crash.
 	}
-
-	//QGLWidget::resizeEvent(e);
 }
 
+/// <summary>
+/// Set the dimensions of the drawing area.
+/// This will be called from the main window's SyncSizes() function.
+/// </summary>
+/// <param name="w">Width in pixels</param>
+/// <param name="h">Height in pixels</param>
 void GLWidget::SetDimensions(int w, int h)
 {
 	setFixedSize(w, h);

@@ -262,8 +262,7 @@ bool EmberRender(EmberOptions& opt)
 
 			//TotalIterCount() is actually using ScaledQuality() which does not get reset upon ember assignment,
 			//so it ends up using the correct value for quality * strips.
-			writeSuccess = false;
-			iterCount = renderer->TotalIterCount();
+			iterCount = renderer->TotalIterCount(1);
 			comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 			os.str("");
 			os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << (((double)stats.m_Iters / (double)iterCount) * 100) << "%)";
@@ -285,6 +284,8 @@ bool EmberRender(EmberOptions& opt)
 			{
 				finalImagep = finalImage.data();
 			}
+
+			writeSuccess = false;
 
 			if (opt.Format() == "png")
 				writeSuccess = WritePng(filename.c_str(), finalImagep, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH, opt.BitsPerChannel() / 8, opt.PngComments(), comments, opt.Id(), opt.Url(), opt.Nick());

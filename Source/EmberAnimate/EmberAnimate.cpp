@@ -300,7 +300,8 @@ bool EmberAnimate(EmberOptions& opt)
 		stats = renderer->Stats();
 		comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 		os.str("");
-		os << comments.m_NumIters << " / " << renderer->TotalIterCount() << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters/(double)renderer->TotalIterCount() * 100) << "%)";
+		size_t iterCount = renderer->TotalIterCount(1);
+		os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters / (double)iterCount * 100) << "%)";
 
 		VerbosePrint("\nIters ran/requested: " + os.str());
 		VerbosePrint("Bad values: " << stats.m_Badvals);

@@ -520,6 +520,7 @@ void FractoriumEmberController<T>::FillParamTablesAndPalette()
 	m_Fractorium->m_CenterXSpin->SetValueStealth(m_Ember.m_CenterX);
 	m_Fractorium->m_CenterYSpin->SetValueStealth(m_Ember.m_CenterY);
 	m_Fractorium->m_ScaleSpin->SetValueStealth(m_Ember.m_PixelsPerUnit);
+	m_Fractorium->m_ZoomSpin->SetValueStealth(m_Ember.m_Zoom);
 	m_Fractorium->m_RotateSpin->SetValueStealth(m_Ember.m_Rotate);
 	m_Fractorium->m_ZPosSpin->SetValueStealth(m_Ember.m_CamZPos);
 	m_Fractorium->m_PerspectiveSpin->SetValueStealth(m_Ember.m_CamPerspective);
@@ -582,6 +583,7 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_CenterX = m_Fractorium->m_CenterXSpin->value();
 	ember.m_CenterY = m_Fractorium->m_CenterYSpin->value();
 	ember.m_PixelsPerUnit = m_Fractorium->m_ScaleSpin->value();
+	ember.m_Zoom = m_Fractorium->m_ZoomSpin->value();
 	ember.m_Rotate = m_Fractorium->m_RotateSpin->value();
 	ember.m_CamZPos = m_Fractorium->m_ZPosSpin->value();
 	ember.m_CamPerspective = m_Fractorium->m_PerspectiveSpin->value();

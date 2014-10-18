@@ -102,28 +102,6 @@ bool Affine2D<T>::operator == (const Affine2D<T>& affine)
 }
 
 /// <summary>
-/// * operator to multiply this affine transform by another and return the result.
-/// </summary>
-/// <param name="affine">The Affine2D to multiply by</param>
-/// <returns>A new Affine2D which is the product of the multiplication</returns>
-template <typename T>
-Affine2D<T>& Affine2D<T>::operator * (const Affine2D<T>& affine)
-{
-	v2T x = affine.X();
-	v2T y = affine.Y();
-	v2T o = affine.O();
-	v2T tx = TransformNormal(x);
-	v2T ty = TransformNormal(y);
-	v2T to = TransformNormal(o);
-
-	X(tx);
-	Y(ty);
-	O(to);
-
-	return *this;
-}
-
-/// <summary>
 /// * operator to multiply this affine transform by a vec2 and return the result as a vec2.
 /// </summary>
 /// <param name="v">The vec2 to multiply by</param>
@@ -277,7 +255,7 @@ template <typename T>
 typename m2T Affine2D<T>::ToMat2ColMajor() const
 {
 	return m2T(A(), B(),//Col0...
-			  D(), E());//1
+			   D(), E());//1
 }
 
 /// <summary>
@@ -288,7 +266,7 @@ template <typename T>
 typename m2T Affine2D<T>::ToMat2RowMajor() const
 {
 	return m2T(A(), D(),//Col0...
-			  B(), E());//1
+			   B(), E());//1
 }
 
 /// <summary>
@@ -299,10 +277,10 @@ typename m2T Affine2D<T>::ToMat2RowMajor() const
 template <typename T>
 typename m4T Affine2D<T>::ToMat4ColMajor(bool center) const
 {
-	m4T mat(A(), B(), 0, center ? 0 : C(),//Col0...
-		   D(), E(), 0, center ? 0 : F(),//1
-			 0,	  0, 1,				   0,//2
-			 0,   0, 0,				   1);//3
+	m4T mat(A(), B(), 0, center ? 0 : C(), //Col0...
+		    D(), E(), 0, center ? 0 : F(), //1
+			  0,   0, 1,			    0, //2
+			  0,   0, 0,			    1);//3
 
 	return mat;
 }
@@ -316,9 +294,9 @@ template <typename T>
 typename m4T Affine2D<T>::ToMat4RowMajor(bool center) const
 {
 	m4T mat(A(), D(), 0, 0,
-		   B(), E(), 0, 0,
-			 0,	  0, 1, 0,
-		   center ? 0 : C(), center ? 0 : F(), 0, 1);
+		    B(), E(), 0, 0,
+			  0,   0, 1, 0,
+			center ? 0 : C(), center ? 0 : F(), 0, 1);
 
 	return mat;
 }

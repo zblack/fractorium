@@ -273,20 +273,20 @@ size_t RendererBase::MemoryAvailable()
 /// Non-virtual renderer properties, getters only.
 /// </summary>
 
-size_t		   RendererBase::SuperRasW()			  const { return m_SuperRasW; }
-size_t		   RendererBase::SuperRasH()			  const { return m_SuperRasH; }
-size_t		   RendererBase::SuperSize()			  const { return m_SuperSize; }
-size_t		   RendererBase::FinalRowSize()			  const { return FinalRasW() * PixelSize(); }
-size_t		   RendererBase::FinalDimensions()		  const { return FinalRasW() * FinalRasH(); }
-size_t		   RendererBase::FinalBufferSize()		  const { return FinalRowSize() * FinalRasH(); }
-size_t		   RendererBase::PixelSize()			  const { return NumChannels() * BytesPerChannel(); }
-size_t		   RendererBase::GutterWidth()			  const { return m_GutterWidth; }
-size_t		   RendererBase::DensityFilterOffset()    const { return m_DensityFilterOffset; }
-size_t         RendererBase::TotalIterCount()	      const { return (size_t)((size_t)Round(ScaledQuality()) * FinalRasW() * FinalRasH()); }//Use Round() because there can be some roundoff error when interpolating.
-size_t         RendererBase::ItersPerTemporalSample() const { return (size_t)ceil(double(TotalIterCount()) / double(Passes() * TemporalSamples())); }
-eProcessState  RendererBase::ProcessState()           const { return m_ProcessState; }
-eProcessAction RendererBase::ProcessAction()          const { return m_ProcessAction; }
-EmberStats     RendererBase::Stats()                  const { return m_Stats; }
+size_t		   RendererBase::SuperRasW()				   const { return m_SuperRasW; }
+size_t		   RendererBase::SuperRasH()				   const { return m_SuperRasH; }
+size_t		   RendererBase::SuperSize()				   const { return m_SuperSize; }
+size_t		   RendererBase::FinalRowSize()				   const { return FinalRasW() * PixelSize(); }
+size_t		   RendererBase::FinalDimensions()			   const { return FinalRasW() * FinalRasH(); }
+size_t		   RendererBase::FinalBufferSize()			   const { return FinalRowSize() * FinalRasH(); }
+size_t		   RendererBase::PixelSize()				   const { return NumChannels() * BytesPerChannel(); }
+size_t		   RendererBase::GutterWidth()				   const { return m_GutterWidth; }
+size_t		   RendererBase::DensityFilterOffset()		   const { return m_DensityFilterOffset; }
+size_t         RendererBase::TotalIterCount(size_t strips) const { return (size_t)((size_t)Round(ScaledQuality()) * FinalRasW() * FinalRasH() * strips); }//Use Round() because there can be some roundoff error when interpolating.
+size_t         RendererBase::ItersPerTemporalSample()	   const { return (size_t)ceil(double(TotalIterCount(1)) / double(Passes() * TemporalSamples())); }//Temporal samples is used with animation, which doesn't support strips, so pass 1.
+eProcessState  RendererBase::ProcessState()				   const { return m_ProcessState; }
+eProcessAction RendererBase::ProcessAction()			   const { return m_ProcessAction; }
+EmberStats     RendererBase::Stats()					   const { return m_Stats; }
 
 /// <summary>
 /// Non-virtual render properties, getters and setters.

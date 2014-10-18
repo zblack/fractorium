@@ -566,8 +566,10 @@ void FinalRenderEmberController<T>::ResetProgress(bool total)
 /// </summary>
 /// <returns>If successful, memory required in bytes, else zero.</returns>
 template <typename T>
-size_t FinalRenderEmberController<T>::SyncAndComputeMemory()
+pair<size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemory()
 {
+	pair<size_t, size_t> p(0, 0);
+
 	if (m_Renderer.get())
 	{
 		bool b = false;
@@ -579,12 +581,14 @@ size_t FinalRenderEmberController<T>::SyncAndComputeMemory()
 		m_Renderer->CreateTemporalFilter(b);
 		m_Renderer->NumChannels(channels);
 		m_Renderer->ComputeBounds();
+		m_Renderer->ComputeCamera();
 		CancelPreviewRender();
 		m_FinalPreviewRenderFunc();
-		return m_Renderer->MemoryRequired(m_FinalRenderDialog->Strips(), true);
+		p.first = m_Renderer->MemoryRequired(m_FinalRenderDialog->Strips(), true);
+		p.second = m_Renderer->TotalIterCount(m_FinalRenderDialog->Strips());
 	}
 
-	return 0;
+	return p;
 }
 
 /// <summary>

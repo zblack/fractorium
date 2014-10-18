@@ -50,12 +50,12 @@ public:
 	virtual ~Renderer();
 
 	//Non-virtual processing functions.
-	void ComputeCamera();
 	void AddEmber(Ember<T>& ember);
 	bool AssignIterator();
 
 	//Virtual processing functions overriden from RendererBase.
 	virtual void ComputeBounds() override;
+	virtual void ComputeCamera() override;
 	virtual void SetEmber(Ember<T>& ember, eProcessAction action = FULL_RENDER) override;
 	virtual void SetEmber(vector<Ember<T>>& embers) override;
 	virtual bool CreateDEFilter(bool& newAlloc) override;

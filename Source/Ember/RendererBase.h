@@ -115,25 +115,26 @@ public:
 	virtual bool CreateSpatialFilter(bool& newAlloc) = 0;
 	virtual bool CreateTemporalFilter(bool& newAlloc) = 0;
 	virtual void ComputeBounds() = 0;
+	virtual void ComputeCamera() = 0;
 	virtual eRenderStatus Run(vector<unsigned char>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) = 0;
 	virtual EmberImageComments ImageComments(EmberStats& stats, size_t printEditDepth = 0, bool intPalette = false, bool hexPalette = true) = 0;
 	virtual DensityFilterBase* GetDensityFilter() = 0;
 
 	//Non-virtual renderer properties, getters only.
-	size_t		   SuperRasW()				const;
-	size_t		   SuperRasH()				const;
-	size_t		   SuperSize()              const;
-	size_t		   FinalRowSize()           const;
-	size_t		   FinalDimensions()        const;
-	size_t		   FinalBufferSize()		const;
-	size_t   PixelSize()              const;
-	size_t   GutterWidth()			const;
-	size_t   DensityFilterOffset()    const;
-	size_t		   TotalIterCount()	        const;
-	size_t		   ItersPerTemporalSample() const;
-	eProcessState  ProcessState()			const;
-	eProcessAction ProcessAction()			const;
-	EmberStats     Stats() 				    const;
+	size_t		   SuperRasW()					 const;
+	size_t		   SuperRasH()					 const;
+	size_t		   SuperSize()					 const;
+	size_t		   FinalRowSize()				 const;
+	size_t		   FinalDimensions()			 const;
+	size_t		   FinalBufferSize()			 const;
+	size_t		   PixelSize()					 const;
+	size_t		   GutterWidth()				 const;
+	size_t		   DensityFilterOffset()		 const;
+	size_t		   TotalIterCount(size_t strips) const;
+	size_t		   ItersPerTemporalSample()		 const;
+	eProcessState  ProcessState()				 const;
+	eProcessAction ProcessAction()				 const;
+	EmberStats     Stats() 						 const;
 
 	//Non-virtual render getters and setters.
 	bool LockAccum() const;

@@ -110,6 +110,7 @@ private:
 	bool SetMemory();
 	
 	int m_MemoryCellIndex;
+	int m_ItersCellIndex;
 	int m_PathCellIndex;
 	OpenCLWrapper m_Wrapper;
 	Timing m_RenderTimer;
