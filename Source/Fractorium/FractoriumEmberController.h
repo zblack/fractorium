@@ -231,7 +231,7 @@ protected:
 	vector<unsigned char> m_FinalImage;
 	vector<unsigned char> m_PreviewFinalImage;
 	vector<eProcessAction> m_ProcessActions;
-	auto_ptr<EmberNs::RendererBase> m_Renderer;
+	unique_ptr<EmberNs::RendererBase> m_Renderer;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> m_Rand;
 	Fractorium* m_Fractorium;
 	QTimer* m_RenderTimer;
@@ -447,9 +447,9 @@ private:
 	Palette<T> m_TempPalette;
 	PaletteList<T> m_PaletteList;
 	VariationList<T> m_VariationList;
-	auto_ptr<SheepTools<T, T>> m_SheepTools;
-	auto_ptr<GLEmberController<T>> m_GLController;
-	auto_ptr<EmberNs::Renderer<T, T>> m_PreviewRenderer;
+	unique_ptr<SheepTools<T, T>> m_SheepTools;
+	unique_ptr<GLEmberController<T>> m_GLController;
+	unique_ptr<EmberNs::Renderer<T, T>> m_PreviewRenderer;
 	QFuture<void> m_PreviewResult;
 	std::function<void (unsigned int, unsigned int)> m_PreviewRenderFunc;
 };

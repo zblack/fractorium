@@ -34,7 +34,7 @@ bool EmberAnimate(EmberOptions& opt)
 	bool appendXml = false;
 	unsigned char* finalImagep;
 	unsigned int i, channels, ftime;
-	string s, flameName, filename;
+	string s, flameName, filename, inputPath = GetPath(opt.Input());
 	ostringstream os;
 	vector<unsigned char> finalImage, vecRgb;
 	vector<Ember<T>> embers;
@@ -44,8 +44,8 @@ bool EmberAnimate(EmberOptions& opt)
 	Ember<T> centerEmber;
 	XmlToEmber<T> parser;
 	EmberToXml<T> emberToXml;
-	auto_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
-	auto_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
+	unique_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
+	unique_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
 	vector<string> errorReport = emberReport.ErrorReport();
 
 	if (!errorReport.empty())
@@ -277,7 +277,7 @@ bool EmberAnimate(EmberOptions& opt)
 		if (opt.Out().empty())
 		{
 			os.str("");
-			os << opt.Prefix() << setfill('0') << setw(5) << ftime << opt.Suffix() << "." << opt.Format();
+			os << inputPath << opt.Prefix() << setfill('0') << setw(5) << ftime << opt.Suffix() << "." << opt.Format();
 			filename = os.str();
 		}
 		

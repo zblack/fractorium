@@ -84,10 +84,10 @@ Fractorium::Fractorium(QWidget* parent)
 	//of their respective objects.
 #ifdef DO_DOUBLE
 	if (m_Settings->Double())
-		m_Controller = auto_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<double>(this));
+		m_Controller = unique_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<double>(this));
 	else
 #endif
-		m_Controller = auto_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<float>(this));
+		m_Controller = unique_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<float>(this));
 
 	if (m_Wrapper.CheckOpenCL() && m_Settings->OpenCL() && m_QualitySpin->value() < 30)
 		m_QualitySpin->setValue(30);

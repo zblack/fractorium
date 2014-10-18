@@ -32,6 +32,7 @@ bool EmberRender(EmberOptions& opt)
 	size_t strips;
 	size_t iterCount;
 	string filename;
+	string inputPath = GetPath(opt.Input());
 	ostringstream os;
 	vector<Ember<T>> embers;
 	vector<unsigned char> finalImage, vecRgb;
@@ -41,8 +42,8 @@ bool EmberRender(EmberOptions& opt)
 	XmlToEmber<T> parser;
 	EmberToXml<T> emberToXml;
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> randVec;
-	auto_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
-	auto_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
+	unique_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
+	unique_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
 	vector<string> errorReport = emberReport.ErrorReport();
 
 	if (!errorReport.empty())
@@ -250,13 +251,13 @@ bool EmberRender(EmberOptions& opt)
 			}
 			else if (opt.NameEnable() && !finalEmber.m_Name.empty())
 			{
-				filename = opt.Prefix() + finalEmber.m_Name + opt.Suffix() + "." + opt.Format();
+				filename = inputPath + opt.Prefix() + finalEmber.m_Name + opt.Suffix() + "." + opt.Format();
 			}
 			else
 			{
 				ostringstream ssLocal;
 
-				ssLocal << opt.Prefix() << setfill('0') << setw(5) << i << opt.Suffix() << "." << opt.Format();
+				ssLocal << inputPath << opt.Prefix() << setfill('0') << setw(5) << i << opt.Suffix() << "." << opt.Format();
 				filename = ssLocal.str();
 			}
 

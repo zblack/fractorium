@@ -77,8 +77,8 @@ bool EmberGenome(EmberOptions& opt)
 	EmberToXml<T> emberToXml;
 	VariationList<T> varList;
 	EmberReport emberReport, emberReport2;
-	auto_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
-	auto_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
+	unique_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
+	unique_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand(ISAAC_INT(t.Tic()), ISAAC_INT(t.Tic() * 2), ISAAC_INT(t.Tic() * 3));
 	vector<string> errorReport = emberReport.ErrorReport();
 

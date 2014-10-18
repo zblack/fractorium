@@ -92,7 +92,7 @@ template<typename T>
 FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderDialog* finalRender)
 	: FinalRenderEmberControllerBase(finalRender)
 {
-	m_FinalPreviewRenderer = auto_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
+	m_FinalPreviewRenderer = unique_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
 	m_FinalPreviewRenderer->Callback(NULL);
 	m_FinalPreviewRenderer->NumChannels(4);
 
@@ -418,7 +418,7 @@ bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uns
 		m_OutputTexID = 0;//Don't care about tex ID when doing final render.
 		m_Shared = shared;
 
-		m_Renderer = auto_ptr<EmberNs::RendererBase>(::CreateRenderer<T, T>(renderType, platform, device, shared, m_OutputTexID, emberReport));
+		m_Renderer = unique_ptr<EmberNs::RendererBase>(::CreateRenderer<T, T>(renderType, platform, device, shared, m_OutputTexID, emberReport));
 		errorReport = emberReport.ErrorReport();
 
 		if (!errorReport.empty())

@@ -135,7 +135,7 @@ protected:
 	Ember<T> m_PreviewEmber;
 	EmberFile<T> m_EmberFile;
 	EmberToXml<T> m_XmlWriter;
-	auto_ptr<EmberNs::Renderer<T, T>> m_FinalPreviewRenderer;
+	unique_ptr<EmberNs::Renderer<T, T>> m_FinalPreviewRenderer;
 };
 
 template class FinalRenderEmberController<float>;

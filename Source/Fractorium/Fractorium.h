@@ -398,7 +398,7 @@ private:
 	int m_VarSortMode;
 	int m_PreviousPaletteRow;
 	OpenCLWrapper m_Wrapper;
-	auto_ptr<FractoriumEmberControllerBase> m_Controller;
+	unique_ptr<FractoriumEmberControllerBase> m_Controller;
 	Ui::FractoriumClass ui;
 };
 

@@ -353,7 +353,7 @@ static bool WriteBmp(const char* filename, unsigned char* image, size_t width, s
 {
 	bool b = false;
 	size_t newSize;
-	auto_ptr<BYTE> bgrBuf(ConvertRGBToBMPBuffer(image, width, height, newSize));
+	unique_ptr<BYTE> bgrBuf(ConvertRGBToBMPBuffer(image, width, height, newSize));
 
 	if (bgrBuf.get())
 		b = SaveBmp(filename, bgrBuf.get(), width, height, newSize);

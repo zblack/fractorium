@@ -493,7 +493,7 @@ bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsi
 		DeleteRenderer();//Delete the renderer and refresh the textures.
 		//Before starting, must take care of allocations.
 		gl->Allocate(true);//Forcing a realloc of the texture is necessary on AMD, but not on nVidia.
-		m_Renderer = auto_ptr<EmberNs::RendererBase>(::CreateRenderer<T, T>(renderType, platform, device, shared, gl->OutputTexID(), emberReport));
+		m_Renderer = unique_ptr<EmberNs::RendererBase>(::CreateRenderer<T, T>(renderType, platform, device, shared, gl->OutputTexID(), emberReport));
 		errorReport = emberReport.ErrorReport();
 
 		if (errorReport.empty())
@@ -625,10 +625,10 @@ bool Fractorium::CreateControllerFromOptions()
 
 #ifdef DO_DOUBLE
 		if (m_Settings->Double())
-			m_Controller = auto_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<double>(this));
+			m_Controller = unique_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<double>(this));
 		else
 #endif
-			m_Controller = auto_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<float>(this));
+			m_Controller = unique_ptr<FractoriumEmberControllerBase>(new FractoriumEmberController<float>(this));
 
 		//Restore the ember and ember file.
 		if (m_Controller.get())

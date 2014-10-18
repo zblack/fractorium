@@ -816,6 +816,24 @@ static string Trim(const string& str, char ch = ' ')
 }
 
 /// <summary>
+/// Return a copy of a file path string with the path portion removed.
+/// </summary>
+/// <param name="filename">The string to retrieve the path from</param>
+/// <returns>The path portion of the string</returns>
+static string GetPath(const string& filename)
+{
+	string s;
+	const size_t lastSlash = filename.find_last_of("\\/");
+	
+	if (std::string::npos != lastSlash)
+		s = filename.substr(0, lastSlash + 1);
+	else
+		s = "";
+
+	return s;
+}
+
+/// <summary>
 /// Placeholder for a templated function to query the value of a specified system environment variable
 /// of a specific type. This function does nothing as the functions for specific types implement the behavior
 /// via template specialization.

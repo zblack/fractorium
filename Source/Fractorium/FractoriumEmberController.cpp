@@ -69,9 +69,9 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 {
 	m_PreviewRun = false;
 	m_PreviewRunning = false;
-	m_SheepTools = auto_ptr<SheepTools<T, T>>(new SheepTools<T, T>("flam3-palettes.xml", new EmberNs::Renderer<T, T>()));
-	m_GLController = auto_ptr<GLEmberController<T>>(new GLEmberController<T>(fractorium, fractorium->ui.GLDisplay, this));
-	m_PreviewRenderer = auto_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
+	m_SheepTools = unique_ptr<SheepTools<T, T>>(new SheepTools<T, T>("flam3-palettes.xml", new EmberNs::Renderer<T, T>()));
+	m_GLController = unique_ptr<GLEmberController<T>>(new GLEmberController<T>(fractorium, fractorium->ui.GLDisplay, this));
+	m_PreviewRenderer = unique_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
 	SetupVariationTree();
 	InitPaletteTable("flam3-palettes.xml");
 	BackgroundChanged(QColor(0, 0, 0));//Default to black.

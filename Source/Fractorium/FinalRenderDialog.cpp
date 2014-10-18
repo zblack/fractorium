@@ -670,10 +670,10 @@ bool FractoriumFinalRenderDialog::CreateControllerFromGUI(bool createRenderer)
 		//Create a float or double controller based on the GUI.
 #ifdef DO_DOUBLE
 		if (Double())
-			m_Controller = auto_ptr<FinalRenderEmberControllerBase>(new FinalRenderEmberController<double>(this));
+			m_Controller = unique_ptr<FinalRenderEmberControllerBase>(new FinalRenderEmberController<double>(this));
 		else
 #endif
-			m_Controller = auto_ptr<FinalRenderEmberControllerBase>(new FinalRenderEmberController<float>(this));
+			m_Controller = unique_ptr<FinalRenderEmberControllerBase>(new FinalRenderEmberController<float>(this));
 
 		//Restore the ember and ember file.
 		if (m_Controller.get())

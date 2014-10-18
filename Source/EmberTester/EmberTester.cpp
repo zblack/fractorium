@@ -139,9 +139,9 @@ void MakeTestAllVarsRegPrePostComboFile(const string& filename)
 	while (index < varList.RegSize())
 	{
 		Ember<float> ember1;
-		auto_ptr<Variation<float>> regVar (varList.GetVariationCopy(index, VARTYPE_REG));
-		auto_ptr<Variation<float>> preVar (varList.GetVariationCopy("pre_" + regVar->Name()));
-		auto_ptr<Variation<float>> postVar(varList.GetVariationCopy("post_" + regVar->Name()));
+		unique_ptr<Variation<float>> regVar(varList.GetVariationCopy(index, VARTYPE_REG));
+		unique_ptr<Variation<float>> preVar(varList.GetVariationCopy("pre_" + regVar->Name()));
+		unique_ptr<Variation<float>> postVar(varList.GetVariationCopy("post_" + regVar->Name()));
 
 		ember1.m_FinalRasW = 640;
 		ember1.m_FinalRasH = 480;
@@ -666,7 +666,7 @@ bool TestVarCopy()
 	{
 		Variation<sT>* var = vlf.GetVariation(i);
 		Variation<dT>* destVar = NULL;
-		auto_ptr<Variation<sT>> copyVar(var->Copy());//Test Copy().
+		unique_ptr<Variation<sT>> copyVar(var->Copy());//Test Copy().
 		
 		if (!TestVarEqual<sT, sT>(var, copyVar.get()))
 		{
@@ -675,7 +675,7 @@ bool TestVarCopy()
 		}
 
 		var->Copy(destVar);//Test Copy(var*);
-		auto_ptr<Variation<dT>> destPtr(destVar);//Just for deletion.
+		unique_ptr<Variation<dT>> destPtr(destVar);//Just for deletion.
 
 		if (!TestVarEqual<sT, dT>(var, destPtr.get()))
 		{
@@ -1142,13 +1142,13 @@ void TestXformsInOutPoints()
 	while (index < varList.RegSize())
 	{
 		vector<Xform<float>> xforms;
-		auto_ptr<Variation<float>> regVar (varList.GetVariationCopy(index, VARTYPE_REG));
+		unique_ptr<Variation<float>> regVar(varList.GetVariationCopy(index, VARTYPE_REG));
 		string s = regVar->OpenCLString() + regVar->OpenCLFuncsString();
 
 		if (s.find("MwcNext") == string::npos)
 		{
-			auto_ptr<Variation<float>> preVar (varList.GetVariationCopy("pre_" + regVar->Name()));
-			auto_ptr<Variation<float>> postVar(varList.GetVariationCopy("post_" + regVar->Name()));
+			unique_ptr<Variation<float>> preVar(varList.GetVariationCopy("pre_" + regVar->Name()));
+			unique_ptr<Variation<float>> postVar(varList.GetVariationCopy("post_" + regVar->Name()));
 
 			Xform<float> xform0(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
 			Xform<float> xform1(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
@@ -1772,9 +1772,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//cout << "sizeof(RendererCL<float>): " << sizeof(RendererCL<float>) << endl;
 	//cout << "sizeof(RendererCL<double>): " << sizeof(RendererCL<double>) << endl;
 
-	/*auto_ptr<LinearVariation<float>> linV(new LinearVariation<float>());
-	auto_ptr<PreLinearVariation<float>> preLinV(new PreLinearVariation<float>());
-	auto_ptr<PostLinearVariation<float>> postLinV(new PostLinearVariation<float>());
+	/*unique_ptr<LinearVariation<float>> linV(new LinearVariation<float>());
+	unique_ptr<PreLinearVariation<float>> preLinV(new PreLinearVariation<float>());
+	unique_ptr<PostLinearVariation<float>> postLinV(new PostLinearVariation<float>());
 	
 	cout << linV->BaseName() << endl;
 	cout << preLinV->BaseName() << endl;
@@ -1789,7 +1789,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestGpuVectorRead<double>();
 	//TestGpuVectorRead<float>();
 	//return 0;
-	//auto_ptr<PreFarblurVariation<float>> preFarblurV(new PreFarblurVariation<float>());
+	//unique_ptr<PreFarblurVariation<float>> preFarblurV(new PreFarblurVariation<float>());
 	//size_t vsize = 1024 * 1024;
 	//
 	//t.Tic();

@@ -125,6 +125,6 @@ private:
 	QLineEdit* m_SuffixEdit;
 	FractoriumSettings* m_Settings;
 	Fractorium* m_Fractorium;
-	auto_ptr<FinalRenderEmberControllerBase> m_Controller;
+	unique_ptr<FinalRenderEmberControllerBase> m_Controller;
 	Ui::FinalRenderDialog ui;
 };
