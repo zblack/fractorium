@@ -100,9 +100,10 @@ public:
 	}
 
 	/// <summary>
-	/// Return the next random integer between 0 and the value passed in.
+	/// Return the next random integer between 0 and the value passed in minus 1.
 	/// </summary>
-	/// <returns>A value one greater than the maximum value that will be returned</returns>
+	/// <param name="upper">A value one greater than the maximum value that will be returned</param>
+	/// <returns>A value between 0 and the value passed in minus 1</returns>
 	inline T Rand(T upper)
 	{
 		return (upper == 0) ? Rand() : Rand() % upper;

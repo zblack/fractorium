@@ -108,6 +108,7 @@ public:
 		m_CamMat			  = ember.m_CamMat;
 		m_CenterX			  = T(ember.m_CenterX);
 		m_CenterY			  = T(ember.m_CenterY);
+		m_RotCenterY		  = T(ember.m_RotCenterY);
 		m_Rotate			  = T(ember.m_Rotate);
 		m_Hue				  = T(ember.m_Hue);
 		m_Brightness		  = T(ember.m_Brightness);
@@ -201,6 +202,7 @@ public:
 		m_CamMat = m3T(0);
 		m_CenterX = 0;
 		m_CenterY = 0;
+		m_RotCenterY = 0;
 		m_Rotate = 0;
 		m_Hue = 0;
 		m_Brightness = 4;
@@ -761,6 +763,7 @@ public:
 		InterpI<&Ember<T>::m_Supersample>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CenterX>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CenterY>(embers, coefs, size);
+		InterpT<&Ember<T>::m_RotCenterY>(embers, coefs, size);
 		InterpX<Color<T>, &Ember<T>::m_Background>(embers, coefs, size); m_Background.a = bgAlphaSave;//Don't interp alpha.
 		InterpT<&Ember<T>::m_PixelsPerUnit>(embers, coefs, size);
 		InterpT<&Ember<T>::m_SpatialFilterRadius>(embers, coefs, size);
@@ -1269,6 +1272,7 @@ public:
 		m_Palette.m_Index = -1;
 		m_CenterX = 0;
 		m_CenterY = 0;
+		m_RotCenterY = 0;
 		m_Gamma = 4;
 		m_Vibrancy = 1;
 		m_Brightness = 4;
@@ -1392,6 +1396,7 @@ public:
 		   << "Depth Blur: " << m_CamDepthBlur << endl
 		   << "CenterX: " << m_CenterX << endl
 		   << "CenterY: " << m_CenterY << endl
+		   << "RotCenterY: " << m_RotCenterY << endl
 		   << "Rotate: " << m_Rotate << endl
 		   << "Hue: " << m_Hue << endl
 		   << "Brightness: " << m_Brightness << endl
@@ -1523,10 +1528,11 @@ public:
 	m3T m_CamMat;
 
 	//The camera offset from the center of the cartesian plane. Since this is the camera offset, the final output image will be moved in the opposite
-	//direction of the values specified.
+	//direction of the values specified. There is also a second copy of the Y coordinate needed because m_CenterY will be modified during strips rendering.
 	//Xml field: "center".
 	T m_CenterX;
 	T m_CenterY;
+	T m_RotCenterY;
 
 	//Rotate the camera by this many degrees. Since this is a camera rotation, the final output image will be rotated counter-clockwise.
 	//Xml field: "rotate".

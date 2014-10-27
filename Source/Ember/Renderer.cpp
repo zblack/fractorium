@@ -459,6 +459,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 			//it.Tic();
 			if (m_Embers.size() > 1)
 				Interpolater<T>::Interpolate(m_Embers, temporalTime, 0, m_Ember);//This will perform all necessary precalcs via the ember/xform/variation assignment operators.
+
 			//it.Toc("Interp 3");
 
 			if (!resume && !AssignIterator())
@@ -1478,10 +1479,10 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, size_t sampleCount, con
 		if (Rotate() != 0)
 		{
 			T p00 = samples[i].m_X - CenterX();
-			T p11 = samples[i].m_Y - CenterY();
+			T p11 = samples[i].m_Y - m_Ember.m_RotCenterY;
 
 			samples[i].m_X = (p00 * m_RotMat.A()) + (p11 * m_RotMat.B()) + CenterX();
-			samples[i].m_Y = (p00 * m_RotMat.D()) + (p11 * m_RotMat.E()) + CenterY();
+			samples[i].m_Y = (p00 * m_RotMat.D()) + (p11 * m_RotMat.E()) + m_Ember.m_RotCenterY;
 		}
 
 		//Checking this first before converting gives better performance than converting and checking a single value, which the original did.

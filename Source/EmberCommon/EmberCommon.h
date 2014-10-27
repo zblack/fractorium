@@ -313,7 +313,6 @@ static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<unsigne
 			ember.m_CenterY -= (origHeight - ember.m_FinalRasH) * T(0.5) / (ember.m_PixelsPerUnit * zoomScale);
 		}
 
-		ember.m_CenterY;
 		perStripStart(strip);
 
 		if (strips > 1)

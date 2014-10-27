@@ -27,6 +27,9 @@ void Fractorium::InitPaletteUI()
 	SetupSpinner<SpinBox, int>(table, this, row, 3, m_PaletteContrastSpin,  spinHeight, -100, 100, 1, SIGNAL(valueChanged(int)), SLOT(OnPaletteAdjust(int)), true, 0, 0, 0);
 	SetupSpinner<SpinBox, int>(table, this, row, 3, m_PaletteBlurSpin,	    spinHeight,	   0, 127, 1, SIGNAL(valueChanged(int)), SLOT(OnPaletteAdjust(int)), true, 0, 0, 0);
 	SetupSpinner<SpinBox, int>(table, this, row, 3, m_PaletteFrequencySpin, spinHeight,	   1,  10, 1, SIGNAL(valueChanged(int)), SLOT(OnPaletteAdjust(int)), true, 1, 1, 1);
+
+	connect(ui.PaletteRandomSelect, SIGNAL(clicked(bool)), this, SLOT(OnPaletteRandomSelectButtonClicked(bool)), Qt::QueuedConnection);
+	connect(ui.PaletteRandomAdjust, SIGNAL(clicked(bool)), this, SLOT(OnPaletteRandomAdjustButtonClicked(bool)), Qt::QueuedConnection);
 }
 
 /// <summary>
@@ -55,7 +58,7 @@ bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
 		palettePreviewTable->setItem(0, 1, previewPaletteItem);
 
 		//Palette list table.
-		paletteTable->setRowCount(m_PaletteList.Count());
+		paletteTable->setRowCount(m_PaletteList.Size());
 		paletteTable->setColumnWidth(1, 260);//256 plus small margin on each side.
 		paletteTable->horizontalHeader()->setSectionsClickable(false);
 
@@ -70,7 +73,7 @@ bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
 		paletteTable->setHorizontalHeaderItem(1, paletteHeader);
 
 		//Palette list table.
-		for (size_t i = 0; i < m_PaletteList.Count(); i++)
+		for (size_t i = 0; i < m_PaletteList.Size(); i++)
 		{
 			Palette<T>* p = m_PaletteList.GetPalette(i);
 			vector<unsigned char> v = p->MakeRgbPaletteBlock(PALETTE_CELL_HEIGHT);
@@ -218,6 +221,52 @@ void Fractorium::OnPaletteCellDoubleClicked(int row, int col)
 	ResetPaletteControls();
 	m_PreviousPaletteRow = -1;
 	OnPaletteCellClicked(row, col);
+}
+
+/// <summary>
+/// Set the selected palette to a randomly selected one,
+/// applying any adjustments previously specified.
+/// Called when the Random Palette button is clicked.
+/// Resets the rendering process.
+/// </summary>
+/// <param name="row">The current row selected</param>
+void Fractorium::OnPaletteRandomSelectButtonClicked(bool checked)
+{
+	unsigned int i = 0;
+	int rowCount = ui.PaletteListTable->rowCount() - 1;
+
+	while ((i = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand(rowCount)) == m_PreviousPaletteRow);
+
+	OnPaletteCellClicked(i, 1);
+}
+
+/// <summary>
+/// Apply random adjustments to the selected palette.
+/// Called when the Random Adjustment button is clicked.
+/// Resets the rendering process.
+/// </summary>
+void Fractorium::OnPaletteRandomAdjustButtonClicked(bool checked)
+{
+	QTIsaac<ISAAC_SIZE, ISAAC_INT>* gRand = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand.get();
+
+	m_PaletteHueSpin->setValue(-180 + gRand->Rand(361));
+	m_PaletteSaturationSpin->setValue(-50 + gRand->Rand(101));//Full range of these leads to bad palettes, so clamp range.
+	m_PaletteBrightnessSpin->setValue(-50 + gRand->Rand(101));
+	m_PaletteContrastSpin->setValue(-50 + gRand->Rand(101));
+
+	//Doing frequency and blur together gives bad palettes that are just a solid color.
+	if (gRand->RandBit())
+	{
+		m_PaletteBlurSpin->setValue(gRand->Rand(21));
+		m_PaletteFrequencySpin->setValue(1);
+	}
+	else
+	{
+		m_PaletteBlurSpin->setValue(0);
+		m_PaletteFrequencySpin->setValue(1 + gRand->Rand(10));
+	}
+
+	OnPaletteAdjust(0);
 }
 
 /// <summary>

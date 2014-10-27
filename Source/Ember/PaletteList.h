@@ -80,7 +80,7 @@ public:
 		if (!m_Palettes.empty())
 		{
 			if (i == -1)
-				return &m_Palettes[QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand() % Count()];
+				return &m_Palettes[QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand() % Size()];
 			else if (i < (int)m_Palettes.size())
 				return &m_Palettes[i];
 		}
@@ -95,7 +95,7 @@ public:
 	/// <returns>A pointer to the palette if found, else nullptr</returns>
 	Palette<T>* GetPaletteByName(const string&& name)
 	{
-		for (unsigned int i = 0; i < Count(); i++)
+		for (unsigned int i = 0; i < Size(); i++)
 			if (m_Palettes[i].m_Name == name)
 				return &m_Palettes[i];
 
@@ -136,7 +136,7 @@ public:
 	/// Accessors.
 	/// </summary>
 	bool Init() { return m_Init; }
-	unsigned int Count() { return (unsigned int)m_Palettes.size(); }
+	size_t Size() { return m_Palettes.size(); }
 
 private:
 	/// <summary>

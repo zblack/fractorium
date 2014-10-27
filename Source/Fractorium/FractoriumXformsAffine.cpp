@@ -49,6 +49,18 @@ void Fractorium::InitXformsAffineUI()
 	ui.PostMoveCombo->setValidator(postMoveVal);
 	ui.PostScaleCombo->setValidator(postScaleVal);
 
+	QStringList moveList;
+
+	moveList.append(ToString(0.5));
+	moveList.append(ToString(0.25));
+	moveList.append(ToString(0.1));
+	moveList.append(ToString(0.05));
+	moveList.append(ToString(0.025));
+	moveList.append(ToString(0.01));
+
+	ui.PreMoveCombo->addItems(moveList);
+	ui.PostMoveCombo->addItems(moveList);
+
 	connect(ui.PreFlipHorizontalButton,    SIGNAL(clicked(bool)), this, SLOT(OnFlipHorizontalButtonClicked(bool)),			  Qt::QueuedConnection);
 	connect(ui.PreFlipVerticalButton,      SIGNAL(clicked(bool)), this, SLOT(OnFlipVerticalButtonClicked(bool)),			  Qt::QueuedConnection);
 	connect(ui.PreRotate90CButton,         SIGNAL(clicked(bool)), this, SLOT(OnRotate90CButtonClicked(bool)),				  Qt::QueuedConnection);

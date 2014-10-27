@@ -1297,7 +1297,7 @@ EmberCL<T> RendererCL<T>::ConvertEmber(Ember<T>& ember)
 	emberCL.m_RotE            = m_RotMat.E();
 	emberCL.m_CamMat		  = ember.m_CamMat;
 	emberCL.m_CenterX         = CenterX();
-	emberCL.m_CenterY         = CenterY();
+	emberCL.m_CenterY		  = ember.m_RotCenterY;
 	emberCL.m_CamZPos		  = ember.m_CamZPos;
 	emberCL.m_CamPerspective  = ember.m_CamPerspective;
 	emberCL.m_CamYaw		  = ember.m_CamYaw;

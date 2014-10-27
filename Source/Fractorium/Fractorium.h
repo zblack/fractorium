@@ -221,6 +221,8 @@ public slots:
 	void OnPaletteAdjust(int d);
 	void OnPaletteCellClicked(int row, int col);
 	void OnPaletteCellDoubleClicked(int row, int col);
+	void OnPaletteRandomSelectButtonClicked(bool checked);
+	void OnPaletteRandomAdjustButtonClicked(bool checked);
 
 	//Library.
 	void OnEmberTreeItemChanged(QTreeWidgetItem* item, int col);

@@ -655,7 +655,7 @@ private:
 				}
 
 				currentEmber.m_CenterX = T(vals[0]);
-				currentEmber.m_CenterY = T(vals[1]);
+				currentEmber.m_CenterY = currentEmber.m_RotCenterY = T(vals[1]);
 			}
 			else if (!Compare(curAtt->name, "filter_shape"))
 			{

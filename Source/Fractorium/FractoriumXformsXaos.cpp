@@ -189,6 +189,7 @@ void Fractorium::OnClearXaosButtonClicked(bool checked) { m_Controller->ClearXao
 /// Set all xaos values to random numbers.
 /// There is a 50% chance they're set to 0 or 1, and
 /// 50% that they're 0-3.
+/// Resets the rendering process.
 /// </summary>
 /// <param name="checked">Ignored</param>
 template <typename T>

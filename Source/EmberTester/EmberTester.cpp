@@ -198,7 +198,7 @@ void MakeTestAllVarsRegPrePostComboFile(const string& filename)
 		ss << index << "_" << regVar->Name();
 		ember1.m_Name = ss.str();
 		ss.str("");
-		ember1.m_Palette = *paletteList.GetPalette(index % paletteList.Count());
+		ember1.m_Palette = *paletteList.GetPalette(index % paletteList.Size());
 		index++;
 		embers.push_back(ember1);
 	}

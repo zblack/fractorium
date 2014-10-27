@@ -155,7 +155,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_GuiState = m_FinalRenderDialog->State();//Cache render settings from the GUI before running.
 		bool doAll = m_GuiState.m_DoAll && m_EmberFile.Size() > 1;
 		unsigned int currentStripForProgress = 0;//Sort of a hack to get the strip value to the progress function.
-		QString path = EmberFile<T>::UniqueFilename(doAll ? ComposePath(QString::fromStdString(m_EmberFile.m_Embers[0].m_Name)) : ComposePath(Name()));
+		QString path = doAll ? ComposePath(QString::fromStdString(m_EmberFile.m_Embers[0].m_Name)) : ComposePath(Name());
 		QString backup = path + "_backup.flame";
 
 		//Save backup Xml.
@@ -219,7 +219,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				//Render each image, cancelling if m_Run ever gets set to false.
 				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
-					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + EmberFile<T>::UniqueFilename(ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name))));
+					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name)));
 					m_Renderer->Reset();//Have to manually set this since the ember is not set each time through.
 					m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 
@@ -244,7 +244,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				//Render each image, cancelling if m_Run ever gets set to false.
 				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
-					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + EmberFile<T>::UniqueFilename(ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name))));
+					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name)));
 					m_Renderer->SetEmber(m_EmberFile.m_Embers[i]);
 					m_Renderer->PrepFinalAccumVector(m_FinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 					m_Stats.Clear();
@@ -272,7 +272,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			m_Renderer->PrepFinalAccumVector(m_FinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 			m_Stats.Clear();
 			Memset(m_FinalImage);
-			Output(EmberFile<T>::UniqueFilename(ComposePath(QString::fromStdString(m_Ember->m_Name))));
+			Output(ComposePath(QString::fromStdString(m_Ember->m_Name)));
 			m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 			
 			StripsRender<T>(m_Renderer.get(), *m_Ember, m_FinalImage, 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
@@ -496,7 +496,7 @@ void FinalRenderEmberController<T>::SyncCurrentToGui()
 	m_FinalRenderDialog->Scale(m_Ember->ScaleType());
 	m_FinalRenderDialog->m_QualitySpin->SetValueStealth(m_Ember->m_Quality);
 	m_FinalRenderDialog->m_SupersampleSpin->SetValueStealth(m_Ember->m_Supersample);
-	m_FinalRenderDialog->Path(EmberFile<T>::UniqueFilename(ComposePath(Name())));
+	m_FinalRenderDialog->Path(ComposePath(Name()));
 }
 
 /// <summary>
@@ -606,7 +606,7 @@ QString FinalRenderEmberController<T>::ComposePath(const QString& name)
 	QString path = MakeEnd(m_Settings->SaveFolder(), '/');//Base path.
 	QString full = path + m_FinalRenderDialog->Prefix() + name + m_FinalRenderDialog->Suffix() + "." + m_FinalRenderDialog->Ext();
 
-	return full;
+	return EmberFile<T>::UniqueFilename(full);
 }
 
 /// <summary>
@@ -635,7 +635,7 @@ template<typename T>
 void FinalRenderEmberController<T>::RenderComplete(Ember<T>& ember)
 {
 	string renderTimeString = m_RenderTimer.Format(m_RenderTimer.Toc()), totalTimeString;
-	QString status, filename = EmberFile<T>::UniqueFilename(ComposePath(QString::fromStdString(ember.m_Name)));
+	QString status, filename = ComposePath(QString::fromStdString(ember.m_Name));
 	QString itersString = ToString(m_Stats.m_Iters);
 	QString itersPerSecString = ToString(size_t(m_Stats.m_Iters / (m_Stats.m_IterMs / 1000.0)));
 

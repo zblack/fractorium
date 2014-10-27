@@ -242,7 +242,7 @@ void Fractorium::OnCenterXChanged(double d) { m_Controller->CenterXChanged(d); }
 /// Resets the rendering process.
 /// </summary>
 /// <param name="d">The y offset value</param>
-template <typename T> void FractoriumEmberController<T>::CenterYChanged(double d) { Update([&] { m_Ember.m_CenterY = d; }); }
+template <typename T> void FractoriumEmberController<T>::CenterYChanged(double d) { Update([&] { m_Ember.m_CenterY = m_Ember.m_RotCenterY = d; }); }
 void Fractorium::OnCenterYChanged(double d) { m_Controller->CenterYChanged(d); }
 
 /// <summary>
@@ -493,7 +493,7 @@ template <typename T>
 void FractoriumEmberController<T>::SetCenter(double x, double y)
 {
 	m_Ember.m_CenterX = x;
-	m_Ember.m_CenterY = y;
+	m_Ember.m_CenterY = m_Ember.m_RotCenterY = y;
 	m_Fractorium->m_CenterXSpin->SetValueStealth(x);//Don't trigger a redraw twice.
 	m_Fractorium->m_CenterYSpin->SetValueStealth(y);
 
@@ -581,7 +581,7 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_FinalRasW = m_Fractorium->m_WidthSpin->value();//Geometry.
 	ember.m_FinalRasH = m_Fractorium->m_HeightSpin->value();
 	ember.m_CenterX = m_Fractorium->m_CenterXSpin->value();
-	ember.m_CenterY = m_Fractorium->m_CenterYSpin->value();
+	ember.m_CenterY = ember.m_RotCenterY = m_Fractorium->m_CenterYSpin->value();
 	ember.m_PixelsPerUnit = m_Fractorium->m_ScaleSpin->value();
 	ember.m_Zoom = m_Fractorium->m_ZoomSpin->value();
 	ember.m_Rotate = m_Fractorium->m_RotateSpin->value();

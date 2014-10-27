@@ -7,11 +7,14 @@
 #include "FinalAccumOpenCLKernelCreator.h"
 
 /// <summary>
-/// RendererCL class.
+/// RendererCLBase and RendererCL classes.
 /// </summary>
 
 namespace EmberCLns
 {
+/// <summary>
+/// Serves only as an interface for OpenCL specific rendering functions.
+/// </summary>
 class EMBERCL_API RendererCLBase
 {
 public:

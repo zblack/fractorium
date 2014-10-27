@@ -99,7 +99,7 @@ enum eOptionIDs
 	OPT_SUFFIX,
 	OPT_FORMAT,
 	OPT_PALETTE_FILE,
-	OPT_PALETTE_IMAGE,
+	//OPT_PALETTE_IMAGE,
 	OPT_ID,
 	OPT_URL,
 	OPT_NICK,
@@ -292,7 +292,7 @@ public:
 		INITBOOLOPTION(Enclosed,       Eob(OPT_USE_GENOME,  OPT_ENCLOSED,         _T("--enclosed"),             true,                 SO_NONE,    "\t--enclosed               Use enclosing XML tags [default: false].\n"));
 		INITBOOLOPTION(NoEdits,        Eob(OPT_USE_GENOME,  OPT_NO_EDITS,         _T("--noedits"),              false,                SO_NONE,    "\t--noedits                Exclude edit tags when writing Xml [default: false].\n"));
 		INITBOOLOPTION(UnsmoothEdge,   Eob(OPT_USE_GENOME,  OPT_UNSMOOTH_EDGE,    _T("--unsmoother"),           false,                SO_NONE,    "\t--unsmoother             Do not use smooth blending for sheep edges [default: false].\n"));
-		INITBOOLOPTION(LockAccum,	   Eob(OPT_USE_ALL,		OPT_LOCK_ACCUM,       _T("--lock_accum"),           false,                SO_NONE,    "\t--lock_accum             Lock threads when accumulating to the histogram using the CPU (ignored for OpenCL). This will drop performance to that of single threading [default: false].\n"));
+		INITBOOLOPTION(LockAccum,	   Eob(OPT_USE_ALL,		OPT_LOCK_ACCUM,       _T("--lock_accum"),           false,                SO_NONE,    "\t--lock_accum             Lock threads when accumulating to the histogram using the CPU. This will drop performance to that of single threading [default: false].\n"));
 		INITBOOLOPTION(DumpKernel,	   Eob(OPT_USE_RENDER,	OPT_DUMP_KERNEL,      _T("--dump_kernel"),          false,                SO_NONE,    "\t--dump_kernel            Print the iteration kernel string when using OpenCL (ignored for CPU) [default: false].\n"));
 
 		//Int.
@@ -348,10 +348,10 @@ public:
 		INITSTRINGOPTION(Suffix,       Eos(OPT_RENDER_ANIM, OPT_SUFFIX,           _T("--suffix"),               "",                   SO_REQ_SEP, "\t--suffix=<val>           Suffix to append to all output files.\n"));
 		INITSTRINGOPTION(Format,       Eos(OPT_RENDER_ANIM, OPT_FORMAT,           _T("--format"),               "png",                SO_REQ_SEP, "\t--format=<val>           Format of the output file. Valid values are: bmp, jpg, png, ppm [default: jpg].\n"));
 		INITSTRINGOPTION(PalettePath,  Eos(OPT_USE_ALL,     OPT_PALETTE_FILE,     _T("--flam3_palettes"),       "flam3-palettes.xml", SO_REQ_SEP, "\t--flam3_palettes=<val>   Path and name of the palette file [default: flam3-palettes.xml].\n"));
-		INITSTRINGOPTION(PaletteImage, Eos(OPT_USE_ALL,     OPT_PALETTE_IMAGE,    _T("--image"),                "",                   SO_REQ_SEP, "\t--image=<val>            Replace palette with png, jpg, or ppm image.\n"));
-		INITSTRINGOPTION(Id,           Eos(OPT_USE_ALL,     OPT_ID,               _T("--id"),                   "",                   SO_REQ_SEP, "\t--id=<val>               ID to use in <edit> tags.\n"));
-		INITSTRINGOPTION(Url,          Eos(OPT_USE_ALL,     OPT_URL,              _T("--url"),                  "",                   SO_REQ_SEP, "\t--url=<val>              URL to use in <edit> tags / img comments.\n"));
-		INITSTRINGOPTION(Nick,         Eos(OPT_USE_ALL,     OPT_NICK,             _T("--nick"),                 "",                   SO_REQ_SEP, "\t--nick=<val>             Nickname to use in <edit> tags / img comments.\n"));
+		//INITSTRINGOPTION(PaletteImage, Eos(OPT_USE_ALL,     OPT_PALETTE_IMAGE,    _T("--image"),                "",                   SO_REQ_SEP, "\t--image=<val>            Replace palette with png, jpg, or ppm image.\n"));
+		INITSTRINGOPTION(Id,           Eos(OPT_USE_ALL,     OPT_ID,               _T("--id"),                   "",                   SO_REQ_SEP, "\t--id=<val>               ID to use in <edit> tags / image comments.\n"));
+		INITSTRINGOPTION(Url,          Eos(OPT_USE_ALL,     OPT_URL,              _T("--url"),                  "",                   SO_REQ_SEP, "\t--url=<val>              URL to use in <edit> tags / image comments.\n"));
+		INITSTRINGOPTION(Nick,         Eos(OPT_USE_ALL,     OPT_NICK,             _T("--nick"),                 "",                   SO_REQ_SEP, "\t--nick=<val>             Nickname to use in <edit> tags / image comments.\n"));
 		INITSTRINGOPTION(Comment,      Eos(OPT_USE_GENOME,  OPT_COMMENT,          _T("--comment"),              "",                   SO_REQ_SEP, "\t--comment=<val>          Comment to use in <edit> tags.\n"));
 
 		INITSTRINGOPTION(TemplateFile, Eos(OPT_USE_GENOME,  OPT_TEMPLATE,         _T("--template"),             "",                   SO_REQ_SEP, "\t--template=<val>         Apply defaults based on this flame.\n"));
@@ -472,7 +472,7 @@ public:
 					PARSESTRINGOPTION(OPT_SUFFIX, Suffix);
 					PARSESTRINGOPTION(OPT_FORMAT, Format);
 					PARSESTRINGOPTION(OPT_PALETTE_FILE, PalettePath);
-					PARSESTRINGOPTION(OPT_PALETTE_IMAGE, PaletteImage);
+					//PARSESTRINGOPTION(OPT_PALETTE_IMAGE, PaletteImage);
 					PARSESTRINGOPTION(OPT_ID, Id);
 					PARSESTRINGOPTION(OPT_URL, Url);
 					PARSESTRINGOPTION(OPT_NICK, Nick);
@@ -639,8 +639,8 @@ public:
 	EmberOptionEntry<bool> DumpKernel;
 
 	EmberOptionEntry<int> Symmetry;//Value int.
-	EmberOptionEntry<int> SheepGen;//Value int.
-	EmberOptionEntry<int> SheepId;//Value int.
+	EmberOptionEntry<int> SheepGen;
+	EmberOptionEntry<int> SheepId;
 	EmberOptionEntry<unsigned int> Platform;//Value unsigned int.
 	EmberOptionEntry<unsigned int> Device;
 	EmberOptionEntry<unsigned int> Seed;
@@ -682,7 +682,7 @@ public:
 	EmberOptionEntry<string> Suffix;
 	EmberOptionEntry<string> Format;
 	EmberOptionEntry<string> PalettePath;
-	EmberOptionEntry<string> PaletteImage;
+	//EmberOptionEntry<string> PaletteImage;
 	EmberOptionEntry<string> Id;
 	EmberOptionEntry<string> Url;
 	EmberOptionEntry<string> Nick;
