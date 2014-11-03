@@ -944,13 +944,13 @@
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>140</height>
+                 <height>117</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>140</height>
+                 <height>117</height>
                 </size>
                </property>
                <property name="focusPolicy">
@@ -1033,11 +1033,6 @@
                </attribute>
                <row>
                 <property name="text">
-                 <string>Passes</string>
-                </property>
-               </row>
-               <row>
-                <property name="text">
                  <string>Temporal Samples</string>
                 </property>
                </row>
@@ -1073,7 +1068,7 @@
                </column>
                <item row="0" column="0">
                 <property name="text">
-                 <string>Passes</string>
+                 <string>Temporal Samples</string>
                 </property>
                </item>
                <item row="0" column="1">
@@ -1083,7 +1078,7 @@
                </item>
                <item row="1" column="0">
                 <property name="text">
-                 <string>Temporal Samples</string>
+                 <string>Quality</string>
                 </property>
                </item>
                <item row="1" column="1">
@@ -1093,7 +1088,7 @@
                </item>
                <item row="2" column="0">
                 <property name="text">
-                 <string>Quality</string>
+                 <string>Supersample</string>
                 </property>
                </item>
                <item row="2" column="1">
@@ -1103,7 +1098,7 @@
                </item>
                <item row="3" column="0">
                 <property name="text">
-                 <string>Supersample</string>
+                 <string>Affine Interpolation</string>
                 </property>
                </item>
                <item row="3" column="1">
@@ -1113,20 +1108,10 @@
                </item>
                <item row="4" column="0">
                 <property name="text">
-                 <string>Affine Interpolation</string>
-                </property>
-               </item>
-               <item row="4" column="1">
-                <property name="text">
-                 <string>0</string>
-                </property>
-               </item>
-               <item row="5" column="0">
-                <property name="text">
                  <string>Interpolation</string>
                 </property>
                </item>
-               <item row="5" column="1">
+               <item row="4" column="1">
                 <property name="text">
                  <string>0</string>
                 </property>
@@ -2835,8 +2820,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>238</width>
-                  <height>747</height>
+                  <width>118</width>
+                  <height>597</height>
                  </rect>
                 </property>
                 <property name="palette">

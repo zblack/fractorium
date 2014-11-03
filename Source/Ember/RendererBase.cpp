@@ -23,7 +23,6 @@ RendererBase::RendererBase()
 	ThreadCount(Timing::ProcessorCount());
 	m_Callback = nullptr;
 	m_ProgressParameter = nullptr;
-	m_LastPass = 0;
 	m_LastTemporalSample = 0;
 	m_LastIter = 0;
 	m_LastIterPercent = 0;
@@ -65,7 +64,7 @@ void RendererBase::ChangeVal(std::function<void(void)> func, eProcessAction acti
 	//new and old quality values.
 	else if (action == KEEP_ITERATING)
 	{
-		if (m_ProcessState == ACCUM_DONE && TemporalSamples() == 1 && Passes() == 1)
+		if (m_ProcessState == ACCUM_DONE && TemporalSamples() == 1)
 		{
 			m_ProcessState = ITER_STARTED;
 			m_ProcessAction = KEEP_ITERATING;
@@ -84,11 +83,11 @@ void RendererBase::ChangeVal(std::function<void(void)> func, eProcessAction acti
 			m_ProcessState = NONE;
 			m_ProcessAction = FULL_RENDER;
 		}
-		//If passes == 1, set the state to ITER_DONE and the next process action to FILTER_AND_ACCUM.
+		//Set the state to ITER_DONE and the next process action to FILTER_AND_ACCUM.
 		else
 		{
-			m_ProcessState = Passes() == 1 ? ITER_DONE : NONE;
-			m_ProcessAction = Passes() == 1 ? FILTER_AND_ACCUM : FULL_RENDER;//Cannot just filter if passes > 1 because filtering is done with each pass.
+			m_ProcessState = ITER_DONE;
+			m_ProcessAction = FILTER_AND_ACCUM;
 		}
 	}
 	//Run accum only.
@@ -283,7 +282,7 @@ size_t		   RendererBase::PixelSize()				   const { return NumChannels() * BytesP
 size_t		   RendererBase::GutterWidth()				   const { return m_GutterWidth; }
 size_t		   RendererBase::DensityFilterOffset()		   const { return m_DensityFilterOffset; }
 size_t         RendererBase::TotalIterCount(size_t strips) const { return (size_t)((size_t)Round(ScaledQuality()) * FinalRasW() * FinalRasH() * strips); }//Use Round() because there can be some roundoff error when interpolating.
-size_t         RendererBase::ItersPerTemporalSample()	   const { return (size_t)ceil(double(TotalIterCount(1)) / double(Passes() * TemporalSamples())); }//Temporal samples is used with animation, which doesn't support strips, so pass 1.
+size_t         RendererBase::ItersPerTemporalSample()	   const { return (size_t)ceil(double(TotalIterCount(1)) / double(TemporalSamples())); }//Temporal samples is used with animation, which doesn't support strips, so pass 1.
 eProcessState  RendererBase::ProcessState()				   const { return m_ProcessState; }
 eProcessAction RendererBase::ProcessAction()			   const { return m_ProcessAction; }
 EmberStats     RendererBase::Stats()					   const { return m_Stats; }

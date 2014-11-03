@@ -44,14 +44,12 @@ public:
 	/// Derived class constructors will complete the final part of filter setup.
 	/// </summary>
 	/// <param name="filterType">Type of the filter.</param>
-	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
-	TemporalFilter(eTemporalFilterType filterType, size_t passes, size_t temporalSamples, T filterWidth)
+	TemporalFilter(eTemporalFilterType filterType, size_t temporalSamples, T filterWidth)
 	{
-		size_t i, steps = passes * temporalSamples;
+		size_t i, steps = temporalSamples;
 
-		m_Passes = passes;
 		m_TemporalSamples = temporalSamples;
 		m_FilterWidth = filterWidth;
 		m_Deltas.resize(steps);
@@ -98,7 +96,6 @@ public:
 	{
 		if (this != &filter)
 		{
-			m_Passes = filter.m_Passes;
 			m_TemporalSamples = filter.m_TemporalSamples;
 			m_FilterWidth = filter.m_FilterWidth;
 			m_FilterExp = filter.m_FilterExp;
@@ -146,7 +143,6 @@ public:
 	/// Accessors.
 	/// </summary>
 	size_t Size() const { return m_Filter.size(); }
-	size_t Passes() const { return m_Passes; }
 	size_t TemporalSamples() const { return m_TemporalSamples; }
 	T FilterWidth() const { return m_FilterWidth; }
 	T FilterExp() const { return m_FilterExp; }
@@ -176,7 +172,6 @@ protected:
 	T m_SumFilt;//The sum of all filter values.
 	T m_FilterWidth;
 	T m_FilterExp;
-	size_t m_Passes;
 	size_t m_TemporalSamples;
 	vector<T> m_Deltas;//Delta vector.
 	vector<T> m_Filter;//Filter vector.
@@ -194,12 +189,11 @@ public:
 	/// <summary>
 	/// Constructor to create an Exp filter.
 	/// </summary>
-	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
 	/// <param name="filterExp">The filter exp.</param>
-	ExpTemporalFilter(size_t passes, size_t temporalSamples, T filterWidth, T filterExp)
-		: TemporalFilter<T>(BOX_TEMPORAL_FILTER, passes, temporalSamples, filterWidth)
+	ExpTemporalFilter(size_t temporalSamples, T filterWidth, T filterExp)
+		: TemporalFilter<T>(BOX_TEMPORAL_FILTER, temporalSamples, filterWidth)
 	{
 		if (Size() > 1)
 		{
@@ -237,11 +231,10 @@ public:
 	/// <summary>
 	/// Constructor to create a Gaussian filter.
 	/// </summary>
-	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
-	GaussianTemporalFilter(size_t passes, size_t temporalSamples, T filterWidth)
-		: TemporalFilter<T>(GAUSSIAN_TEMPORAL_FILTER, passes, temporalSamples, filterWidth)
+	GaussianTemporalFilter(size_t temporalSamples, T filterWidth)
+		: TemporalFilter<T>(GAUSSIAN_TEMPORAL_FILTER, temporalSamples, filterWidth)
 	{
 		if (Size() > 1)
 		{
@@ -273,11 +266,10 @@ public:
 	/// <summary>
 	/// Constructor to create a Box filter.
 	/// </summary>
-	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter.</param>
-	BoxTemporalFilter(size_t passes, size_t temporalSamples, T filterWidth)
-		: TemporalFilter<T>(BOX_TEMPORAL_FILTER, passes, temporalSamples, filterWidth)
+	BoxTemporalFilter(size_t temporalSamples, T filterWidth)
+		: TemporalFilter<T>(BOX_TEMPORAL_FILTER, temporalSamples, filterWidth)
 	{
 		if (Size() > 1)
 		{
@@ -300,23 +292,22 @@ public:
 	/// Creates the specified filter type based on the filterType enum parameter.
 	/// </summary>
 	/// <param name="filterType">Type of the filter</param>
-	/// <param name="passes">The number of passes used in the ember being rendered</param>
 	/// <param name="temporalSamples">The number of temporal samples in the ember being rendered</param>
 	/// <param name="filterWidth">The width of the filter</param>
 	/// <param name="filterExp">The filter exp, only used with Exp filter, otherwise ignored.</param>
 	/// <returns>A pointer to the newly created filter object</returns>
-	static TemporalFilter<T>* Create(eTemporalFilterType filterType, size_t passes, size_t temporalSamples, T filterWidth, T filterExp = 1)
+	static TemporalFilter<T>* Create(eTemporalFilterType filterType, size_t temporalSamples, T filterWidth, T filterExp = 1)
 	{
 		TemporalFilter<T>* filter = nullptr;
 
 		if (filterType == BOX_TEMPORAL_FILTER)
-			filter = new BoxTemporalFilter<T>(passes, temporalSamples, filterWidth);
+			filter = new BoxTemporalFilter<T>(temporalSamples, filterWidth);
 		else if (filterType == GAUSSIAN_TEMPORAL_FILTER)
-			filter = new GaussianTemporalFilter<T>(passes, temporalSamples, filterWidth);
+			filter = new GaussianTemporalFilter<T>(temporalSamples, filterWidth);
 		else if (filterType == EXP_TEMPORAL_FILTER)
-			filter = new ExpTemporalFilter<T>(passes, temporalSamples, filterWidth, filterExp);
+			filter = new ExpTemporalFilter<T>(temporalSamples, filterWidth, filterExp);
 		else
-			filter = new BoxTemporalFilter<T>(passes, temporalSamples, filterWidth);//Default to box if bad enum passed in.
+			filter = new BoxTemporalFilter<T>(temporalSamples, filterWidth);//Default to box if bad enum passed in.
 
 		return filter;
 	}

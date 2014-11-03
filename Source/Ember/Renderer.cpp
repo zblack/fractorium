@@ -265,14 +265,13 @@ bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 
 	//Use intelligent testing so it isn't created every time a new ember is passed in.
 	if ((!m_TemporalFilter.get()) ||
-		(m_Ember.m_Passes != m_TemporalFilter->Passes()) ||
 		(m_Ember.m_TemporalSamples != m_TemporalFilter->TemporalSamples()) ||
 		(m_Ember.m_TemporalFilterType != m_TemporalFilter->FilterType()) ||
 		(m_Ember.m_TemporalFilterWidth != m_TemporalFilter->FilterWidth()) ||
 		(m_Ember.m_TemporalFilterExp != m_TemporalFilter->FilterExp()))
 	{
 		m_TemporalFilter = unique_ptr<TemporalFilter<T>>(
-							TemporalFilterCreator<T>::Create(m_Ember.m_TemporalFilterType, m_Ember.m_Passes, m_Ember.m_TemporalSamples, m_Ember.m_TemporalFilterWidth, m_Ember.m_TemporalFilterExp));
+							TemporalFilterCreator<T>::Create(m_Ember.m_TemporalFilterType, m_Ember.m_TemporalSamples, m_Ember.m_TemporalFilterWidth, m_Ember.m_TemporalFilterExp));
 		newAlloc = true;
 	}
 
@@ -287,15 +286,13 @@ bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 /// future-proofs the algorithm for GPU-based renderers.
 /// If the caller calls Abort() at any time, or the progress function returns 0,
 /// the entire rendering process will exit as soon as it can.
+/// The concept of passes from flam3 has been removed as it was never used.
 /// The loop structure is:
 /// {
-///		Passes (Default 1)
+///		Temporal Samples (Default 1 for single image)
 ///		{
-///			Temporal Samples (Default 1 for single image)
+///			Iterate (Either to completion or to a specified number of iterations)
 ///			{
-///				Iterate (Either to completion or to a specified number of iterations)
-///				{
-///				}
 ///			}
 ///		}
 ///
@@ -326,11 +323,11 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	m_InRender = true;
 	EnterRender();
 	m_Abort = false;
-	bool filterAndAccumOnly = (m_ProcessAction == FILTER_AND_ACCUM && Passes() == 1);
+	bool filterAndAccumOnly = m_ProcessAction == FILTER_AND_ACCUM;
 	bool accumOnly = m_ProcessAction == ACCUM_ONLY;
 	bool resume = m_ProcessState != NONE;
 	bool newFilterAlloc;
-	size_t temporalSample = 0, pass;
+	size_t temporalSample = 0;
 	T deTime;
 	eRenderStatus success = RENDER_OK;
 	//double iterationTime = 0;
@@ -349,7 +346,6 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 
 	if (!resume)//Beginning, reset everything.
 	{
-		m_LastPass = 0;
 		m_LastTemporalSample = 0;
 		m_LastIter = 0;
 		m_LastIterPercent = 0;
@@ -360,9 +356,8 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 		m_Background.Clear();
 	}
 	//User requested an increase in quality after finishing.
-	else if (m_ProcessState == ITER_STARTED && m_ProcessAction == KEEP_ITERATING && TemporalSamples() == 1 && Passes() == 1)
+	else if (m_ProcessState == ITER_STARTED && m_ProcessAction == KEEP_ITERATING && TemporalSamples() == 1)
 	{
-		m_LastPass = 0;
 		m_LastTemporalSample = 0;
 		m_LastIter = m_Stats.m_Iters;
 		m_LastIterPercent = 0;//Might skip a progress update, but shouldn't matter.
@@ -372,10 +367,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 		m_Background.Clear();
 	}
 
-	pass = (resume ? m_LastPass : 0);
-
 	//Make sure values are within valid range.
-	ClampGteRef(m_Ember.m_Passes, size_t(1));
 	ClampGteRef(m_Ember.m_Supersample, size_t(1));
 
 	//Make sure to get most recent update since loop won't be entered to call Interp().
@@ -426,199 +418,176 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, doubl
 	if (!resume)
 		ResetBuckets(true, false);//Only reset hist here and do accum when needed later on.
 
-	//Passes, outermost loop 1.
-	for (; (pass < Passes()) && !m_Abort;)
-	{
-		deTime = T(time) + m_TemporalFilter->Deltas()[pass * m_Ember.m_TemporalSamples];
+	deTime = T(time) + m_TemporalFilter->Deltas()[0];
 
-		//Interpolate and get an ember for DE purposes.
-		//Additional interpolation will be done in the temporal samples loop.
+	//Interpolate and get an ember for DE purposes.
+	//Additional interpolation will be done in the temporal samples loop.
+	//it.Tic();
+	if (m_Embers.size() > 1)
+		Interpolater<T>::Interpolate(m_Embers, deTime, 0, m_Ember);
+	//it.Toc("Interp 2");
+
+	ClampGte<T>(m_Ember.m_MinRadDE, 0);
+	ClampGte<T>(m_Ember.m_MaxRadDE, 0);
+
+	if (!CreateDEFilter(newFilterAlloc))
+	{
+		m_ErrorReport.push_back("Density filter creation failed, aborting.\n");
+		success = RENDER_ERROR;
+		goto Finish;
+	}
+
+	//Temporal samples, loop 1.
+	temporalSample = resume ? m_LastTemporalSample : 0;
+	for (; (temporalSample < TemporalSamples()) && !m_Abort;)
+	{
+		T colorScalar = m_TemporalFilter->Filter()[temporalSample];
+		T temporalTime = T(time) + m_TemporalFilter->Deltas()[temporalSample];
+
+		//Interpolate again.
 		//it.Tic();
 		if (m_Embers.size() > 1)
-			Interpolater<T>::Interpolate(m_Embers, deTime, 0, m_Ember);
-		//it.Toc("Interp 2");
+			Interpolater<T>::Interpolate(m_Embers, temporalTime, 0, m_Ember);//This will perform all necessary precalcs via the ember/xform/variation assignment operators.
 
-		ClampGte<T>(m_Ember.m_MinRadDE, 0);
-		ClampGte<T>(m_Ember.m_MaxRadDE, 0);
+		//it.Toc("Interp 3");
 
-		if (!CreateDEFilter(newFilterAlloc))
+		if (!resume && !AssignIterator())
 		{
-			m_ErrorReport.push_back("Density filter creation failed, aborting.\n");
+			m_ErrorReport.push_back("Iterator assignment failed, aborting.\n");
 			success = RENDER_ERROR;
 			goto Finish;
 		}
 
-		//Temporal samples, loop 2.
-		temporalSample = resume ? m_LastTemporalSample : 0;
-		for (; (temporalSample < TemporalSamples()) && !m_Abort;)
+		ComputeCamera();
+
+		//For each temporal sample, the palette m_Dmap needs to be re-created with color scalar. 1 if no temporal samples.
+		MakeDmap(colorScalar);
+
+		//The actual number of times to iterate. Each thread will get (totalIters / ThreadCount) iters to do.
+		//This is based on zoom and scale calculated in ComputeCamera().
+		//Note that the iter count is based on the final image dimensions, and not the super sampled dimensions.
+		size_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample without overrides.
+		size_t sampleItersToDo;//The number of iterations to actually do in this sample, considering overrides.
+
+		if (subBatchCountOverride > 0)
+			sampleItersToDo = subBatchCountOverride * SubBatchSize() * ThreadCount();//Run a specific number of sub batches.
+		else
+			sampleItersToDo = itersPerTemporalSample;//Run as many iters as specified to complete this temporal sample.
+
+		sampleItersToDo = min(sampleItersToDo, itersPerTemporalSample - m_LastIter);
+		EmberStats stats = Iterate(sampleItersToDo, temporalSample);//The heavy work is done here.
+
+		//If no iters were executed, something went catastrophically wrong.
+		if (stats.m_Iters == 0)
 		{
-			T colorScalar = m_TemporalFilter->Filter()[pass * TemporalSamples() + temporalSample];
-			T temporalTime = T(time) + m_TemporalFilter->Deltas()[pass * TemporalSamples() + temporalSample];
-
-			//Interpolate again.
-			//it.Tic();
-			if (m_Embers.size() > 1)
-				Interpolater<T>::Interpolate(m_Embers, temporalTime, 0, m_Ember);//This will perform all necessary precalcs via the ember/xform/variation assignment operators.
-
-			//it.Toc("Interp 3");
-
-			if (!resume && !AssignIterator())
-			{
-				m_ErrorReport.push_back("Iterator assignment failed, aborting.\n");
-				success = RENDER_ERROR;
-				goto Finish;
-			}
-
-			ComputeCamera();
-
-			//For each temporal sample, the palette m_Dmap needs to be re-created with color scalar. 1 if no temporal samples.
-			MakeDmap(colorScalar);
-
-			//The actual number of times to iterate. Each thread will get (totalIters / ThreadCount) iters to do.
-			//This is based on zoom and scale calculated in ComputeCamera().
-			//Note that the iter count is based on the final image dimensions, and not the super sampled dimensions.
-			size_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample in this pass without overrides.
-			size_t sampleItersToDo;//The number of iterations to actually do in this sample in this pass, considering overrides.
-
-			if (subBatchCountOverride > 0)
-				sampleItersToDo = subBatchCountOverride * SubBatchSize() * ThreadCount();//Run a specific number of sub batches.
-			else
-				sampleItersToDo = itersPerTemporalSample;//Run as many iters as specified to complete this temporal sample.
-
-			sampleItersToDo = min(sampleItersToDo, itersPerTemporalSample - m_LastIter);
-			EmberStats stats = Iterate(sampleItersToDo, pass, temporalSample);//The heavy work is done here.
-
-			//If no iters were executed, something went catastrophically wrong.
-			if (stats.m_Iters == 0)
-			{
-				m_ErrorReport.push_back("Zero iterations ran, rendering failed, aborting.\n");
-				success = RENDER_ERROR;
-				Abort();
-				goto Finish;
-			}
-
-			if (m_Abort)
-			{
-				success = RENDER_ABORT;
-				goto Finish;
-			}
-
-			//Accumulate stats whether this batch ran to completion or exited prematurely.
-			m_LastIter += stats.m_Iters;//Sum of iter count of all threads, reset each temporal sample.
-			m_Stats.m_Iters += stats.m_Iters;//Sum of iter count of all threads, cumulative from beginning to end.
-			m_Stats.m_Badvals += stats.m_Badvals;
-			m_Stats.m_IterMs += stats.m_IterMs;
-
-			//After each temporal sample, accumulate these.
-			//Allow for incremental rendering by only taking action if the iter loop for this temporal sample is completely done.
-			if (m_LastIter >= itersPerTemporalSample)
-			{
-				m_Vibrancy += m_Ember.m_Vibrancy;
-				m_Gamma += m_Ember.m_Gamma;
-				m_Background.r += m_Ember.m_Background.r;
-				m_Background.g += m_Ember.m_Background.g;
-				m_Background.b += m_Ember.m_Background.b;
-				m_VibGamCount++;
-				m_LastIter = 0;
-				temporalSample++;
-			}
-
-			m_LastTemporalSample = temporalSample;
-
-			if (subBatchCountOverride > 0)//Don't keep going through this loop if only doing an incremental render.
-				break;
-		}//Temporal samples.
-
-		//If we've completed all temporal samples and all passes, then it was a complete render, so report progress.
-		if ((Passes() == 1 || pass == Passes() - 1) && (temporalSample >= TemporalSamples()))
-		{
-			m_ProcessState = ITER_DONE;
-
-			if (m_Callback && !m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 0, 0))
-			{
-				Abort();
-				success = RENDER_ABORT;
-				goto Finish;
-			}
+			m_ErrorReport.push_back("Zero iterations ran, rendering failed, aborting.\n");
+			success = RENDER_ERROR;
+			Abort();
+			goto Finish;
 		}
 
-FilterAndAccum:
-		if (filterAndAccumOnly || temporalSample >= TemporalSamples() || forceOutput)
+		if (m_Abort)
 		{
-			//t.Toc("Iterating and accumulating");
-			//Compute k1 and k2.
-			eRenderStatus fullRun = RENDER_OK;//Whether density filtering was run to completion without aborting prematurely or triggering an error.
-			T passFilter = T(1) / T(Passes());//Original used an array, but every element in the array had the same value, so just use a single value here.
-
-			T area = FinalRasW() * FinalRasH() / (m_PixelsPerUnitX * m_PixelsPerUnitY);//Need to use temps from field if ever implemented.
-			m_K1 = (Brightness() * T(268.0) * passFilter) / 256;
-
-			//When doing an interactive render, force output early on in the render process, before all iterations are done.
-			//This presents a problem with the normal calculation of K2 since it relies on the quality value; it will scale the colors
-			//to be very dark. Correct it by pretending the number of iters done is the exact quality desired and then scale according to that.
-			if (forceOutput)
-			{
-				T quality = ((T)m_Stats.m_Iters / (T)FinalDimensions()) * (m_Scale * m_Scale);
-				m_K2 = (Supersample() * Supersample() * Passes()) / (area * quality * m_TemporalFilter->SumFilt());
-			}
-			else
-				m_K2 = (Supersample() * Supersample() * Passes()) / (area * m_ScaledQuality * m_TemporalFilter->SumFilt());
-
-			if (filterAndAccumOnly || pass == 0)
-				ResetBuckets(false, true);//Only the histogram was reset above, now reset the density filtering buffer.
-			//t.Tic();
-
-			//Apply appropriate filter if iterating is complete.
-			if (filterAndAccumOnly || temporalSample >= TemporalSamples())
-			{
-				fullRun = m_DensityFilter.get() ? GaussianDensityFilter() : LogScaleDensityFilter();
-			}
-			else
-			{
-				//Apply requested filter for a forced output during interactive rendering.
-				if (m_DensityFilter.get() && m_InteractiveFilter == FILTER_DE)
-					fullRun = GaussianDensityFilter();
-				else if (!m_DensityFilter.get() || m_InteractiveFilter == FILTER_LOG)
-					fullRun = LogScaleDensityFilter();
-			}
-
-			//Only update state if iterating and filtering finished completely (didn't arrive here via forceOutput).
-			if (fullRun == RENDER_OK && m_ProcessState == ITER_DONE && (Passes() == 1 || pass == Passes() - 1))
-				m_ProcessState = FILTER_DONE;
-
-			//Take special action if filtering exited prematurely.
-			if (fullRun != RENDER_OK)
-			{
-				if (Passes() > 1)//Since all filtering is cummulative with passes > 1, must restart the entire process.
-				{
-					m_ProcessState = NONE;
-					m_ProcessAction = FULL_RENDER;
-				}
-
-				ResetBuckets(false, true);//Reset the accumulator, come back and try again on the next call.
-				success = fullRun;
-				goto Finish;
-			}
-
-			if (m_Abort)
-			{
-				success = RENDER_ABORT;
-				goto Finish;
-			}
-			//t.Toc("Density estimation filtering time: ", true);
+			success = RENDER_ABORT;
+			goto Finish;
 		}
 
-		//Only increment pass if the temporal samples loop has been completed, which could have been done incrementally.
-		//Also skip if rendering jumped straight here after completely finishing beforehand.
-		if (!filterAndAccumOnly && temporalSample >= TemporalSamples())//This may not work if filtering was prematurely exited.
-			pass++;
+		//Accumulate stats whether this batch ran to completion or exited prematurely.
+		m_LastIter += stats.m_Iters;//Sum of iter count of all threads, reset each temporal sample.
+		m_Stats.m_Iters += stats.m_Iters;//Sum of iter count of all threads, cumulative from beginning to end.
+		m_Stats.m_Badvals += stats.m_Badvals;
+		m_Stats.m_IterMs += stats.m_IterMs;
 
-		if (!filterAndAccumOnly)
-			m_LastPass = pass;
+		//After each temporal sample, accumulate these.
+		//Allow for incremental rendering by only taking action if the iter loop for this temporal sample is completely done.
+		if (m_LastIter >= itersPerTemporalSample)
+		{
+			m_Vibrancy += m_Ember.m_Vibrancy;
+			m_Gamma += m_Ember.m_Gamma;
+			m_Background.r += m_Ember.m_Background.r;
+			m_Background.g += m_Ember.m_Background.g;
+			m_Background.b += m_Ember.m_Background.b;
+			m_VibGamCount++;
+			m_LastIter = 0;
+			temporalSample++;
+		}
+
+		m_LastTemporalSample = temporalSample;
 
 		if (subBatchCountOverride > 0)//Don't keep going through this loop if only doing an incremental render.
 			break;
-	}//Passes.
+	}//Temporal samples.
+
+	//If we've completed all temporal samples, then it was a complete render, so report progress.
+	if (temporalSample >= TemporalSamples())
+	{
+		m_ProcessState = ITER_DONE;
+
+		if (m_Callback && !m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 0, 0))
+		{
+			Abort();
+			success = RENDER_ABORT;
+			goto Finish;
+		}
+	}
+
+FilterAndAccum:
+	if (filterAndAccumOnly || temporalSample >= TemporalSamples() || forceOutput)
+	{
+		//t.Toc("Iterating and accumulating");
+		//Compute k1 and k2.
+		eRenderStatus fullRun = RENDER_OK;//Whether density filtering was run to completion without aborting prematurely or triggering an error.
+
+		T area = FinalRasW() * FinalRasH() / (m_PixelsPerUnitX * m_PixelsPerUnitY);//Need to use temps from field if ever implemented.
+		m_K1 = (Brightness() * T(268.0)) / 256;
+
+		//When doing an interactive render, force output early on in the render process, before all iterations are done.
+		//This presents a problem with the normal calculation of K2 since it relies on the quality value; it will scale the colors
+		//to be very dark. Correct it by pretending the number of iters done is the exact quality desired and then scale according to that.
+		if (forceOutput)
+		{
+			T quality = ((T)m_Stats.m_Iters / (T)FinalDimensions()) * (m_Scale * m_Scale);
+			m_K2 = (Supersample() * Supersample()) / (area * quality * m_TemporalFilter->SumFilt());
+		}
+		else
+			m_K2 = (Supersample() * Supersample()) / (area * m_ScaledQuality * m_TemporalFilter->SumFilt());
+
+		ResetBuckets(false, true);//Only the histogram was reset above, now reset the density filtering buffer.
+		//t.Tic();
+
+		//Apply appropriate filter if iterating is complete.
+		if (filterAndAccumOnly || temporalSample >= TemporalSamples())
+		{
+			fullRun = m_DensityFilter.get() ? GaussianDensityFilter() : LogScaleDensityFilter();
+		}
+		else
+		{
+			//Apply requested filter for a forced output during interactive rendering.
+			if (m_DensityFilter.get() && m_InteractiveFilter == FILTER_DE)
+				fullRun = GaussianDensityFilter();
+			else if (!m_DensityFilter.get() || m_InteractiveFilter == FILTER_LOG)
+				fullRun = LogScaleDensityFilter();
+		}
+
+		//Only update state if iterating and filtering finished completely (didn't arrive here via forceOutput).
+		if (fullRun == RENDER_OK && m_ProcessState == ITER_DONE)
+			m_ProcessState = FILTER_DONE;
+
+		//Take special action if filtering exited prematurely.
+		if (fullRun != RENDER_OK)
+		{
+			ResetBuckets(false, true);//Reset the accumulator, come back and try again on the next call.
+			success = fullRun;
+			goto Finish;
+		}
+
+		if (m_Abort)
+		{
+			success = RENDER_ABORT;
+			goto Finish;
+		}
+		//t.Toc("Density estimation filtering time: ", true);
+	}
 
 AccumOnly:
 	if (m_ProcessState == FILTER_DONE || forceOutput)
@@ -816,57 +785,29 @@ eRenderStatus Renderer<T, bucketT>::LogScaleDensityFilter()
 	//Timing t(4);
 
 	//Original didn't parallelize this, doing so gives a 50-75% speedup.
-	//If there is only one pass, the value can be directly assigned, which is quicker than summing.
-	if (Passes() == 1)
+	//The value can be directly assigned, which is quicker than summing.
+	parallel_for(startRow, endRow, [&] (size_t j)
 	{
-		parallel_for(startRow, endRow, [&] (size_t j)
+		size_t row = j * m_SuperRasW;
+		//__m128 logm128;//Figure out SSE at some point.
+		//__m128 bucketm128;
+		//__m128 scaledBucket128;
+
+		for (size_t i = startCol; (i < endCol) && !m_Abort; i++)
 		{
-			size_t row = j * m_SuperRasW;
-			//__m128 logm128;//Figure out SSE at some point.
-			//__m128 bucketm128;
-			//__m128 scaledBucket128;
+			size_t index = row + i;
 
-			for (size_t i = startCol; (i < endCol) && !m_Abort; i++)
+			//Check for visibility first before doing anything else to avoid all possible unnecessary calculations.
+			if (m_HistBuckets[index].a != 0)
 			{
-				size_t index = row + i;
+				T logScale = (m_K1 * log(1 + m_HistBuckets[index].a * m_K2)) / m_HistBuckets[index].a;
 
-				//Check for visibility first before doing anything else to avoid all possible unnecessary calculations.
-				if (m_HistBuckets[index].a != 0)
-				{
-					T logScale = (m_K1 * log(1 + m_HistBuckets[index].a * m_K2)) / m_HistBuckets[index].a;
-
-					//Original did a temporary assignment, then *= logScale, then passed the result to bump_no_overflow().
-					//Combine here into one operation for a slight speedup.
-					m_AccumulatorBuckets[index] = (m_HistBuckets[index] * (bucketT)logScale);
-				}
+				//Original did a temporary assignment, then *= logScale, then passed the result to bump_no_overflow().
+				//Combine here into one operation for a slight speedup.
+				m_AccumulatorBuckets[index] = m_HistBuckets[index] * (bucketT)logScale;
 			}
-		});
-	}
-	else//Passes > 1, so sum.
-	{
-		parallel_for(startRow, endRow, [&] (size_t j)
-		{
-			size_t row = j * m_SuperRasW;
-
-			for (size_t i = startCol; (i < endCol) && !m_Abort; i++)
-			{
-				size_t index = row + i;
-
-				//Check for visibility first before doing anything else to avoid all possible unnecessary calculations.
-				if (m_HistBuckets[index].a != 0)
-				{
-					//Figure out SSE at some point.
-					//__declspec(align(16))
-					T logScale = (m_K1 * log(1 + m_HistBuckets[index].a * m_K2)) / m_HistBuckets[index].a;
-					//logm128 = _mm_load1_ps(&logScale);
-					//bucketm128 = _mm_load_ps(m_HistBuckets[index].Channels);
-					//scaledBucket128 = _mm_mul_ps(logm128, bucketm128);
-
-					m_AccumulatorBuckets[index] += (m_HistBuckets[index] * bucketT(logScale));
-				}
-			}
-		});
-	}
+		}
+	});
 	//t.Toc(__FUNCTION__);
 
 	return m_Abort ? RENDER_ABORT : RENDER_OK;
@@ -1216,11 +1157,10 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 /// which by default is 10,000 iterations.
 /// </summary>
 /// <param name="iterCount">The number of iterations to run</param>
-/// <param name="pass">The pass this is running for</param>
-/// <param name="temporalSample">The temporal sample within the current pass this is running for</param>
+/// <param name="temporalSample">The temporal sample this is running for</param>
 /// <returns>Rendering statistics</returns>
 template <typename T, typename bucketT>
-EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t pass, size_t temporalSample)
+EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample)
 {
 	//Timing t2(4);
 	m_IterTimer.Tic();
@@ -1245,7 +1185,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t pass, size_t t
 
 		m_BadVals[threadIndex] = 0;
 
-		//Sub batch iterations, loop 3.
+		//Sub batch iterations, loop 2.
 		for (m_SubBatch[threadIndex] = 0; (m_SubBatch[threadIndex] < totalItersPerThread) && !m_Abort; m_SubBatch[threadIndex] += subBatchSize)
 		{
 			//Must recalculate the number of iters to run on each sub batch because the last batch will most likely have less than m_SubBatchSize iters.
@@ -1262,7 +1202,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t pass, size_t t
 
 			//Finally, iterate.
 			//t.Tic();
-			//Iterating, loop 4.
+			//Iterating, loop 3.
 			m_BadVals[threadIndex] += m_Iterator->Iterate(m_Ember, subBatchSize, fuse, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
 			//iterationTime += t.Toc();
 
@@ -1278,21 +1218,19 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t pass, size_t t
 			if (m_Callback && threadIndex == 0)
 			{
 				percent = 100.0 *
+
+				double
+				(
 					double
 					(
 						double
 						(
-							double
-							(
-								double
-								(
-									//Takes progress of current thread and multiplies by thread count.
-									//This assumes the threads progress at roughly the same speed.
-									double(m_LastIter + (m_SubBatch[threadIndex] * m_ThreadsToUse)) / double(ItersPerTemporalSample())
-								) + temporalSample
-							) / (double)TemporalSamples()
-						) + (double)pass
-					) / (double)Passes();
+							//Takes progress of current thread and multiplies by thread count.
+							//This assumes the threads progress at roughly the same speed.
+							double(m_LastIter + (m_SubBatch[threadIndex] * m_ThreadsToUse)) / double(ItersPerTemporalSample())
+						) + temporalSample
+					) / (double)TemporalSamples()
+				);
 
 				double percentDiff = percent - m_LastIterPercent;
 				double toc = m_ProgressTimer.Toc();
@@ -1406,7 +1344,6 @@ template <typename T, typename bucketT> ePaletteMode      Renderer<T, bucketT>::
 /// Virtual ember wrappers overridden from RendererBase, getters only.
 /// </summary>
 
-template <typename T, typename bucketT> size_t Renderer<T, bucketT>::Passes()          const { return m_Ember.m_Passes; }
 template <typename T, typename bucketT> size_t Renderer<T, bucketT>::TemporalSamples() const { return m_Ember.m_TemporalSamples; }
 template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FinalRasW()       const { return m_Ember.m_FinalRasW; }
 template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FinalRasH()       const { return m_Ember.m_FinalRasH; }

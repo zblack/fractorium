@@ -573,7 +573,6 @@ void Fractorium::SetTabOrders()
 	w = SetTabOrder(this, w, m_DEFilterMaxRadiusSpin);
 	w = SetTabOrder(this, w, m_DECurveSpin);
 	
-	w = SetTabOrder(this, w, m_PassesSpin);
 	w = SetTabOrder(this, w, m_TemporalSamplesSpin);
 	w = SetTabOrder(this, w, m_QualitySpin);
 	w = SetTabOrder(this, w, m_SupersampleSpin);

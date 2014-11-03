@@ -601,11 +601,10 @@ eRenderStatus RendererCL<T>::AccumulatorToFinalImage(unsigned char* pixels, size
 /// needed, run on the CPU.
 /// </summary>
 /// <param name="iterCount">The number of iterations to run</param>
-/// <param name="pass">The pass this is running for</param>
 /// <param name="temporalSample">The temporal sample within the current pass this is running for</param>
 /// <returns>Rendering statistics</returns>
 template <typename T>
-EmberStats RendererCL<T>::Iterate(size_t iterCount, size_t pass, size_t temporalSample)
+EmberStats RendererCL<T>::Iterate(size_t iterCount, size_t temporalSample)
 {
 	bool b = true;
 	EmberStats stats;//Do not record bad vals with with GPU. If the user needs to investigate bad vals, use the CPU.
@@ -636,7 +635,7 @@ EmberStats RendererCL<T>::Iterate(size_t iterCount, size_t pass, size_t temporal
 		if (m_Stats.m_Iters == 0)//Only reset the call count on the beginning of a new render. Do not reset on KEEP_ITERATING.
 			m_Calls = 0;
 
-		b = RunIter(iterCount, pass, temporalSample, stats.m_Iters);
+		b = RunIter(iterCount, temporalSample, stats.m_Iters);
 
 		if (!b || stats.m_Iters == 0)//If no iters were executed, something went catastrophically wrong.
 			m_Abort = true;
@@ -695,12 +694,11 @@ bool RendererCL<T>::BuildIterProgramForEmber(bool doAccum)
 /// between quality of the final image and performance.
 /// </summary>
 /// <param name="iterCount">The number of iterations to run</param>
-/// <param name="pass">The pass this is running for</param>
-/// <param name="temporalSample">The temporal sample within the current pass this is running for</param>
+/// <param name="temporalSample">The temporal sample this is running for</param>
 /// <param name="itersRan">The storage for the number of iterations ran</param>
 /// <returns>True if success, else false.</returns>
 template <typename T>
-bool RendererCL<T>::RunIter(size_t iterCount, size_t pass, size_t temporalSample, size_t& itersRan)
+bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& itersRan)
 {
 	Timing t;//, t2(4);
 	bool b = true;
@@ -795,13 +793,10 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t pass, size_t temporalSample
 						(
 							double
 							(
-								double
-								(
-									double(m_LastIter + itersRan) / double(ItersPerTemporalSample())
-								) + temporalSample
-							) / (double)TemporalSamples()
-						) + (double)pass
-					) / (double)Passes();
+								double(m_LastIter + itersRan) / double(ItersPerTemporalSample())
+							) + temporalSample
+						) / (double)TemporalSamples()
+					);
 
 				double percentDiff = percent - m_LastIterPercent;
 				double toc = m_ProgressTimer.Toc();
@@ -838,14 +833,9 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 {
 	//Timing t(4);
 	bool b = true;
-	int kernelIndex;
+	int kernelIndex = m_Wrapper.FindKernelIndex(m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint());
 	const char* loc = __FUNCTION__;
 	eRenderStatus status = RENDER_OK;
-
-	if (Passes() == 1)
-		kernelIndex = m_Wrapper.FindKernelIndex(m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint());
-	else
-		kernelIndex = m_Wrapper.FindKernelIndex(m_DEOpenCLKernelCreator.LogScaleSumDEEntryPoint());
 
 	if (kernelIndex != -1)
 	{	

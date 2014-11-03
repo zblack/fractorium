@@ -324,13 +324,13 @@ in interactive mode for each mouse movement</string>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>66</height>
+           <height>68</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>66</height>
+           <height>68</height>
           </size>
          </property>
          <property name="focusPolicy">
@@ -507,13 +507,13 @@ in interactive mode for each mouse movement</string>
          <property name="minimumSize">
           <size>
            <width>120</width>
-           <height>66</height>
+           <height>68</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
            <width>16777215</width>
-           <height>66</height>
+           <height>68</height>
           </size>
          </property>
          <property name="focusPolicy">

@@ -27,7 +27,6 @@ void SetDefaultTestValues(Ember<T>& ember)
    ember.m_SpatialFilterType = GAUSSIAN_SPATIAL_FILTER;
    ember.m_Zoom = 0;
    ember.m_Quality = 1;
-   ember.m_Passes = 1;
    ember.m_TemporalSamples = 1;
    ember.m_MaxRadDE = 0;
    ember.m_MinRadDE = 0;

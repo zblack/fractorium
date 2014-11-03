@@ -88,12 +88,12 @@ protected:
 	virtual eRenderStatus LogScaleDensityFilter() override;
 	virtual eRenderStatus GaussianDensityFilter() override;
 	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset) override;
-	virtual EmberStats Iterate(size_t iterCount, size_t pass, size_t temporalSample) override;
+	virtual EmberStats Iterate(size_t iterCount, size_t temporalSample) override;
 
 private:
 	//Private functions for making and running OpenCL programs.
 	bool BuildIterProgramForEmber(bool doAccum = true);
-	bool RunIter(size_t iterCount, size_t pass, size_t temporalSample, size_t& itersRan);
+	bool RunIter(size_t iterCount, size_t temporalSample, size_t& itersRan);
 	eRenderStatus RunLogScaleFilter();
 	eRenderStatus RunDensityFilter();
 	eRenderStatus RunFinalAccum();

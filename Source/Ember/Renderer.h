@@ -74,7 +74,7 @@ protected:
 	virtual eRenderStatus GaussianDensityFilter();
 	virtual eRenderStatus AccumulatorToFinalImage(vector<unsigned char>& pixels, size_t finalOffset);
 	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset);
-	virtual EmberStats Iterate(size_t iterCount, size_t pass, size_t temporalSample);
+	virtual EmberStats Iterate(size_t iterCount, size_t temporalSample);
 
 public:
 	//Non-virtual render properties, getters and setters.
@@ -131,7 +131,6 @@ public:
 	inline ePaletteMode      PaletteMode()         const;
 
 	//Virtual ember wrappers overridden from RendererBase, getters only.
-	virtual size_t Passes()          const override;
 	virtual size_t TemporalSamples() const override;
 	virtual size_t FinalRasW()       const override;
 	virtual size_t FinalRasH()       const override;

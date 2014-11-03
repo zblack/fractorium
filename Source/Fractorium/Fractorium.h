@@ -152,8 +152,7 @@ public slots:
 	void OnDEFilterMinRadiusWidthChanged(double d);
 	void OnDEFilterMaxRadiusWidthChanged(double d);
 	void OnDEFilterCurveWidthChanged(double d);
-	void OnPassesChanged(int d);//Iteration.
-	void OnTemporalSamplesChanged(int d);
+	void OnTemporalSamplesChanged(int d);//Iteration.
 	void OnQualityChanged(double d);
 	void OnSupersampleChanged(int d);
 	void OnAffineInterpTypeComboCurrentIndexChanged(int index);
@@ -332,8 +331,7 @@ private:
 	DoubleSpinBox* m_DEFilterMinRadiusSpin;
 	DoubleSpinBox* m_DEFilterMaxRadiusSpin;
 	DoubleSpinBox* m_DECurveSpin;
-	SpinBox* m_PassesSpin;//Iteration.
-	SpinBox* m_TemporalSamplesSpin;
+	SpinBox* m_TemporalSamplesSpin;//Iteration.
 	DoubleSpinBox* m_QualitySpin;
 	SpinBox* m_SupersampleSpin;
 	StealthComboBox* m_AffineInterpTypeCombo;

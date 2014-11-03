@@ -85,7 +85,6 @@ void Fractorium::InitParamsUI()
 	//Iteration.
 	row = 0;
 	table = ui.IterationTable;
-	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_PassesSpin,          spinHeight, 1,    3,  1, SIGNAL(valueChanged(int)),	   SLOT(OnPassesChanged(int)),		    true,    1,  1,  1);
 	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_TemporalSamplesSpin, spinHeight, 1, 5000, 50, SIGNAL(valueChanged(int)),	   SLOT(OnTemporalSamplesChanged(int)), true, 1000);
 	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_QualitySpin,			spinHeight, 1, dmax, 50, SIGNAL(valueChanged(double)), SLOT(OnQualityChanged(double)),	    true,   10, 10, 10);
 	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_SupersampleSpin,		spinHeight, 1,    4,  1, SIGNAL(valueChanged(int)),	   SLOT(OnSupersampleChanged(int)),	    true,    1,  1,  1);
@@ -390,16 +389,6 @@ void Fractorium::OnDEFilterCurveWidthChanged(double d) { m_Controller->DEFilterC
 /// </summary>
 
 /// <summary>
-/// Set the number of passes.
-/// This is a feature that is mostly useless and unused, and may even be removed soon.
-/// It should never be set to a value greater than 1.
-/// Resets the rendering process.
-/// </summary>
-/// <param name="d">The passes value</param>
-template <typename T> void FractoriumEmberController<T>::PassesChanged(int i) { Update([&] { m_Ember.m_Passes = i; }); }
-void Fractorium::OnPassesChanged(int d) { m_Controller->PassesChanged(d); }
-
-/// <summary>
 /// Set the temporal samples to be used with animation.
 /// Called when the temporal samples spinner is changed.
 /// Does not reset anything because this is only used for animation.
@@ -534,8 +523,7 @@ void FractoriumEmberController<T>::FillParamTablesAndPalette()
 	m_Fractorium->m_DEFilterMinRadiusSpin->SetValueStealth(m_Ember.m_MinRadDE);
 	m_Fractorium->m_DEFilterMaxRadiusSpin->SetValueStealth(m_Ember.m_MaxRadDE);
 	m_Fractorium->m_DECurveSpin->SetValueStealth(m_Ember.m_CurveDE);
-	m_Fractorium->m_PassesSpin->SetValueStealth(m_Ember.m_Passes);//Iteration.
-	m_Fractorium->m_TemporalSamplesSpin->SetValueStealth(m_Ember.m_TemporalSamples);
+	m_Fractorium->m_TemporalSamplesSpin->SetValueStealth(m_Ember.m_TemporalSamples);//Iteration.
 	m_Fractorium->m_QualitySpin->SetValueStealth(m_Ember.m_Quality);
 	m_Fractorium->m_SupersampleSpin->SetValueStealth(m_Ember.m_Supersample);
 	m_Fractorium->m_AffineInterpTypeCombo->SetCurrentIndexStealth(m_Ember.m_AffineInterp);
@@ -597,7 +585,6 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_MinRadDE = m_Fractorium->m_DEFilterMinRadiusSpin->value();
 	ember.m_MaxRadDE = m_Fractorium->m_DEFilterMaxRadiusSpin->value();
 	ember.m_CurveDE = m_Fractorium->m_DECurveSpin->value();
-	ember.m_Passes = m_Fractorium->m_PassesSpin->value();
 	ember.m_TemporalSamples = m_Fractorium->m_TemporalSamplesSpin->value();
 	ember.m_Quality = m_Fractorium->m_QualitySpin->value();
 	ember.m_Supersample = m_Fractorium->m_SupersampleSpin->value();

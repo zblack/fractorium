@@ -584,8 +584,6 @@ public:
 		outPoint->m_VizAdjusted = m_VizAdjusted;
 		iterHelper.m_Color.x = outPoint->m_ColorX = m_ColorSpeedCache + (m_OneMinusColorCache * inPoint->m_ColorX);
 
-		//This modification returns the affine transformed points if no variations are present.
-		//Note this differs from flam3, which would just return zero in that scenario.
 		if (m_HasPreOrRegularVars)
 		{
 			//Compute the pre affine portion of the transform.
@@ -637,6 +635,8 @@ public:
 				outPoint->m_Z = iterHelper.m_TransZ;
 			}
 		}
+		//Return the affine transformed points if no variations are present.
+		//Note this differs from flam3, which would just return zero in that scenario.
 		else
 		{
 			//There are no variations, so the affine transformed points can be assigned directly to the output points.

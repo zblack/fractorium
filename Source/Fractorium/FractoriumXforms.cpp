@@ -305,7 +305,7 @@ void FractoriumEmberController<T>::SetNormalizedWeightText(Xform<T>* xform)
 		m_Ember.CalcNormalizedWeights(m_NormalizedWeights);
 
 		if (index != -1 && index < m_NormalizedWeights.size())
-			m_Fractorium->m_XformWeightSpin->setSuffix(QString(" (") + QString::number((double)m_NormalizedWeights[index], 'g', 3) + ")");
+			m_Fractorium->m_XformWeightSpin->setSuffix(QString(" (") + QLocale::system().toString((double)m_NormalizedWeights[index], 'g', 3) + ")");
 	}
 }
 

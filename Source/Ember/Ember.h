@@ -93,7 +93,6 @@ public:
 		m_OrigFinalRasH		  = ember.m_OrigFinalRasH;
 		m_OrigPixPerUnit	  = ember.m_OrigPixPerUnit;
 		m_Supersample		  = ember.m_Supersample;
-		m_Passes			  = ember.m_Passes;
 		m_TemporalSamples	  = ember.m_TemporalSamples;
 		m_Symmetry			  = ember.m_Symmetry;
 
@@ -186,7 +185,6 @@ public:
 		m_OrigFinalRasH = 1080;
 		m_OrigPixPerUnit = 240;
 		m_Supersample = 1;
-		m_Passes = 1;
 		m_TemporalSamples = 1000;
 		m_Symmetry = 0;
 		m_Quality = 100;
@@ -778,7 +776,6 @@ public:
 		InterpT<&Ember<T>::m_CamDepthBlur>(embers, coefs, size);
 		InterpX<m3T, &Ember<T>::m_CamMat>(embers, coefs, size);
 		InterpT<&Ember<T>::m_Rotate>(embers, coefs, size);
-		InterpI<&Ember<T>::m_Passes>(embers, coefs, size);
 		InterpI<&Ember<T>::m_TemporalSamples>(embers, coefs, size);
 		InterpT<&Ember<T>::m_MaxRadDE>(embers, coefs, size);
 		InterpT<&Ember<T>::m_MinRadDE>(embers, coefs, size);
@@ -1309,7 +1306,6 @@ public:
 			m_MinRadDE = 0;
 			m_CurveDE = T(0.4);
 			m_GammaThresh = T(0.01);
-			m_Passes = 1;
 			m_TemporalSamples = 1000;
 			m_SpatialFilterType = GAUSSIAN_SPATIAL_FILTER;
 			m_AffineInterp = INTERP_LOG;
@@ -1341,7 +1337,6 @@ public:
 			m_MinRadDE = -1;
 			m_CurveDE = -1;
 			m_GammaThresh = -1;
-			m_Passes = 0;
 			m_TemporalSamples = 0;
 			m_SpatialFilterType = GAUSSIAN_SPATIAL_FILTER;
 			m_AffineInterp = INTERP_LOG;
@@ -1381,7 +1376,6 @@ public:
 		   << "Original Raster Width: " << m_OrigFinalRasW << endl
 		   << "Original Raster Height: " << m_OrigFinalRasH << endl
 		   << "Supersample: " << m_Supersample << endl
-		   << "Passes: " << m_Passes << endl
 		   << "Temporal Samples: " << m_TemporalSamples << endl
 		   << "Symmetry: " << m_Symmetry << endl
 
@@ -1468,11 +1462,7 @@ public:
 	//The multiplier in size of the histogram and DE filtering buffers. Must be at least one, preferrably never larger than 4, only useful at 2.
 	//Xml field: "supersample" or "overample (deprecated)".
 	size_t m_Supersample;
-
-	//Times to run the algorithm while clearing the histogram, but not the filter. Almost always set to 1 and may even be deprecated.
-	//Xml field: "passes".
-	size_t m_Passes;
-
+	
 	//When animating, split each pass into this many pieces, each doing a fraction of the total iterations. Each temporal sample
 	//will render an interpolated instance of the ember that is a fraction of the current ember and the next one.
 	//When rendering a single image, this field is always set to 1.

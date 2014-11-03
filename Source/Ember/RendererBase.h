@@ -165,7 +165,6 @@ public:
 	virtual eRendererType RendererType() const;
 
 	//Abstract render properties, getters only.
-	virtual size_t Passes()						   const = 0;
 	virtual size_t TemporalSamples()			   const = 0;
 	virtual size_t HistBucketSize()				   const = 0;
 	virtual size_t FinalRasW()		               const = 0;

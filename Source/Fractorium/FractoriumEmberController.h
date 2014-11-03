@@ -126,7 +126,6 @@ public:
 	virtual void DEFilterMinRadiusWidthChanged(double d) { }
 	virtual void DEFilterMaxRadiusWidthChanged(double d) { }
 	virtual void DEFilterCurveWidthChanged(double d) { }
-	virtual void PassesChanged(int i) { }
 	virtual void TemporalSamplesChanged(int d) { }
 	virtual void QualityChanged(double d) { }
 	virtual void SupersampleChanged(int d) { }
@@ -341,7 +340,6 @@ public:
 	virtual void DEFilterMinRadiusWidthChanged(double d) override;
 	virtual void DEFilterMaxRadiusWidthChanged(double d) override;
 	virtual void DEFilterCurveWidthChanged(double d) override;
-	virtual void PassesChanged(int d) override;
 	virtual void TemporalSamplesChanged(int d) override;
 	virtual void QualityChanged(double d) override;
 	virtual void SupersampleChanged(int d) override;

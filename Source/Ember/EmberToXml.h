@@ -155,7 +155,6 @@ public:
 
 		os << " temporal_filter_width=\"" << ember.m_TemporalFilterWidth << "\"";
 		os << " quality=\"" << ember.m_Quality << "\"";
-		os << " passes=\"" << ember.m_Passes << "\"";
 		os << " temporal_samples=\"" << ember.m_TemporalSamples << "\"";
 		os << " background=\"" << ember.m_Background.r << " " << ember.m_Background.g << " " << ember.m_Background.b << "\"";
 		os << " brightness=\"" << ember.m_Brightness << "\"";

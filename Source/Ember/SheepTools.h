@@ -872,7 +872,6 @@ public:
 		adjustedEmber.m_FinalRasW = (size_t)(ember.m_FinalRasW  * scalar);
 		adjustedEmber.m_FinalRasH = (size_t)(ember.m_FinalRasH  * scalar);
 		adjustedEmber.m_PixelsPerUnit *= scalar;
-		adjustedEmber.m_Passes = 1;
 		adjustedEmber.m_TemporalSamples = 1;
 
 		m_Renderer->SetEmber(adjustedEmber);
@@ -1181,9 +1180,6 @@ public:
 		if (templ.m_Quality > 0)
 			ember.m_Quality = templ.m_Quality;
 
-		if (templ.m_Passes > 0)
-			ember.m_Passes = templ.m_Passes;
-
 		if (templ.m_TemporalSamples > 0)
 			ember.m_TemporalSamples = templ.m_TemporalSamples;
 
@@ -1208,9 +1204,6 @@ public:
 
 		if (templ.m_GammaThresh >= 0)
 			ember.m_GammaThresh = templ.m_GammaThresh;
-
-		if (templ.m_Passes > 0)
-			ember.m_Passes = templ.m_Passes;
 
 		if (templ.m_SpatialFilterType > 0)
 			ember.m_SpatialFilterType = templ.m_SpatialFilterType;
