@@ -2820,8 +2820,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>118</width>
-                  <height>597</height>
+                  <width>238</width>
+                  <height>747</height>
                  </rect>
                 </property>
                 <property name="palette">
@@ -3478,7 +3478,7 @@ SpinBox
                     <bool>true</bool>
                    </property>
                    <property name="checked">
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <layout class="QVBoxLayout" name="verticalLayout_14">
                     <property name="spacing">
@@ -3498,6 +3498,9 @@ SpinBox
                     </property>
                     <item>
                      <widget class="TableWidget" name="PostAffineTable">
+                      <property name="enabled">
+                       <bool>true</bool>
+                      </property>
                       <property name="sizePolicy">
                        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Minimum">
                         <horstretch>2</horstretch>
@@ -3637,6 +3640,9 @@ SpinBox
                       </property>
                       <item row="1" column="0">
                        <widget class="QPushButton" name="PostRotate90CcButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Rotate xform 90 degrees counter clockwise</string>
                         </property>
@@ -3651,6 +3657,9 @@ SpinBox
                       </item>
                       <item row="1" column="4">
                        <widget class="QPushButton" name="PostRotate90CButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Rotate xform 90 degrees clockwise</string>
                         </property>
@@ -3665,6 +3674,9 @@ SpinBox
                       </item>
                       <item row="3" column="1">
                        <widget class="QPushButton" name="PostScaleUpButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Scale xform x percent up</string>
                         </property>
@@ -3679,6 +3691,9 @@ SpinBox
                       </item>
                       <item row="2" column="4">
                        <widget class="QPushButton" name="PostMoveRightButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Move xform x units right</string>
                         </property>
@@ -3693,6 +3708,9 @@ SpinBox
                       </item>
                       <item row="3" column="2">
                        <widget class="QComboBox" name="PostScaleCombo">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -3740,6 +3758,9 @@ SpinBox
                       </item>
                       <item row="2" column="0">
                        <widget class="QPushButton" name="PostMoveUpButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Move xform x units up</string>
                         </property>
@@ -3754,6 +3775,9 @@ SpinBox
                       </item>
                       <item row="2" column="1">
                        <widget class="QPushButton" name="PostMoveDownButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Move xform x units down</string>
                         </property>
@@ -3768,6 +3792,9 @@ SpinBox
                       </item>
                       <item row="2" column="2">
                        <widget class="QComboBox" name="PostMoveCombo">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -3795,6 +3822,9 @@ SpinBox
                       </item>
                       <item row="2" column="3">
                        <widget class="QPushButton" name="PostMoveLeftButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Move xform x units left</string>
                         </property>
@@ -3809,6 +3839,9 @@ SpinBox
                       </item>
                       <item row="1" column="2">
                        <widget class="QComboBox" name="PostRotateCombo">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -3877,6 +3910,9 @@ SpinBox
                       </item>
                       <item row="1" column="1">
                        <widget class="QPushButton" name="PostRotateCcButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Rotate xform x degrees counter clockwise</string>
                         </property>
@@ -3891,6 +3927,9 @@ SpinBox
                       </item>
                       <item row="1" column="3">
                        <widget class="QPushButton" name="PostRotateCButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Rotate xform x degrees clockwise</string>
                         </property>
@@ -3905,6 +3944,9 @@ SpinBox
                       </item>
                       <item row="3" column="3">
                        <widget class="QPushButton" name="PostScaleDownButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Scale xform x percent down</string>
                         </property>
@@ -3919,6 +3961,9 @@ SpinBox
                       </item>
                       <item row="0" column="3">
                        <widget class="QPushButton" name="PostFlipHorizontalButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Flip xform horizontally</string>
                         </property>
@@ -3933,6 +3978,9 @@ SpinBox
                       </item>
                       <item row="0" column="1">
                        <widget class="QPushButton" name="PostFlipVerticalButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="toolTip">
                          <string>Flip xform vertically</string>
                         </property>
@@ -3947,6 +3995,9 @@ SpinBox
                       </item>
                       <item row="0" column="2">
                        <widget class="QPushButton" name="PostResetButton">
+                        <property name="enabled">
+                         <bool>true</bool>
+                        </property>
                         <property name="sizePolicy">
                          <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                           <horstretch>0</horstretch>
@@ -3972,7 +4023,7 @@ SpinBox
                     <item>
                      <widget class="QGroupBox" name="PostAffineShowGroupBox">
                       <property name="enabled">
-                       <bool>false</bool>
+                       <bool>true</bool>
                       </property>
                       <property name="title">
                        <string>Show</string>
@@ -3993,7 +4044,7 @@ SpinBox
                        <item>
                         <widget class="QRadioButton" name="ShowPostAffineCurrentRadio">
                          <property name="enabled">
-                          <bool>false</bool>
+                          <bool>true</bool>
                          </property>
                          <property name="text">
                           <string>Current</string>
@@ -4005,6 +4056,9 @@ SpinBox
                        </item>
                        <item>
                         <widget class="QRadioButton" name="ShowPostAffineAllRadio">
+                         <property name="enabled">
+                          <bool>true</bool>
+                         </property>
                          <property name="text">
                           <string>All</string>
                          </property>

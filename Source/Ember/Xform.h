@@ -871,11 +871,11 @@ public:
 	}
 
 	/// <summary>
-	/// Flatten this xform by adding a flatten variation if none is present, and if any of the
+	/// Flatten this xform by adding a flatten variation if none is present, and if none of the
 	/// variations or parameters in the vector are present.
 	/// </summary>
-	/// <param name="names">Vector of variation and parameter names</param>
-	/// <returns>True if flatten was added, false if it already was present or if none of the specified variations or parameters were present.</returns>
+	/// <param name="names">Vector of variation and parameter names that inhibit flattening</param>
+	/// <returns>True if flatten was added, false if it already was present or if at least one of the specified variations or parameters were present.</returns>
 	bool Flatten(vector<string>& names)
 	{
 		bool shouldFlatten = true;
@@ -890,7 +890,7 @@ public:
 
 					if (var->m_Weight != 0)//This should never happen, but just to be safe.
 					{
-						if (FindIf(names, [&] (const string& s) -> bool { return !_stricmp(s.c_str(), var->Name().c_str()); }))
+						if (FindIf(names, [&] (const string& s) -> bool { return !_stricmp(s.c_str(), var->Name().c_str()); }))//If any variation is present, don't flatten.
 						{
 							shouldFlatten = false;
 							keepGoing = false;
@@ -899,7 +899,7 @@ public:
 					}
 
 					//Now traverse the parameters for this variation.
-					if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var))
+					if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var))//If any parametric variation parameter is present and non-zero, don't flatten.
 					{
 						ForEach(names, [&] (const string& s)
 						{
@@ -913,7 +913,7 @@ public:
 				}
 			});
 
-			if (shouldFlatten)
+			if (shouldFlatten)//Flatten was not present and neither was any variation name or parameter in the list.
 			{
 				Variation<T>* var = new FlattenVariation<T>();
 

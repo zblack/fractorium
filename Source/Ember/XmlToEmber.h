@@ -153,30 +153,33 @@ public:
 			m_BadParamNames.push_back(pair<string, string>("post_bwraps2_outer_twist", "post_bwraps_outer_twist"));
 
 			m_FlattenNames.reserve(24);
-			m_FlattenNames.push_back("linear3D");
-			m_FlattenNames.push_back("bubble");
-			m_FlattenNames.push_back("cylinder");
-			m_FlattenNames.push_back("zblur");
-			m_FlattenNames.push_back("blur3D");
-			m_FlattenNames.push_back("pre_ztranslate");
+			m_FlattenNames.push_back("pre_crop");
+			m_FlattenNames.push_back("pre_falloff2");
 			m_FlattenNames.push_back("pre_rotate_x");
 			m_FlattenNames.push_back("pre_rotate_y");
-			m_FlattenNames.push_back("ztranslate");
-			m_FlattenNames.push_back("zcone");
-			m_FlattenNames.push_back("post_rotate_x");
-			m_FlattenNames.push_back("post_rotate_y");
-			m_FlattenNames.push_back("julia3D");
-			m_FlattenNames.push_back("julia3Dz");
-			m_FlattenNames.push_back("curl3D_cz");
-			m_FlattenNames.push_back("hemisphere");
+			m_FlattenNames.push_back("pre_ztranslate");
+
+			m_FlattenNames.push_back("blur3D");
+			m_FlattenNames.push_back("bubble");
 			m_FlattenNames.push_back("bwraps");
 			m_FlattenNames.push_back("bwraps2");
-			m_FlattenNames.push_back("falloff2");
 			m_FlattenNames.push_back("crop");
-			m_FlattenNames.push_back("pre_falloff2");
-			m_FlattenNames.push_back("pre_crop");
-			m_FlattenNames.push_back("post_falloff2");
+			m_FlattenNames.push_back("cylinder");
+			m_FlattenNames.push_back("falloff2");
+			m_FlattenNames.push_back("hemisphere");
+			m_FlattenNames.push_back("julia3D");
+			m_FlattenNames.push_back("julia3Dz");
+			m_FlattenNames.push_back("linear3D");
+			m_FlattenNames.push_back("zblur");
+			m_FlattenNames.push_back("zcone");
+			m_FlattenNames.push_back("ztranslate");
+
 			m_FlattenNames.push_back("post_crop");
+			m_FlattenNames.push_back("post_falloff2");
+			m_FlattenNames.push_back("post_rotate_x");
+			m_FlattenNames.push_back("post_rotate_y");
+			
+			m_FlattenNames.push_back("curl3D_cz");
 
 			//This is a vector of the param names as they are in the legacy, badly named flam3/Apophysis code.
 			vector<string> badParams;

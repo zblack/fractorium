@@ -219,7 +219,7 @@ void FractoriumEmberController<T>::Update(std::function<void (void)> func, bool 
 /// Wrapper to call a function on the current xform, then optionally add the requested action to the rendering queue.
 /// </summary>
 /// <param name="func">The function to call</param>
-/// <param name="updateRender">True to update renderer, else false. Default: false.</param>
+/// <param name="updateRender">True to update renderer, else false. Default: true.</param>
 /// <param name="action">The action to add to the rendering queue. Default: FULL_RENDER.</param>
 template <typename T>
 void FractoriumEmberController<T>::UpdateCurrentXform(std::function<void (Xform<T>*)> func, bool updateRender, eProcessAction action)
