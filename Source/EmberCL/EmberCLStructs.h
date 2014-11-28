@@ -181,9 +181,6 @@ static const char* XformCLStructString =
 "} XformCL;\n"
 "\n";
 
-#define MAX_CL_XFORM 21//These must always match.
-#define MAX_CL_XFORM_STRING "21"
-
 /// <summary>
 /// A structure on the host used to hold all of the needed information for an ember used on the device to iterate in OpenCL.
 /// Template argument expected to be float or double.
@@ -191,7 +188,6 @@ static const char* XformCLStructString =
 template <typename T>
 struct ALIGN EmberCL
 {
-	XformCL<T> m_Xforms[MAX_CL_XFORM];
 	T m_CamZPos;
 	T m_CamPerspective;
 	T m_CamYaw;
@@ -209,7 +205,6 @@ struct ALIGN EmberCL
 static const char* EmberCLStructString =
 "typedef struct __attribute__ " ALIGN_CL " _EmberCL\n"
 "{\n"
-"	XformCL m_Xforms[" MAX_CL_XFORM_STRING "];\n"
 "	real_t m_CamZPos;\n"
 "	real_t m_CamPerspective;\n"
 "	real_t m_CamYaw;\n"

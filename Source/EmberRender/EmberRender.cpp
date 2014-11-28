@@ -147,7 +147,6 @@ bool EmberRender(EmberOptions& opt)
 	renderer->YAxisUp(opt.YAxisUp());
 	renderer->LockAccum(opt.LockAccum());
 	renderer->InsertPalette(opt.InsertPalette());
-	renderer->SubBatchSize(opt.SubBatchSize());
 	renderer->PixelAspectRatio(T(opt.AspectRatio()));
 	renderer->Transparency(opt.Transparency());
 	renderer->NumChannels(channels);
@@ -163,6 +162,9 @@ bool EmberRender(EmberOptions& opt)
 
 		if (opt.Supersample() > 0)
 			embers[i].m_Supersample = opt.Supersample();
+
+		if (opt.SubBatchSize() != DEFAULT_SBS)
+			embers[i].m_SubBatchSize = opt.SubBatchSize();
 
 		embers[i].m_TemporalSamples = 1;//Force temporal samples to 1 for render.
 		embers[i].m_Quality *= T(opt.QualityScale());

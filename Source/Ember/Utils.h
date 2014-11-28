@@ -34,6 +34,17 @@ static inline void ForEach(c& container, fn func)
 }
 
 /// <summary>
+/// Thin wrapper around computing the total size of a vector.
+/// </summary>
+/// <param name="vec">The vector to compute the size of</param>
+/// <returns>The size of one element times the length.</returns>
+template<typename T>
+static inline size_t SizeOf(vector<T>& vec)
+{
+	return sizeof(vec[0]) * vec.size();
+}
+
+/// <summary>
 /// After a run completes, information about what was run can be saved as strings to the comments
 /// section of a jpg or png file. This class is just a container for those values.
 /// </summary>
@@ -276,7 +287,7 @@ static void ClearVec(vector<T*>& vec, bool arrayDelete = false)
 template<typename T>
 static inline void Memset(vector<T>& vec, int val = 0)
 {
-	memset((void*)vec.data(), val, vec.size() * sizeof(vec[0]));
+	memset((void*)vec.data(), val, SizeOf(vec));
 }
 
 /// <summary>

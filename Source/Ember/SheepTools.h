@@ -879,7 +879,6 @@ public:
 		m_Renderer->EarlyClip(true);
 		m_Renderer->PixelAspectRatio(1);
 		m_Renderer->ThreadCount(Timing::ProcessorCount());
-		m_Renderer->SubBatchSize(10000);
 		m_Renderer->Callback(nullptr);
 
 		if (m_Renderer->Run(m_FinalImage) != RENDER_OK)
@@ -1280,8 +1279,16 @@ public:
 	/// <returns>The number of iterations ran</returns>
 	size_t EstimateBoundingBox(Ember<T>& ember, T eps, size_t samples, T* bmin, T* bmax)
 	{
+		bool newAlloc = false;
 		size_t i, lowTarget, highTarget;
 		T min[2], max[2];
+		IterParams<T> params;
+
+		m_Renderer->SetEmber(ember);
+		m_Renderer->CreateSpatialFilter(newAlloc);
+		m_Renderer->CreateDEFilter(newAlloc);
+		m_Renderer->ComputeBounds();
+		m_Renderer->ComputeCamera();
 
 		if (ember.XaosPresent())
 			m_Iterator = m_XaosIterator.get();
@@ -1290,8 +1297,12 @@ public:
 
 		m_Iterator->InitDistributions(ember);
 		m_Samples.resize(samples);
+		params.m_Count = samples;
+		params.m_Skip = 20;
+		//params.m_OneColDiv2 = m_Renderer->CoordMap()->OneCol() / 2;
+		//params.m_OneRowDiv2 = m_Renderer->CoordMap()->OneRow() / 2;
 
-		size_t bv = m_Iterator->Iterate(ember, samples, 20, m_Samples.data(), m_Rand);//Use a special fuse of 20, all other calls to this will use 15, or 100.
+		size_t bv = m_Iterator->Iterate(ember, params, m_Samples.data(), m_Rand);//Use a special fuse of 20, all other calls to this will use 15, or 100.
 
 		if (bv / T(samples) > eps)
 			eps = 3 * bv / T(samples);

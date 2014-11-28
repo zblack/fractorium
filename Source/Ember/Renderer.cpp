@@ -691,7 +691,7 @@ bool Renderer<T, bucketT>::Alloc()
 		(m_SuperSize         != m_HistBuckets.size())        ||
 		(m_SuperSize         != m_AccumulatorBuckets.size()) ||
 		(m_ThreadsToUse      != m_Samples.size())            ||
-		(m_Samples[0].size() != m_SubBatchSize);
+		(m_Samples[0].size() != SubBatchSize());
 
 	if (lock)
 		EnterResize();
@@ -728,14 +728,14 @@ bool Renderer<T, bucketT>::Alloc()
 
 	for (size_t i = 0; i < m_Samples.size(); i++)
 	{
-		if (m_Samples[i].size() != m_SubBatchSize)
+		if (m_Samples[i].size() != SubBatchSize())
 		{
-			m_Samples[i].resize(m_SubBatchSize);
+			m_Samples[i].resize(SubBatchSize());
 
 			if (m_ReclaimOnResize)
 				m_Samples[i].shrink_to_fit();
 
-			b &= (m_Samples[i].size() == m_SubBatchSize);
+			b &= (m_Samples[i].size() == SubBatchSize());
 		}
 	}
 
@@ -1154,7 +1154,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 /// This function will be called multiple times for an interactive rendering, and
 /// once for a straight through render.
 /// The iteration is reset and fused in each thread after each sub batch is done
-/// which by default is 10,000 iterations.
+/// which by default is 10,240 iterations.
 /// </summary>
 /// <param name="iterCount">The number of iterations to run</param>
 /// <param name="temporalSample">The temporal sample this is running for</param>
@@ -1164,7 +1164,6 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 {
 	//Timing t2(4);
 	m_IterTimer.Tic();
-	size_t fuse = EarlyClip() ? 100 : 15;//EarlyClip was one way of detecting a later version of flam3, so it used 100 which is a better value.
 	size_t totalItersPerThread = (size_t)ceil((double)iterCount / (double)m_ThreadsToUse);
 	double percent, etaMs;
 	EmberStats stats;
@@ -1180,17 +1179,21 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 	parallel_for(size_t(0), m_ThreadsToUse, [&] (size_t threadIndex)
 	{
 #endif
-		Timing t;
-		size_t subBatchSize = (size_t)min(totalItersPerThread, (size_t)m_SubBatchSize);
+		//Timing t;
+		IterParams<T> params;
 
 		m_BadVals[threadIndex] = 0;
+		params.m_Count = min(totalItersPerThread, SubBatchSize());
+		params.m_Skip = FuseCount();
+		//params.m_OneColDiv2 = m_CarToRas.OneCol() / 2;
+		//params.m_OneRowDiv2 = m_CarToRas.OneRow() / 2;
 
 		//Sub batch iterations, loop 2.
-		for (m_SubBatch[threadIndex] = 0; (m_SubBatch[threadIndex] < totalItersPerThread) && !m_Abort; m_SubBatch[threadIndex] += subBatchSize)
+		for (m_SubBatch[threadIndex] = 0; (m_SubBatch[threadIndex] < totalItersPerThread) && !m_Abort; m_SubBatch[threadIndex] += params.m_Count)
 		{
-			//Must recalculate the number of iters to run on each sub batch because the last batch will most likely have less than m_SubBatchSize iters.
+			//Must recalculate the number of iters to run on each sub batch because the last batch will most likely have less than SubBatchSize iters.
 			//For example, if 51,000 are requested, and the sbs is 10,000, it should run 5 sub batches of 10,000 iters, and one final sub batch of 1,000 iters.
-			subBatchSize = min(subBatchSize, totalItersPerThread - m_SubBatch[threadIndex]);
+			params.m_Count = min(params.m_Count, totalItersPerThread - m_SubBatch[threadIndex]);
 
 			//Use first as random point, the rest are iterated points.
 			//Note that this gets reset with a new random point for each subBatchSize iterations.
@@ -1203,14 +1206,14 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 			//Finally, iterate.
 			//t.Tic();
 			//Iterating, loop 3.
-			m_BadVals[threadIndex] += m_Iterator->Iterate(m_Ember, subBatchSize, fuse, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
+			m_BadVals[threadIndex] += m_Iterator->Iterate(m_Ember, params, m_Samples[threadIndex].data(), m_Rand[threadIndex]);
 			//iterationTime += t.Toc();
 
 			if (m_LockAccum)
 				m_AccumCs.Enter();
 			//t.Tic();
 			//Map temp buffer samples into the histogram using the palette for color.
-			Accumulate(m_Samples[threadIndex].data(), subBatchSize, &m_Dmap);
+			Accumulate(m_Rand[threadIndex], m_Samples[threadIndex].data(), params.m_Count, &m_Dmap);
 			//accumulationTime += t.Toc();
 			if (m_LockAccum)
 				m_AccumCs.Leave();
@@ -1347,6 +1350,8 @@ template <typename T, typename bucketT> ePaletteMode      Renderer<T, bucketT>::
 template <typename T, typename bucketT> size_t Renderer<T, bucketT>::TemporalSamples() const { return m_Ember.m_TemporalSamples; }
 template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FinalRasW()       const { return m_Ember.m_FinalRasW; }
 template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FinalRasH()       const { return m_Ember.m_FinalRasH; }
+template <typename T, typename bucketT> size_t Renderer<T, bucketT>::SubBatchSize()    const { return m_Ember.m_SubBatchSize; }
+template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FuseCount()	   const { return m_Ember.m_FuseCount; }
 
 /// <summary>
 /// Non-virtual iterator wrappers.
@@ -1396,11 +1401,13 @@ void Renderer<T, bucketT>::PrepFinalAccumVals(Color<T>& background, T& g, T& lin
 /// <param name="sampleCount">The number of samples</param>
 /// <param name="palette">The palette to use</param>
 template <typename T, typename bucketT>
-void Renderer<T, bucketT>::Accumulate(Point<T>* samples, size_t sampleCount, const Palette<bucketT>* palette)
+void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Point<T>* samples, size_t sampleCount, const Palette<bucketT>* palette)
 {
 	size_t histIndex, intColorIndex, histSize = m_HistBuckets.size();
 	bucketT colorIndex, colorIndexFrac;
 	const glm::detail::tvec4<bucketT, glm::defaultp>* dmap = &(palette->m_Entries[0]);
+	//T oneColDiv2 = m_CarToRas.OneCol() / 2;
+	//T oneRowDiv2 = m_CarToRas.OneRow() / 2;
 
 	//It's critical to understand what's going on here as it's one of the most important parts of the algorithm.
 	//A color value gets retrieved from the palette and
@@ -1413,24 +1420,37 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, size_t sampleCount, con
 	//Splitting these conditionals into separate loops makes no speed difference.
 	for (size_t i = 0; i < sampleCount && !m_Abort; i++)
 	{
+		Point<T> p(samples[i]);//Slightly faster to cache this.
+
 		if (Rotate() != 0)
 		{
-			T p00 = samples[i].m_X - CenterX();
-			T p11 = samples[i].m_Y - m_Ember.m_RotCenterY;
+			T p00 = p.m_X - CenterX();
+			T p11 = p.m_Y - m_Ember.m_RotCenterY;
 
-			samples[i].m_X = (p00 * m_RotMat.A()) + (p11 * m_RotMat.B()) + CenterX();
-			samples[i].m_Y = (p00 * m_RotMat.D()) + (p11 * m_RotMat.E()) + m_Ember.m_RotCenterY;
+			p.m_X = (p00 * m_RotMat.A()) + (p11 * m_RotMat.B()) + CenterX();
+			p.m_Y = (p00 * m_RotMat.D()) + (p11 * m_RotMat.E()) + m_Ember.m_RotCenterY;
 		}
+
+		//T angle = rand.Frand01<T>() * M_2PI;
+		//T r = exp(T(0.5) * sqrt(-log(rand.Frand01<T>()))) - 1;
+
+		//T r = (rand.Frand01<T>() + rand.Frand01<T>() - 1);
+		//T r = (rand.Frand01<T>() + rand.Frand01<T>() + rand.Frand01<T>() + rand.Frand01<T>() - 2);
+
+		//p.m_X += (r * oneColDiv2) * cos(angle);
+		//p.m_Y += (r * oneRowDiv2) * sin(angle);
+		//p.m_X += r * cos(angle);
+		//p.m_Y += r * sin(angle);
 
 		//Checking this first before converting gives better performance than converting and checking a single value, which the original did.
 		//Second, an interesting optimization observation is that when keeping the bounds vars within m_CarToRas and calling its InBounds() member function,
 		//rather than here as members, about a 7% speedup is achieved. This is possibly due to the fact that data from m_CarToRas is accessed
 		//right after the call to Convert(), so some caching efficiencies get realized.
-		if (m_CarToRas.InBounds(samples[i]))
+		if (m_CarToRas.InBounds(p))
 		{
-			if (samples[i].m_VizAdjusted != 0)
+			if (p.m_VizAdjusted != 0)
 			{
-				m_CarToRas.Convert(samples[i], histIndex);
+				m_CarToRas.Convert(p, histIndex);
 
 				//There is a very slim chance that a point will be right on the border and will technically be in bounds, passing the InBounds() test,
 				//but ends up being mapped to a histogram bucket that is out of bounds due to roundoff error. Perform one final check before proceeding.
@@ -1445,7 +1465,7 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, size_t sampleCount, con
 					//Use overloaded addition and multiplication operators in vec4 to perform the accumulation.
 					if (PaletteMode() == PALETTE_LINEAR)
 					{
-						colorIndex = (bucketT)samples[i].m_ColorX * COLORMAP_LENGTH;
+						colorIndex = (bucketT)p.m_ColorX * COLORMAP_LENGTH;
 						intColorIndex = (size_t)colorIndex;
 
 						if (intColorIndex < 0)
@@ -1463,19 +1483,19 @@ void Renderer<T, bucketT>::Accumulate(Point<T>* samples, size_t sampleCount, con
 							colorIndexFrac = colorIndex - (bucketT)intColorIndex;//Interpolate between intColorIndex and intColorIndex + 1.
 						}
 
-						if (samples[i].m_VizAdjusted == 1)
+						if (p.m_VizAdjusted == 1)
 							m_HistBuckets[histIndex] += ((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac));
 						else
-							m_HistBuckets[histIndex] += (((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac)) * (bucketT)samples[i].m_VizAdjusted);
+							m_HistBuckets[histIndex] += (((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac)) * (bucketT)p.m_VizAdjusted);
 					}
 					else if (PaletteMode() == PALETTE_STEP)
 					{
-						intColorIndex = Clamp<size_t>((size_t)(samples[i].m_ColorX * COLORMAP_LENGTH), 0, COLORMAP_LENGTH_MINUS_1);
+						intColorIndex = Clamp<size_t>((size_t)(p.m_ColorX * COLORMAP_LENGTH), 0, COLORMAP_LENGTH_MINUS_1);
 
-						if (samples[i].m_VizAdjusted == 1)
+						if (p.m_VizAdjusted == 1)
 							m_HistBuckets[histIndex] += dmap[intColorIndex];
 						else
-							m_HistBuckets[histIndex] += (dmap[intColorIndex] * (bucketT)samples[i].m_VizAdjusted);
+							m_HistBuckets[histIndex] += (dmap[intColorIndex] * (bucketT)p.m_VizAdjusted);
 					}
 				}
 			}

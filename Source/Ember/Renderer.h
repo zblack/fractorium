@@ -134,6 +134,8 @@ public:
 	virtual size_t TemporalSamples() const override;
 	virtual size_t FinalRasW()       const override;
 	virtual size_t FinalRasH()       const override;
+	virtual size_t SubBatchSize()    const override;
+	virtual size_t FuseCount()		 const override;
 
 	//Non-virtual iterator wrappers.
 	const unsigned char* XformDistributions()		 const;
@@ -144,9 +146,9 @@ protected:
 	//Non-virtual functions that might be needed by a derived class.
 	void PrepFinalAccumVals(Color<T>& background, T& g, T& linRange, T& vibrancy);
 
-private:
+	private:
 	//Miscellaneous non-virtual functions used only in this class.
-	void Accumulate(Point<T>* samples, size_t sampleCount, const Palette<bucketT>* palette);
+	void Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Point<T>* samples, size_t sampleCount, const Palette<bucketT>* palette);
 	/*inline*/ void AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj);
 	template <typename accumT> void GammaCorrection(glm::detail::tvec4<bucketT, glm::defaultp>& bucket, Color<T>& background, T g, T linRange, T vibrancy, bool doAlpha, bool scale, accumT* correctedChannels);
 

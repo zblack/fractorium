@@ -156,6 +156,8 @@ public:
 		os << " temporal_filter_width=\"" << ember.m_TemporalFilterWidth << "\"";
 		os << " quality=\"" << ember.m_Quality << "\"";
 		os << " temporal_samples=\"" << ember.m_TemporalSamples << "\"";
+		os << " sub_batch_size=\"" << ember.m_SubBatchSize << "\"";
+		os << " fuse=\"" << ember.m_FuseCount << "\"";
 		os << " background=\"" << ember.m_Background.r << " " << ember.m_Background.g << " " << ember.m_Background.b << "\"";
 		os << " brightness=\"" << ember.m_Brightness << "\"";
 		os << " gamma=\"" << ember.m_Gamma << "\"";

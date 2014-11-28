@@ -149,7 +149,6 @@ public:
 	void ReclaimOnResize(bool reclaimOnResize);
 	bool Transparency() const;
 	void Transparency(bool transparency);
-	void SubBatchSize(size_t subBatchSize);
 	void Callback(RenderCallback* callback);
 	void ThreadCount(size_t threads, const char* seedString = nullptr);
 	size_t BytesPerChannel() const;
@@ -161,7 +160,6 @@ public:
 	//Virtual render properties, getters and setters.
 	virtual void NumChannels(size_t numChannels);
 	virtual size_t ThreadCount()   const;
-	virtual size_t SubBatchSize()  const;
 	virtual eRendererType RendererType() const;
 
 	//Abstract render properties, getters only.
@@ -169,6 +167,8 @@ public:
 	virtual size_t HistBucketSize()				   const = 0;
 	virtual size_t FinalRasW()		               const = 0;
 	virtual size_t FinalRasH()					   const = 0;
+	virtual size_t SubBatchSize()				   const = 0;
+	virtual size_t FuseCount()					   const = 0;
 	virtual double ScaledQuality()                 const = 0;
 	virtual double LowerLeftX(bool  gutter = true) const = 0;
 	virtual double LowerLeftY(bool  gutter = true) const = 0;
@@ -207,10 +207,8 @@ protected:
 	size_t m_DensityFilterOffset;
 	size_t m_NumChannels;
 	size_t m_BytesPerChannel;
-	size_t m_SubBatchSize;
 	size_t m_ThreadsToUse;
 	size_t m_VibGamCount;
-	size_t m_LastPass;
 	size_t m_LastTemporalSample;
 	double m_LastIterPercent;
 	size_t m_LastIter;

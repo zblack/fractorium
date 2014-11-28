@@ -264,10 +264,22 @@ bool EmberGenome(EmberOptions& opt)
 	else if (opt.Clone()    != "") filename = opt.Clone();
 	else if (opt.Mutate()   != "") filename = opt.Mutate();
 
-	if (!ParseEmberFile(parser, filename, embers))
+	if (ParseEmberFile(parser, filename, embers))
+	{
+		if (opt.SubBatchSize() != DEFAULT_SBS)
+			for (i = 0; i < embers.size(); i++)
+				embers[i].m_SubBatchSize = opt.SubBatchSize();
+	}
+	else
 		return false;
 
-	if (doCross1 && !ParseEmberFile(parser, opt.Cross1(), embers2))
+	if (doCross1 && ParseEmberFile(parser, opt.Cross1(), embers2))
+	{
+		if (opt.SubBatchSize() != DEFAULT_SBS)
+			for (i = 0; i < embers2.size(); i++)
+				embers2[i].m_SubBatchSize = opt.SubBatchSize();
+	}
+	else
 		return false;
 
 	if (opt.CloneAll() != "")
@@ -493,7 +505,6 @@ bool EmberGenome(EmberOptions& opt)
 	renderer->EarlyClip(opt.EarlyClip());
 	renderer->YAxisUp(opt.YAxisUp());
 	renderer->LockAccum(opt.LockAccum());
-	renderer->SubBatchSize(opt.SubBatchSize());
 	renderer->PixelAspectRatio(T(opt.AspectRatio()));
 	renderer->Transparency(opt.Transparency());
 

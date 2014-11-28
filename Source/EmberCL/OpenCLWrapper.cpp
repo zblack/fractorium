@@ -1121,12 +1121,12 @@ string OpenCLWrapper::DumpInfo()
 /// <summary>
 /// OpenCL properties, getters only.
 /// </summary>
-bool OpenCLWrapper::Ok() { return m_Init; }
-bool OpenCLWrapper::Shared() { return m_Shared; }
-cl::Context OpenCLWrapper::Context() { return m_Context; }
-unsigned int OpenCLWrapper::PlatformIndex() { return m_PlatformIndex; }
-unsigned int OpenCLWrapper::DeviceIndex() { return m_DeviceIndex; }
-unsigned int OpenCLWrapper::LocalMemSize() { return m_LocalMemSize; }
+bool OpenCLWrapper::Ok() const { return m_Init; }
+bool OpenCLWrapper::Shared() const { return m_Shared; }
+cl::Context OpenCLWrapper::Context() const { return m_Context; }
+unsigned int OpenCLWrapper::PlatformIndex() const { return m_PlatformIndex; }
+unsigned int OpenCLWrapper::DeviceIndex() const { return m_DeviceIndex; }
+unsigned int OpenCLWrapper::LocalMemSize() const { return m_LocalMemSize; }
 
 /// <summary>
 /// Makes the even grid dims.

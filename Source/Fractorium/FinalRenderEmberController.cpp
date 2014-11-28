@@ -578,6 +578,7 @@ pair<size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemory()
 			[&](const string& s) { }, [&](const string& s) { }, [&](const string& s) { });
 
 		SyncGuiToEmbers();
+		m_FinalRenderDialog->m_StripsSpin->setSuffix(" (" + ToString(strips) + ")");
 		m_Renderer->SetEmber(*m_Ember);
 		m_Renderer->CreateSpatialFilter(b);
 		m_Renderer->CreateTemporalFilter(b);

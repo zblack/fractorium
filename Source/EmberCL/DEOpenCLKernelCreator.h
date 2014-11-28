@@ -8,6 +8,8 @@
 /// DEOpenCLKernelCreator class.
 /// </summary>
 
+//#define ROW_ONLY_DE 1
+
 namespace EmberCLns
 {
 /// <summary>
@@ -35,8 +37,6 @@ public:
 	DEOpenCLKernelCreator(bool nVidia);
 
 	//Accessors.
-	string LogScaleSumDEKernel();
-	string LogScaleSumDEEntryPoint();
 	string LogScaleAssignDEKernel();
 	string LogScaleAssignDEEntryPoint();
 	string GaussianDEKernel(size_t ss, unsigned int filterWidth);
@@ -49,14 +49,10 @@ public:
 
 private:
 	//Kernel creators.
-	string CreateLogScaleSumDEKernelString();
 	string CreateLogScaleAssignDEKernelString();
 	string CreateGaussianDEKernel(size_t ss);
 	string CreateGaussianDEKernelNoLocalCache(size_t ss);
-
-	string m_LogScaleSumDEKernel;
-	string m_LogScaleSumDEEntryPoint;
-
+	
 	string m_LogScaleAssignDEKernel;
 	string m_LogScaleAssignDEEntryPoint;
 

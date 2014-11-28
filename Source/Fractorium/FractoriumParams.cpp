@@ -85,9 +85,11 @@ void Fractorium::InitParamsUI()
 	//Iteration.
 	row = 0;
 	table = ui.IterationTable;
-	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_TemporalSamplesSpin, spinHeight, 1, 5000, 50, SIGNAL(valueChanged(int)),	   SLOT(OnTemporalSamplesChanged(int)), true, 1000);
-	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_QualitySpin,			spinHeight, 1, dmax, 50, SIGNAL(valueChanged(double)), SLOT(OnQualityChanged(double)),	    true,   10, 10, 10);
-	SetupSpinner<SpinBox, int>         (table, this, row, 1, m_SupersampleSpin,		spinHeight, 1,    4,  1, SIGNAL(valueChanged(int)),	   SLOT(OnSupersampleChanged(int)),	    true,    1,  1,  1);
+	SetupSpinner<SpinBox, int>(			table, this, row, 1, m_SbsSpin,				spinHeight, 1000, 100000, 100, SIGNAL(valueChanged(int)),	 SLOT(OnSbsChanged(int)),			  true, DEFAULT_SBS, DEFAULT_SBS, DEFAULT_SBS);
+	SetupSpinner<SpinBox, int>(			table, this, row, 1, m_FuseSpin,			spinHeight, 1,      1000,   5, SIGNAL(valueChanged(int)),	 SLOT(OnFuseChanged(int)),			  true,	   15,	  15, 15);
+	SetupSpinner<DoubleSpinBox, double>(table, this, row, 1, m_QualitySpin,			spinHeight, 1,      dmax,  50, SIGNAL(valueChanged(double)), SLOT(OnQualityChanged(double)),	  true,    10,	  10, 10);
+	SetupSpinner<SpinBox, int>(         table, this, row, 1, m_SupersampleSpin,		spinHeight, 1,         4,   1, SIGNAL(valueChanged(int)),	 SLOT(OnSupersampleChanged(int)),	  true,     1,	   1,  1);
+	SetupSpinner<SpinBox, int>(         table, this, row, 1, m_TemporalSamplesSpin, spinHeight, 1,      5000,  50, SIGNAL(valueChanged(int)),	 SLOT(OnTemporalSamplesChanged(int)), true,  1000);
 
 	comboVals.clear();
 	comboVals.push_back("Step");
@@ -389,14 +391,22 @@ void Fractorium::OnDEFilterCurveWidthChanged(double d) { m_Controller->DEFilterC
 /// </summary>
 
 /// <summary>
-/// Set the temporal samples to be used with animation.
-/// Called when the temporal samples spinner is changed.
-/// Does not reset anything because this is only used for animation.
-/// In the future, when animation is implemented, this will have an effect.
+/// Set the iteration depth.
+/// Called when the sub batch size spinner is changed.
+/// Resets the rendering process.
 /// </summary>
-/// <param name="d">The temporal samples value</param>
-template <typename T> void FractoriumEmberController<T>::TemporalSamplesChanged(int i) { Update([&] { m_Ember.m_TemporalSamples = i; }, true, NOTHING); }//Don't do anything until animation is implemented.
-void Fractorium::OnTemporalSamplesChanged(int d) { m_Controller->TemporalSamplesChanged(d); }
+/// <param name="d">The sub batch size value to set</param>
+template <typename T> void FractoriumEmberController<T>::SbsChanged(int d) { Update([&] { m_Ember.m_SubBatchSize = d; }); }
+void Fractorium::OnSbsChanged(int d) { m_Controller->SbsChanged(d); }
+
+/// <summary>
+/// Set the number of samples to disregard for each sub batch.
+/// Called when the fuse count spinner is changed.
+/// Resets the rendering process.
+/// </summary>
+/// <param name="d">The fuse count value to set</param>
+template <typename T> void FractoriumEmberController<T>::FuseChanged(int d) { Update([&] { m_Ember.m_FuseCount = d; }); }
+void Fractorium::OnFuseChanged(int d) { m_Controller->FuseChanged(d); }
 
 /// <summary>
 /// Set the quality.
@@ -424,6 +434,16 @@ void Fractorium::OnQualityChanged(double d) { m_Controller->QualityChanged(d); }
 /// <param name="d">The supersample value to set</param>
 template <typename T> void FractoriumEmberController<T>::SupersampleChanged(int d) { Update([&] { m_Ember.m_Supersample = d; }); }
 void Fractorium::OnSupersampleChanged(int d) { m_Controller->SupersampleChanged(d); }
+
+/// <summary>
+/// Set the temporal samples to be used with animation.
+/// Called when the temporal samples spinner is changed.
+/// Does not reset anything because this is only used for animation.
+/// In the future, when animation is implemented, this will have an effect.
+/// </summary>
+/// <param name="d">The temporal samples value</param>
+template <typename T> void FractoriumEmberController<T>::TemporalSamplesChanged(int i) { Update([&] { m_Ember.m_TemporalSamples = i; }, true, NOTHING); }//Don't do anything until animation is implemented.
+void Fractorium::OnTemporalSamplesChanged(int d) { m_Controller->TemporalSamplesChanged(d); }
 
 /// <summary>
 /// Set the affine interpolation type.
@@ -523,9 +543,11 @@ void FractoriumEmberController<T>::FillParamTablesAndPalette()
 	m_Fractorium->m_DEFilterMinRadiusSpin->SetValueStealth(m_Ember.m_MinRadDE);
 	m_Fractorium->m_DEFilterMaxRadiusSpin->SetValueStealth(m_Ember.m_MaxRadDE);
 	m_Fractorium->m_DECurveSpin->SetValueStealth(m_Ember.m_CurveDE);
-	m_Fractorium->m_TemporalSamplesSpin->SetValueStealth(m_Ember.m_TemporalSamples);//Iteration.
+	m_Fractorium->m_SbsSpin->SetValueStealth(m_Ember.m_SubBatchSize);//Iteration.
+	m_Fractorium->m_FuseSpin->SetValueStealth(m_Ember.m_FuseCount);
 	m_Fractorium->m_QualitySpin->SetValueStealth(m_Ember.m_Quality);
 	m_Fractorium->m_SupersampleSpin->SetValueStealth(m_Ember.m_Supersample);
+	m_Fractorium->m_TemporalSamplesSpin->SetValueStealth(m_Ember.m_TemporalSamples);
 	m_Fractorium->m_AffineInterpTypeCombo->SetCurrentIndexStealth(m_Ember.m_AffineInterp);
 	m_Fractorium->m_InterpTypeCombo->SetCurrentIndexStealth(m_Ember.m_Interp);
 
@@ -585,9 +607,11 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_MinRadDE = m_Fractorium->m_DEFilterMinRadiusSpin->value();
 	ember.m_MaxRadDE = m_Fractorium->m_DEFilterMaxRadiusSpin->value();
 	ember.m_CurveDE = m_Fractorium->m_DECurveSpin->value();
-	ember.m_TemporalSamples = m_Fractorium->m_TemporalSamplesSpin->value();
+	ember.m_SubBatchSize = m_Fractorium->m_SbsSpin->value();
+	ember.m_FuseCount = m_Fractorium->m_FuseSpin->value();
 	ember.m_Quality = m_Fractorium->m_QualitySpin->value();
 	ember.m_Supersample = m_Fractorium->m_SupersampleSpin->value();
+	ember.m_TemporalSamples = m_Fractorium->m_TemporalSamplesSpin->value();
 	ember.m_AffineInterp = (eAffineInterp)m_Fractorium->m_AffineInterpTypeCombo->currentIndex();
 	ember.m_Interp = (eInterp)m_Fractorium->m_InterpTypeCombo->currentIndex();
 }

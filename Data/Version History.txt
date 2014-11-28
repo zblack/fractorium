@@ -1,3 +1,51 @@
+0.4.1.5 Beta 11/28/2014
+--User Changes
+	Remove limit on the number of xforms allowable on the GPU. This was previously 21.
+	Show actual strips count to be used in parens outside of user specified strips count on final render dialog.
+	Allow for adjustment of iteration depth and fuse count per ember and save/read these values with the xml.
+	Iteration optimizations on both CPU and GPU.
+	Automatically adjust default quality spinner value when using CPU/GPU to 10/30, respectively.
+
+--Bug Fixes
+	Fix severe randomization bug with OpenCL.
+	Fix undo list off by one error when doing a new edit anywhere but the end of the undo list.
+	Make integer variation parameters use 4 decimal places in the variations list like all the others.
+	New build of the latest Qt to fix scroll bar drawing bug.
+	Prevent grid from showing as much when pressing control to increase a spinner's increment speed. Still shows sometimes, but better than before.
+
+--Code Changes
+	Pass count and fuse to iterator as a structure now to allow for passing more params in the future.
+	Slightly different grid/block logic when running DE filtering on the GPU.
+	Attempt a different way of doing DE, but #define out because it ended up not being faster.
+	Restructure some things to allow for a variable length xforms buffer to be passed to the GPU.
+	Add sub batch size and fuse count as ember members, and remove them from the renderer classes.
+	Remove m_LastPass from Renderer. It should have been removed with passes.
+	Pass seeds as a buffer to the OpenCL iteration kernel, rather than a single seed that gets modified.
+	Slight optimization on CPU accum.
+	Use case statement instead of if/else for xform chosing in OpenCL for a 2% speedup on params with large numbers of xforms.
+	Add SizeOf() wrapper around sizeof(vec[0]) * vec.size().
+	Remove LogScaleSum() functions from the CPU and GPU because they're no longer used since passes were removed.
+	Make some OpenCLWrapper getters const.
+	Better ogranize RendererCL methods that return grid dimensions.
+
+0.4.1.4 Beta 11/04/2014
+--User Changes
+	Remove custom focusing logic from spin boxes. This was originally done to overcome a bug in Qt that has since been fixed.
+	Add Random Xaos button.
+	Remove passes, they were never used.
+
+--Bug Fixes
+	Fix uniqe names and estimated iter count in final render dialog.
+	Fix using non-zero rotation with strips.
+	Fix locale decimal commas bug with affine adjustment combo boxes.
+	Fix accidental disabling of post affine group box. The designer was clobbering it.
+	Remove PaletteImage option from command line programs, it's unused.
+	Improve documentation for some other command line options.
+	
+--Code Changes
+	Replace all instances of auto_ptr with unique_ptr.
+	Remove * operator from Affine2D, it was unused.
+	
 0.4.1.3 Beta 10/14/2014
 --User Changes
 	Size is no longer fixed to the window size.

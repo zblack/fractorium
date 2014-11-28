@@ -186,6 +186,9 @@ bool EmberAnimate(EmberOptions& opt)
 		if (opt.Supersample() > 0)
 			embers[i].m_Supersample = opt.Supersample();
 
+		if (opt.SubBatchSize() != DEFAULT_SBS)
+			embers[i].m_SubBatchSize = opt.SubBatchSize();
+
 		embers[i].m_Quality *= T(opt.QualityScale());
 		embers[i].m_FinalRasW = (unsigned int)((T)embers[i].m_FinalRasW * opt.SizeScale());
 		embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH * opt.SizeScale());
@@ -250,13 +253,12 @@ bool EmberAnimate(EmberOptions& opt)
 	renderer->YAxisUp(opt.YAxisUp());
 	renderer->LockAccum(opt.LockAccum());
 	renderer->InsertPalette(opt.InsertPalette());
-	renderer->SubBatchSize(opt.SubBatchSize());
 	renderer->PixelAspectRatio(T(opt.AspectRatio()));
 	renderer->Transparency(opt.Transparency());
 	renderer->NumChannels(channels);
 	renderer->BytesPerChannel(opt.BitsPerChannel() / 8);
 	renderer->Callback(opt.DoProgress() ? progress.get() : NULL);
- 
+
 	//Begin run.
 	for (ftime = opt.FirstFrame(); ftime <= opt.LastFrame(); ftime += opt.Dtime())
 	{

@@ -184,12 +184,12 @@ public:
 	string DumpInfo();
 
 	//Accessors.
-	bool Ok();
-	bool Shared();
-	cl::Context Context();
-	unsigned int PlatformIndex();
-	unsigned int DeviceIndex();
-	unsigned int LocalMemSize();
+	bool Ok() const;
+	bool Shared() const;
+	cl::Context Context() const;
+	unsigned int PlatformIndex() const;
+	unsigned int DeviceIndex() const;
+	unsigned int LocalMemSize() const;
 
 	static void MakeEvenGridDims(unsigned int blockW, unsigned int blockH, unsigned int& gridW, unsigned int& gridH);
 

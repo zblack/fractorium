@@ -25,7 +25,6 @@ template <>
 DEOpenCLKernelCreator<float>::DEOpenCLKernelCreator(bool nVidia)
 {
 	m_NVidia = nVidia;
-	m_LogScaleSumDEEntryPoint                 = "LogScaleSumDensityFilterKernel";
 	m_LogScaleAssignDEEntryPoint              = "LogScaleAssignDensityFilterKernel";
 	m_GaussianDEWithoutSsEntryPoint           = "GaussianDEWithoutSsKernel";
 	m_GaussianDESsWithScfEntryPoint           = "GaussianDESsWithScfKernel";
@@ -33,7 +32,6 @@ DEOpenCLKernelCreator<float>::DEOpenCLKernelCreator(bool nVidia)
 	m_GaussianDEWithoutSsNoCacheEntryPoint    = "GaussianDEWithoutSsNoCacheKernel";
 	m_GaussianDESsWithScfNoCacheEntryPoint    = "GaussianDESsWithScfNoCacheKernel";
 	m_GaussianDESsWithoutScfNoCacheEntryPoint = "GaussianDESsWithoutScfNoCacheKernel";
-	m_LogScaleSumDEKernel                     = CreateLogScaleSumDEKernelString();
 	m_LogScaleAssignDEKernel                  = CreateLogScaleAssignDEKernelString();
 	m_GaussianDEWithoutSsKernel               = CreateGaussianDEKernel(1);
 	m_GaussianDESsWithScfKernel               = CreateGaussianDEKernel(2);
@@ -56,25 +54,39 @@ DEOpenCLKernelCreator<float>::DEOpenCLKernelCreator(bool nVidia)
 template <>
 DEOpenCLKernelCreator<double>::DEOpenCLKernelCreator(bool nVidia)
 {
+#ifdef ROW_ONLY_DE
 	m_NVidia = nVidia;
-	m_LogScaleSumDEEntryPoint                 = "LogScaleSumDensityFilterKernel";
+	m_LogScaleAssignDEEntryPoint = "LogScaleAssignDensityFilterKernel";
+	m_GaussianDEWithoutSsEntryPoint = "GaussianDEWithoutSsKernel";
+	m_GaussianDESsWithScfEntryPoint = "GaussianDESsWithScfKernel";
+	m_GaussianDESsWithoutScfEntryPoint = "GaussianDESsWithoutScfKernel";
+	m_GaussianDEWithoutSsNoCacheEntryPoint = "GaussianDEWithoutSsNoCacheKernel";
+	m_GaussianDESsWithScfNoCacheEntryPoint = "GaussianDESsWithScfNoCacheKernel";
+	m_GaussianDESsWithoutScfNoCacheEntryPoint = "GaussianDESsWithoutScfNoCacheKernel";
+	m_LogScaleAssignDEKernel = CreateLogScaleAssignDEKernelString();
+	m_GaussianDEWithoutSsKernel = CreateGaussianDEKernel(1);
+	m_GaussianDESsWithScfKernel = CreateGaussianDEKernel(2);
+	m_GaussianDESsWithoutScfKernel = CreateGaussianDEKernel(3);
+	m_GaussianDEWithoutSsNoCacheKernel = CreateGaussianDEKernelNoLocalCache(1);
+	m_GaussianDESsWithScfNoCacheKernel = CreateGaussianDEKernelNoLocalCache(2);
+	m_GaussianDESsWithoutScfNoCacheKernel = CreateGaussianDEKernelNoLocalCache(3);
+#else
+	m_NVidia = nVidia;
 	m_LogScaleAssignDEEntryPoint              = "LogScaleAssignDensityFilterKernel";
 	m_GaussianDEWithoutSsNoCacheEntryPoint    = "GaussianDEWithoutSsNoCacheKernel";
 	m_GaussianDESsWithScfNoCacheEntryPoint    = "GaussianDESsWithScfNoCacheKernel";
 	m_GaussianDESsWithoutScfNoCacheEntryPoint = "GaussianDESsWithoutScfNoCacheKernel";
-	m_LogScaleSumDEKernel                     = CreateLogScaleSumDEKernelString();
 	m_LogScaleAssignDEKernel                  = CreateLogScaleAssignDEKernelString();
 	m_GaussianDEWithoutSsNoCacheKernel        = CreateGaussianDEKernelNoLocalCache(1);
 	m_GaussianDESsWithScfNoCacheKernel        = CreateGaussianDEKernelNoLocalCache(2);
 	m_GaussianDESsWithoutScfNoCacheKernel     = CreateGaussianDEKernelNoLocalCache(3);
+#endif
 }
 
 /// <summary>
 /// Kernel source and entry point properties, getters only.
 /// </summary>
 
-template <typename T> string DEOpenCLKernelCreator<T>::LogScaleSumDEKernel() { return m_LogScaleSumDEKernel; }
-template <typename T> string DEOpenCLKernelCreator<T>::LogScaleSumDEEntryPoint() { return m_LogScaleSumDEEntryPoint; }
 template <typename T> string DEOpenCLKernelCreator<T>::LogScaleAssignDEKernel() { return m_LogScaleAssignDEKernel; }
 template <typename T> string DEOpenCLKernelCreator<T>::LogScaleAssignDEEntryPoint() { return m_LogScaleAssignDEEntryPoint; }
 
@@ -87,6 +99,7 @@ template <typename T> string DEOpenCLKernelCreator<T>::LogScaleAssignDEEntryPoin
 template <typename T>
 string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, unsigned int filterWidth)
 {
+#ifndef ROW_ONLY_DE
 	if ((typeid(T) == typeid(double)) || (filterWidth > MaxDEFilterSize()))//Type double does not use cache.
 	{
 		if (ss > 1)
@@ -100,6 +113,7 @@ string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, unsigned int filter
 			return m_GaussianDEWithoutSsNoCacheKernel;
 	}
 	else
+#endif
 	{
 		if (ss > 1)
 		{
@@ -122,6 +136,7 @@ string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, unsigned int filter
 template <typename T>
 string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(size_t ss, unsigned int filterWidth)
 {
+#ifndef ROW_ONLY_DE
 	if ((typeid(T) == typeid(double)) || (filterWidth > MaxDEFilterSize()))//Type double does not use cache.
 	{
 		if (ss > 1)
@@ -135,6 +150,7 @@ string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(size_t ss, unsigned int fi
 			return m_GaussianDEWithoutSsNoCacheEntryPoint;
 	}
 	else
+#endif
 	{
 		if (ss > 1)
 		{
@@ -195,45 +211,6 @@ unsigned int DEOpenCLKernelCreator<T>::SolveMaxBoxSize(unsigned int localMem)
 }
 
 /// <summary>
-/// Create the log scale kernel string, using summation.
-/// This means each cell will be added to, rather than just assigned.
-/// Since adding is slower than assigning, this should only be used when Passes > 1,
-/// otherwise use the kernel created from CreateLogScaleAssignDEKernelString().
-/// </summary>
-/// <returns>The kernel string</returns>
-template <typename T>
-string DEOpenCLKernelCreator<T>::CreateLogScaleSumDEKernelString()
-{
-	ostringstream os;
- 
-	os	<<
-		ConstantDefinesString(typeid(T) == typeid(double)) <<
-		DensityFilterCLStructString <<
-		"__kernel void " << m_LogScaleSumDEEntryPoint << "(\n"
-		"	const __global real4* histogram,\n"
-		"	__global real4* accumulator,\n"
-		"	__constant DensityFilterCL* logFilter\n"
-		"\t)\n"
-		"{\n"
-		"	if ((GLOBAL_ID_X < logFilter->m_SuperRasW) && (GLOBAL_ID_Y < logFilter->m_SuperRasH))\n"
-		"	{\n"
-		"		uint index = (GLOBAL_ID_Y * logFilter->m_SuperRasW) + GLOBAL_ID_X;\n"
-		"\n"
-		"		if (histogram[index].w != 0)\n"
-		"		{\n"
-		"			real_t logScale = (logFilter->m_K1 * log(1.0 + histogram[index].w * logFilter->m_K2)) / histogram[index].w;\n"
-		"\n"
-		"			accumulator[index] += histogram[index] * logScale;\n"//Using a single real4 vector operation doubles the speed from doing each component individually.
-		"		}\n"
-		"\n"
-		"		barrier(CLK_GLOBAL_MEM_FENCE);\n"//Just to be safe. Makes no speed difference to do all of the time or only when there's a hit.
-		"	}\n"
-		"}\n";
- 
-	return os.str();
-}
-
-/// <summary>
 /// Create the log scale kernel string, using assignment.
 /// Use this when Passes == 1.
 /// </summary>
@@ -270,6 +247,215 @@ string DEOpenCLKernelCreator<T>::CreateLogScaleAssignDEKernelString()
 	return os.str();
 }
 
+#ifdef ROW_ONLY_DE
+template <typename T>
+string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
+{
+	bool doSS = ss > 1;
+	bool doScf = !(ss & 1);
+	ostringstream os;
+
+	os <<
+		ConstantDefinesString(typeid(T) == typeid(double)) <<
+		DensityFilterCLStructString <<
+		UnionCLStructString <<
+		"__kernel void " << GaussianDEEntryPoint(ss, MaxDEFilterSize()) << "(\n" <<
+		"	const __global real4* histogram,\n"
+		"	__global real4reals* accumulator,\n"
+		"	__constant DensityFilterCL* densityFilter,\n"
+		"	const __global real_t* filterCoefs,\n"
+		"	const __global real_t* filterWidths,\n"
+		"	const __global uint* coefIndices,\n"
+		"	const uint chunkSizeW,\n"
+		"	const uint chunkSizeH,\n"
+		"	const uint chunkW,\n"
+		"	const uint chunkH\n"
+		"\t)\n"
+		"{\n"
+		"	uint rowsToProcess = 32;\n"//Rows to process.
+		"\n"
+		"	if (((((BLOCK_ID_X * chunkSizeW) + chunkW) * BLOCK_SIZE_X) + THREAD_ID_X >= densityFilter->m_SuperRasW) ||\n"
+		"	    ((((BLOCK_ID_Y * chunkSizeH) + chunkH) * rowsToProcess) + THREAD_ID_Y >= densityFilter->m_SuperRasH))\n"
+		"			return;\n"
+		"\n";
+
+	if (doSS)
+	{
+		os <<
+			"	uint ss = (uint)floor((real_t)densityFilter->m_Supersample / 2.0);\n"
+			"	int densityBoxLeftX;\n"
+			"	int densityBoxRightX;\n"
+			"	int densityBoxTopY;\n"
+			"	int densityBoxBottomY;\n"
+			"\n";
+
+		if (doScf)
+			os <<
+			"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), 2.0);\n";
+	}
+
+	os <<
+		"	uint fullTempBoxWidth;\n"
+		"	uint leftBound, rightBound, topBound, botBound;\n"
+		"	uint blockHistStartRow, blockHistEndRow, histCol;\n"
+		"	uint blockHistStartCol, boxReadStartCol, boxReadEndCol;\n"
+		"	uint accumWriteStartCol, colsToWrite, colOffset, colsToWriteOffset;\n"
+		"	int histRow, filterRow, accumWriteOffset;\n"
+		"\n"
+		"	fullTempBoxWidth = BLOCK_SIZE_X + (densityFilter->m_FilterWidth * 2);\n"
+		//Compute the bounds of the area to be sampled, which is just the ends minus the super sample minus 1.
+		"	leftBound = densityFilter->m_Supersample - 1;\n"
+		"	rightBound = densityFilter->m_SuperRasW - (densityFilter->m_Supersample - 1);\n"
+		"	topBound = densityFilter->m_Supersample - 1;\n"
+		"	botBound = densityFilter->m_SuperRasH - (densityFilter->m_Supersample - 1);\n"
+		"\n"
+		//Start and end values are the indices in the histogram read from
+		//and written to in the accumulator. They are not the indices for the local block of data.
+		//Before computing local offsets, compute the global offsets first to determine if any rows or cols fall outside of the bounds.
+		"	blockHistStartRow = min(botBound, topBound + (((BLOCK_ID_Y * chunkSizeH) + chunkH) * rowsToProcess));\n"//The first histogram row this block will process.
+		"	blockHistEndRow = min(botBound, blockHistStartRow + rowsToProcess);\n"//The last histogram row this block will process, clamped to the last row.
+		"	blockHistStartCol = min(rightBound, leftBound + (((BLOCK_ID_X * chunkSizeW) + chunkW) * BLOCK_SIZE_X));\n"//The first histogram column this block will process.
+		"	boxReadStartCol = densityFilter->m_FilterWidth - min(densityFilter->m_FilterWidth, blockHistStartCol);\n"//The first box col this block will read from when copying to the accumulator.
+		"	boxReadEndCol = densityFilter->m_FilterWidth + min(densityFilter->m_FilterWidth + BLOCK_SIZE_X, densityFilter->m_SuperRasW - blockHistStartCol);\n"//The last box col this block will read from when copying to the accumulator.
+		"\n"
+		//Last, the indices in the global accumulator that the local bounds will be writing to.
+		"	accumWriteStartCol = blockHistStartCol - min(densityFilter->m_FilterWidth, blockHistStartCol);\n"//The first column in the accumulator this block will write to.
+		"	colsToWrite = ceil((real_t)(boxReadEndCol - boxReadStartCol) / (real_t)BLOCK_SIZE_X);\n"//Elements per thread to be written to the accumulator.
+		"	histCol = blockHistStartCol + THREAD_ID_X;\n"//The histogram column this individual thread will be reading from.
+		"\n"
+		"	if (histCol >= rightBound)\n"
+		"		return;\n"
+		"\n"
+		//Compute the col position in this local box to serve as the center position
+		//from which filter application offsets are computed.
+		//These are the local indices for the local data that are temporarily accumulated to before
+		//writing out to the global accumulator.
+		"	uint boxCol = densityFilter->m_FilterWidth + THREAD_ID_X;\n"
+		"	uint colsToZeroOffset, colsToZero = ceil((real_t)fullTempBoxWidth / (real_t)(BLOCK_SIZE_X));\n"//Usually is 2.
+		"	int i, j, k, jmin, jmax;\n"
+		"	uint filterSelectInt, filterCoefIndex;\n"
+		"	real_t cacheLog;\n"
+		"	real_t filterSelect;\n"
+		"	real4 bucket;\n"
+		;
+
+	os << " __local real4reals filterBox[192];\n";//Must be >= fullTempBoxWidth.
+
+	os <<
+		"\n"
+		"	colsToZeroOffset = colsToZero * THREAD_ID_X;\n"
+		"	colsToWriteOffset = colsToWrite * THREAD_ID_X;\n"
+		"	k = (int)densityFilter->m_FilterWidth;\n"//Need a signed int to use below, really is filter width, but reusing a variable to save space.
+		"\n"
+		"	for (histRow = blockHistStartRow; histRow < blockHistEndRow; histRow++)\n"//Process pixels by row, for 32 rows.
+		"	{\n"
+		"		bucket = histogram[(histRow * densityFilter->m_SuperRasW) + histCol];\n"
+		"\n"
+		"		if (bucket.w != 0)\n"
+		"			cacheLog = (densityFilter->m_K1 * log(1.0 + bucket.w * densityFilter->m_K2)) / bucket.w;\n"
+		"\n";
+		
+	if (doSS)
+	{
+		os <<
+			"	filterSelect = 0;\n"
+			"	densityBoxLeftX = histCol - min(histCol, ss);\n"
+			"	densityBoxRightX = histCol + min(ss, (densityFilter->m_SuperRasW - histCol) - 1);\n"
+			"	densityBoxTopY = histRow - min((uint)histRow, ss);\n"
+			"	densityBoxBottomY = histRow + min(ss, (densityFilter->m_SuperRasH - histRow) - 1);\n"
+			"\n"
+			"	for (j = densityBoxTopY; j <= densityBoxBottomY; j++)\n"
+			"	{\n"
+			"		for (i = densityBoxLeftX; i <= densityBoxRightX; i++)\n"
+			"		{\n"
+			"			filterSelect += histogram[(j * densityFilter->m_SuperRasW) + i].w;\n"
+			"		}\n"
+			"	}\n"
+			"\n";
+
+	if (doScf)
+		os << "	filterSelect *= scfact;\n";
+	}
+	else
+	{
+	os
+		<< "	filterSelect = bucket.w;\n";
+	}
+
+	os <<
+		"\n"
+		"		if (filterSelect > densityFilter->m_MaxFilteredCounts)\n"
+		"			filterSelectInt = densityFilter->m_MaxFilterIndex;\n"
+		"		else if (filterSelect <= DE_THRESH)\n"
+		"			filterSelectInt = (int)ceil(filterSelect) - 1;\n"
+		"		else if (filterSelect != 0)\n"
+		"			filterSelectInt = (int)DE_THRESH + (int)floor(pow((real_t)(filterSelect - DE_THRESH), densityFilter->m_Curve));\n"
+		"		else\n"
+		"			filterSelectInt = 0;\n"
+		"\n"
+		"		if (filterSelectInt > densityFilter->m_MaxFilterIndex)\n"
+		"			filterSelectInt = densityFilter->m_MaxFilterIndex;\n"
+		"\n"
+		"		filterCoefIndex = filterSelectInt * densityFilter->m_KernelSize;\n"
+		"\n"
+		//With this new method, only accumulate to the temp local buffer first. Write to the final accumulator last.
+		//For each loop through, note that there is a local memory barrier call inside of each call to AddToAccumNoCheck().
+		//If this isn't done, pixel errors occurr and even an out of resources error occurrs because too many writes are done to the same place in memory at once.
+		"		jmin = min(k, histRow);\n"
+		"		jmax = (int)min((densityFilter->m_SuperRasH - 1) - histRow, densityFilter->m_FilterWidth);\n"
+		"\n"
+		"		for (j = -jmin; j <= jmax; j++)\n"
+		"		{\n"
+		"			for (i = 0; i < colsToZero && (colsToZeroOffset + i) < fullTempBoxWidth; i++)\n"//Each thread zeroizes a few columns.
+		"			{\n"
+		"				filterBox[colsToZeroOffset + i].m_Real4 = 0;\n"
+		"			}\n"
+		"\n"
+		"			barrier(CLK_LOCAL_MEM_FENCE);\n"
+		"\n"
+		"			if (bucket.w != 0)\n"
+		"			{\n"
+		"				filterRow = abs(j) * (densityFilter->m_FilterWidth + 1);\n"
+		"\n"
+		"				for (i = -k; i <= k; i++)\n"
+		"				{\n"
+		"					filterSelectInt = filterCoefIndex + coefIndices[filterRow + abs(i)];\n"//Really is filterCoeffIndexPlusOffset, but reusing a variable to save space.
+		"					filterBox[i + boxCol].m_Real4 += (bucket * (filterCoefs[filterSelectInt] * cacheLog));\n"
+		"				}\n"
+		"			}\n"
+		"\n"
+		"			barrier(CLK_LOCAL_MEM_FENCE);\n"
+		"\n"
+		//At this point, all threads in this block have applied the filter to their surrounding pixels and stored the results in the temp local box.
+		//Add the cells of it that are in bounds to the global accumulator.
+		//Compute offsets in local box to read from, and offsets into global accumulator to write to.
+		//Use a method here that is similar to the zeroization above: Each thread (column) in the first row iterates through all of the
+		//rows and adds a few columns to the accumulator.
+		//"			if (THREAD_ID_X == 0)\n"
+		//"			{\n"
+		//"				for (int kk = boxReadStartCol, i = 0; kk < boxReadEndCol; kk++, i++)\n"//Each thread writes a few columns.//Could do away with kk//TODO//OPT
+		//"				{\n"
+		//"					accumulator[((histRow + j) * densityFilter->m_SuperRasW) + (accumWriteStartCol + i)].m_Real4 += filterBox[kk].m_Real4;\n"
+		//"				}\n"
+		//"			}\n"
+		"			accumWriteOffset = ((histRow + j) * densityFilter->m_SuperRasW) + accumWriteStartCol;\n"
+		"\n"
+		"			for (i = 0; i < colsToWrite; i++)\n"//Each thread writes a few columns.
+		"			{\n"
+		"				colOffset = colsToWriteOffset + i;\n"
+		"\n"
+		"				if (boxReadStartCol + colOffset < boxReadEndCol)\n"
+		"					accumulator[accumWriteOffset + colOffset].m_Real4 += filterBox[boxReadStartCol + colOffset].m_Real4;\n"
+		"			}\n"
+		"		}\n"//for() filter rows.
+		"		barrier(CLK_GLOBAL_MEM_FENCE);\n"
+		"	}\n"//for() histogram rows.
+		"}\n";
+
+	return os.str();
+}
+
+#else
 /// <summary>
 /// Create the gaussian density filtering kernel string.
 /// 6 different methods of processing were tried before settling on this final and fastest 7th one.
@@ -281,7 +467,7 @@ string DEOpenCLKernelCreator<T>::CreateLogScaleAssignDEKernelString()
 /// This allows writing to the global buffer without ever overlapping or using atomics.
 /// The supersample parameter will produce three different kernels.
 /// SS = 1, SS > 1 && SS even, SS > 1 && SS odd.
-/// The width of the kernl this runs in must be evenly divisible by 16 or else artifacts will occur.
+/// The width of the kernel this runs in must be evenly divisible by 16 or else artifacts will occur.
 /// Note that because this function uses so many variables and is so complex, OpenCL can easily run
 /// out of resources in some cases. Certain variables had to be reused to condense the kernel footprint
 /// down enough to be able to run a block size of 32x32.
@@ -311,18 +497,15 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"	const __global uint* coefIndices,\n"
 		"	const uint chunkSizeW,\n"
 		"	const uint chunkSizeH,\n"
-		"	const uint rowParity,\n"
-		"	const uint colParity\n"
+		"	const uint chunkW,\n"
+		"	const uint chunkH\n"
 		"\t)\n"
 		"{\n"
-		//Parity determines if this function should execute.
-		"	if ((GLOBAL_ID_X >= densityFilter->m_SuperRasW) ||\n"
-		"	    (GLOBAL_ID_Y >= densityFilter->m_SuperRasH) ||\n"
-		"	    ((BLOCK_ID_X % chunkSizeW) != colParity)    ||\n"
-		"	    ((BLOCK_ID_Y % chunkSizeH) != rowParity))     \n"
+		"	if (((((BLOCK_ID_X * chunkSizeW) + chunkW) * BLOCK_SIZE_X) + THREAD_ID_X >= densityFilter->m_SuperRasW) ||\n"
+		"	    ((((BLOCK_ID_Y * chunkSizeH) + chunkH) * BLOCK_SIZE_Y) + THREAD_ID_Y >= densityFilter->m_SuperRasH))\n"
 		"			return;\n"
 		"\n";
- 
+
 	if (doSS)
 	{
 		os <<
@@ -367,13 +550,13 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		//Start and end values are the indices in the histogram read from
 		//and written to in the accumulator. They are not the indices for the local block of data.
 		//Before computing local offsets, compute the global offsets first to determine if any rows or cols fall outside of the bounds.
-		"	blockHistStartRow = min(botBound, topBound + (BLOCK_ID_Y * BLOCK_SIZE_Y));\n"//The first histogram row this block will process.
+		"	blockHistStartRow = min(botBound, topBound + (((BLOCK_ID_Y * chunkSizeH) + chunkH) * BLOCK_SIZE_Y));\n"//The first histogram row this block will process.
 		"	blockHistEndRow = min(botBound, blockHistStartRow + BLOCK_SIZE_Y);\n"//The last histogram row this block will process, clamped to the last row.
 		"	boxReadStartRow = densityFilter->m_FilterWidth - min(densityFilter->m_FilterWidth, blockHistStartRow);\n"//The first row in the local box to read from when writing back to the final accumulator for this block.
 		"	boxReadEndRow = densityFilter->m_FilterWidth + min(densityFilter->m_FilterWidth + BLOCK_SIZE_Y, densityFilter->m_SuperRasH - blockHistStartRow);\n"//The last row in the local box to read from  when writing back to the final accumulator for this block.
-		"	blockHistStartCol = min(rightBound, leftBound + (BLOCK_ID_X * BLOCK_SIZE_X));\n"//The first histogram column this block will process.
-		"	boxReadStartCol = densityFilter->m_FilterWidth - min(densityFilter->m_FilterWidth, blockHistStartCol);\n"//The first box row this block will read from when copying to the accumulator.
-		"	boxReadEndCol = densityFilter->m_FilterWidth + min(densityFilter->m_FilterWidth + BLOCK_SIZE_X, densityFilter->m_SuperRasW - blockHistStartCol);\n"//The last box row this block will read from when copying to the accumulator.
+		"	blockHistStartCol = min(rightBound, leftBound + (((BLOCK_ID_X * chunkSizeW) + chunkW) * BLOCK_SIZE_X));\n"//The first histogram column this block will process.
+		"	boxReadStartCol = densityFilter->m_FilterWidth - min(densityFilter->m_FilterWidth, blockHistStartCol);\n"//The first box col this block will read from when copying to the accumulator.
+		"	boxReadEndCol = densityFilter->m_FilterWidth + min(densityFilter->m_FilterWidth + BLOCK_SIZE_X, densityFilter->m_SuperRasW - blockHistStartCol);\n"//The last box col this block will read from when copying to the accumulator.
 		"\n"
 		//Last, the indices in the global accumulator that the local bounds will be writing to.
 		"	accumWriteStartRow = blockHistStartRow - min(densityFilter->m_FilterWidth,  blockHistStartRow);\n"//Will be fw - 0 except for boundary columns, it will be less.
@@ -496,7 +679,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"				{\n"
 		"					filterSelectInt = filterCoefIndex + coefIndices[(abs(j) * (densityFilter->m_FilterWidth + 1)) + abs(i)];\n"//Really is filterCoeffIndexPlusOffset, but reusing a variable to save space.
 		"\n"
-		"					if (filterCoefs[filterSelectInt] != 0)\n"
+		"					if (filterCoefs[filterSelectInt] != 0)\n"//This conditional actually improves speed, despite SIMT being bad at conditionals.
 		"					{\n"
 		"						filterBox[(i + boxCol) + ((j + boxRow) * fullTempBoxWidth)].m_Real4 += (bucket * (filterCoefs[filterSelectInt] * cacheLog));\n"
 		"					}\n"
@@ -511,14 +694,14 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"\n"
 		"	if (THREAD_ID_Y == 0)\n"
 		"	{\n"
-				//At this point, all threads in this block have applied the filter to their surrounding pixel and stored the results in the temp local box.
+				//At this point, all threads in this block have applied the filter to their surrounding pixels and stored the results in the temp local box.
 				//Add the cells of it that are in bounds to the global accumulator.
 				//Compute offsets in local box to read from, and offsets into global accumulator to write to.
 				//Use a method here that is similar to the zeroization above: Each thread (column) in the first row iterates through all of the
 				//rows and adds a few columns to the accumulator.
 		"		for (i = boxReadStartRow, j = accumWriteStartRow; i < boxReadEndRow; i++, j++)\n"
 		"		{\n"
-		"			for (k = 0; k < colsToWrite; k++)\n"//Write a few columns.
+		"			for (k = 0; k < colsToWrite; k++)\n"//Each thread writes a few columns.
 		"			{\n"
 		"				boxCol = (colsToWrite * THREAD_ID_X) + k;\n"//Really is colOffset, but reusing a variable to save space.
 		"\n"
@@ -532,6 +715,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 
 	return os.str();
 }
+#endif
 
 /// <summary>
 /// Create the gaussian density filtering kernel string, but use no local cache and perform
@@ -543,7 +727,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 /// on the CPU because the frequent global memory access brings performance to a crawl.
 /// The supersample parameter will produce three different kernels.
 /// SS = 1, SS > 1 && SS even, SS > 1 && SS odd.
-/// The width of the kernl this runs in must be evenly divisible by 16 or else artifacts will occur.
+/// The width of the kernel this runs in must be evenly divisible by 16 or else artifacts will occur.
 /// Note that because this function uses so many variables and is so complex, OpenCL can easily run
 /// out of resources in some cases. Certain variables had to be reused to condense the kernel footprint
 /// down enough to be able to run a block size of 32x32.
@@ -572,15 +756,12 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"	const __global uint* coefIndices,\n"
 		"	const uint chunkSizeW,\n"
 		"	const uint chunkSizeH,\n"
-		"	const uint rowParity,\n"
-		"	const uint colParity\n"
+		"	const uint chunkW,\n"
+		"	const uint chunkH\n"
 		"\t)\n"
 		"{\n"
-		//Parity determines if this function should execute.
-		"	if ((GLOBAL_ID_X >= densityFilter->m_SuperRasW) ||\n"
-		"	    (GLOBAL_ID_Y >= densityFilter->m_SuperRasH) ||\n"
-		"	    ((BLOCK_ID_X % chunkSizeW) != colParity)    ||\n"
-		"	    ((BLOCK_ID_Y % chunkSizeH) != rowParity))     \n"
+		"	if (((((BLOCK_ID_X * chunkSizeW) + chunkW) * BLOCK_SIZE_X) + THREAD_ID_X >= densityFilter->m_SuperRasW) ||\n"
+		"	    ((((BLOCK_ID_Y * chunkSizeH) + chunkH) * BLOCK_SIZE_Y) + THREAD_ID_Y >= densityFilter->m_SuperRasH))\n"
 		"			return;\n"
 		"\n";
  
@@ -606,10 +787,10 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"\n"
 		//Start and end values are the indices in the histogram read from and written to in the accumulator.
 		//Before computing local offsets, compute the global offsets first to determine if any rows or cols fall outside of the bounds.
-		"	uint blockHistStartRow = min(botBound, topBound + (BLOCK_ID_Y * BLOCK_SIZE_Y));\n"//The first histogram row this block will process.
+		"	uint blockHistStartRow = min(botBound, topBound + (((BLOCK_ID_Y * chunkSizeH) + chunkH) * BLOCK_SIZE_Y));\n"//The first histogram row this block will process.
 		"	uint threadHistRow = blockHistStartRow + THREAD_ID_Y;\n"//The histogram row this individual thread will be reading from.
 		"\n"
-		"	uint blockHistStartCol = min(rightBound, leftBound + (BLOCK_ID_X * BLOCK_SIZE_X));\n"//The first histogram column this block will process.
+		"	uint blockHistStartCol = min(rightBound, leftBound + (((BLOCK_ID_X * chunkSizeW) + chunkW) * BLOCK_SIZE_X));\n"//The first histogram column this block will process.
 		"	uint threadHistCol = blockHistStartCol + THREAD_ID_X;\n"//The histogram column this individual thread will be reading from.
 		"\n"
 		"	int i, j;\n"

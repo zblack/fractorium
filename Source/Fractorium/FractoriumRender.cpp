@@ -140,7 +140,7 @@ void FractoriumEmberControllerBase::SaveCurrentRender(const QString& filename, b
 			return;
 		}
 
-		data = m_FinalImage.data();//Png and channels = 4.
+		data = m_FinalImage.data();//Png and channels == 4.
 		
 		if ((suffix == "jpg" || suffix == "bmp") && m_Renderer->NumChannels() == 4)
 		{
@@ -296,7 +296,7 @@ bool FractoriumEmberController<T>::Render()
 
 	bool success = true;
 	GLWidget* gl = m_Fractorium->ui.GLDisplay;
-	RendererCL<T>* rendererCL;
+	RendererCL<T>* rendererCL = nullptr;
 	eProcessAction action = CondenseAndClearProcessActions();
 
 	if (m_Renderer->RendererType() == OPENCL_RENDERER)
@@ -412,10 +412,16 @@ bool FractoriumEmberController<T>::Render()
 					if (m_UndoList.size() >= UNDO_SIZE)
 						m_UndoList.pop_front();
 				}
-				else if (!m_LastEditWasUndoRedo && m_UndoIndex != m_UndoList.size() - 1)//They were in the middle of the undo list, then did a manual edit, so clear the undo list.
+				else if (!m_LastEditWasUndoRedo && m_UndoIndex < m_UndoList.size() - 1)//They were anywhere but the end of the undo list, then did a manual edit, so clear the undo list.
 				{
+					Ember<T> ember(m_UndoList[m_UndoIndex]);
+
 					ClearUndo();
+					m_UndoList.push_back(ember);
 					m_UndoList.push_back(m_Ember);
+					m_UndoIndex = m_UndoList.size() - 1;
+					m_Fractorium->ui.ActionUndo->setEnabled(true);
+					m_Fractorium->ui.ActionRedo->setEnabled(false);
 				}
 
 				m_LastEditWasUndoRedo = false;
@@ -515,8 +521,22 @@ bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsi
 	{
 		m_RenderType = m_Renderer->RendererType();
 
-		if (m_RenderType == OPENCL_RENDERER && m_Fractorium->m_QualitySpin->value() < 30)
-			m_Fractorium->m_QualitySpin->setValue(30);
+		if (m_RenderType == OPENCL_RENDERER)
+		{
+			m_Fractorium->m_QualitySpin->DoubleClickZero(30);
+			m_Fractorium->m_QualitySpin->DoubleClickNonZero(30);
+
+			if (m_Fractorium->m_QualitySpin->value() < 30)
+				m_Fractorium->m_QualitySpin->setValue(30);
+		}
+		else
+		{
+			m_Fractorium->m_QualitySpin->DoubleClickZero(10);
+			m_Fractorium->m_QualitySpin->DoubleClickNonZero(10);
+
+			if (m_Fractorium->m_QualitySpin->value() > 10)
+				m_Fractorium->m_QualitySpin->setValue(10);
+		}
 
 		m_Renderer->Callback(this);
 		m_Renderer->NumChannels(4);//Always using 4 since the GL texture is RGBA.

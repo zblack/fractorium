@@ -593,6 +593,8 @@ private:
 			else if (ParseAndAssignInt(curAtt->name, attStr, "oversample",       currentEmber.m_Supersample    , ret)) { }
 			else if (ParseAndAssignInt(curAtt->name, attStr, "supersample",      currentEmber.m_Supersample    , ret)) { }
 			else if (ParseAndAssignInt(curAtt->name, attStr, "temporal_samples", currentEmber.m_TemporalSamples, ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "sub_batch_size",	 currentEmber.m_SubBatchSize   , ret)) { }
+			else if (ParseAndAssignInt(curAtt->name, attStr, "fuse",			 currentEmber.m_FuseCount	   , ret)) { }
 			else if (ParseAndAssignInt(curAtt->name, attStr, "soloxform",		 soloXform                     , ret)) { }
 			else if (ParseAndAssignInt(curAtt->name, attStr, "new_linear",		 newLinear					   , ret)) { }
 

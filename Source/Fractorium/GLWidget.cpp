@@ -294,7 +294,7 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 	bool dragging = m_DragState == DragDragging;
 
 	//Draw grid if control key is pressed.
-	if ((m_DragModifier & DragModControl) == DragModControl)
+	if (m_GL->hasFocus() && ((m_DragModifier & DragModControl) == DragModControl))
 	{
 		m_GL->glLineWidth(1.0f);
 		m_GL->DrawGrid();

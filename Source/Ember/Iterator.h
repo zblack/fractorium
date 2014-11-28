@@ -16,6 +16,17 @@ namespace EmberNs
 	using Iterator<T>::DoFinalXform; \
 	using Iterator<T>::DoBadVals;
 
+template <typename T, typename bucketT> class Renderer;
+
+template <typename T>
+struct IterParams
+{
+	size_t m_Count;
+	size_t m_Skip;
+	//T m_OneColDiv2;
+	//T m_OneRowDiv2;
+};
+
 /// <summary>
 /// Iterator base class.
 /// Iterating is one loop level outside of the inner xform application loop so it's still very important
@@ -69,7 +80,7 @@ public:
 	/// <param name="samples">The buffer to store the output points</param>
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
-	virtual size_t Iterate(Ember<T>& ember, size_t count, size_t skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { return 0; }
+	virtual size_t Iterate(Ember<T>& ember, IterParams<T>& params, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { return 0; }
 
 	/// <summary>
 	/// Initialize the xform selection vector by normalizing the weights of all xforms and
@@ -278,7 +289,7 @@ public:
 	/// <param name="samples">The buffer to store the output points</param>
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
-	virtual size_t Iterate(Ember<T>& ember, size_t count, size_t skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual size_t Iterate(Ember<T>& ember, IterParams<T>& params, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		size_t i, badVals = 0;
 		Point<T> tempPoint, p1;
@@ -290,7 +301,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, badVals, &p1, rand);
@@ -299,7 +310,7 @@ public:
 				DoFinalXform(ember, p1, samples, rand);//Apply to last fuse point and store as the first element in samples.
 				ember.Proj(samples[0], rand);
 
-				for (i = 1; i < count; i++)//Real loop.
+				for (i = 1; i < params.m_Count; i++)//Real loop.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, badVals, &p1, rand);
@@ -312,7 +323,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, badVals, &p1, rand);
@@ -321,7 +332,7 @@ public:
 				samples[0] = p1;
 				ember.Proj(samples[0], rand);
 
-				for (i = 1; i < count; i++)//Real loop.
+				for (i = 1; i < params.m_Count; i++)//Real loop.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &samples[i], rand))
 						DoBadVals(xforms, badVals, samples + i, rand);
@@ -337,7 +348,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, badVals, &p1, rand);
@@ -345,7 +356,7 @@ public:
 
 				DoFinalXform(ember, p1, samples, rand);//Apply to last fuse point and store as the first element in samples.
 
-				for (i = 1; i < count; i++)//Real loop.
+				for (i = 1; i < params.m_Count; i++)//Real loop.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))//Feed the resulting value of applying the randomly selected xform back into the next iter, and not the result of applying the final xform.
 						DoBadVals(xforms, badVals, &p1, rand);
@@ -357,7 +368,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(&p1, &p1, rand))
 						DoBadVals(xforms, badVals, &p1, rand);
@@ -365,9 +376,11 @@ public:
 
 				samples[0] = p1;
 
-				for (i = 0; i < count - 1; i++)//Real loop.
+				for (i = 0; i < params.m_Count - 1; i++)//Real loop.
+				{
 					if (xforms[NextXformFromIndex(rand.Rand())].Apply(samples + i, samples + i + 1, rand))
 						DoBadVals(xforms, badVals, samples + i + 1, rand);
+				}
 			}
 		}
 
@@ -442,7 +455,7 @@ public:
 	/// <param name="samples">The buffer to store the output points</param>
 	/// <param name="rand">The random context to use</param>
 	/// <returns>The number of bad values</returns>
-	virtual size_t Iterate(Ember<T>& ember, size_t count, size_t skip, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
+	virtual size_t Iterate(Ember<T>& ember, IterParams<T>& params, Point<T>* samples, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		size_t i, xformIndex;
 		size_t lastXformUsed = 0;
@@ -456,7 +469,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -469,7 +482,7 @@ public:
 				DoFinalXform(ember, p1, samples, rand);//Apply to last fuse point and store as the first element in samples.
 				ember.Proj(samples[0], rand);
 
-				for (i = 1; i < count; i++)//Real loop.
+				for (i = 1; i < params.m_Count; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -485,7 +498,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -498,7 +511,7 @@ public:
 				samples[0] = p1;
 				ember.Proj(samples[0], rand);
 
-				for (i = 1; i < count; i++)//Real loop.
+				for (i = 1; i < params.m_Count; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -517,7 +530,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -529,7 +542,7 @@ public:
 
 				DoFinalXform(ember, p1, samples, rand);//Apply to last fuse point and store as the first element in samples.
 
-				for (i = 1; i < count; i++)//Real loop.
+				for (i = 1; i < params.m_Count; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -544,7 +557,7 @@ public:
 			{
 				p1 = samples[0];
 
-				for (i = 0; i < skip; i++)//Fuse.
+				for (i = 0; i < params.m_Skip; i++)//Fuse.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 
@@ -556,7 +569,7 @@ public:
 
 				samples[0] = p1;
 
-				for (i = 0; i < count - 1; i++)//Real loop.
+				for (i = 0; i < params.m_Count - 1; i++)//Real loop.
 				{
 					xformIndex = NextXformFromIndex(rand.Rand(), lastXformUsed);
 

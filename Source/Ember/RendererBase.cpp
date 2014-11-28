@@ -15,7 +15,6 @@ RendererBase::RendererBase()
 	m_YAxisUp = false;
 	m_InsertPalette = false;
 	m_ReclaimOnResize = false;
-	m_SubBatchSize = 1024 * 10;
 	m_NumChannels = 3;
 	m_BytesPerChannel = 1;
 	m_SuperSize = 0;
@@ -413,17 +412,6 @@ void RendererBase::Transparency(bool transparency)
 }
 
 /// <summary>
-/// Set the sub batch size. This is the size of of the chunks that the iteration
-/// trajectory will be broken up into.
-/// Reset the rendering process.
-/// </summary>
-/// <param name="sbs">The sub batch size to set</param>
-void RendererBase::SubBatchSize(size_t sbs)
-{
-	ChangeVal([&] { m_SubBatchSize = sbs; }, FULL_RENDER);
-}
-
-/// <summary>
 /// Set the callback object.
 /// </summary>
 /// <param name="callback">The callback object to set</param>
@@ -582,14 +570,6 @@ void RendererBase::NumChannels(size_t numChannels)
 /// </summary>
 /// <returns>The number of threads used when rendering</returns>
 size_t RendererBase::ThreadCount() const { return m_ThreadsToUse; }
-
-/// <summary>
-/// Get the sub batch size. This is the size of of the chunks that the iteration
-/// trajectory will be broken up into.
-/// Default: 10k.
-/// </summary>
-/// <returns>The sub batch size</returns>
-size_t RendererBase::SubBatchSize() const { return m_SubBatchSize; }
 
 /// <summary>
 /// Get the renderer type enum.

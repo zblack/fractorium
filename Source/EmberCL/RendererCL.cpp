@@ -22,7 +22,9 @@ RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool share
 
 	//Buffer names.
 	m_EmberBufferName               = "Ember";
+	m_XformsBufferName				= "Xforms";
 	m_ParVarsBufferName             = "ParVars";
+	m_SeedsBufferName				= "Seeds";
 	m_DistBufferName                = "Dist";
 	m_CarToRasBufferName            = "CarToRas";
 	m_DEFilterParamsBufferName      = "DEFilterParams";
@@ -50,6 +52,13 @@ RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool share
 	m_PaletteFormat.image_channel_data_type = CL_FLOAT;
 	m_FinalFormat.image_channel_order = CL_RGBA;
 	m_FinalFormat.image_channel_data_type = CL_UNORM_INT8;//Change if this ever supports 2BPC outputs for PNG.
+	m_Seeds.resize(IterGridKernelCount());
+
+	for (size_t i = 0; i < m_Seeds.size(); i++)
+	{
+		m_Seeds[i].x = m_Rand[0].Rand();
+		m_Seeds[i].y = m_Rand[0].Rand();
+	}
 
 	Init(platform, device, shared, outputTexID);//Init OpenCL upon construction and create programs that will not change.
 }
@@ -100,14 +109,12 @@ bool RendererCL<T>::Init(unsigned int platform, unsigned int device, bool shared
 		m_DEOpenCLKernelCreator = DEOpenCLKernelCreator<T>(m_NVidia);
 
 		string zeroizeProgram = m_IterOpenCLKernelCreator.ZeroizeKernel();
-		string logAssignProgram = m_DEOpenCLKernelCreator.LogScaleAssignDEKernel();
-		string logSumProgram = m_DEOpenCLKernelCreator.LogScaleSumDEKernel();//Build a couple of simple programs to ensure OpenCL is working right.
+		string logAssignProgram = m_DEOpenCLKernelCreator.LogScaleAssignDEKernel();//Build a couple of simple programs to ensure OpenCL is working right.
 
 		if (b && !(b = m_Wrapper.AddProgram(m_IterOpenCLKernelCreator.ZeroizeEntryPoint(),		  zeroizeProgram,	m_IterOpenCLKernelCreator.ZeroizeEntryPoint(),        m_DoublePrecision))) { m_ErrorReport.push_back(loc); }
 		if (b && !(b = m_Wrapper.AddProgram(m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint(), logAssignProgram, m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint(), m_DoublePrecision))) { m_ErrorReport.push_back(loc); }
-		if (b && !(b = m_Wrapper.AddProgram(m_DEOpenCLKernelCreator.LogScaleSumDEEntryPoint(),	  logSumProgram,	m_DEOpenCLKernelCreator.LogScaleSumDEEntryPoint(),    m_DoublePrecision))) { m_ErrorReport.push_back(loc); }
-		
 		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, 256, 1, 0, NULL))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SeedsBufferName, (void*)m_Seeds.data(), SizeOf(m_Seeds)))) { m_ErrorReport.push_back(loc); }
 
 		//This is the maximum box dimension for density filtering which consists of (blockSize  * blockSize) + (2 * filterWidth).
 		//These blocks must be square, and ideally, 32x32.
@@ -123,6 +130,11 @@ bool RendererCL<T>::Init(unsigned int platform, unsigned int device, bool shared
 	return b;
 }
 
+/// <summary>
+/// Set the shared output texture where final accumulation will be written to.
+/// </summary>
+/// <param name="outputTexID">The texture ID of the shared OpenGL texture if shared</param>
+/// <returns>True if success, else false.</returns>
 template <typename T>
 bool RendererCL<T>::SetOutputTexture(GLuint outputTexID)
 {
@@ -149,16 +161,28 @@ bool RendererCL<T>::SetOutputTexture(GLuint outputTexID)
 /// OpenCL property accessors, getters only.
 /// </summary>
 
-template <typename T> unsigned int RendererCL<T>::IterCountPerKernel()   { return m_IterCountPerKernel;                 }
-template <typename T> unsigned int RendererCL<T>::IterBlocksWide()       { return m_IterBlocksWide;                     }
-template <typename T> unsigned int RendererCL<T>::IterBlocksHigh()       { return m_IterBlocksHigh;                     }
-template <typename T> unsigned int RendererCL<T>::IterBlockWidth()       { return m_IterBlockWidth;                     }
-template <typename T> unsigned int RendererCL<T>::IterBlockHeight()      { return m_IterBlockHeight;                    }
-template <typename T> unsigned int RendererCL<T>::IterGridWidth()        { return IterBlocksWide() * IterBlockWidth();  }
-template <typename T> unsigned int RendererCL<T>::IterGridHeight()       { return IterBlocksHigh() * IterBlockHeight(); }
-template <typename T> unsigned int RendererCL<T>::TotalIterKernelCount() { return IterGridWidth() * IterGridHeight();   }
-template <typename T> unsigned int RendererCL<T>::PlatformIndex()        { return m_Wrapper.PlatformIndex();            }
-template <typename T> unsigned int RendererCL<T>::DeviceIndex()          { return m_Wrapper.DeviceIndex();              }
+//Iters per kernel/block/grid.
+template <typename T> unsigned int RendererCL<T>::IterCountPerKernel() const { return m_IterCountPerKernel; }
+template <typename T> unsigned int RendererCL<T>::IterCountPerBlock()  const { return IterCountPerKernel() * IterBlockKernelCount(); }
+template <typename T> unsigned int RendererCL<T>::IterCountPerGrid()   const { return IterCountPerKernel() * IterGridKernelCount();  }
+
+//Kernels per block.
+template <typename T> unsigned int RendererCL<T>::IterBlockKernelWidth()  const { return m_IterBlockWidth;								 }
+template <typename T> unsigned int RendererCL<T>::IterBlockKernelHeight() const { return m_IterBlockHeight;								 }
+template <typename T> unsigned int RendererCL<T>::IterBlockKernelCount()  const { return IterBlockKernelWidth() * IterBlockKernelHeight(); }
+
+//Kernels per grid.
+template <typename T> unsigned int RendererCL<T>::IterGridKernelWidth()  const { return IterGridBlockWidth() * IterBlockKernelWidth();   }
+template <typename T> unsigned int RendererCL<T>::IterGridKernelHeight() const { return IterGridBlockHeight() * IterBlockKernelHeight(); }
+template <typename T> unsigned int RendererCL<T>::IterGridKernelCount()	 const { return IterGridKernelWidth() * IterGridKernelHeight();  }
+
+//Blocks per grid.
+template <typename T> unsigned int RendererCL<T>::IterGridBlockWidth()  const { return m_IterBlocksWide;							   }
+template <typename T> unsigned int RendererCL<T>::IterGridBlockHeight() const { return m_IterBlocksHigh;							   }
+template <typename T> unsigned int RendererCL<T>::IterGridBlockCount()  const { return IterGridBlockWidth() * IterGridBlockHeight(); }
+
+template <typename T> unsigned int RendererCL<T>::PlatformIndex() { return m_Wrapper.PlatformIndex(); }
+template <typename T> unsigned int RendererCL<T>::DeviceIndex()   { return m_Wrapper.DeviceIndex();   }
 
 /// <summary>
 /// Read the histogram into the host side CPU buffer.
@@ -197,10 +221,10 @@ bool RendererCL<T>::ReadAccum()
 template <typename T>
 bool RendererCL<T>::ReadPoints(vector<PointCL<T>>& vec)
 {
-	vec.resize(TotalIterKernelCount());//Allocate the memory to read into.
+	vec.resize(IterGridKernelCount());//Allocate the memory to read into.
 
-	if (vec.size() >= TotalIterKernelCount())
-		return m_Wrapper.ReadBuffer(m_PointsBufferName, (void*)vec.data(), TotalIterKernelCount() * sizeof(PointCL<T>));
+	if (vec.size() >= IterGridKernelCount())
+		return m_Wrapper.ReadBuffer(m_PointsBufferName, (void*)vec.data(), IterGridKernelCount() * sizeof(PointCL<T>));
 
 	return false;
 }
@@ -236,6 +260,26 @@ bool RendererCL<T>::WritePoints(vector<PointCL<T>>& vec)
 {
 	return m_Wrapper.WriteBuffer(m_PointsBufferName, (void*)vec.data(), vec.size() * sizeof(vec[0]));
 }
+
+#ifdef TEST_CL
+template <typename T>
+bool RendererCL<T>::WriteRandomPoints()
+{
+	size_t size = IterGridKernelCount();
+	vector<PointCL<T>> vec(size);
+
+	for (int i = 0; i < size; i++)
+	{
+		vec[i].m_X = m_Rand[0].Frand11<T>();
+		vec[i].m_Y = m_Rand[0].Frand11<T>();
+		vec[i].m_Z = 0;
+		vec[i].m_ColorX = m_Rand[0].Frand01<T>();
+		vec[i].m_LastXfUsed = 0;
+	}
+
+	return WritePoints(vec);
+}
+#endif
 
 /// <summary>
 /// Get the kernel string for the last built iter program.
@@ -351,7 +395,7 @@ void RendererCL<T>::ClearErrorReport()
 template <typename T>
 size_t RendererCL<T>::SubBatchSize() const
 {
-	return m_IterBlocksWide * m_IterBlocksHigh * SQR(m_IterCountPerKernel);
+	return IterCountPerGrid();
 }
 
 /// <summary>
@@ -483,6 +527,7 @@ bool RendererCL<T>::Alloc()
 		return false;
 
 	EnterResize();
+	m_XformsCL.resize(m_Ember.TotalXformCount());
 
 	bool b = true;
 	size_t histLength = SuperSize() * sizeof(v4T);
@@ -490,6 +535,7 @@ bool RendererCL<T>::Alloc()
 	const char* loc = __FUNCTION__;
 
 	if (b && !(b = m_Wrapper.AddBuffer(m_EmberBufferName,               sizeof(m_EmberCL))))         { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_XformsBufferName,				SizeOf(m_XformsCL))))		 { m_ErrorReport.push_back(loc); }
 	if (b && !(b = m_Wrapper.AddBuffer(m_ParVarsBufferName,             128 * sizeof(T))))           { m_ErrorReport.push_back(loc); }
 	if (b && !(b = m_Wrapper.AddBuffer(m_DistBufferName,                CHOOSE_XFORM_GRAIN)))        { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
 	if (b && !(b = m_Wrapper.AddBuffer(m_CarToRasBufferName,            sizeof(m_CarToRasCL))))      { m_ErrorReport.push_back(loc); }
@@ -498,7 +544,7 @@ bool RendererCL<T>::Alloc()
 
 	if (b && !(b = m_Wrapper.AddBuffer(m_HistBufferName,   histLength)))								  { m_ErrorReport.push_back(loc); }//Histogram. Will memset to zero later.
 	if (b && !(b = m_Wrapper.AddBuffer(m_AccumBufferName,  accumLength)))								  { m_ErrorReport.push_back(loc); }//Accum buffer.
-	if (b && !(b = m_Wrapper.AddBuffer(m_PointsBufferName, TotalIterKernelCount() * sizeof(PointCL<T>)))) { m_ErrorReport.push_back(loc); }//Points between iter calls.
+	if (b && !(b = m_Wrapper.AddBuffer(m_PointsBufferName, IterGridKernelCount() * sizeof(PointCL<T>))))  { m_ErrorReport.push_back(loc); }//Points between iter calls.
 
 	if (b && !(b = SetOutputTexture(m_OutputTexID))) { m_ErrorReport.push_back(loc); }
 	
@@ -702,12 +748,12 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 {
 	Timing t;//, t2(4);
 	bool b = true;
-	unsigned int seed, fuse, argIndex;
-	unsigned int iterCountPerKernel = m_IterCountPerKernel;
-	unsigned int iterCountPerBlock = iterCountPerKernel * m_IterBlockWidth * m_IterBlockHeight;
+	unsigned int fuse, argIndex;
+	unsigned int iterCountPerKernel = IterCountPerKernel();
+	unsigned int iterCountPerBlock = IterCountPerBlock();
 	unsigned int supersize = (unsigned int)SuperSize();
 	int kernelIndex = m_Wrapper.FindKernelIndex(m_IterOpenCLKernelCreator.IterEntryPoint());
-	size_t fuseFreq = m_SubBatchSize / m_IterCountPerKernel;
+	size_t fuseFreq = Renderer<T, T>::SubBatchSize() / m_IterCountPerKernel;//Use the base sbs to determine when to fuse.
 	size_t itersRemaining, localIterCount = 0;
 	double percent, etaMs;
 	const char* loc = __FUNCTION__;
@@ -719,12 +765,13 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 
 	if (kernelIndex != -1)
 	{
-		m_EmberCL = ConvertEmber(m_Ember);
+		ConvertEmber(m_Ember, m_EmberCL, m_XformsCL);
 		m_CarToRasCL = ConvertCarToRas(*CoordMap());
 
-		if (b && !(b = m_Wrapper.WriteBuffer      (m_EmberBufferName,    (void*)&m_EmberCL,           sizeof(m_EmberCL))))        { m_ErrorReport.push_back(loc); }
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DistBufferName,     (void*)XformDistributions(), XformDistributionsSize()))) { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
-		if (b && !(b = m_Wrapper.WriteBuffer      (m_CarToRasBufferName, (void*)&m_CarToRasCL,        sizeof(m_CarToRasCL))))     { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.WriteBuffer      (m_EmberBufferName,    (void*)&m_EmberCL,           sizeof(m_EmberCL))))						   { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.WriteBuffer	  (m_XformsBufferName,   (void*)m_XformsCL.data(),    sizeof(m_XformsCL[0]) * m_XformsCL.size()))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DistBufferName,     (void*)XformDistributions(), XformDistributionsSize())))				   { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
+		if (b && !(b = m_Wrapper.WriteBuffer      (m_CarToRasBufferName, (void*)&m_CarToRasCL,        sizeof(m_CarToRasCL))))					   { m_ErrorReport.push_back(loc); }
 		
 		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, m_Dmap.m_Entries.size(), 1, 0, m_Dmap.m_Entries.data()))) { m_ErrorReport.push_back(loc); }
 		
@@ -735,31 +782,32 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 		while (b && itersRan < iterCount && !m_Abort)
 		{
 			argIndex = 0;
-			seed = m_Rand[0].Rand();
 #ifdef TEST_CL
 			fuse = 0;
 #else
 			//fuse = 100;
-			fuse = ((m_Calls % fuseFreq) == 0 ? (EarlyClip() ? 100u : 15u) : 0u);
+			//fuse = ((m_Calls % fuseFreq) == 0 ? (EarlyClip() ? 100u : 15u) : 0u);
+			fuse = (unsigned int)((m_Calls % fuseFreq) == 0u ? FuseCount() : 0u);
 			//fuse = ((m_Calls % 4) == 0 ? 100u : 0u);
 #endif
 			itersRemaining = iterCount - itersRan;
-			unsigned int gridW = (unsigned int)min(ceil((double)itersRemaining / (double)iterCountPerBlock), (double)IterBlocksWide());
-			unsigned int gridH = (unsigned int)min(ceil((double)itersRemaining / ((double)gridW * iterCountPerBlock)), (double)IterBlocksHigh());
+			unsigned int gridW = (unsigned int)min(ceil((double)itersRemaining / (double)iterCountPerBlock), (double)IterGridBlockWidth());
+			unsigned int gridH = (unsigned int)min(ceil((double)itersRemaining / ((double)gridW * iterCountPerBlock)), (double)IterGridBlockHeight());
 			unsigned int iterCountThisLaunch = iterCountPerBlock * gridW * gridH;
 
 			//Similar to what's done in the base class.
 			//The number of iters per thread must be adjusted if they've requested less iters than is normally ran in a block (256 * 256).
 			if (iterCountThisLaunch > iterCount)
 			{
-				iterCountPerKernel = (unsigned int)ceil((double)iterCount / (double)(gridW * gridH * m_IterBlockWidth * m_IterBlockHeight));
-				iterCountThisLaunch = iterCountPerKernel * (gridW * gridH * m_IterBlockWidth * m_IterBlockHeight);
+				iterCountPerKernel = (unsigned int)ceil((double)iterCount / (double)(gridW * gridH * IterBlockKernelCount()));
+				iterCountThisLaunch = iterCountPerKernel * (gridW * gridH * IterBlockKernelCount());
 			}
 
 			if (b && !(b = m_Wrapper.SetArg      (kernelIndex, argIndex++, iterCountPerKernel)))   { m_ErrorReport.push_back(loc); }//Number of iters for each thread to run.
 			if (b && !(b = m_Wrapper.SetArg      (kernelIndex, argIndex++, fuse)))                 { m_ErrorReport.push_back(loc); }//Number of iters to fuse.
-			if (b && !(b = m_Wrapper.SetArg      (kernelIndex, argIndex++, seed)))                 { m_ErrorReport.push_back(loc); }//Seed.
-			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_EmberBufferName)))    { m_ErrorReport.push_back(loc); }//Flame.
+			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_SeedsBufferName)))    { m_ErrorReport.push_back(loc); }//Seeds.
+			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_EmberBufferName)))    { m_ErrorReport.push_back(loc); }//Ember.
+			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_XformsBufferName)))   { m_ErrorReport.push_back(loc); }//Xforms.
 			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_ParVarsBufferName)))  { m_ErrorReport.push_back(loc); }//Parametric variation parameters.
 			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_DistBufferName)))     { m_ErrorReport.push_back(loc); }//Xform distributions.
 			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_CarToRasBufferName))) { m_ErrorReport.push_back(loc); }//Coordinate converter.
@@ -769,11 +817,11 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_PointsBufferName)))   { m_ErrorReport.push_back(loc); }//Random start points.
 			
 			if (b && !(b = m_Wrapper.RunKernel(kernelIndex,
-									 gridW * IterBlockWidth(),//Total grid dims.
-									 gridH * IterBlockHeight(),
+									 gridW * IterBlockKernelWidth(),//Total grid dims.
+									 gridH * IterBlockKernelHeight(),
 									 1,
-									 IterBlockWidth(),//Individual block dims.
-									 IterBlockHeight(),
+									 IterBlockKernelWidth(),//Individual block dims.
+									 IterBlockKernelHeight(),
 									 1)))
 			{
 				m_Abort = true;
@@ -876,7 +924,7 @@ template <typename T>
 eRenderStatus RendererCL<T>::RunDensityFilter()
 {
 	bool b = true;
-	Timing t(4);//, t2(4);
+	Timing t(4);// , t2(4);
 	m_DensityFilterCL = ConvertDensityFilter();
 	int kernelIndex = MakeAndGetDensityFilterProgram(Supersample(), m_DensityFilterCL.m_FilterWidth);
 	const char* loc = __FUNCTION__;
@@ -907,26 +955,62 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 		//The other is to proces the entire image in multiple passes, and each pass processes blocks of pixels
 		//that are far enough apart such that their filters do not overlap.
 		//Do the latter.
+		//Gap is in terms of blocks. How many blocks must separate two blocks running at the same time.
 		unsigned int gapW = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
 		unsigned int chunkSizeW = gapW + 1;
 		unsigned int gapH = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeH);
 		unsigned int chunkSizeH = gapH + 1;
-
 		double totalChunks = chunkSizeW * chunkSizeH;
 
 		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, (void*)&m_DensityFilterCL, sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
 
-		for (unsigned int row = 0; b && !m_Abort && row < chunkSizeH; row++)
+#ifdef ROW_ONLY_DE
+		blockSizeW = 64;//These *must* both be divisible by 16 or else pixels will go missing.
+		blockSizeH = 1;
+		gapW = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
+		chunkSizeW = gapW + 1;
+		gapH = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)32);//Block height is 1, but iterates over 32 rows.
+		chunkSizeH = gapH + 1;
+		totalChunks = chunkSizeW * chunkSizeH;
+
+		OpenCLWrapper::MakeEvenGridDims(blockSizeW, blockSizeH, gridW, gridH);
+		gridW /= chunkSizeW;
+		gridH /= chunkSizeH;
+
+		for (unsigned int rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
 		{
-			for (unsigned int col = 0; b && !m_Abort && col < chunkSizeW; col++)
+			for (unsigned int colChunk = 0; b && !m_Abort && colChunk < chunkSizeW; colChunk++)
 			{
 				//t2.Tic();
-				if (b && !(b = RunDensityFilterPrivate(kernelIndex, gridW, gridH, blockSizeW, blockSizeH, chunkSizeW, chunkSizeH, row, col))) { m_Abort = true; m_ErrorReport.push_back(loc); }
+				if (b && !(b = RunDensityFilterPrivate(kernelIndex, gridW, gridH, blockSizeW, blockSizeH, chunkSizeW, chunkSizeH, colChunk, rowChunk))) { m_Abort = true; m_ErrorReport.push_back(loc); }
 				//t2.Toc(loc);
 
 				if (b && m_Callback)
 				{
-					double percent = (double((row * chunkSizeW) + (col + 1)) / totalChunks) * 100.0;
+					double percent = (double((rowChunk * chunkSizeW) + (colChunk + 1)) / totalChunks) * 100.0;
+					double etaMs = ((100.0 - percent) / percent) * t.Toc();
+
+					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 1, etaMs))
+						Abort();
+				}
+			}
+		}
+#else
+		OpenCLWrapper::MakeEvenGridDims(blockSizeW, blockSizeH, gridW, gridH);
+		gridW /= chunkSizeW;
+		gridH /= chunkSizeH;
+
+		for (unsigned int rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
+		{
+			for (unsigned int colChunk = 0; b && !m_Abort && colChunk < chunkSizeW; colChunk++)
+			{
+				//t2.Tic();
+				if (b && !(b = RunDensityFilterPrivate(kernelIndex, gridW, gridH, blockSizeW, blockSizeH, chunkSizeW, chunkSizeH, colChunk, rowChunk))) { m_Abort = true; m_ErrorReport.push_back(loc); }
+				//t2.Toc(loc);
+
+				if (b && m_Callback)
+				{
+					double percent = (double((rowChunk * chunkSizeW) + (colChunk + 1)) / totalChunks) * 100.0;
 					double etaMs = ((100.0 - percent) / percent) * t.Toc();
 					
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 1, etaMs))
@@ -934,6 +1018,7 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 				}
 			}
 		}
+#endif
 
 		if (b && m_Callback)
 			m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0.0);
@@ -1084,14 +1169,15 @@ bool RendererCL<T>::ClearBuffer(const string& bufferName, unsigned int width, un
 /// <param name="gridH">Grid height</param>
 /// <param name="blockW">Block width</param>
 /// <param name="blockH">Block height</param>
-/// <param name="chunkSize">Chunk size (gap + 1)</param>
+/// <param name="chunkSizeW">Chunk size width (gapW + 1)</param>
+/// <param name="chunkSizeH">Chunk size height (gapH + 1)</param>
 /// <param name="rowParity">Row parity</param>
 /// <param name="colParity">Column parity</param>
 /// <returns>True if success, else false.</returns>
 template <typename T>
-bool RendererCL<T>::RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int rowParity, unsigned int colParity)
+bool RendererCL<T>::RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int chunkW, unsigned int chunkH)
 {
-	//Timing t;
+	//Timing t(4);
 	bool b = true;
 	unsigned int argIndex = 0;
 	const char* loc = __FUNCTION__;
@@ -1104,8 +1190,8 @@ bool RendererCL<T>::RunDensityFilterPrivate(unsigned int kernelIndex, unsigned i
 	if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_DECoefIndicesBufferName)))  { m_ErrorReport.push_back(loc); } argIndex++;//Coef indices.
 	if (b && !(b = m_Wrapper.SetArg(      kernelIndex, argIndex, chunkSizeW)))                 { m_ErrorReport.push_back(loc); } argIndex++;//Chunk size width (gapW + 1).
 	if (b && !(b = m_Wrapper.SetArg(      kernelIndex, argIndex, chunkSizeH)))                 { m_ErrorReport.push_back(loc); } argIndex++;//Chunk size height (gapH + 1).
-	if (b && !(b = m_Wrapper.SetArg(      kernelIndex, argIndex, rowParity)))                  { m_ErrorReport.push_back(loc); } argIndex++;//Row parity.
-	if (b && !(b = m_Wrapper.SetArg(      kernelIndex, argIndex, colParity)))                  { m_ErrorReport.push_back(loc); } argIndex++;//Col parity.
+	if (b && !(b = m_Wrapper.SetArg(      kernelIndex, argIndex, chunkW)))					   { m_ErrorReport.push_back(loc); } argIndex++;//Column chunk.
+	if (b && !(b = m_Wrapper.SetArg(      kernelIndex, argIndex, chunkH)))					   { m_ErrorReport.push_back(loc); } argIndex++;//Row chunk.
 	//t.Toc(__FUNCTION__ " set args");
 
 	//t.Tic();
@@ -1270,60 +1356,57 @@ SpatialFilterCL<T> RendererCL<T>::ConvertSpatialFilter()
 
 /// <summary>
 /// Convert the host side Ember object into an EmberCL object
-/// for passing to OpenCL.
+/// and a vector of XformCL for passing to OpenCL.
 /// </summary>
 /// <param name="ember">The Ember object to convert</param>
-/// <returns>The EmberCL object</returns>
+/// <param name="emberCL">The converted EmberCL</param>
+/// <param name="xformsCL">The converted vector of XformCL</param>
 template <typename T>
-EmberCL<T> RendererCL<T>::ConvertEmber(Ember<T>& ember)
+void RendererCL<T>::ConvertEmber(Ember<T>& ember, EmberCL<T>& emberCL, vector<XformCL<T>>& xformsCL)
 {
-	EmberCL<T> emberCL;
-
 	memset(&emberCL, 0, sizeof(EmberCL<T>));//Might not really be needed.
 
-	emberCL.m_RotA            = m_RotMat.A();
-	emberCL.m_RotB            = m_RotMat.B();
-	emberCL.m_RotD            = m_RotMat.D();
-	emberCL.m_RotE            = m_RotMat.E();
-	emberCL.m_CamMat		  = ember.m_CamMat;
-	emberCL.m_CenterX         = CenterX();
-	emberCL.m_CenterY		  = ember.m_RotCenterY;
-	emberCL.m_CamZPos		  = ember.m_CamZPos;
-	emberCL.m_CamPerspective  = ember.m_CamPerspective;
-	emberCL.m_CamYaw		  = ember.m_CamYaw;
-	emberCL.m_CamPitch		  = ember.m_CamPitch;
-	emberCL.m_CamDepthBlur	  = ember.m_CamDepthBlur;
-	emberCL.m_BlurCoef		  = ember.BlurCoef();
+	emberCL.m_RotA           = m_RotMat.A();
+	emberCL.m_RotB           = m_RotMat.B();
+	emberCL.m_RotD           = m_RotMat.D();
+	emberCL.m_RotE           = m_RotMat.E();
+	emberCL.m_CamMat		 = ember.m_CamMat;
+	emberCL.m_CenterX        = CenterX();
+	emberCL.m_CenterY		 = ember.m_RotCenterY;
+	emberCL.m_CamZPos		 = ember.m_CamZPos;
+	emberCL.m_CamPerspective = ember.m_CamPerspective;
+	emberCL.m_CamYaw		 = ember.m_CamYaw;
+	emberCL.m_CamPitch		 = ember.m_CamPitch;
+	emberCL.m_CamDepthBlur	 = ember.m_CamDepthBlur;
+	emberCL.m_BlurCoef		 = ember.BlurCoef();
 
-	for (unsigned int i = 0; i < ember.TotalXformCount() && i < MAX_CL_XFORM; i++)//Copy the relevant values for each xform, capped at the max.
+	for (unsigned int i = 0; i < ember.TotalXformCount() && i < xformsCL.size(); i++)
 	{
 		Xform<T>* xform = ember.GetTotalXform(i);
 
-		emberCL.m_Xforms[i].m_A = xform->m_Affine.A();
-		emberCL.m_Xforms[i].m_B = xform->m_Affine.B();
-		emberCL.m_Xforms[i].m_C = xform->m_Affine.C();
-		emberCL.m_Xforms[i].m_D = xform->m_Affine.D();
-		emberCL.m_Xforms[i].m_E = xform->m_Affine.E();
-		emberCL.m_Xforms[i].m_F = xform->m_Affine.F();
+		xformsCL[i].m_A = xform->m_Affine.A();
+		xformsCL[i].m_B = xform->m_Affine.B();
+		xformsCL[i].m_C = xform->m_Affine.C();
+		xformsCL[i].m_D = xform->m_Affine.D();
+		xformsCL[i].m_E = xform->m_Affine.E();
+		xformsCL[i].m_F = xform->m_Affine.F();
 
-		emberCL.m_Xforms[i].m_PostA = xform->m_Post.A();
-		emberCL.m_Xforms[i].m_PostB = xform->m_Post.B();
-		emberCL.m_Xforms[i].m_PostC = xform->m_Post.C();
-		emberCL.m_Xforms[i].m_PostD = xform->m_Post.D();
-		emberCL.m_Xforms[i].m_PostE = xform->m_Post.E();
-		emberCL.m_Xforms[i].m_PostF = xform->m_Post.F();
+		xformsCL[i].m_PostA = xform->m_Post.A();
+		xformsCL[i].m_PostB = xform->m_Post.B();
+		xformsCL[i].m_PostC = xform->m_Post.C();
+		xformsCL[i].m_PostD = xform->m_Post.D();
+		xformsCL[i].m_PostE = xform->m_Post.E();
+		xformsCL[i].m_PostF = xform->m_Post.F();
 
-		emberCL.m_Xforms[i].m_DirectColor = xform->m_DirectColor;
-		emberCL.m_Xforms[i].m_ColorSpeedCache = xform->ColorSpeedCache();
-		emberCL.m_Xforms[i].m_OneMinusColorCache = xform->OneMinusColorCache();
-		emberCL.m_Xforms[i].m_Opacity = xform->m_Opacity;
-		emberCL.m_Xforms[i].m_VizAdjusted = xform->VizAdjusted();
+		xformsCL[i].m_DirectColor = xform->m_DirectColor;
+		xformsCL[i].m_ColorSpeedCache = xform->ColorSpeedCache();
+		xformsCL[i].m_OneMinusColorCache = xform->OneMinusColorCache();
+		xformsCL[i].m_Opacity = xform->m_Opacity;
+		xformsCL[i].m_VizAdjusted = xform->VizAdjusted();
 
 		for (unsigned int varIndex = 0; varIndex < xform->TotalVariationCount() && varIndex < MAX_CL_VARS; varIndex++)//Assign all variation weights for this xform, with a max of MAX_CL_VARS.
-			emberCL.m_Xforms[i].m_VariationWeights[varIndex] = xform->GetVariation(varIndex)->m_Weight;
+			xformsCL[i].m_VariationWeights[varIndex] = xform->GetVariation(varIndex)->m_Weight;
 	}
-
-	return emberCL;
 }
 
 /// <summary>

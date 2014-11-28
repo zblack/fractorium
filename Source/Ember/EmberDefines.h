@@ -36,7 +36,7 @@ namespace EmberNs
 	extern void sincos(float x, float *s, float *c);
 #endif
 
-#define EMBER_VERSION "0.4.1.4"
+#define EMBER_VERSION "0.4.1.5"
 #define EPS6 T(1e-6)
 #define EPS std::numeric_limits<T>::epsilon()//Apoplugin.h uses -20, but it's more mathematically correct to do it this way.
 #define ISAAC_SIZE 4
@@ -54,6 +54,7 @@ namespace EmberNs
 #define COLORMAP_LENGTH 256//These will need to change if 2D palette support is ever added, or variable sized palettes.
 #define COLORMAP_LENGTH_MINUS_1 255
 #define WHITE 255
+#define DEFAULT_SBS (1024 * 10)
 #define XC (const xmlChar*)
 #define BadVal(x) (((x) != (x)) || ((x) > 1e10) || ((x) < -1e10))
 #define Rint(A) floor((A) + (((A) < 0) ? T(-0.5) : T(0.5)))

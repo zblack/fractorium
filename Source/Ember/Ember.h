@@ -92,6 +92,8 @@ public:
 		m_OrigFinalRasW		  = ember.m_OrigFinalRasW;
 		m_OrigFinalRasH		  = ember.m_OrigFinalRasH;
 		m_OrigPixPerUnit	  = ember.m_OrigPixPerUnit;
+		m_SubBatchSize		  = ember.m_SubBatchSize;
+		m_FuseCount			  = ember.m_FuseCount;
 		m_Supersample		  = ember.m_Supersample;
 		m_TemporalSamples	  = ember.m_TemporalSamples;
 		m_Symmetry			  = ember.m_Symmetry;
@@ -184,6 +186,8 @@ public:
 		m_OrigFinalRasW = 1920;
 		m_OrigFinalRasH = 1080;
 		m_OrigPixPerUnit = 240;
+		m_SubBatchSize = DEFAULT_SBS;
+		m_FuseCount = 15;
 		m_Supersample = 1;
 		m_TemporalSamples = 1000;
 		m_Symmetry = 0;
@@ -750,24 +754,15 @@ public:
 		m_PaletteMode = embers[0].m_PaletteMode;
 		m_AffineInterp = embers[0].m_AffineInterp;
 
-		//Interpolate ember parameters.
-		InterpT<&Ember<T>::m_Brightness>(embers, coefs, size);
-		InterpT<&Ember<T>::m_HighlightPower>(embers, coefs, size);
-		InterpT<&Ember<T>::m_Gamma>(embers, coefs, size);
-		InterpT<&Ember<T>::m_Vibrancy>(embers, coefs, size);
-		InterpT<&Ember<T>::m_Hue>(embers, coefs, size);
+		//Interpolate ember parameters, these should be in the same order the members are declared.
 		InterpI<&Ember<T>::m_FinalRasW>(embers, coefs, size);
 		InterpI<&Ember<T>::m_FinalRasH>(embers, coefs, size);
+		InterpI<&Ember<T>::m_SubBatchSize>(embers, coefs, size);
+		InterpI<&Ember<T>::m_FuseCount>(embers, coefs, size);
 		InterpI<&Ember<T>::m_Supersample>(embers, coefs, size);
-		InterpT<&Ember<T>::m_CenterX>(embers, coefs, size);
-		InterpT<&Ember<T>::m_CenterY>(embers, coefs, size);
-		InterpT<&Ember<T>::m_RotCenterY>(embers, coefs, size);
-		InterpX<Color<T>, &Ember<T>::m_Background>(embers, coefs, size); m_Background.a = bgAlphaSave;//Don't interp alpha.
-		InterpT<&Ember<T>::m_PixelsPerUnit>(embers, coefs, size);
-		InterpT<&Ember<T>::m_SpatialFilterRadius>(embers, coefs, size);
-		InterpT<&Ember<T>::m_TemporalFilterExp>(embers, coefs, size);
-		InterpT<&Ember<T>::m_TemporalFilterWidth>(embers, coefs, size);
+		InterpI<&Ember<T>::m_TemporalSamples>(embers, coefs, size);
 		InterpT<&Ember<T>::m_Quality>(embers, coefs, size);
+		InterpT<&Ember<T>::m_PixelsPerUnit>(embers, coefs, size);
 		InterpT<&Ember<T>::m_Zoom>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CamZPos>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CamPerspective>(embers, coefs, size);
@@ -775,12 +770,23 @@ public:
 		InterpT<&Ember<T>::m_CamPitch>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CamDepthBlur>(embers, coefs, size);
 		InterpX<m3T, &Ember<T>::m_CamMat>(embers, coefs, size);
+		InterpT<&Ember<T>::m_CenterX>(embers, coefs, size);
+		InterpT<&Ember<T>::m_CenterY>(embers, coefs, size);
+		InterpT<&Ember<T>::m_RotCenterY>(embers, coefs, size);
 		InterpT<&Ember<T>::m_Rotate>(embers, coefs, size);
-		InterpI<&Ember<T>::m_TemporalSamples>(embers, coefs, size);
+		InterpT<&Ember<T>::m_Hue>(embers, coefs, size);
+		InterpT<&Ember<T>::m_Brightness>(embers, coefs, size);
+		InterpT<&Ember<T>::m_Gamma>(embers, coefs, size);
+		InterpT<&Ember<T>::m_Vibrancy>(embers, coefs, size);
+		InterpT<&Ember<T>::m_GammaThresh>(embers, coefs, size);
+		InterpT<&Ember<T>::m_HighlightPower>(embers, coefs, size);
+		InterpX<Color<T>, &Ember<T>::m_Background>(embers, coefs, size); m_Background.a = bgAlphaSave;//Don't interp alpha.
+		InterpT<&Ember<T>::m_TemporalFilterExp>(embers, coefs, size);
+		InterpT<&Ember<T>::m_TemporalFilterWidth>(embers, coefs, size);
 		InterpT<&Ember<T>::m_MaxRadDE>(embers, coefs, size);
 		InterpT<&Ember<T>::m_MinRadDE>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CurveDE>(embers, coefs, size);
-		InterpT<&Ember<T>::m_GammaThresh>(embers, coefs, size);
+		InterpT<&Ember<T>::m_SpatialFilterRadius>(embers, coefs, size);
 
 		//An extra step needed here due to the OOD that was not needed in the original.
 		//A small price to pay for the conveniences it affords us elsewhere.
@@ -1382,6 +1388,8 @@ public:
 		   << "Quality: " << m_Quality << endl
 		   << "Pixels Per Unit: " << m_PixelsPerUnit << endl
 		   << "Original Pixels Per Unit: " << m_OrigPixPerUnit << endl
+		   << "Sub Batch Size: " << m_SubBatchSize << endl
+		   << "Fuse Count: " << m_FuseCount << endl
 		   << "Zoom: " << m_Zoom << endl
 		   << "ZPos: " << m_CamZPos << endl
 		   << "Perspective: " << m_CamPerspective << endl
@@ -1458,6 +1466,14 @@ public:
 	size_t m_OrigFinalRasW;//Keep track of the originals read from the Xml, because...
 	size_t m_OrigFinalRasH;//the dimension may change in an editor and the originals are needed for the aspect ratio.
 	T m_OrigPixPerUnit;
+
+	//The iteration depth. This was a rendering parameter in flam3 but has been made a member here
+	//so that it can be adjusted more easily.
+	size_t m_SubBatchSize;
+
+	//The number of iterations to disregard for each sub batch. This was a rendering parameter in flam3 but has been made a member here
+	//so that it can be adjusted more easily.
+	size_t m_FuseCount;
 
 	//The multiplier in size of the histogram and DE filtering buffers. Must be at least one, preferrably never larger than 4, only useful at 2.
 	//Xml field: "supersample" or "overample (deprecated)".

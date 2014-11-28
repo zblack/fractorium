@@ -126,9 +126,11 @@ public:
 	virtual void DEFilterMinRadiusWidthChanged(double d) { }
 	virtual void DEFilterMaxRadiusWidthChanged(double d) { }
 	virtual void DEFilterCurveWidthChanged(double d) { }
-	virtual void TemporalSamplesChanged(int d) { }
+	virtual void SbsChanged(int d) { }
+	virtual void FuseChanged(int d) { }
 	virtual void QualityChanged(double d) { }
 	virtual void SupersampleChanged(int d) { }
+	virtual void TemporalSamplesChanged(int d) { }
 	virtual void AffineInterpTypeChanged(int i) { }
 	virtual void InterpTypeChanged(int i) { }
 	virtual void BackgroundChanged(const QColor& color) { }
@@ -340,9 +342,11 @@ public:
 	virtual void DEFilterMinRadiusWidthChanged(double d) override;
 	virtual void DEFilterMaxRadiusWidthChanged(double d) override;
 	virtual void DEFilterCurveWidthChanged(double d) override;
-	virtual void TemporalSamplesChanged(int d) override;
+	virtual void SbsChanged(int d) override;
+	virtual void FuseChanged(int d) override;
 	virtual void QualityChanged(double d) override;
 	virtual void SupersampleChanged(int d) override;
+	virtual void TemporalSamplesChanged(int d) override;
 	virtual void AffineInterpTypeChanged(int index) override;
 	virtual void InterpTypeChanged(int index) override;
 	virtual void BackgroundChanged(const QColor& col) override;

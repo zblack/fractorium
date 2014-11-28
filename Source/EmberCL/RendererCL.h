@@ -42,14 +42,27 @@ public:
 	//Non-virtual member functions for OpenCL specific tasks.
 	bool Init(unsigned int platform, unsigned int device, bool shared, GLuint outputTexID);
 	bool SetOutputTexture(GLuint outputTexID);
-	inline unsigned int IterCountPerKernel();
-	inline unsigned int IterBlocksWide();
-	inline unsigned int IterBlocksHigh();
-	inline unsigned int IterBlockWidth();
-	inline unsigned int IterBlockHeight();
-	inline unsigned int IterGridWidth();
-	inline unsigned int IterGridHeight();
-	inline unsigned int TotalIterKernelCount();
+
+	//Iters per kernel/block/grid.
+	inline unsigned int IterCountPerKernel() const;
+	inline unsigned int IterCountPerBlock() const;
+	inline unsigned int IterCountPerGrid() const;
+
+	//Kernels per block.
+	inline unsigned int IterBlockKernelWidth() const;
+	inline unsigned int IterBlockKernelHeight() const;
+	inline unsigned int IterBlockKernelCount() const;
+
+	//Kernels per grid.
+	inline unsigned int IterGridKernelWidth() const;
+	inline unsigned int IterGridKernelHeight() const;
+	inline unsigned int IterGridKernelCount() const;
+
+	//Blocks per grid.
+	inline unsigned int IterGridBlockWidth() const;
+	inline unsigned int IterGridBlockHeight() const;
+	inline unsigned int IterGridBlockCount() const;
+
 	unsigned int PlatformIndex();
 	unsigned int DeviceIndex();
 	bool ReadHist();
@@ -58,6 +71,9 @@ public:
 	bool ClearHist();
 	bool ClearAccum();
 	bool WritePoints(vector<PointCL<T>>& vec);
+#ifdef TEST_CL
+	bool WriteRandomPoints();
+#endif
 	string IterKernel();
 
 	//Virtual functions overridden from RendererCLBase.
@@ -98,7 +114,7 @@ private:
 	eRenderStatus RunDensityFilter();
 	eRenderStatus RunFinalAccum();
 	bool ClearBuffer(const string& bufferName, unsigned int width, unsigned int height, unsigned int elementSize);
-	bool RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int rowParity, unsigned int colParity);
+	bool RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int chunkW, unsigned int chunkH);
 	int MakeAndGetDensityFilterProgram(size_t ss, unsigned int filterWidth);
 	int MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale);
 	int MakeAndGetGammaCorrectionProgram();
@@ -106,7 +122,7 @@ private:
 	//Private functions passing data to OpenCL programs.
 	DensityFilterCL<T> ConvertDensityFilter();
 	SpatialFilterCL<T> ConvertSpatialFilter();
-	EmberCL<T> ConvertEmber(Ember<T>& ember);
+	void ConvertEmber(Ember<T>& ember, EmberCL<T>& emberCL, vector<XformCL<T>>& xformsCL);
 	static CarToRasCL<T> ConvertCarToRas(const CarToRas<T>& carToRas);
 
 	bool m_Init;
@@ -122,7 +138,9 @@ private:
 
 	//Buffer names.
 	string m_EmberBufferName;
+	string m_XformsBufferName;
 	string m_ParVarsBufferName;
+	string m_SeedsBufferName;
 	string m_DistBufferName;
 	string m_CarToRasBufferName;
 	string m_DEFilterParamsBufferName;
@@ -146,6 +164,8 @@ private:
 	IMAGEGL2D m_AccumImage;
 	GLuint m_OutputTexID;
 	EmberCL<T> m_EmberCL;
+	vector<XformCL<T>> m_XformsCL;
+	vector<glm::highp_uvec2> m_Seeds;
 	Palette<float> m_Dmap;//Used instead of the base class' m_Dmap because OpenCL only supports float textures.
 	CarToRasCL<T> m_CarToRasCL;
 	DensityFilterCL<T> m_DensityFilterCL;
