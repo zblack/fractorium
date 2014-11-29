@@ -93,6 +93,7 @@ public:
 	virtual eRendererType RendererType() const override;
 	virtual string ErrorReportString() override;
 	virtual vector<string> ErrorReport() override;
+	virtual bool RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec) override;
 
 #ifndef TEST_CL
 protected:
@@ -118,6 +119,7 @@ private:
 	int MakeAndGetDensityFilterProgram(size_t ss, unsigned int filterWidth);
 	int MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale);
 	int MakeAndGetGammaCorrectionProgram();
+	void FillSeeds();
 
 	//Private functions passing data to OpenCL programs.
 	DensityFilterCL<T> ConvertDensityFilter();

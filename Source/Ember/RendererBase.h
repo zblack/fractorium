@@ -99,7 +99,6 @@ public:
 	void ChangeVal(std::function<void(void)> func, eProcessAction action);
 	size_t MemoryRequired(size_t strips, bool includeFinal);
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> RandVec();
-	bool RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec);
 	bool PrepFinalAccumVector(vector<unsigned char>& pixels);
 
 	//Virtual processing functions.
@@ -109,6 +108,7 @@ public:
 	virtual void SetEmber(vector<Ember<float>>& embers) { }
 	virtual void SetEmber(Ember<double>& ember, eProcessAction action = FULL_RENDER) { }
 	virtual void SetEmber(vector<Ember<double>>& embers) { }
+	virtual bool RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec);
 
 	//Abstract processing functions.
 	virtual bool CreateDEFilter(bool& newAlloc) = 0;

@@ -614,6 +614,8 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_TemporalSamples = m_Fractorium->m_TemporalSamplesSpin->value();
 	ember.m_AffineInterp = (eAffineInterp)m_Fractorium->m_AffineInterpTypeCombo->currentIndex();
 	ember.m_Interp = (eInterp)m_Fractorium->m_InterpTypeCombo->currentIndex();
+
+	ember.SyncSize();
 }
 
 /// <summary>

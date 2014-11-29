@@ -1,3 +1,16 @@
+0.4.1.6 Beta 11/29/2014
+--User Changes
+	None.
+
+--Bug Fixes
+	Fix broken continuity of randomness in OpenCL when using strips, broken in last build.
+	Fix broken density filtering dimensions in OpenCL which left black lines, broken in last build.
+	Fix broken preview update on when the only change is scale.
+	Update density filtering progress bar to 100% in final render dialog when DE radius is 0 (disabled).
+	
+--Code Changes
+	Make RendererBase::RandVec() virtual.
+
 0.4.1.5 Beta 11/28/2014
 --User Changes
 	Remove limit on the number of xforms allowable on the GPU. This was previously 21.

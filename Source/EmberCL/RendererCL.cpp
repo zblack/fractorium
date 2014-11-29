@@ -52,14 +52,8 @@ RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool share
 	m_PaletteFormat.image_channel_data_type = CL_FLOAT;
 	m_FinalFormat.image_channel_order = CL_RGBA;
 	m_FinalFormat.image_channel_data_type = CL_UNORM_INT8;//Change if this ever supports 2BPC outputs for PNG.
-	m_Seeds.resize(IterGridKernelCount());
-
-	for (size_t i = 0; i < m_Seeds.size(); i++)
-	{
-		m_Seeds[i].x = m_Rand[0].Rand();
-		m_Seeds[i].y = m_Rand[0].Rand();
-	}
-
+	
+	FillSeeds();
 	Init(platform, device, shared, outputTexID);//Init OpenCL upon construction and create programs that will not change.
 }
 
@@ -499,6 +493,27 @@ vector<string> RendererCL<T>::ErrorReport()
 }
 
 /// <summary>
+/// Set the vector of random contexts.
+/// Call the base, and reset the seeds vector.
+/// </summary>
+/// <param name="randVec">The vector of random contexts to assign</param>
+/// <returns>True if the size of the vector matched the number of threads used for rendering and writing seeds to OpenCL succeeded, else false.</returns>
+template <typename T>
+bool RendererCL<T>::RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec)
+{
+	bool b = Renderer<T, T>::RandVec(randVec);
+	const char* loc = __FUNCTION__;
+
+	if (m_Wrapper.Ok())
+	{
+		FillSeeds();
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SeedsBufferName, (void*)m_Seeds.data(), SizeOf(m_Seeds)))) { m_ErrorReport.push_back(loc); }
+	}
+
+	return b;
+}
+
+/// <summary>
 /// Protected virtual functions overridden from Renderer.
 /// </summary>
 
@@ -912,6 +927,9 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 		m_ErrorReport.push_back(loc);
 	}
 	
+	if (b && m_Callback)
+		m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0.0);
+
 	return b ? RENDER_OK : RENDER_ERROR;
 }
 
@@ -996,9 +1014,9 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 			}
 		}
 #else
-		OpenCLWrapper::MakeEvenGridDims(blockSizeW, blockSizeH, gridW, gridH);
 		gridW /= chunkSizeW;
 		gridH /= chunkSizeH;
+		OpenCLWrapper::MakeEvenGridDims(blockSizeW, blockSizeH, gridW, gridH);
 
 		for (unsigned int rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
 		{
@@ -1431,5 +1449,22 @@ CarToRasCL<T> RendererCL<T>::ConvertCarToRas(const CarToRas<T>& carToRas)
 	carToRasCL.m_CarUrY = carToRas.CarUrY();
 
 	return carToRasCL;
+}
+
+/// <summary>
+/// Fill seeds buffer which gets passed to the iteration kernel.
+/// Note, WriteBuffer() must be called after this to actually copy the
+/// data from the host to the device.
+/// </summary>
+template <typename T>
+void RendererCL<T>::FillSeeds()
+{
+	m_Seeds.resize(IterGridKernelCount());
+
+	for (size_t i = 0; i < m_Seeds.size(); i++)
+	{
+		m_Seeds[i].x = m_Rand[0].Rand();
+		m_Seeds[i].y = m_Rand[0].Rand();
+	}
 }
 }

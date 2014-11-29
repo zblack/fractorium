@@ -118,7 +118,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_PreviewEmber.m_FinalRasW = max<size_t>(1, min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasW)));//Ensure neither is zero.
 		m_PreviewEmber.m_FinalRasH = max<size_t>(1, min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasH)));
 		m_PreviewEmber.m_PixelsPerUnit = scalePercentage * m_Ember->m_PixelsPerUnit;
-
+		
 		m_FinalPreviewRenderer->EarlyClip(m_FinalRenderDialog->EarlyClip());
 		m_FinalPreviewRenderer->YAxisUp(m_FinalRenderDialog->YAxisUp());
 		m_FinalPreviewRenderer->Transparency(m_FinalRenderDialog->Transparency());

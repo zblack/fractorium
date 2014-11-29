@@ -101,6 +101,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 			{
 				Ember<T> ember = m_EmberFile.m_Embers[i];
 
+				ember.SyncSize();
 				ember.SetSizeAndAdjustScale(PREVIEW_SIZE, PREVIEW_SIZE, false, SCALE_WIDTH);
 				ember.m_TemporalSamples = 1;
 				ember.m_Quality = 25;

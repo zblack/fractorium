@@ -62,8 +62,6 @@ void FractoriumEmberController<T>::NewFlock(unsigned int count)
 		m_SheepTools->Random(ember);
 		ParamsToEmber(ember);
 		ember.m_Index = i;
-		ember.m_OrigFinalRasW = ember.m_FinalRasW;
-		ember.m_OrigFinalRasH = ember.m_FinalRasH;
 		ember.m_Name = m_EmberFile.m_Filename.toStdString() + "-" + ToString(i + 1).toStdString();
 		m_EmberFile.m_Embers.push_back(ember);
 	}
@@ -97,8 +95,6 @@ void FractoriumEmberController<T>::NewEmptyFlameInCurrentFile()
 
 	StopPreviewRender();
 	ParamsToEmber(ember);
-	ember.m_OrigFinalRasW = ember.m_FinalRasW;
-	ember.m_OrigFinalRasH = ember.m_FinalRasH;
 	xform.m_Weight = T(0.25);
 	xform.m_ColorX = m_Rand.Frand01<T>();
 	ember.AddXform(xform);
@@ -126,8 +122,6 @@ void FractoriumEmberController<T>::NewRandomFlameInCurrentFile()
 	StopPreviewRender();
 	m_SheepTools->Random(ember);
 	ParamsToEmber(ember);
-	ember.m_OrigFinalRasW = ember.m_FinalRasW;
-	ember.m_OrigFinalRasH = ember.m_FinalRasH;
 	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.Size() + 1).toStdString();
 	ember.m_Index = m_EmberFile.Size();
 	m_EmberFile.m_Embers.push_back(ember);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
