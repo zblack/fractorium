@@ -125,7 +125,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_FinalPreviewRenderer->SetEmber(m_PreviewEmber);
 		m_FinalPreviewRenderer->PrepFinalAccumVector(m_PreviewFinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 
-		unsigned int strips = VerifyStrips(m_PreviewEmber.m_FinalRasH, m_FinalRenderDialog->Strips(),
+		uint strips = VerifyStrips(m_PreviewEmber.m_FinalRasH, m_FinalRenderDialog->Strips(),
 		[&](const string& s) { }, [&](const string& s) { }, [&](const string& s) { });
 
 		StripsRender<T>(m_FinalPreviewRenderer.get(), m_PreviewEmber, m_PreviewFinalImage, 0, strips, m_FinalRenderDialog->YAxisUp(),
@@ -154,7 +154,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		size_t i;
 		m_GuiState = m_FinalRenderDialog->State();//Cache render settings from the GUI before running.
 		bool doAll = m_GuiState.m_DoAll && m_EmberFile.Size() > 1;
-		unsigned int currentStripForProgress = 0;//Sort of a hack to get the strip value to the progress function.
+		uint currentStripForProgress = 0;//Sort of a hack to get the strip value to the progress function.
 		QString path = doAll ? ComposePath(QString::fromStdString(m_EmberFile.m_Embers[0].m_Name)) : ComposePath(Name());
 		QString backup = path + "_backup.flame";
 
@@ -395,11 +395,11 @@ bool FinalRenderEmberController<T>::Render()
 /// <param name="shared">True if shared with OpenGL, else false. Default: true.</param>
 /// <returns>True if nothing went wrong, else false.</returns>
 template <typename T>
-bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared)
+bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared)
 {
 	bool ok = true;
 	vector<string> errorReport;
-	unsigned int channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;
+	uint channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;
 
 	CancelRender();
 
@@ -464,7 +464,7 @@ template <typename T>
 int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs)
 {
 	static int count = 0;
-	unsigned int strip = *((unsigned int*)m_Renderer->m_ProgressParameter);
+	uint strip = *((uint*)m_Renderer->m_ProgressParameter);
 	double fracPerStrip = ceil(100.0 / m_GuiState.m_Strips);
 	double stripsfrac = ceil(fracPerStrip * strip) + ceil(fraction / m_GuiState.m_Strips);
 	int intFract = (int)stripsfrac;
@@ -573,7 +573,7 @@ pair<size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemory()
 	if (m_Renderer.get())
 	{
 		bool b = false;
-		unsigned int channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;//4 channels for Png, else 3.
+		uint channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;//4 channels for Png, else 3.
 		size_t strips = VerifyStrips(m_Ember->m_FinalRasH, m_FinalRenderDialog->Strips(),
 			[&](const string& s) { }, [&](const string& s) { }, [&](const string& s) { });
 

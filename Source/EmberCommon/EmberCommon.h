@@ -129,11 +129,11 @@ static bool InitPaletteList(const string& filename)
 /// <param name="rgb">The RGB buffer</param>
 /// <param name="width">The width of the image in pixels</param>
 /// <param name="height">The height of the image in pixels</param>
-static void RgbaToRgb(vector<unsigned char>& rgba, vector<unsigned char>& rgb, size_t width, size_t height)
+static void RgbaToRgb(vector<byte>& rgba, vector<byte>& rgb, size_t width, size_t height)
 {
 	rgb.resize(width * height * 3);
 
-	for (unsigned int i = 0, j = 0; i < (width * height * 4); i += 4, j += 3)
+	for (uint i = 0, j = 0; i < (width * height * 4); i += 4, j += 3)
 	{
 		rgb[j]	   = rgba[i];
 		rgb[j + 1] = rgba[i + 1];
@@ -149,9 +149,9 @@ static void RgbaToRgb(vector<unsigned char>& rgba, vector<unsigned char>& rgb, s
 /// <param name="memAvailable">Amount of memory available on the system</param>
 /// <param name="useMem">The maximum amount of memory to use. Use max if 0.</param>
 /// <returns>The number of strips to use</returns>
-static unsigned int CalcStrips(double memRequired, double memAvailable, double useMem)
+static uint CalcStrips(double memRequired, double memAvailable, double useMem)
 {
-	unsigned int strips;
+	uint strips;
 
 	if (useMem > 0)
 		memAvailable = useMem;
@@ -161,7 +161,7 @@ static unsigned int CalcStrips(double memRequired, double memAvailable, double u
 	if (memAvailable >= memRequired)
 		return 1;
 
-	strips = (unsigned int)ceil(memRequired / memAvailable);
+	strips = (uint)ceil(memRequired / memAvailable);
 
 	return strips;
 }
@@ -239,7 +239,7 @@ static T NextLowestEvenDiv(T numerator, T denominator)
 /// <param name="errorReport">The error report for holding errors if anything goes wrong</param>
 /// <returns>A pointer to the created renderer if successful, else false.</returns>
 template <typename T, typename bucketT>
-static Renderer<T, bucketT>* CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared, GLuint texId, EmberReport& errorReport)
+static Renderer<T, bucketT>* CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared, GLuint texId, EmberReport& errorReport)
 {
 	string s;
 	unique_ptr<Renderer<T, bucketT>> renderer;
@@ -275,7 +275,7 @@ static Renderer<T, bucketT>* CreateRenderer(eRendererType renderType, unsigned i
 }
 
 template <typename T>
-static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<unsigned char>& finalImage, double time, size_t strips, bool yAxisUp,
+static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<byte>& finalImage, double time, size_t strips, bool yAxisUp,
 	std::function<void(size_t strip)> perStripStart,
 	std::function<void(size_t strip)> perStripFinish,
 	std::function<void(size_t strip)> perStripError,

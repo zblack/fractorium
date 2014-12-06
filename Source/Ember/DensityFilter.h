@@ -110,7 +110,7 @@ public:
 		int rowSize;
 		size_t filterLoop;
 		int keepThresh = 100;
-		unsigned int filterCoefIndex = 0;
+		uint filterCoefIndex = 0;
 		T decFilterCount;
 		T finalMinRad = m_MinRad * m_Supersample + 1;//Should scale the filter width by the oversample.
 		T finalMaxRad = m_MaxRad * m_Supersample + 1;//The '+1' comes from the assumed distance to the first pixel.
@@ -329,7 +329,7 @@ public:
 	inline size_t CoefsIndicesSizeBytes() const { return (m_CoefIndices.size() * sizeof(m_CoefIndices[0])); }
 	inline const T* Coefs() const { return m_Coefs.data(); }
 	inline const T* Widths() const { return m_Widths.data(); }
-	inline const unsigned int* CoefIndices() const { return m_CoefIndices.data(); }
+	inline const uint* CoefIndices() const { return m_CoefIndices.data(); }
 
 private:
 	T m_MinRad;
@@ -342,6 +342,6 @@ private:
 	intmax_t m_FilterWidth;//The new radius after scaling for super sample and rounding. This is what's actually used.
 	vector<T> m_Coefs;
 	vector<T> m_Widths;
-	vector<unsigned int> m_CoefIndices;
+	vector<uint> m_CoefIndices;
 };
 }

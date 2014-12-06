@@ -207,7 +207,7 @@ void Fractorium::OnColorSelected(const QColor& color) { m_Controller->Background
 /// Resets the rendering process.
 /// </summary>
 /// <param name="index">The index of the palette mode combo box</param>
-template <typename T> void FractoriumEmberController<T>::PaletteModeChanged(unsigned int i) { Update([&] { m_Ember.m_PaletteMode = i == 0 ? PALETTE_STEP : PALETTE_LINEAR; }); }
+template <typename T> void FractoriumEmberController<T>::PaletteModeChanged(uint i) { Update([&] { m_Ember.m_PaletteMode = i == 0 ? PALETTE_STEP : PALETTE_LINEAR; }); }
 void Fractorium::OnPaletteModeComboCurrentIndexChanged(int index) { m_Controller->PaletteModeChanged(index); }
 
 /// <summary>
@@ -219,7 +219,7 @@ void Fractorium::OnPaletteModeComboCurrentIndexChanged(int index) { m_Controller
 /// Dimensions are set automatically to match the dimensions of GLWidget.
 /// </summary>
 /// <param name="d">Ignored</param>
-template <typename T> void FractoriumEmberController<T>::WidthChanged(unsigned int i) { Update([&] { m_Ember.m_FinalRasW = i; }); }
+template <typename T> void FractoriumEmberController<T>::WidthChanged(uint i) { Update([&] { m_Ember.m_FinalRasW = i; }); }
 void Fractorium::OnWidthChanged(int i) { m_Controller->WidthChanged(i); }
 
 /// <summary>
@@ -227,7 +227,7 @@ void Fractorium::OnWidthChanged(int i) { m_Controller->WidthChanged(i); }
 /// Dimensions are set automatically to match the dimensions of GLWidget.
 /// </summary>
 /// <param name="d">Ignored</param>
-template <typename T> void FractoriumEmberController<T>::HeightChanged(unsigned int i) { Update([&] { m_Ember.m_FinalRasH = i; }); }
+template <typename T> void FractoriumEmberController<T>::HeightChanged(uint i) { Update([&] { m_Ember.m_FinalRasH = i; }); }
 void Fractorium::OnHeightChanged(int i) { m_Controller->HeightChanged(i); }
 
 /// <summary>

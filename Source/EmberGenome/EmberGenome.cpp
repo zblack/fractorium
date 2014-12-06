@@ -58,15 +58,15 @@ bool EmberGenome(EmberOptions& opt)
 	//Regular variables.
 	Timing t;
 	bool exactTimeMatch, randomMode, didColor, seqFlag;
-	unsigned int i, j, i0, i1, rep, val, frame, frameCount, count = 0;
-	unsigned int ftime, firstFrame, lastFrame;
+	uint i, j, i0, i1, rep, val, frame, frameCount, count = 0;
+	uint ftime, firstFrame, lastFrame;
 	size_t n, tot, totb, totw;
 	T avgPix, fractionBlack, fractionWhite, blend, spread, mix0, mix1;
 	string token, filename;
 	ostringstream os, os2;
 	vector<Ember<T>> embers, embers2, templateEmbers;
 	vector<eVariationId> vars, noVars;
-	vector<unsigned char> finalImage;
+	vector<byte> finalImage;
 	eCrossMode crossMeth;
 	eMutateMode mutMeth;
 	Ember<T> orig, save, selp0, selp1, parent0, parent1;
@@ -312,8 +312,8 @@ bool EmberGenome(EmberOptions& opt)
 			embers[i].DeleteMotionElements();
 		}
 
-		firstFrame = (unsigned int)(opt.FirstFrame() == UINT_MAX ? embers[0].m_Time : opt.FirstFrame());
-		lastFrame  = (unsigned int)(opt.LastFrame()  == UINT_MAX ? embers.back().m_Time : opt.LastFrame());
+		firstFrame = (uint)(opt.FirstFrame() == UINT_MAX ? embers[0].m_Time : opt.FirstFrame());
+		lastFrame  = (uint)(opt.LastFrame()  == UINT_MAX ? embers.back().m_Time : opt.LastFrame());
 
 		if (lastFrame < firstFrame)
 			lastFrame = firstFrame;
@@ -326,7 +326,7 @@ bool EmberGenome(EmberOptions& opt)
 
 			for (i = 0; i < embers.size(); i++)
 			{
-				if (ftime == (unsigned int)embers[i].m_Time)
+				if (ftime == (uint)embers[i].m_Time)
 				{
 					interpolated = embers[i];
 					exactTimeMatch = true;
@@ -340,7 +340,7 @@ bool EmberGenome(EmberOptions& opt)
 
 				for (i = 0; i < embers.size(); i++)
 				{
-					if (ftime == (unsigned int)(embers[i].m_Time - 1))
+					if (ftime == (uint)(embers[i].m_Time - 1))
 					{
 						exactTimeMatch = true;
 						break;
@@ -480,7 +480,7 @@ bool EmberGenome(EmberOptions& opt)
 
 			oldX = embers[i].m_CenterX;
 			oldY = embers[i].m_CenterY;
-			embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH / (T)opt.Frames());
+			embers[i].m_FinalRasH = (uint)((T)embers[i].m_FinalRasH / (T)opt.Frames());
 
 			embers[i].m_CenterY = embers[i].m_CenterY - ((opt.Frames() - 1) * embers[i].m_FinalRasH) /
 				(2 * embers[i].m_PixelsPerUnit * pow(T(2.0), embers[i].m_Zoom));

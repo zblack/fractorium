@@ -12,7 +12,7 @@ namespace EmberCLns
 /// <param name="shared">True if shared with OpenGL, else false. Default: false.</param>
 /// <param name="outputTexID">The texture ID of the shared OpenGL texture if shared. Default: 0.</param>
 template <typename T>
-RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool shared, GLuint outputTexID)
+RendererCL<T>::RendererCL(uint platform, uint device, bool shared, GLuint outputTexID)
 {
 	m_Init = false;
 	m_NVidia = false;
@@ -82,7 +82,7 @@ RendererCL<T>::~RendererCL()
 /// <param name="outputTexID">The texture ID of the shared OpenGL texture if shared</param>
 /// <returns>True if success, else false.</returns>
 template <typename T>
-bool RendererCL<T>::Init(unsigned int platform, unsigned int device, bool shared, GLuint outputTexID)
+bool RendererCL<T>::Init(uint platform, uint device, bool shared, GLuint outputTexID)
 {
 	//Timing t;
 	bool b = true;
@@ -156,27 +156,27 @@ bool RendererCL<T>::SetOutputTexture(GLuint outputTexID)
 /// </summary>
 
 //Iters per kernel/block/grid.
-template <typename T> unsigned int RendererCL<T>::IterCountPerKernel() const { return m_IterCountPerKernel; }
-template <typename T> unsigned int RendererCL<T>::IterCountPerBlock()  const { return IterCountPerKernel() * IterBlockKernelCount(); }
-template <typename T> unsigned int RendererCL<T>::IterCountPerGrid()   const { return IterCountPerKernel() * IterGridKernelCount();  }
+template <typename T> uint RendererCL<T>::IterCountPerKernel() const { return m_IterCountPerKernel; }
+template <typename T> uint RendererCL<T>::IterCountPerBlock()  const { return IterCountPerKernel() * IterBlockKernelCount(); }
+template <typename T> uint RendererCL<T>::IterCountPerGrid()   const { return IterCountPerKernel() * IterGridKernelCount();  }
 
 //Kernels per block.
-template <typename T> unsigned int RendererCL<T>::IterBlockKernelWidth()  const { return m_IterBlockWidth;								 }
-template <typename T> unsigned int RendererCL<T>::IterBlockKernelHeight() const { return m_IterBlockHeight;								 }
-template <typename T> unsigned int RendererCL<T>::IterBlockKernelCount()  const { return IterBlockKernelWidth() * IterBlockKernelHeight(); }
+template <typename T> uint RendererCL<T>::IterBlockKernelWidth()  const { return m_IterBlockWidth;								 }
+template <typename T> uint RendererCL<T>::IterBlockKernelHeight() const { return m_IterBlockHeight;								 }
+template <typename T> uint RendererCL<T>::IterBlockKernelCount()  const { return IterBlockKernelWidth() * IterBlockKernelHeight(); }
 
 //Kernels per grid.
-template <typename T> unsigned int RendererCL<T>::IterGridKernelWidth()  const { return IterGridBlockWidth() * IterBlockKernelWidth();   }
-template <typename T> unsigned int RendererCL<T>::IterGridKernelHeight() const { return IterGridBlockHeight() * IterBlockKernelHeight(); }
-template <typename T> unsigned int RendererCL<T>::IterGridKernelCount()	 const { return IterGridKernelWidth() * IterGridKernelHeight();  }
+template <typename T> uint RendererCL<T>::IterGridKernelWidth()  const { return IterGridBlockWidth() * IterBlockKernelWidth();   }
+template <typename T> uint RendererCL<T>::IterGridKernelHeight() const { return IterGridBlockHeight() * IterBlockKernelHeight(); }
+template <typename T> uint RendererCL<T>::IterGridKernelCount()	 const { return IterGridKernelWidth() * IterGridKernelHeight();  }
 
 //Blocks per grid.
-template <typename T> unsigned int RendererCL<T>::IterGridBlockWidth()  const { return m_IterBlocksWide;							   }
-template <typename T> unsigned int RendererCL<T>::IterGridBlockHeight() const { return m_IterBlocksHigh;							   }
-template <typename T> unsigned int RendererCL<T>::IterGridBlockCount()  const { return IterGridBlockWidth() * IterGridBlockHeight(); }
+template <typename T> uint RendererCL<T>::IterGridBlockWidth()  const { return m_IterBlocksWide;							   }
+template <typename T> uint RendererCL<T>::IterGridBlockHeight() const { return m_IterBlocksHigh;							   }
+template <typename T> uint RendererCL<T>::IterGridBlockCount()  const { return IterGridBlockWidth() * IterGridBlockHeight(); }
 
-template <typename T> unsigned int RendererCL<T>::PlatformIndex() { return m_Wrapper.PlatformIndex(); }
-template <typename T> unsigned int RendererCL<T>::DeviceIndex()   { return m_Wrapper.DeviceIndex();   }
+template <typename T> uint RendererCL<T>::PlatformIndex() { return m_Wrapper.PlatformIndex(); }
+template <typename T> uint RendererCL<T>::DeviceIndex()   { return m_Wrapper.DeviceIndex();   }
 
 /// <summary>
 /// Read the histogram into the host side CPU buffer.
@@ -230,7 +230,7 @@ bool RendererCL<T>::ReadPoints(vector<PointCL<T>>& vec)
 template <typename T>
 bool RendererCL<T>::ClearHist()
 {
-	return ClearBuffer(m_HistBufferName, (unsigned int)SuperRasW(), (unsigned int)SuperRasH(), sizeof(v4T));
+	return ClearBuffer(m_HistBufferName, (uint)SuperRasW(), (uint)SuperRasH(), sizeof(v4T));
 }
 
 /// <summary>
@@ -240,7 +240,7 @@ bool RendererCL<T>::ClearHist()
 template <typename T>
 bool RendererCL<T>::ClearAccum()
 {
-	return ClearBuffer(m_AccumBufferName, (unsigned int)SuperRasW(), (unsigned int)SuperRasH(), sizeof(v4T));
+	return ClearBuffer(m_AccumBufferName, (uint)SuperRasW(), (uint)SuperRasH(), sizeof(v4T));
 }
 
 /// <summary>
@@ -293,7 +293,7 @@ string RendererCL<T>::IterKernel() { return m_IterKernel; }
 /// <param name="pixels">The host side buffer to read into</param>
 /// <returns>True if success, else false.</returns>
 template <typename T>
-bool RendererCL<T>::ReadFinal(unsigned char* pixels)
+bool RendererCL<T>::ReadFinal(byte* pixels)
 {
 	if (pixels)
 		return m_Wrapper.ReadImage(m_FinalImageName, FinalRasW(), FinalRasH(), 0, m_Wrapper.Shared(), pixels);
@@ -309,8 +309,8 @@ bool RendererCL<T>::ReadFinal(unsigned char* pixels)
 template <typename T>
 bool RendererCL<T>::ClearFinal()
 {
-	vector<unsigned char> v;
-	unsigned int index = m_Wrapper.FindImageIndex(m_FinalImageName, m_Wrapper.Shared());
+	vector<byte> v;
+	uint index = m_Wrapper.FindImageIndex(m_FinalImageName, m_Wrapper.Shared());
 
 	if (this->PrepFinalAccumVector(v))
 	{
@@ -611,7 +611,7 @@ eRenderStatus RendererCL<T>::GaussianDensityFilter()
 	//then copying the results back to the GPU.
 	//if (ReadHist())
 	//{
-	//	unsigned int accumLength = SuperSize() * sizeof(glm::detail::tvec4<T>);
+	//	uint accumLength = SuperSize() * sizeof(glm::detail::tvec4<T>);
 	//	const char* loc = __FUNCTION__;
 	//
 	//	Renderer<T, T>::ResetBuckets(false, true);
@@ -641,7 +641,7 @@ eRenderStatus RendererCL<T>::GaussianDensityFilter()
 /// <param name="finalOffset">Offset in the buffer to store the pixels to</param>
 /// <returns>True if success and not aborted, else false.</returns>
 template <typename T>
-eRenderStatus RendererCL<T>::AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset)
+eRenderStatus RendererCL<T>::AccumulatorToFinalImage(byte* pixels, size_t finalOffset)
 {
 	eRenderStatus status = RunFinalAccum();
 
@@ -766,10 +766,10 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 {
 	Timing t;//, t2(4);
 	bool b = true;
-	unsigned int fuse, argIndex;
-	unsigned int iterCountPerKernel = IterCountPerKernel();
-	unsigned int iterCountPerBlock = IterCountPerBlock();
-	unsigned int supersize = (unsigned int)SuperSize();
+	uint fuse, argIndex;
+	uint iterCountPerKernel = IterCountPerKernel();
+	uint iterCountPerBlock = IterCountPerBlock();
+	uint supersize = (uint)SuperSize();
 	int kernelIndex = m_Wrapper.FindKernelIndex(m_IterOpenCLKernelCreator.IterEntryPoint());
 	size_t fuseFreq = Renderer<T, T>::SubBatchSize() / m_IterCountPerKernel;//Use the base sbs to determine when to fuse.
 	size_t itersRemaining, localIterCount = 0;
@@ -805,19 +805,19 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 #else
 			//fuse = 100;
 			//fuse = ((m_Calls % fuseFreq) == 0 ? (EarlyClip() ? 100u : 15u) : 0u);
-			fuse = (unsigned int)((m_Calls % fuseFreq) == 0u ? FuseCount() : 0u);
+			fuse = (uint)((m_Calls % fuseFreq) == 0u ? FuseCount() : 0u);
 			//fuse = ((m_Calls % 4) == 0 ? 100u : 0u);
 #endif
 			itersRemaining = iterCount - itersRan;
-			unsigned int gridW = (unsigned int)min(ceil((double)itersRemaining / (double)iterCountPerBlock), (double)IterGridBlockWidth());
-			unsigned int gridH = (unsigned int)min(ceil((double)itersRemaining / ((double)gridW * iterCountPerBlock)), (double)IterGridBlockHeight());
-			unsigned int iterCountThisLaunch = iterCountPerBlock * gridW * gridH;
+			uint gridW = (uint)min(ceil((double)itersRemaining / (double)iterCountPerBlock), (double)IterGridBlockWidth());
+			uint gridH = (uint)min(ceil((double)itersRemaining / ((double)gridW * iterCountPerBlock)), (double)IterGridBlockHeight());
+			uint iterCountThisLaunch = iterCountPerBlock * gridW * gridH;
 
 			//Similar to what's done in the base class.
 			//The number of iters per thread must be adjusted if they've requested less iters than is normally ran in a block (256 * 256).
 			if (iterCountThisLaunch > iterCount)
 			{
-				iterCountPerKernel = (unsigned int)ceil((double)iterCount / (double)(gridW * gridH * IterBlockKernelCount()));
+				iterCountPerKernel = (uint)ceil((double)iterCount / (double)(gridW * gridH * IterBlockKernelCount()));
 				iterCountThisLaunch = iterCountPerKernel * (gridW * gridH * IterBlockKernelCount());
 			}
 
@@ -906,11 +906,11 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 	if (kernelIndex != -1)
 	{
 		m_DensityFilterCL = ConvertDensityFilter();
-		unsigned int argIndex = 0;
-		unsigned int blockW = m_WarpSize;
-		unsigned int blockH = 4;//A height of 4 seems to run the fastest.
-		unsigned int gridW = m_DensityFilterCL.m_SuperRasW;
-		unsigned int gridH = m_DensityFilterCL.m_SuperRasH;
+		uint argIndex = 0;
+		uint blockW = m_WarpSize;
+		uint blockH = 4;//A height of 4 seems to run the fastest.
+		uint gridW = m_DensityFilterCL.m_SuperRasW;
+		uint gridH = m_DensityFilterCL.m_SuperRasH;
 
 		OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
 
@@ -952,14 +952,14 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 
 	if (kernelIndex != -1)
 	{
-		unsigned int leftBound  = m_DensityFilterCL.m_Supersample - 1;
-		unsigned int rightBound = m_DensityFilterCL.m_SuperRasW - (m_DensityFilterCL.m_Supersample - 1);
-		unsigned int topBound   = leftBound;
-		unsigned int botBound   = m_DensityFilterCL.m_SuperRasH - (m_DensityFilterCL.m_Supersample - 1);
-		unsigned int gridW      = rightBound - leftBound;
-		unsigned int gridH      = botBound - topBound;
-		unsigned int blockSizeW = m_MaxDEBlockSizeW;//These *must* both be divisible by 16 or else pixels will go missing.
-		unsigned int blockSizeH = m_MaxDEBlockSizeH;
+		uint leftBound  = m_DensityFilterCL.m_Supersample - 1;
+		uint rightBound = m_DensityFilterCL.m_SuperRasW - (m_DensityFilterCL.m_Supersample - 1);
+		uint topBound   = leftBound;
+		uint botBound   = m_DensityFilterCL.m_SuperRasH - (m_DensityFilterCL.m_Supersample - 1);
+		uint gridW      = rightBound - leftBound;
+		uint gridH      = botBound - topBound;
+		uint blockSizeW = m_MaxDEBlockSizeW;//These *must* both be divisible by 16 or else pixels will go missing.
+		uint blockSizeH = m_MaxDEBlockSizeH;
 
 		//OpenCL runs out of resources when using double or a supersample of 2.
 		//Remedy this by reducing the height of the block by 2.
@@ -977,10 +977,10 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 		//that are far enough apart such that their filters do not overlap.
 		//Do the latter.
 		//Gap is in terms of blocks. How many blocks must separate two blocks running at the same time.
-		unsigned int gapW = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
-		unsigned int chunkSizeW = gapW + 1;
-		unsigned int gapH = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeH);
-		unsigned int chunkSizeH = gapH + 1;
+		uint gapW = (uint)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
+		uint chunkSizeW = gapW + 1;
+		uint gapH = (uint)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeH);
+		uint chunkSizeH = gapH + 1;
 		double totalChunks = chunkSizeW * chunkSizeH;
 
 		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, (void*)&m_DensityFilterCL, sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
@@ -988,9 +988,9 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 #ifdef ROW_ONLY_DE
 		blockSizeW = 64;//These *must* both be divisible by 16 or else pixels will go missing.
 		blockSizeH = 1;
-		gapW = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
+		gapW = (uint)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
 		chunkSizeW = gapW + 1;
-		gapH = (unsigned int)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)32);//Block height is 1, but iterates over 32 rows.
+		gapH = (uint)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)32);//Block height is 1, but iterates over 32 rows.
 		chunkSizeH = gapH + 1;
 		totalChunks = chunkSizeW * chunkSizeH;
 
@@ -998,9 +998,9 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 		gridW /= chunkSizeW;
 		gridH /= chunkSizeH;
 
-		for (unsigned int rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
+		for (uint rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
 		{
-			for (unsigned int colChunk = 0; b && !m_Abort && colChunk < chunkSizeW; colChunk++)
+			for (uint colChunk = 0; b && !m_Abort && colChunk < chunkSizeW; colChunk++)
 			{
 				//t2.Tic();
 				if (b && !(b = RunDensityFilterPrivate(kernelIndex, gridW, gridH, blockSizeW, blockSizeH, chunkSizeW, chunkSizeH, colChunk, rowChunk))) { m_Abort = true; m_ErrorReport.push_back(loc); }
@@ -1021,9 +1021,9 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 		gridH /= chunkSizeH;
 		OpenCLWrapper::MakeEvenGridDims(blockSizeW, blockSizeH, gridW, gridH);
 
-		for (unsigned int rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
+		for (uint rowChunk = 0; b && !m_Abort && rowChunk < chunkSizeH; rowChunk++)
 		{
-			for (unsigned int colChunk = 0; b && !m_Abort && colChunk < chunkSizeW; colChunk++)
+			for (uint colChunk = 0; b && !m_Abort && colChunk < chunkSizeW; colChunk++)
 			{
 				//t2.Tic();
 				if (b && !(b = RunDensityFilterPrivate(kernelIndex, gridW, gridH, blockSizeW, blockSizeH, chunkSizeW, chunkSizeH, colChunk, rowChunk))) { m_Abort = true; m_ErrorReport.push_back(loc); }
@@ -1067,11 +1067,11 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 	T alphaBase;
 	T alphaScale;
 	int accumKernelIndex = MakeAndGetFinalAccumProgram(alphaBase, alphaScale);
-	unsigned int argIndex;
-	unsigned int gridW;
-	unsigned int gridH;
-	unsigned int blockW;
-	unsigned int blockH;
+	uint argIndex;
+	uint gridW;
+	uint gridH;
+	uint blockW;
+	uint blockH;
 	const char* loc = __FUNCTION__;
 
 	if (!m_Abort && accumKernelIndex != -1)
@@ -1151,23 +1151,23 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 /// <param name="elementSize">Size of each element</param>
 /// <returns>True if success, else false.</returns>
 template <typename T>
-bool RendererCL<T>::ClearBuffer(const string& bufferName, unsigned int width, unsigned int height, unsigned int elementSize)
+bool RendererCL<T>::ClearBuffer(const string& bufferName, uint width, uint height, uint elementSize)
 {
 	bool b = true;
 	int kernelIndex = m_Wrapper.FindKernelIndex(m_IterOpenCLKernelCreator.ZeroizeEntryPoint());
-	unsigned int argIndex = 0;
+	uint argIndex = 0;
 	const char* loc = __FUNCTION__;
 
 	if (kernelIndex != -1)
 	{
-		unsigned int blockW = m_NVidia ? 32 : 16;//Max work group size is 256 on AMD, which means 16x16.
-		unsigned int blockH = m_NVidia ? 32 : 16;
-		unsigned int gridW = width * elementSize;
-		unsigned int gridH = height;
+		uint blockW = m_NVidia ? 32 : 16;//Max work group size is 256 on AMD, which means 16x16.
+		uint blockH = m_NVidia ? 32 : 16;
+		uint gridW = width * elementSize;
+		uint gridH = height;
 
 		OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
 
-		if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, bufferName)))          { m_ErrorReport.push_back(loc); }//Buffer of unsigned char.
+		if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, bufferName)))          { m_ErrorReport.push_back(loc); }//Buffer of byte.
 		if (b && !(b = m_Wrapper.SetArg      (kernelIndex, argIndex++, width * elementSize))) { m_ErrorReport.push_back(loc); }//Width.
 		if (b && !(b = m_Wrapper.SetArg      (kernelIndex, argIndex++, height)))              { m_ErrorReport.push_back(loc); }//Height.
 		if (b && !(b = m_Wrapper.RunKernel(kernelIndex, gridW, gridH, 1, blockW, blockH, 1))) { m_ErrorReport.push_back(loc); }
@@ -1196,11 +1196,11 @@ bool RendererCL<T>::ClearBuffer(const string& bufferName, unsigned int width, un
 /// <param name="colParity">Column parity</param>
 /// <returns>True if success, else false.</returns>
 template <typename T>
-bool RendererCL<T>::RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int chunkW, unsigned int chunkH)
+bool RendererCL<T>::RunDensityFilterPrivate(uint kernelIndex, uint gridW, uint gridH, uint blockW, uint blockH, uint chunkSizeW, uint chunkSizeH, uint chunkW, uint chunkH)
 {
 	//Timing t(4);
 	bool b = true;
-	unsigned int argIndex = 0;
+	uint argIndex = 0;
 	const char* loc = __FUNCTION__;
 
 	if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex, m_HistBufferName)))           { m_ErrorReport.push_back(loc); } argIndex++;//Histogram.
@@ -1229,7 +1229,7 @@ bool RendererCL<T>::RunDensityFilterPrivate(unsigned int kernelIndex, unsigned i
 /// <param name="filterWidth">Width of the gaussian filter</param>
 /// <returns>The kernel index if successful, else -1.</returns>
 template <typename T>
-int RendererCL<T>::MakeAndGetDensityFilterProgram(size_t ss, unsigned int filterWidth)
+int RendererCL<T>::MakeAndGetDensityFilterProgram(size_t ss, uint filterWidth)
 {
 	string deEntryPoint = m_DEOpenCLKernelCreator.GaussianDEEntryPoint(ss, filterWidth);
 	int kernelIndex = m_Wrapper.FindKernelIndex(deEntryPoint);
@@ -1323,19 +1323,19 @@ DensityFilterCL<T> RendererCL<T>::ConvertDensityFilter()
 	DensityFilterCL<T> filterCL;
 	DensityFilter<T>* densityFilter = dynamic_cast<DensityFilter<T>*>(GetDensityFilter());
 
-	filterCL.m_Supersample = (unsigned int)Supersample();
-	filterCL.m_SuperRasW = (unsigned int)SuperRasW();
-	filterCL.m_SuperRasH = (unsigned int)SuperRasH();
+	filterCL.m_Supersample = (uint)Supersample();
+	filterCL.m_SuperRasW = (uint)SuperRasW();
+	filterCL.m_SuperRasH = (uint)SuperRasH();
 	filterCL.m_K1 = K1();
 	filterCL.m_K2 = K2();
 
 	if (densityFilter)
 	{
 		filterCL.m_Curve = densityFilter->Curve();
-		filterCL.m_KernelSize = (unsigned int)densityFilter->KernelSize();
-		filterCL.m_MaxFilterIndex = (unsigned int)densityFilter->MaxFilterIndex();
-		filterCL.m_MaxFilteredCounts = (unsigned int)densityFilter->MaxFilteredCounts();
-		filterCL.m_FilterWidth = (unsigned int)densityFilter->FilterWidth();
+		filterCL.m_KernelSize = (uint)densityFilter->KernelSize();
+		filterCL.m_MaxFilterIndex = (uint)densityFilter->MaxFilterIndex();
+		filterCL.m_MaxFilteredCounts = (uint)densityFilter->MaxFilteredCounts();
+		filterCL.m_FilterWidth = (uint)densityFilter->FilterWidth();
 	}
 
 	return filterCL;
@@ -1355,17 +1355,17 @@ SpatialFilterCL<T> RendererCL<T>::ConvertSpatialFilter()
 
 	this->PrepFinalAccumVals(background, g, linRange, vibrancy);
 
-	filterCL.m_SuperRasW = (unsigned int)SuperRasW();
-	filterCL.m_SuperRasH = (unsigned int)SuperRasH();
-	filterCL.m_FinalRasW = (unsigned int)FinalRasW();
-	filterCL.m_FinalRasH = (unsigned int)FinalRasH();
-	filterCL.m_Supersample = (unsigned int)Supersample();
-	filterCL.m_FilterWidth = (unsigned int)GetSpatialFilter()->FinalFilterWidth();
-	filterCL.m_NumChannels = (unsigned int)Renderer<T, T>::NumChannels();
-	filterCL.m_BytesPerChannel = (unsigned int)BytesPerChannel();
-	filterCL.m_DensityFilterOffset = (unsigned int)DensityFilterOffset();
+	filterCL.m_SuperRasW = (uint)SuperRasW();
+	filterCL.m_SuperRasH = (uint)SuperRasH();
+	filterCL.m_FinalRasW = (uint)FinalRasW();
+	filterCL.m_FinalRasH = (uint)FinalRasH();
+	filterCL.m_Supersample = (uint)Supersample();
+	filterCL.m_FilterWidth = (uint)GetSpatialFilter()->FinalFilterWidth();
+	filterCL.m_NumChannels = (uint)Renderer<T, T>::NumChannels();
+	filterCL.m_BytesPerChannel = (uint)BytesPerChannel();
+	filterCL.m_DensityFilterOffset = (uint)DensityFilterOffset();
 	filterCL.m_Transparency = Transparency();
-	filterCL.m_YAxisUp = (unsigned int)m_YAxisUp;
+	filterCL.m_YAxisUp = (uint)m_YAxisUp;
 	filterCL.m_Vibrancy = vibrancy;
 	filterCL.m_HighlightPower = HighlightPower();
 	filterCL.m_Gamma = g;
@@ -1401,7 +1401,7 @@ void RendererCL<T>::ConvertEmber(Ember<T>& ember, EmberCL<T>& emberCL, vector<Xf
 	emberCL.m_CamDepthBlur	 = ember.m_CamDepthBlur;
 	emberCL.m_BlurCoef		 = ember.BlurCoef();
 
-	for (unsigned int i = 0; i < ember.TotalXformCount() && i < xformsCL.size(); i++)
+	for (uint i = 0; i < ember.TotalXformCount() && i < xformsCL.size(); i++)
 	{
 		Xform<T>* xform = ember.GetTotalXform(i);
 
@@ -1425,7 +1425,7 @@ void RendererCL<T>::ConvertEmber(Ember<T>& ember, EmberCL<T>& emberCL, vector<Xf
 		xformsCL[i].m_Opacity = xform->m_Opacity;
 		xformsCL[i].m_VizAdjusted = xform->VizAdjusted();
 
-		for (unsigned int varIndex = 0; varIndex < xform->TotalVariationCount() && varIndex < MAX_CL_VARS; varIndex++)//Assign all variation weights for this xform, with a max of MAX_CL_VARS.
+		for (uint varIndex = 0; varIndex < xform->TotalVariationCount() && varIndex < MAX_CL_VARS; varIndex++)//Assign all variation weights for this xform, with a max of MAX_CL_VARS.
 			xformsCL[i].m_VariationWeights[varIndex] = xform->GetVariation(varIndex)->m_Weight;
 	}
 }
@@ -1441,7 +1441,7 @@ CarToRasCL<T> RendererCL<T>::ConvertCarToRas(const CarToRas<T>& carToRas)
 {
 	CarToRasCL<T> carToRasCL;
 
-	carToRasCL.m_RasWidth = (unsigned int)carToRas.RasWidth();
+	carToRasCL.m_RasWidth = (uint)carToRas.RasWidth();
 	carToRasCL.m_PixPerImageUnitW = carToRas.PixPerImageUnitW();
 	carToRasCL.m_RasLlX = carToRas.RasLlX();
 	carToRasCL.m_PixPerImageUnitH = carToRas.PixPerImageUnitH();

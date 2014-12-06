@@ -159,7 +159,7 @@ protected:
 };
 
 /// <summary>
-/// Open a file in binary mode and read its entire contents into a vector of unsigned chars. Optionally null terminate.
+/// Open a file in binary mode and read its entire contents into a vector of bytes. Optionally null terminate.
 /// </summary>
 /// <param name="filename">The full path to the file to read</param>
 /// <param name="buf">The vector which will be populated with the file's contents</param>
@@ -262,7 +262,7 @@ static void CopyVec(vector<T>& dest, const vector<U>& source, std::function<void
 template <typename T>
 static void ClearVec(vector<T*>& vec, bool arrayDelete = false)
 {
-	for (unsigned int i = 0; i < vec.size(); i++)
+	for (uint i = 0; i < vec.size(); i++)
 	{
 		if (vec[i] != nullptr)
 		{
@@ -451,7 +451,7 @@ static inline float LRint(float x)
 /// <returns>The rounded value</returns>
 static inline double LRint(double x)
 {
-	int64_t temp = (x >= 0 ? (int64_t)(x + 0.5) : (int64_t)(x - 0.5));
+	glm::int64_t temp = (x >= 0 ? (int64_t)(x + 0.5) : (int64_t)(x - 0.5));
 	return (double)temp;
 }
 
@@ -893,7 +893,7 @@ int Arg<int>(char* name, int def)
 }
 
 /// <summary>
-/// Template specialization for Arg<>() with a type of unsigned int.
+/// Template specialization for Arg<>() with a type of uint.
 /// </summary>
 /// <param name="name">The name of the environment variable to query</param>
 /// <param name="def">The default value to return if the environment variable was not present</param>
@@ -902,7 +902,7 @@ template <>
 #ifdef _WIN32
 static
 #endif
-unsigned int Arg<unsigned int>(char* name, unsigned int def)
+uint Arg<uint>(char* name, uint def)
 {
 	return Arg<int>(name, (int)def);
 }
@@ -1003,9 +1003,9 @@ string Arg<string>(char* name, string def)
 /// <param name="replace">The value to replace with</param>
 /// <returns>The number of instances replaced</returns>
 template<typename T>
-static unsigned int FindAndReplace(T& source, const T& find, const T& replace)
+static uint FindAndReplace(T& source, const T& find, const T& replace)
 {
-	unsigned int replaceCount = 0;
+	uint replaceCount = 0;
 	typename T::size_type fLen = find.size();
 	typename T::size_type rLen = replace.size();
 

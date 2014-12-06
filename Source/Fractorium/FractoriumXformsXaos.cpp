@@ -50,7 +50,7 @@ void FractoriumEmberController<T>::FillXaosWithCurrentXform()
 /// <param name="i">The index of the xform whose xaos will be used</param>
 /// <returns>The xaos name string</returns>
 template <typename T>
-QString FractoriumEmberController<T>::MakeXaosNameString(unsigned int i)
+QString FractoriumEmberController<T>::MakeXaosNameString(uint i)
 {
 	Xform<T>* xform = m_Ember.GetXform(i);
 	QString name;

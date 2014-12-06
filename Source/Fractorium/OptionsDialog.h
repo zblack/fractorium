@@ -40,9 +40,9 @@ private:
 	bool OpenCL();
 	bool Double();
 	bool ShowAllXforms();
-	unsigned int PlatformIndex();
-	unsigned int DeviceIndex();
-	unsigned int ThreadCount();
+	uint PlatformIndex();
+	uint DeviceIndex();
+	uint ThreadCount();
 
 	Ui::OptionsDialog ui;
 	OpenCLWrapper m_Wrapper;

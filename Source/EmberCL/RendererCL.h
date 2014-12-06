@@ -19,7 +19,7 @@ class EMBERCL_API RendererCLBase
 {
 public:
 	virtual ~RendererCLBase() { }
-	virtual bool ReadFinal(unsigned char* pixels) = 0;
+	virtual bool ReadFinal(byte* pixels) = 0;
 	virtual bool ClearFinal() = 0;
 };
 
@@ -54,35 +54,35 @@ using EmberNs::Renderer<T, T>::m_RotMat;
 using EmberNs::Renderer<T, T>::m_Ember;
 
 public:
-	RendererCL(unsigned int platform = 0, unsigned int device = 0, bool shared = false, GLuint outputTexID = 0);
+	RendererCL(uint platform = 0, uint device = 0, bool shared = false, GLuint outputTexID = 0);
 	~RendererCL();
 
 	//Non-virtual member functions for OpenCL specific tasks.
-	bool Init(unsigned int platform, unsigned int device, bool shared, GLuint outputTexID);
+	bool Init(uint platform, uint device, bool shared, GLuint outputTexID);
 	bool SetOutputTexture(GLuint outputTexID);
 
 	//Iters per kernel/block/grid.
-	inline unsigned int IterCountPerKernel() const;
-	inline unsigned int IterCountPerBlock() const;
-	inline unsigned int IterCountPerGrid() const;
+	inline uint IterCountPerKernel() const;
+	inline uint IterCountPerBlock() const;
+	inline uint IterCountPerGrid() const;
 
 	//Kernels per block.
-	inline unsigned int IterBlockKernelWidth() const;
-	inline unsigned int IterBlockKernelHeight() const;
-	inline unsigned int IterBlockKernelCount() const;
+	inline uint IterBlockKernelWidth() const;
+	inline uint IterBlockKernelHeight() const;
+	inline uint IterBlockKernelCount() const;
 
 	//Kernels per grid.
-	inline unsigned int IterGridKernelWidth() const;
-	inline unsigned int IterGridKernelHeight() const;
-	inline unsigned int IterGridKernelCount() const;
+	inline uint IterGridKernelWidth() const;
+	inline uint IterGridKernelHeight() const;
+	inline uint IterGridKernelCount() const;
 
 	//Blocks per grid.
-	inline unsigned int IterGridBlockWidth() const;
-	inline unsigned int IterGridBlockHeight() const;
-	inline unsigned int IterGridBlockCount() const;
+	inline uint IterGridBlockWidth() const;
+	inline uint IterGridBlockHeight() const;
+	inline uint IterGridBlockCount() const;
 
-	unsigned int PlatformIndex();
-	unsigned int DeviceIndex();
+	uint PlatformIndex();
+	uint DeviceIndex();
 	bool ReadHist();
 	bool ReadAccum();
 	bool ReadPoints(vector<PointCL<T>>& vec);
@@ -95,7 +95,7 @@ public:
 	string IterKernel();
 
 	//Virtual functions overridden from RendererCLBase.
-	virtual bool ReadFinal(unsigned char* pixels);
+	virtual bool ReadFinal(byte* pixels);
 	virtual bool ClearFinal();
 
 	//Public virtual functions overridden from Renderer or RendererBase.
@@ -122,7 +122,7 @@ protected:
 	virtual bool ResetBuckets(bool resetHist = true, bool resetAccum = true) override;
 	virtual eRenderStatus LogScaleDensityFilter() override;
 	virtual eRenderStatus GaussianDensityFilter() override;
-	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset) override;
+	virtual eRenderStatus AccumulatorToFinalImage(byte* pixels, size_t finalOffset) override;
 	virtual EmberStats Iterate(size_t iterCount, size_t temporalSample) override;
 
 private:
@@ -132,9 +132,9 @@ private:
 	eRenderStatus RunLogScaleFilter();
 	eRenderStatus RunDensityFilter();
 	eRenderStatus RunFinalAccum();
-	bool ClearBuffer(const string& bufferName, unsigned int width, unsigned int height, unsigned int elementSize);
-	bool RunDensityFilterPrivate(unsigned int kernelIndex, unsigned int gridW, unsigned int gridH, unsigned int blockW, unsigned int blockH, unsigned int chunkSizeW, unsigned int chunkSizeH, unsigned int chunkW, unsigned int chunkH);
-	int MakeAndGetDensityFilterProgram(size_t ss, unsigned int filterWidth);
+	bool ClearBuffer(const string& bufferName, uint width, uint height, uint elementSize);
+	bool RunDensityFilterPrivate(uint kernelIndex, uint gridW, uint gridH, uint blockW, uint blockH, uint chunkSizeW, uint chunkSizeH, uint chunkW, uint chunkH);
+	int MakeAndGetDensityFilterProgram(size_t ss, uint filterWidth);
 	int MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale);
 	int MakeAndGetGammaCorrectionProgram();
 	void FillSeeds();
@@ -148,12 +148,12 @@ private:
 	bool m_Init;
 	bool m_NVidia;
 	bool m_DoublePrecision;
-	unsigned int m_IterCountPerKernel;
-	unsigned int m_IterBlocksWide, m_IterBlockWidth;
-	unsigned int m_IterBlocksHigh, m_IterBlockHeight;
-	unsigned int m_MaxDEBlockSizeW;
-	unsigned int m_MaxDEBlockSizeH;
-	unsigned int m_WarpSize;
+	uint m_IterCountPerKernel;
+	uint m_IterBlocksWide, m_IterBlockWidth;
+	uint m_IterBlocksHigh, m_IterBlockHeight;
+	uint m_MaxDEBlockSizeW;
+	uint m_MaxDEBlockSizeH;
+	uint m_WarpSize;
 	size_t m_Calls;
 
 	//Buffer names.

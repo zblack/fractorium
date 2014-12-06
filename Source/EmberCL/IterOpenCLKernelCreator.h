@@ -59,10 +59,10 @@ private:
 //template EMBERCL_API bool IterOpenCLKernelCreator::IsBuildRequired<double>(Ember<double>& ember1, Ember<double>& ember2);
 
 #ifdef OPEN_CL_TEST_AREA
-typedef void (*KernelFuncPointer) (unsigned int gridWidth, unsigned int gridHeight, unsigned int blockWidth, unsigned int blockHeight,
-								   unsigned int BLOCK_ID_X, unsigned int BLOCK_ID_Y, unsigned int THREAD_ID_X, unsigned int THREAD_ID_Y);
+typedef void (*KernelFuncPointer) (uint gridWidth, uint gridHeight, uint blockWidth, uint blockHeight,
+								   uint BLOCK_ID_X, uint BLOCK_ID_Y, uint THREAD_ID_X, uint THREAD_ID_Y);
 
-static void OpenCLSim(unsigned int gridWidth, unsigned int gridHeight, unsigned int blockWidth, unsigned int blockHeight, KernelFuncPointer func)
+static void OpenCLSim(uint gridWidth, uint gridHeight, uint blockWidth, uint blockHeight, KernelFuncPointer func)
 {
 	cout << "OpenCLSim(): " << endl;
 	cout << "	Params: " << endl;
@@ -71,13 +71,13 @@ static void OpenCLSim(unsigned int gridWidth, unsigned int gridHeight, unsigned 
 	cout << "		blockW: " << blockWidth << endl;
 	cout << "		blockH: " << blockHeight << endl;
 
-	for (unsigned int i = 0; i < gridHeight; i += blockHeight)
+	for (uint i = 0; i < gridHeight; i += blockHeight)
 	{
-		for (unsigned int j = 0; j < gridWidth; j += blockWidth)
+		for (uint j = 0; j < gridWidth; j += blockWidth)
 		{
-			for (unsigned int k = 0; k < blockHeight; k++)
+			for (uint k = 0; k < blockHeight; k++)
 			{
-				for (unsigned int l = 0; l < blockWidth; l++)
+				for (uint l = 0; l < blockWidth; l++)
 				{
 					func(gridWidth, gridHeight, blockWidth, blockHeight, j / blockWidth, i / blockHeight, l, k);
 				}

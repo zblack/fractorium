@@ -318,7 +318,7 @@ bool Renderer<T, bucketT>::CreateTemporalFilter(bool& newAlloc)
 /// <param name="finalOffset">Offset in finalImage to store the pixels to. Default: 0.</param>
 /// <returns>True if nothing went wrong, else false.</returns>
 template <typename T, typename bucketT>
-eRenderStatus Renderer<T, bucketT>::Run(vector<unsigned char>& finalImage, double time, size_t subBatchCountOverride, bool forceOutput, size_t finalOffset)
+eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, size_t subBatchCountOverride, bool forceOutput, size_t finalOffset)
 {
 	m_InRender = true;
 	EnterRender();
@@ -988,7 +988,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 /// <param name="finalOffset">Offset in the buffer to store the pixels to</param>
 /// <returns>True if not prematurely aborted, else false.</returns>
 template <typename T, typename bucketT>
-eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(vector<unsigned char>& pixels, size_t finalOffset)
+eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(vector<byte>& pixels, size_t finalOffset)
 {
 	if (PrepFinalAccumVector(pixels))
 		return AccumulatorToFinalImage(pixels.data(), finalOffset);
@@ -1004,7 +1004,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(vector<unsigned char
 /// <param name="finalOffset">Offset in the buffer to store the pixels to. Default: 0.</param>
 /// <returns>True if not prematurely aborted, else false.</returns>
 template <typename T, typename bucketT>
-eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset)
+eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t finalOffset)
 {
 	if (!pixels)
 		return RENDER_ERROR;
@@ -1048,7 +1048,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 		Color<bucketT> newBucket;
 		size_t pixelsRowStart = (m_YAxisUp ? ((FinalRasH() - j) - 1) : j) * FinalRowSize();//Pull out of inner loop for optimization.
 		size_t y = m_DensityFilterOffset + (j * Supersample());//Start at the beginning row of each super sample block.
-		unsigned short* p16;
+		uint16* p16;
 
 		for (size_t i = 0; i < FinalRasW(); i++, pixelsRowStart += PixelSize())
 		{
@@ -1074,18 +1074,18 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 
 			if (BytesPerChannel() == 2)
 			{
-				p16 = (unsigned short*)(pixels + pixelsRowStart);
+				p16 = (uint16*)(pixels + pixelsRowStart);
 
 				if (EarlyClip())
 				{
-					p16[0] = (unsigned short)(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
-					p16[1] = (unsigned short)(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
-					p16[2] = (unsigned short)(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
+					p16[0] = (uint16)(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
+					p16[1] = (uint16)(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
+					p16[2] = (uint16)(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
 
 					if (NumChannels() > 3)
 					{
 						if (Transparency())
-							p16[3] = (unsigned char)(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(65535.0));
+							p16[3] = (byte)(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(65535.0));
 						else
 							p16[3] = 65535;
 					}
@@ -1099,14 +1099,14 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 			{
 				if (EarlyClip())
 				{
-					pixels[pixelsRowStart]     = (unsigned char)Clamp<bucketT>(newBucket.r, 0, 255);
-					pixels[pixelsRowStart + 1] = (unsigned char)Clamp<bucketT>(newBucket.g, 0, 255);
-					pixels[pixelsRowStart + 2] = (unsigned char)Clamp<bucketT>(newBucket.b, 0, 255);
+					pixels[pixelsRowStart]     = (byte)Clamp<bucketT>(newBucket.r, 0, 255);
+					pixels[pixelsRowStart + 1] = (byte)Clamp<bucketT>(newBucket.g, 0, 255);
+					pixels[pixelsRowStart + 2] = (byte)Clamp<bucketT>(newBucket.b, 0, 255);
 
 					if (NumChannels() > 3)
 					{
 						if (Transparency())
-							pixels[pixelsRowStart + 3] = (unsigned char)(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(255.0));
+							pixels[pixelsRowStart + 3] = (byte)(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(255.0));
 						else
 							pixels[pixelsRowStart + 3] = 255;
 					}
@@ -1131,11 +1131,11 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(unsigned char* pixel
 		{
 			for (i = 0; i < FinalRasW(); i++)
 			{
-				unsigned char* p = pixels + (NumChannels() * (i + j * FinalRasW()));
+				byte* p = pixels + (NumChannels() * (i + j * FinalRasW()));
 
-				p[0] = (unsigned char)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][0] * WHITE);//The palette is [0..1], output image is [0..255].
-				p[1] = (unsigned char)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][1] * WHITE);
-				p[2] = (unsigned char)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][2] * WHITE);
+				p[0] = (byte)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][0] * WHITE);//The palette is [0..1], output image is [0..255].
+				p[1] = (byte)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][1] * WHITE);
+				p[2] = (byte)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][2] * WHITE);
 			}
 		}
 	}
@@ -1357,7 +1357,7 @@ template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FuseCount()
 /// Non-virtual iterator wrappers.
 /// </summary>
 
-template <typename T, typename bucketT> const unsigned char* Renderer<T, bucketT>::XformDistributions()        const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr; }
+template <typename T, typename bucketT> const byte* Renderer<T, bucketT>::XformDistributions()        const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr; }
 template <typename T, typename bucketT> const size_t		 Renderer<T, bucketT>::XformDistributionsSize()    const { return m_Iterator != nullptr ? m_Iterator->XformDistributionsSize() : 0; }
 template <typename T, typename bucketT> Point<T>*            Renderer<T, bucketT>::Samples(size_t threadIndex) const { return threadIndex < m_Samples.size() ? (Point<T>*)m_Samples[threadIndex].data() : nullptr; }
 
@@ -1523,7 +1523,7 @@ void Renderer<T, bucketT>::AddToAccum(const glm::detail::tvec4<bucketT, glm::def
 /// Because this code is used in both early and late clipping, a few extra arguments are passed
 /// to specify what actions to take. Coupled with an additional template argument, this allows
 /// using one function to perform all color clipping, gamma correction and final accumulation.
-/// Template argument accumT is expected to match T for the case of early clipping, unsigned char for late clip for
+/// Template argument accumT is expected to match T for the case of early clipping, byte for late clip for
 /// images with one byte per channel and unsigned short for images with two bytes per channel.
 /// </summary>
 /// <param name="bucket">The pixel to correct</param>

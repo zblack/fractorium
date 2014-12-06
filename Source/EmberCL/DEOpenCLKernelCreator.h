@@ -39,13 +39,13 @@ public:
 	//Accessors.
 	string LogScaleAssignDEKernel();
 	string LogScaleAssignDEEntryPoint();
-	string GaussianDEKernel(size_t ss, unsigned int filterWidth);
-	string GaussianDEEntryPoint(size_t ss, unsigned int filterWidth);
+	string GaussianDEKernel(size_t ss, uint filterWidth);
+	string GaussianDEEntryPoint(size_t ss, uint filterWidth);
 
 	//Miscellaneous static functions.
-	static unsigned int MaxDEFilterSize();
-	static T SolveMaxDERad(unsigned int maxBoxSize, T desiredFilterSize, T ss);
-	static unsigned int SolveMaxBoxSize(unsigned int localMem);
+	static uint MaxDEFilterSize();
+	static T SolveMaxDERad(uint maxBoxSize, T desiredFilterSize, T ss);
+	static uint SolveMaxBoxSize(uint localMem);
 
 private:
 	//Kernel creators.

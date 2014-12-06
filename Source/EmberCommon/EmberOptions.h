@@ -126,7 +126,7 @@ class EmberOptions;
 
 /// <summary>
 /// A single option.
-/// Template argument expected to be bool, int, unsigned int, double or string.
+/// Template argument expected to be bool, int, uint, double or string.
 /// </summary>
 template <typename T>
 class EmberOptionEntry
@@ -217,7 +217,7 @@ private:
 		break
 
 //Uint.
-#define Eou EmberOptionEntry<unsigned int>
+#define Eou EmberOptionEntry<uint>
 #define INITUINTOPTION(member, option) \
 		member = option; \
 		m_UintArgs.push_back(&member)
@@ -431,7 +431,7 @@ public:
 					PARSEINTOPTION(OPT_SYMMETRY, Symmetry);//Int args
 					PARSEINTOPTION(OPT_SHEEP_GEN, SheepGen);
 					PARSEINTOPTION(OPT_SHEEP_ID, SheepId);
-					PARSEUINTOPTION(OPT_OPENCL_PLATFORM, Platform);//Unsigned int args.
+					PARSEUINTOPTION(OPT_OPENCL_PLATFORM, Platform);//uint args.
 					PARSEUINTOPTION(OPT_OPENCL_DEVICE, Device);
 					PARSEUINTOPTION(OPT_SEED, Seed);
 					PARSEUINTOPTION(OPT_NTHREADS, ThreadCount);
@@ -645,27 +645,27 @@ public:
 	EmberOptionEntry<int> Symmetry;//Value int.
 	EmberOptionEntry<int> SheepGen;
 	EmberOptionEntry<int> SheepId;
-	EmberOptionEntry<unsigned int> Platform;//Value unsigned int.
-	EmberOptionEntry<unsigned int> Device;
-	EmberOptionEntry<unsigned int> Seed;
-	EmberOptionEntry<unsigned int> ThreadCount;
-	EmberOptionEntry<unsigned int> Strips;
-	EmberOptionEntry<unsigned int> Supersample;
-	EmberOptionEntry<unsigned int> BitsPerChannel;
-	EmberOptionEntry<unsigned int> SubBatchSize;
-	EmberOptionEntry<unsigned int> Bits;
-	EmberOptionEntry<unsigned int> PrintEditDepth;
-	EmberOptionEntry<unsigned int> JpegQuality;
-	EmberOptionEntry<unsigned int> FirstFrame;
-	EmberOptionEntry<unsigned int> LastFrame;
-	EmberOptionEntry<unsigned int> Frame;
-	EmberOptionEntry<unsigned int> Time;
-	EmberOptionEntry<unsigned int> Dtime;
-	EmberOptionEntry<unsigned int> Frames;
-	EmberOptionEntry<unsigned int> Loops;
-	EmberOptionEntry<unsigned int> Repeat;
-	EmberOptionEntry<unsigned int> Tries;
-	EmberOptionEntry<unsigned int> MaxXforms;
+	EmberOptionEntry<uint> Platform;//Value uint.
+	EmberOptionEntry<uint> Device;
+	EmberOptionEntry<uint> Seed;
+	EmberOptionEntry<uint> ThreadCount;
+	EmberOptionEntry<uint> Strips;
+	EmberOptionEntry<uint> Supersample;
+	EmberOptionEntry<uint> BitsPerChannel;
+	EmberOptionEntry<uint> SubBatchSize;
+	EmberOptionEntry<uint> Bits;
+	EmberOptionEntry<uint> PrintEditDepth;
+	EmberOptionEntry<uint> JpegQuality;
+	EmberOptionEntry<uint> FirstFrame;
+	EmberOptionEntry<uint> LastFrame;
+	EmberOptionEntry<uint> Frame;
+	EmberOptionEntry<uint> Time;
+	EmberOptionEntry<uint> Dtime;
+	EmberOptionEntry<uint> Frames;
+	EmberOptionEntry<uint> Loops;
+	EmberOptionEntry<uint> Repeat;
+	EmberOptionEntry<uint> Tries;
+	EmberOptionEntry<uint> MaxXforms;
 
 	EmberOptionEntry<double> SizeScale;//Value double.
 	EmberOptionEntry<double> QualityScale;
@@ -711,7 +711,7 @@ public:
 private:
 	vector<EmberOptionEntry<bool>*> m_BoolArgs;
 	vector<EmberOptionEntry<int>*> m_IntArgs;
-	vector<EmberOptionEntry<unsigned int>*> m_UintArgs;
+	vector<EmberOptionEntry<uint>*> m_UintArgs;
 	vector<EmberOptionEntry<double>*> m_DoubleArgs;
 	vector<EmberOptionEntry<string>*> m_StringArgs;
 };

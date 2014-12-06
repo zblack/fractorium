@@ -176,7 +176,7 @@ bool RendererBase::RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec)
 /// </summary>
 /// <param name="pixels">The vector to allocate</param>
 /// <returns>True if the vector contains enough space to hold the output image</returns>
-bool RendererBase::PrepFinalAccumVector(vector<unsigned char>& pixels)
+bool RendererBase::PrepFinalAccumVector(vector<byte>& pixels)
 {
 	EnterResize();
 	size_t size = FinalBufferSize();
@@ -470,7 +470,7 @@ void RendererBase::ThreadCount(size_t threads, const char* seedString)
 				m_Rand.push_back(isaac);
 
 				for (i = 0; i < (isaacSize * sizeof(ISAAC_INT)); i++)
-					((unsigned char*)seeds)[i]++;
+					((byte*)seeds)[i]++;
 			}
 			else
 			{

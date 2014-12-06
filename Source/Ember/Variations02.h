@@ -5594,7 +5594,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcAtanyx;
-		int n = rand.Rand((unsigned int)m_Spread);
+		int n = rand.Rand((uint)m_Spread);
 
 		if (a < 0)
 			n++;

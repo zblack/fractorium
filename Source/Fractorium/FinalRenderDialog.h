@@ -61,16 +61,16 @@ public:
 	void Path(const QString& s);
 	QString Prefix();
 	QString Suffix();
-	unsigned int Current();
-	unsigned int PlatformIndex();
-	unsigned int DeviceIndex();
-	unsigned int ThreadCount();
+	uint Current();
+	uint PlatformIndex();
+	uint DeviceIndex();
+	uint ThreadCount();
 	double WidthScale();
 	double HeightScale();
 	double Quality();
-	unsigned int TemporalSamples();
-	unsigned int Supersample();
-	unsigned int Strips();
+	uint TemporalSamples();
+	uint Supersample();
+	uint Strips();
 	FinalRenderGuiState State();
 
 public Q_SLOTS:

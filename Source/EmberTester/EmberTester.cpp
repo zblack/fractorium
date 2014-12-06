@@ -16,7 +16,7 @@ using namespace EmberNs;
 //#define TEST_CL 1
 
 template <typename T>
-void SaveFinalImage(Renderer<T, T>& renderer, vector<unsigned char>& pixels, char* suffix)
+void SaveFinalImage(Renderer<T, T>& renderer, vector<byte>& pixels, char* suffix)
 {
 	Timing t;
 	//renderer.AccumulatorToFinalImage(pixels);
@@ -31,7 +31,7 @@ void SaveFinalImage(Renderer<T, T>& renderer, vector<unsigned char>& pixels, cha
 }
 
 template <typename T>
-Ember<T> CreateBasicEmber(unsigned int width, unsigned int height, unsigned int ss, T quality, T centerX, T centerY, T rotate)
+Ember<T> CreateBasicEmber(uint width, uint height, uint ss, T quality, T centerX, T centerY, T rotate)
 {
 	Timing t;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
@@ -69,7 +69,7 @@ Ember<T> CreateBasicEmber(unsigned int width, unsigned int height, unsigned int 
 	return ember1;
 }
 
-string GetEmberCLKernelString(Ember<float>& ember, bool iter, bool log, bool de, unsigned int ss, bool accum)
+string GetEmberCLKernelString(Ember<float>& ember, bool iter, bool log, bool de, uint ss, bool accum)
 {
 	ostringstream os;
 	IterOpenCLKernelCreator<float> iterCreator;
@@ -99,7 +99,7 @@ void MakeTestAllVarsRegPrePostComboFile(const string& filename)
 	EmberToXml<float> writer;
 	vector<Ember<float>> embers;
 	VariationList<float> varList;
-	unsigned int index = 0;
+	uint index = 0;
 	PaletteList<float> paletteList;
 	ostringstream ss;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
@@ -221,13 +221,13 @@ void TestAtomicAdd()
 		"{\n"
 		"	union\n"
 		"	{\n"
-		"		unsigned int intVal;\n"
+		"		uint intVal;\n"
 		"		float floatVal;\n"
 		"	} newVal;\n"
 		"\n"
 		"	union\n"
 		"	{\n"
-		"		unsigned int intVal;\n"
+		"		uint intVal;\n"
 		"		float floatVal;\n"
 		"	} prevVal;\n"
 		"\n"
@@ -235,15 +235,15 @@ void TestAtomicAdd()
 		"	{\n"
 		"		prevVal.floatVal = *source;\n"
 		"		newVal.floatVal = prevVal.floatVal + operand;\n"
-		"	} while (atomic_cmpxchg((volatile __global unsigned int*)source, prevVal.intVal, newVal.intVal) != prevVal.intVal);\n"
+		"	} while (atomic_cmpxchg((volatile __global uint*)source, prevVal.intVal, newVal.intVal) != prevVal.intVal);\n"
 		"}\n"
 		"\n"
 		"__kernel void MyKernel(\n"
 		"	__global float* buff,\n"
-		"	unsigned int lockit\n"
+		"	uint lockit\n"
 		"\t)\n"
 		"{\n"
-		"	unsigned int index = THREAD_ID_X;\n"
+		"	uint index = THREAD_ID_X;\n"
 		"\n"
 		"	if (lockit)\n"
 		"	{\n"
@@ -263,12 +263,12 @@ void TestAtomicAdd()
 		for (i = 0; i < vec.size(); i++)
 			vec[i] = (i * 10.2234f);
 
-		if (wrapper.AddAndWriteBuffer("buff", (void*)vec.data(), (unsigned int)vec.size() * sizeof(vec[0])))
+		if (wrapper.AddAndWriteBuffer("buff", (void*)vec.data(), (uint)vec.size() * sizeof(vec[0])))
 		{
 			if (wrapper.AddProgram(entry, program, entry, false))
 			{
 				wrapper.SetBufferArg(0, 0, 0);
-				wrapper.SetArg<unsigned int>(0, 1, 0);
+				wrapper.SetArg<uint>(0, 1, 0);
 
 				if (wrapper.RunKernel(0,
 									 32,//Total grid dims.
@@ -278,7 +278,7 @@ void TestAtomicAdd()
 									 1,
 									 1))
 				{
-					wrapper.ReadBuffer(0, vec.data(), (unsigned int)vec.size() * sizeof(vec[0]));
+					wrapper.ReadBuffer(0, vec.data(), (uint)vec.size() * sizeof(vec[0]));
 					cout << "Vector after unlocked add: " << endl;
 
 					for (i = 0; i < vec.size(); i++)
@@ -289,9 +289,9 @@ void TestAtomicAdd()
 					for (i = 0; i < vec.size(); i++)
 						vec[i] = (i * 10.2234f);
 
-					wrapper.AddAndWriteBuffer("buff", (void*)vec.data(), (unsigned int)vec.size() * sizeof(vec[0]));
+					wrapper.AddAndWriteBuffer("buff", (void*)vec.data(), (uint)vec.size() * sizeof(vec[0]));
 					wrapper.SetBufferArg(0, 0, 0);
-					wrapper.SetArg<unsigned int>(0, 1, 1);
+					wrapper.SetArg<uint>(0, 1, 1);
 
 					if (wrapper.RunKernel(0,
 										 32,//Total grid dims.
@@ -301,7 +301,7 @@ void TestAtomicAdd()
 										 1,
 										 1))
 					{
-						wrapper.ReadBuffer(0, vec.data(), (unsigned int)vec.size() * sizeof(vec[0]));
+						wrapper.ReadBuffer(0, vec.data(), (uint)vec.size() * sizeof(vec[0]));
 						cout << "\n\nVector after locked add: " << endl;
 
 						for (i = 0; i < vec.size(); i++)
@@ -383,14 +383,14 @@ bool TestVarCounts()
 #else
 	bool success = true;
 #endif
-	unsigned int start = (unsigned int)VAR_ARCH;
+	uint start = (uint)VAR_ARCH;
 
 	if (!success)
 	{
-		cout << "Variation list size " << vlf.Size() << " does not equal the max var ID enum " << (unsigned int)LAST_VAR << "." << endl;
+		cout << "Variation list size " << vlf.Size() << " does not equal the max var ID enum " << (uint)LAST_VAR << "." << endl;
 	}
 
-	for (; start < (unsigned int)LAST_VAR; start++)
+	for (; start < (uint)LAST_VAR; start++)
 	{
 		Variation<float>* var = vlf.GetVariation((eVariationId)start);
 
@@ -709,7 +709,7 @@ bool TestParVars()
 			names.reserve(parVar->ParamCount());
 			addresses.reserve(parVar->ParamCount());
 
-			for (unsigned int j = 0; j < parVar->ParamCount(); j++)
+			for (uint j = 0; j < parVar->ParamCount(); j++)
 			{
 				if (std::find(names.begin(), names.end(), params[j].Name()) != names.end())
 				{
@@ -1123,7 +1123,7 @@ bool TestConstants()
 
 void PrintAllVars()
 {
-	unsigned int i = 0;
+	uint i = 0;
 	VariationList<float> vlf;
 
 	while(Variation<float>* var = vlf.GetVariation(i++))
@@ -1132,7 +1132,7 @@ void PrintAllVars()
 
 void TestXformsInOutPoints()
 {
-	unsigned int index = 0;
+	uint index = 0;
 	VariationList<float> varList;
 	PaletteList<float> paletteList;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
@@ -1417,13 +1417,13 @@ void TestVarsSimilar()
 
 				if (parVar)
 				{
-					for (unsigned int v = 0; v < parVar->ParamCount(); v++)
+					for (uint v = 0; v < parVar->ParamCount(); v++)
 						parVar->SetParamVal(v, (T)iter);
 				}
 
 				if (parVarComp)
 				{
-					for (unsigned int v = 0; v < parVarComp->ParamCount(); v++)
+					for (uint v = 0; v < parVarComp->ParamCount(); v++)
 						parVarComp->SetParamVal(v, (T)iter);
 				}
 
@@ -1620,7 +1620,7 @@ void TestGpuVectorRead()
 	if (!renderer.Alloc())
 		return;
 
-	unsigned int i, iters = renderer.IterCountPerKernel() * renderer.TotalIterKernelCount();//Make each thread in each block run at least once.
+	uint i, iters = renderer.IterCountPerKernel() * renderer.TotalIterKernelCount();//Make each thread in each block run at least once.
 	renderer.Iterate(iters, 0, 1);
 	renderer.ReadPoints(points);
 

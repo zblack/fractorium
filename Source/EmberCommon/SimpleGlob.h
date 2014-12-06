@@ -176,7 +176,7 @@ enum SG_Error {
 # endif
 # define sg_strcmp          ::_mbscmp
 # define sg_strcasecmp      ::_mbsicmp
-# define SOCHAR_T           unsigned char
+# define SOCHAR_T           byte
 #else
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -309,7 +309,7 @@ struct SimpleGlobBase
 {
     SimpleGlobBase() : m_hFind(INVALID_HANDLE_VALUE) { }
 
-    int FindFirstFileS(const char * a_pszFileSpec, unsigned int) {
+    int FindFirstFileS(const char * a_pszFileSpec, uint) {
         m_hFind = FindFirstFileA(a_pszFileSpec, &m_oFindDataA);
         if (m_hFind != INVALID_HANDLE_VALUE) {
             return SG_SUCCESS;
@@ -320,7 +320,7 @@ struct SimpleGlobBase
         }
         return SG_ERR_FAILURE;
     }
-    int FindFirstFileS(const wchar_t * a_pszFileSpec, unsigned int) {
+    int FindFirstFileS(const wchar_t * a_pszFileSpec, uint) {
         m_hFind = FindFirstFileW(a_pszFileSpec, &m_oFindDataW);
         if (m_hFind != INVALID_HANDLE_VALUE) {
             return SG_SUCCESS;
@@ -405,7 +405,7 @@ struct SimpleGlobBase
         }
     }
 
-    int FindFirstFileS(const char * a_pszFileSpec, unsigned int a_uiFlags) {
+    int FindFirstFileS(const char * a_pszFileSpec, uint a_uiFlags) {
         int nFlags = GLOB_MARK | GLOB_NOSORT;
         if (a_uiFlags & SG_GLOB_ERR)    nFlags |= GLOB_ERR;
         if (a_uiFlags & SG_GLOB_TILDE)  nFlags |= GLOB_TILDE;
@@ -419,7 +419,7 @@ struct SimpleGlobBase
     }
 
 #if SG_HAVE_ICU
-    int FindFirstFileS(const UChar * a_pszFileSpec, unsigned int a_uiFlags) {
+    int FindFirstFileS(const UChar * a_pszFileSpec, uint a_uiFlags) {
         char buf[PATH_MAX] = { 0 };
         UErrorCode status = U_ZERO_ERROR;
         u_strToUTF8(buf, sizeof(buf), nullptr, a_pszFileSpec, -1, &status);
@@ -531,7 +531,7 @@ public:
             argv[0] ... argv[a_nReservedSlots-1] will be left empty for
             the caller to fill in.
      */
-    CSimpleGlobTempl(unsigned int a_uiFlags = 0, int a_nReservedSlots = 0);
+    CSimpleGlobTempl(uint a_uiFlags = 0, int a_nReservedSlots = 0);
 
     /*! @brief Deallocate all memory buffers. */
     ~CSimpleGlobTempl();
@@ -548,7 +548,7 @@ public:
             argv[0] ... argv[a_nReservedSlots-1] will be left empty for
             the caller to fill in.
      */
-    int Init(unsigned int a_uiFlags = 0, int a_nReservedSlots = 0);
+    int Init(uint a_uiFlags = 0, int a_nReservedSlots = 0);
 
     /*! @brief Add a new filespec to the glob.
 
@@ -624,7 +624,7 @@ private:
     static int fileSortCompare(const void *a1, const void *a2);
 
 private:
-    unsigned int        m_uiFlags;
+    uint        m_uiFlags;
     ARG_ARRAY_TYPE      m_nArgArrayType;    //!< argv is indexes or pointers
     SOCHAR **           m_rgpArgs;          //!< argv
     int                 m_nReservedSlots;   //!< # client slots in argv array
@@ -642,7 +642,7 @@ private:
 
 template<class SOCHAR>
 CSimpleGlobTempl<SOCHAR>::CSimpleGlobTempl(
-    unsigned int    a_uiFlags,
+    uint    a_uiFlags,
     int             a_nReservedSlots
     )
 {
@@ -664,7 +664,7 @@ CSimpleGlobTempl<SOCHAR>::~CSimpleGlobTempl()
 template<class SOCHAR>
 int
 CSimpleGlobTempl<SOCHAR>::Init(
-    unsigned int    a_uiFlags,
+    uint    a_uiFlags,
     int             a_nReservedSlots
     )
 {

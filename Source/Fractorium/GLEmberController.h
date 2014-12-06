@@ -65,7 +65,7 @@ public:
 	virtual void QueryMatrices(bool print) { }
 
 protected:
-	unsigned int m_DragModifier;
+	uint m_DragModifier;
 	glm::ivec2 m_MousePos;
 	glm::ivec2 m_MouseDownPos;
 	glm::ivec4 m_Viewport;
@@ -111,7 +111,7 @@ public:
 
 private:
 	v3T SnapToGrid(v3T& vec);
-	v3T SnapToNormalizedAngle(v3T& vec, unsigned int divisions);
+	v3T SnapToNormalizedAngle(v3T& vec, uint divisions);
 	v3T WindowToWorld(v3T& v, bool flip);
 	void QueryVMP();
 	void MultMatrix(m4T& mat);

@@ -63,6 +63,7 @@
 
 //glm is what's used for matrix math.
 #include "glm/glm.hpp"
+#include "glm/detail/type_int.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/string_cast.hpp"
@@ -70,3 +71,5 @@
 using namespace tbb;
 using namespace std;
 using namespace std::chrono;
+using glm::uint;
+using glm::uint16;

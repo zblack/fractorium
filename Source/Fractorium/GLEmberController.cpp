@@ -119,7 +119,7 @@ typename v3T GLEmberController<T>::SnapToGrid(v3T& vec)
 /// <param name="divisions">The divisions of a circle to use for snapping</param>
 /// <returns>The snapped world cartesian coordinate</returns>
 template <typename T>
-typename v3T GLEmberController<T>::SnapToNormalizedAngle(v3T& vec, unsigned int divisions)
+typename v3T GLEmberController<T>::SnapToNormalizedAngle(v3T& vec, uint divisions)
 {
 	T rsq, theta;
 	T bestRsq = numeric_limits<T>::max();
@@ -128,7 +128,7 @@ typename v3T GLEmberController<T>::SnapToNormalizedAngle(v3T& vec, unsigned int 
 	best.x = 1;
 	best.y = 0;
 
-	for (unsigned int i = 0; i < divisions; i++)
+	for (uint i = 0; i < divisions; i++)
 	{
 		theta = 2.0 * M_PI * (T)i / (T)divisions;
 		c.x = cos(theta);

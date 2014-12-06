@@ -144,7 +144,7 @@ public:
 	/// </summary>
 	/// <param name="i">The index in the file of the ember</param>
 	/// <returns>The default ember name</returns>
-	static QString DefaultEmberName(unsigned int i)
+	static QString DefaultEmberName(uint i)
 	{
 		return DefaultFilename() + "-" + ToString(i);
 	}

@@ -76,7 +76,7 @@ bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
 		for (size_t i = 0; i < m_PaletteList.Size(); i++)
 		{
 			Palette<T>* p = m_PaletteList.GetPalette(i);
-			vector<unsigned char> v = p->MakeRgbPaletteBlock(PALETTE_CELL_HEIGHT);
+			vector<byte> v = p->MakeRgbPaletteBlock(PALETTE_CELL_HEIGHT);
 			QTableWidgetItem* nameCol = new QTableWidgetItem(p->m_Name.c_str());
 
 			nameCol->setToolTip(p->m_Name.c_str());
@@ -109,8 +109,8 @@ template <typename T>
 void FractoriumEmberController<T>::ApplyPaletteToEmber()
 {
 	int i, rot = 0;
-	unsigned int blur = m_Fractorium->m_PaletteBlurSpin->value();
-	unsigned int freq = m_Fractorium->m_PaletteFrequencySpin->value();
+	uint blur = m_Fractorium->m_PaletteBlurSpin->value();
+	uint freq = m_Fractorium->m_PaletteFrequencySpin->value();
 	double sat = (double)m_Fractorium->m_PaletteSaturationSpin->value() / 100.0;
 	double brightness = (double)m_Fractorium->m_PaletteBrightnessSpin->value() / 255.0;
 	double contrast = (double)(m_Fractorium->m_PaletteContrastSpin->value() > 0 ? (m_Fractorium->m_PaletteContrastSpin->value() * 2) : m_Fractorium->m_PaletteContrastSpin->value()) / 100.0;
@@ -138,7 +138,7 @@ void FractoriumEmberController<T>::UpdateAdjustedPaletteGUI(Palette<T>& palette)
 	if (previewPaletteItem)//This can be null if the palette file was moved or corrupted.
 	{
 		//Use the adjusted palette to fill the preview palette control so the user can see the effects of applying the adjustements.
-		vector<unsigned char> v = palette.MakeRgbPaletteBlock(PALETTE_CELL_HEIGHT);//Make the palette repeat for PALETTE_CELL_HEIGHT rows.
+		vector<byte> v = palette.MakeRgbPaletteBlock(PALETTE_CELL_HEIGHT);//Make the palette repeat for PALETTE_CELL_HEIGHT rows.
 
 		m_FinalPaletteImage = QImage(palette.Size(), PALETTE_CELL_HEIGHT, QImage::Format_RGB888);//Create a QImage out of it.
 		memcpy(m_FinalPaletteImage.scanLine(0), v.data(), v.size() * sizeof(v[0]));//Memcpy the data in.
@@ -232,7 +232,7 @@ void Fractorium::OnPaletteCellDoubleClicked(int row, int col)
 /// <param name="row">The current row selected</param>
 void Fractorium::OnPaletteRandomSelectButtonClicked(bool checked)
 {
-	unsigned int i = 0;
+	uint i = 0;
 	int rowCount = ui.PaletteListTable->rowCount() - 1;
 
 	while ((i = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand(rowCount)) == m_PreviousPaletteRow);

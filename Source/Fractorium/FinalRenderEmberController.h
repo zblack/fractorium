@@ -34,15 +34,15 @@ struct FinalRenderGuiState
 	QString m_Ext;
 	QString m_Prefix;
 	QString m_Suffix;
-	unsigned int m_PlatformIndex;
-	unsigned int m_DeviceIndex;
-	unsigned int m_ThreadCount;
+	uint m_PlatformIndex;
+	uint m_DeviceIndex;
+	uint m_ThreadCount;
 	double m_WidthScale;
 	double m_HeightScale;
 	double m_Quality;
-	unsigned int m_TemporalSamples;
-	unsigned int m_Supersample;
-	unsigned int m_Strips;
+	uint m_TemporalSamples;
+	uint m_Supersample;
+	uint m_Strips;
 };
 
 /// <summary>
@@ -74,8 +74,8 @@ public:
 protected:
 	bool m_Run;
 	bool m_PreviewRun;
-	unsigned int m_ImageCount;
-	unsigned int m_FinishedImageCount;
+	uint m_ImageCount;
+	uint m_FinishedImageCount;
 
 	QFuture<void> m_Result;
 	QFuture<void> m_FinalPreviewResult;
@@ -111,10 +111,10 @@ public:
 #endif
 	virtual void SetEmber(size_t index) override;
 	virtual bool Render() override;
-	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true) override;
+	virtual bool CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared = true) override;
 	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs) override;
 	virtual size_t Index() const override { return m_Ember->m_Index; }
-	virtual unsigned int SizeOfT() const override { return sizeof(T); }
+	virtual uint SizeOfT() const override { return sizeof(T); }
 
 	//Virtual functions overridden from FinalRenderEmberControllerBase.
 	virtual void SyncCurrentToGui() override;

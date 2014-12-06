@@ -28,7 +28,7 @@ void Fractorium::UpdateHistogramBounds()
 
 		if (r->GetDensityFilter())
 		{
-			unsigned int deWidth = (r->GetDensityFilter()->FilterWidth() * 2) + 1;
+			uint deWidth = (r->GetDensityFilter()->FilterWidth() * 2) + 1;
 
 			sprintf_s(m_DEString, 16, "%d x %d", deWidth, deWidth);
 			ui.InfoBoundsTable->item(1, 1)->setText(QString(m_DEString));

@@ -27,7 +27,7 @@ bool EmberRender(EmberOptions& opt)
 
 	Timing t;
 	bool writeSuccess = false;
-	unsigned char* finalImagep;
+	byte* finalImagep;
 	size_t i, channels;
 	size_t strips;
 	size_t iterCount;
@@ -35,7 +35,7 @@ bool EmberRender(EmberOptions& opt)
 	string inputPath = GetPath(opt.Input());
 	ostringstream os;
 	vector<Ember<T>> embers;
-	vector<unsigned char> finalImage, vecRgb;
+	vector<byte> finalImage, vecRgb;
 	EmberStats stats;
 	EmberReport emberReport;
 	EmberImageComments comments;
@@ -168,8 +168,8 @@ bool EmberRender(EmberOptions& opt)
 
 		embers[i].m_TemporalSamples = 1;//Force temporal samples to 1 for render.
 		embers[i].m_Quality *= T(opt.QualityScale());
-		embers[i].m_FinalRasW = (unsigned int)((T)embers[i].m_FinalRasW * opt.SizeScale());
-		embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH * opt.SizeScale());
+		embers[i].m_FinalRasW = (uint)((T)embers[i].m_FinalRasW * opt.SizeScale());
+		embers[i].m_FinalRasH = (uint)((T)embers[i].m_FinalRasH * opt.SizeScale());
 		embers[i].m_PixelsPerUnit *= T(opt.SizeScale());
 
 		if (embers[i].m_FinalRasW == 0 || embers[i].m_FinalRasH == 0)

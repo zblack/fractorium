@@ -183,8 +183,8 @@ public:
 		T x, y, z;
 		T p = 2 * rand.Frand01<T>() - 1;
 		T q = 2 * rand.Frand01<T>() - 1;
-		unsigned int i = rand.Rand(3);
-		unsigned int j = rand.RandBit();
+		uint i = rand.Rand(3);
+		uint j = rand.RandBit();
 
 		switch (i)
 		{

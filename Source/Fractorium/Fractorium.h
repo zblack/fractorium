@@ -74,7 +74,7 @@ public:
 	void SetCoordinateStatus(int x, int y, float worldX, float worldY);
 
 	//Xforms.
-	void CurrentXform(unsigned int i);
+	void CurrentXform(uint i);
 
 	//Xforms Affine.
 	bool DrawAllPre();
@@ -236,7 +236,7 @@ public slots:
 	void ShowCritical(const QString& title, const QString& text, bool invokeRequired = false);
 
 	//Can't have a template function be a slot.
-	void SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<unsigned char>& v, unsigned int width, unsigned int height);
+	void SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<byte>& v, uint width, uint height);
 
 public:
 	//template<typename spinType, typename valType>//See below.

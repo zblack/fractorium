@@ -1495,7 +1495,7 @@ public:
 		T z = helper.In.z / m_AbsN;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares + SQR(z), m_Cn);
 		T tmp = r * helper.m_PrecalcSqrtSumSquares;
-		T ang = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((unsigned int)m_AbsN)) / m_N;
+		T ang = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((uint)m_AbsN)) / m_N;
 
 		helper.Out.x = tmp * cos(ang);
 		helper.Out.y = tmp * sin(ang);
@@ -1574,7 +1574,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
-		T temp = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((unsigned int)m_AbsN)) / m_N;
+		T temp = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((uint)m_AbsN)) / m_N;
 
 		helper.Out.x = r * cos(temp);
 		helper.Out.y = r * sin(temp);

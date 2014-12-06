@@ -12,7 +12,7 @@ FractoriumOptionsDialog::FractoriumOptionsDialog(FractoriumSettings* settings, Q
 	: QDialog(parent, f)
 {
 	int row = 0, spinHeight = 20;
-	unsigned int i;
+	uint i;
 
 	ui.setupUi(this);
 	m_Settings = settings;
@@ -102,9 +102,9 @@ bool FractoriumOptionsDialog::Transparency() { return ui.TransparencyCheckBox->i
 bool FractoriumOptionsDialog::OpenCL() { return ui.OpenCLCheckBox->isChecked(); }
 bool FractoriumOptionsDialog::Double() { return ui.DoublePrecisionCheckBox->isChecked(); }
 bool FractoriumOptionsDialog::ShowAllXforms() { return ui.ShowAllXformsCheckBox->isChecked(); }
-unsigned int FractoriumOptionsDialog::PlatformIndex() { return ui.PlatformCombo->currentIndex(); }
-unsigned int FractoriumOptionsDialog::DeviceIndex() { return ui.DeviceCombo->currentIndex(); }
-unsigned int FractoriumOptionsDialog::ThreadCount() { return ui.ThreadCountSpin->value(); }
+uint FractoriumOptionsDialog::PlatformIndex() { return ui.PlatformCombo->currentIndex(); }
+uint FractoriumOptionsDialog::DeviceIndex() { return ui.DeviceCombo->currentIndex(); }
+uint FractoriumOptionsDialog::ThreadCount() { return ui.ThreadCountSpin->value(); }
 
 /// <summary>
 /// Disable or enable the OpenCL related controls based on the state passed in.

@@ -51,7 +51,7 @@ void GLWidget::DrawQuad()
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	RendererBase* renderer = m_Fractorium->m_Controller->Renderer();
-	vector<unsigned char>* finalImage = m_Fractorium->m_Controller->FinalImage();
+	vector<byte>* finalImage = m_Fractorium->m_Controller->FinalImage();
 
 	//Ensure all allocation has taken place first.
 	if (m_OutputTexID != 0 && finalImage && !finalImage->empty())
@@ -270,7 +270,7 @@ void GLEmberController<T>::DrawImage()
 		
 	if (SizesMatch())//Ensure all sizes are correct. If not, do nothing.
 	{
-		vector<unsigned char>* finalImage = m_FractoriumEmberController->FinalImage();
+		vector<byte>* finalImage = m_FractoriumEmberController->FinalImage();
 	
 		if (renderer->RendererType() == OPENCL_RENDERER || finalImage)//Final image only matters for CPU renderer.
 			if (renderer->RendererType() == OPENCL_RENDERER || finalImage->size() == renderer->FinalBufferSize())
@@ -310,7 +310,7 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 	{
 		if (pre && m_Fractorium->DrawAllPre())//Draw all pre affine if specified.
 		{
-			for (unsigned int i = 0; i < ember->TotalXformCount(); i++)
+			for (uint i = 0; i < ember->TotalXformCount(); i++)
 			{
 				Xform<T>* xform = ember->GetTotalXform(i);
 				bool selected = dragging ? (m_SelectedXform == xform) : (m_HoverXform == xform);
@@ -325,7 +325,7 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 
 		if (post && m_Fractorium->DrawAllPost())//Draw all post affine if specified.
 		{
-			for (unsigned int i = 0; i < ember->TotalXformCount(); i++)
+			for (uint i = 0; i < ember->TotalXformCount(); i++)
 			{
 				Xform<T>* xform = ember->GetTotalXform(i);
 				bool selected = dragging ? (m_SelectedXform == xform) : (m_HoverXform == xform);
@@ -1073,7 +1073,7 @@ int GLEmberController<T>::UpdateHover(v3T& glCoords)
 	bool post = m_Fractorium->ui.PostAffineGroupBox->isChecked();
 	bool preAll = pre && m_Fractorium->DrawAllPre();
 	bool postAll = post && m_Fractorium->DrawAllPost();
-	unsigned int bestIndex = -1;
+	uint bestIndex = -1;
 	T bestDist = 10;
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
 
@@ -1096,7 +1096,7 @@ int GLEmberController<T>::UpdateHover(v3T& glCoords)
 	}
 
 	//Check all xforms.
-	for (unsigned int i = 0; i < ember->TotalXformCount(); i++)
+	for (uint i = 0; i < ember->TotalXformCount(); i++)
 	{
 		Xform<T>* xform = ember->GetTotalXform(i);
 

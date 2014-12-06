@@ -63,7 +63,7 @@ public:
 	virtual bool CreateSpatialFilter(bool& newAlloc) override;
 	virtual bool CreateTemporalFilter(bool& newAlloc) override;
 	virtual size_t HistBucketSize() const override { return sizeof(glm::detail::tvec4<bucketT, glm::defaultp>); }
-	virtual eRenderStatus Run(vector<unsigned char>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) override;
+	virtual eRenderStatus Run(vector<byte>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) override;
 	virtual EmberImageComments ImageComments(EmberStats& stats, size_t printEditDepth = 0, bool intPalette = false, bool hexPalette = true) override;
 
 protected:
@@ -73,8 +73,8 @@ protected:
 	virtual bool ResetBuckets(bool resetHist = true, bool resetAccum = true);
 	virtual eRenderStatus LogScaleDensityFilter();
 	virtual eRenderStatus GaussianDensityFilter();
-	virtual eRenderStatus AccumulatorToFinalImage(vector<unsigned char>& pixels, size_t finalOffset);
-	virtual eRenderStatus AccumulatorToFinalImage(unsigned char* pixels, size_t finalOffset);
+	virtual eRenderStatus AccumulatorToFinalImage(vector<byte>& pixels, size_t finalOffset);
+	virtual eRenderStatus AccumulatorToFinalImage(byte* pixels, size_t finalOffset);
 	virtual EmberStats Iterate(size_t iterCount, size_t temporalSample);
 
 public:
@@ -139,7 +139,7 @@ public:
 	virtual size_t FuseCount()		 const override;
 
 	//Non-virtual iterator wrappers.
-	const unsigned char* XformDistributions()		 const;
+	const byte* XformDistributions()		 const;
 	const size_t		 XformDistributionsSize()    const;
 	Point<T>*			 Samples(size_t threadIndex) const;
 

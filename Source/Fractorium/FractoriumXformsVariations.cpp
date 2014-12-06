@@ -106,14 +106,14 @@ void FractoriumEmberController<T>::ClearVariationsTree()
 {
 	QTreeWidget* tree = m_Fractorium->ui.VariationsTree;
 
-	for (unsigned int i = 0; i < tree->topLevelItemCount(); i++)
+	for (uint i = 0; i < tree->topLevelItemCount(); i++)
 	{
 		QTreeWidgetItem* item = tree->topLevelItem(i);
 		VariationTreeDoubleSpinBox<T>* spinBox = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(tree->itemWidget(item, 1));
 
 		spinBox->SetValueStealth(0);
 
-		for (unsigned int j = 0; j < item->childCount(); j++)//Iterate through all of the children, which will be the params.
+		for (uint j = 0; j < item->childCount(); j++)//Iterate through all of the children, which will be the params.
 		{
 			if (spinBox = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(tree->itemWidget(item->child(j), 1)))//Cast the child widget to the VariationTreeDoubleSpinBox type.
 				spinBox->SetValueStealth(0);
@@ -223,7 +223,7 @@ void FractoriumEmberController<T>::FillVariationTreeWithXform(Xform<T>* xform)
 
 	tree->blockSignals(true);
 
-	for (unsigned int i = 0; i < tree->topLevelItemCount(); i++)
+	for (uint i = 0; i < tree->topLevelItemCount(); i++)
 	{
 		VariationTreeWidgetItem<T>* item = dynamic_cast<VariationTreeWidgetItem<T>*>(tree->topLevelItem(i));
 		Variation<T>* var = xform->GetVariationById(item->Id());//See if this variation in the tree was contained in the xform.
@@ -235,7 +235,7 @@ void FractoriumEmberController<T>::FillVariationTreeWithXform(Xform<T>* xform)
 			spinBox->SetValueStealth(var ? var->m_Weight : 0);//If the variation was present, set the spin box to its weight, else zero.
 			item->setBackgroundColor(0, var ? QColor(200, 200, 200) : QColor(255, 255, 255));//Ensure background is always white if the value goes to zero, else gray if var present.
 
-			for (unsigned int j = 0; j < item->childCount(); j++)//Iterate through all of the children, which will be the params if it was a parametric variation.
+			for (uint j = 0; j < item->childCount(); j++)//Iterate through all of the children, which will be the params if it was a parametric variation.
 			{
 				T* param = NULL;
 				QTreeWidgetItem* childItem = item->child(j);//Get the child.
@@ -293,7 +293,7 @@ void Fractorium::OnVariationsFilterLineEditTextChanged(const QString& text)
 
 	tree->setUpdatesEnabled(false);
 
-	for (unsigned int i = 0; i < tree->topLevelItemCount(); i++)
+	for (uint i = 0; i < tree->topLevelItemCount(); i++)
 	{
 		QTreeWidgetItem* item = tree->topLevelItem(i);
 		QString varName = item->text(0);

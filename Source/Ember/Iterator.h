@@ -68,7 +68,7 @@ public:
 	/// <summary>
 	/// Accessors.
 	/// </summary>
-	const unsigned char* XformDistributions() const { return m_XformDistributions.empty() ? nullptr : &m_XformDistributions[0]; }
+	const byte* XformDistributions() const { return m_XformDistributions.empty() ? nullptr : &m_XformDistributions[0]; }
 	const size_t   XformDistributionsSize() const { return m_XformDistributions.size(); }
 
 	/// <summary>
@@ -146,7 +146,7 @@ public:
 				while (tempDensity < currentDensityLimit && j < CHOOSE_XFORM_GRAIN)
 				{
 					//printf("offset = %d, xform = %d, running sum = %f\n", j, i, tempDensity);
-					m_XformDistributions[(distrib * CHOOSE_XFORM_GRAIN) + j] = (unsigned char)i;
+					m_XformDistributions[(distrib * CHOOSE_XFORM_GRAIN) + j] = (byte)i;
 					tempDensity += densityPerElement;
 					j++;
 				}
@@ -262,7 +262,7 @@ protected:
 		return (size_t)m_XformDistributions[(index % CHOOSE_XFORM_GRAIN) + (CHOOSE_XFORM_GRAIN * distribOffset)];
 	}
 
-	vector<unsigned char> m_XformDistributions;
+	vector<byte> m_XformDistributions;
 };
 
 /// <summary>

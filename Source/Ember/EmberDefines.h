@@ -73,6 +73,10 @@ namespace EmberNs
 #define FLOAT_MIN_TAN -FLOAT_MAX_TAN
 typedef std::chrono::high_resolution_clock Clock;
 
+#ifndef byte
+	typedef unsigned char byte;
+#endif
+
 #define DO_DOUBLE 1//Comment this out for shorter build times during development. Always uncomment for release.
 //#define ISAAC_FLAM3_DEBUG 1//This is almost never needed, but is very useful when troubleshooting difficult bugs. Enable it to do a side by side comparison with flam3.
 
@@ -84,14 +88,14 @@ typedef std::chrono::high_resolution_clock Clock;
 #define m4T  glm::detail::tmat4x4<T, glm::defaultp>
 #define m23T glm::detail::tmat2x3<T, glm::defaultp>
 
-enum eInterp : unsigned int { EMBER_INTERP_LINEAR = 0, EMBER_INTERP_SMOOTH = 1 };
-enum eAffineInterp : unsigned int { INTERP_LINEAR = 0, INTERP_LOG = 1, INTERP_COMPAT = 2, INTERP_OLDER = 3 };
-enum ePaletteMode : unsigned int { PALETTE_STEP = 0, PALETTE_LINEAR = 1 };
-enum ePaletteInterp : unsigned int { INTERP_HSV = 0, INTERP_SWEEP = 1 };
-enum eMotion : unsigned int { MOTION_SIN = 1, MOTION_TRIANGLE = 2, MOTION_HILL = 3 };
-enum eProcessAction : unsigned int { NOTHING = 0, ACCUM_ONLY = 1, FILTER_AND_ACCUM = 2, KEEP_ITERATING = 3, FULL_RENDER = 4 };
-enum eProcessState : unsigned int { NONE = 0, ITER_STARTED = 1, ITER_DONE = 2, FILTER_DONE = 3, ACCUM_DONE = 4 };
-enum eInteractiveFilter : unsigned int { FILTER_LOG = 0, FILTER_DE = 1 };
-enum eScaleType : unsigned int { SCALE_NONE = 0, SCALE_WIDTH = 1, SCALE_HEIGHT = 2 };
-enum eRenderStatus : unsigned int { RENDER_OK = 0, RENDER_ERROR = 1, RENDER_ABORT = 2 };
+enum eInterp : uint { EMBER_INTERP_LINEAR = 0, EMBER_INTERP_SMOOTH = 1 };
+enum eAffineInterp : uint { INTERP_LINEAR = 0, INTERP_LOG = 1, INTERP_COMPAT = 2, INTERP_OLDER = 3 };
+enum ePaletteMode : uint { PALETTE_STEP = 0, PALETTE_LINEAR = 1 };
+enum ePaletteInterp : uint { INTERP_HSV = 0, INTERP_SWEEP = 1 };
+enum eMotion : uint { MOTION_SIN = 1, MOTION_TRIANGLE = 2, MOTION_HILL = 3 };
+enum eProcessAction : uint { NOTHING = 0, ACCUM_ONLY = 1, FILTER_AND_ACCUM = 2, KEEP_ITERATING = 3, FULL_RENDER = 4 };
+enum eProcessState : uint { NONE = 0, ITER_STARTED = 1, ITER_DONE = 2, FILTER_DONE = 3, ACCUM_DONE = 4 };
+enum eInteractiveFilter : uint { FILTER_LOG = 0, FILTER_DE = 1 };
+enum eScaleType : uint { SCALE_NONE = 0, SCALE_WIDTH = 1, SCALE_HEIGHT = 2 };
+enum eRenderStatus : uint { RENDER_OK = 0, RENDER_ERROR = 1, RENDER_ABORT = 2 };
 }

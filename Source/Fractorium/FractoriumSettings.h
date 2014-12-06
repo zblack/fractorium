@@ -87,14 +87,14 @@ public:
 	bool ShowAllXforms();
 	void ShowAllXforms(bool b);
 
-	unsigned int PlatformIndex();
-	void PlatformIndex(unsigned int b);
+	uint PlatformIndex();
+	void PlatformIndex(uint b);
 
-	unsigned int DeviceIndex();
-	void DeviceIndex(unsigned int b);
+	uint DeviceIndex();
+	void DeviceIndex(uint b);
 
-	unsigned int ThreadCount();
-	void ThreadCount(unsigned int b);
+	uint ThreadCount();
+	void ThreadCount(uint b);
 
 	bool CpuDEFilter();
 	void CpuDEFilter(bool b);
@@ -102,11 +102,11 @@ public:
 	bool OpenCLDEFilter();
 	void OpenCLDEFilter(bool b);
 
-	unsigned int CpuSubBatch();
-	void CpuSubBatch(unsigned int b);
+	uint CpuSubBatch();
+	void CpuSubBatch(uint b);
 
-	unsigned int OpenCLSubBatch();
-	void OpenCLSubBatch(unsigned int b);
+	uint OpenCLSubBatch();
+	void OpenCLSubBatch(uint b);
 	
 	bool FinalEarlyClip();
 	void FinalEarlyClip(bool b);
@@ -135,41 +135,41 @@ public:
 	bool FinalKeepAspect();
 	void FinalKeepAspect(bool b);
 	
-	unsigned int FinalScale();
-	void FinalScale(unsigned int i);
+	uint FinalScale();
+	void FinalScale(uint i);
 	
 	QString FinalExt();
 	void FinalExt(const QString& s);
 
-	unsigned int FinalPlatformIndex();
-	void FinalPlatformIndex(unsigned int b);
+	uint FinalPlatformIndex();
+	void FinalPlatformIndex(uint b);
 
-	unsigned int FinalDeviceIndex();
-	void FinalDeviceIndex(unsigned int b);
+	uint FinalDeviceIndex();
+	void FinalDeviceIndex(uint b);
 
-	unsigned int FinalThreadCount();
-	void FinalThreadCount(unsigned int b);
+	uint FinalThreadCount();
+	void FinalThreadCount(uint b);
 
-	unsigned int FinalQuality();
-	void FinalQuality(unsigned int i);
+	uint FinalQuality();
+	void FinalQuality(uint i);
 
-	unsigned int FinalTemporalSamples();
-	void FinalTemporalSamples(unsigned int i);
+	uint FinalTemporalSamples();
+	void FinalTemporalSamples(uint i);
 
-	unsigned int FinalSupersample();
-	void FinalSupersample(unsigned int i);
+	uint FinalSupersample();
+	void FinalSupersample(uint i);
 
-	unsigned int FinalStrips();
-	void FinalStrips(unsigned int i);
+	uint FinalStrips();
+	void FinalStrips(uint i);
 
-	unsigned int XmlTemporalSamples();
-	void XmlTemporalSamples(unsigned int i);
+	uint XmlTemporalSamples();
+	void XmlTemporalSamples(uint i);
 
-	unsigned int XmlQuality();
-	void XmlQuality(unsigned int i);
+	uint XmlQuality();
+	void XmlQuality(uint i);
 
-	unsigned int XmlSupersample();
-	void XmlSupersample(unsigned int i);
+	uint XmlSupersample();
+	void XmlSupersample(uint i);
 
 	QString OpenFolder();
 	void OpenFolder(const QString& s);

@@ -97,7 +97,7 @@ template <typename T> string DEOpenCLKernelCreator<T>::LogScaleAssignDEEntryPoin
 /// <param name="filterWidth">Filter width</param>
 /// <returns>The kernel source</returns>
 template <typename T>
-string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, unsigned int filterWidth)
+string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, uint filterWidth)
 {
 #ifndef ROW_ONLY_DE
 	if ((typeid(T) == typeid(double)) || (filterWidth > MaxDEFilterSize()))//Type double does not use cache.
@@ -134,7 +134,7 @@ string DEOpenCLKernelCreator<T>::GaussianDEKernel(size_t ss, unsigned int filter
 /// <param name="filterWidth">Filter width</param>
 /// <returns>The name of the density estimation filtering entry point kernel function</returns>
 template <typename T>
-string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(size_t ss, unsigned int filterWidth)
+string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(size_t ss, uint filterWidth)
 {
 #ifndef ROW_ONLY_DE
 	if ((typeid(T) == typeid(double)) || (filterWidth > MaxDEFilterSize()))//Type double does not use cache.
@@ -170,11 +170,11 @@ string DEOpenCLKernelCreator<T>::GaussianDEEntryPoint(size_t ss, unsigned int fi
 /// </summary>
 /// <returns>The maximum filter size allowed for running the local memory version of density filtering</returns>
 template <typename T>
-unsigned int DEOpenCLKernelCreator<T>::MaxDEFilterSize() { return 9; }//The true max would be (maxBoxSize - 1) / 2, but that's impractical because it can give us a tiny block size.
+uint DEOpenCLKernelCreator<T>::MaxDEFilterSize() { return 9; }//The true max would be (maxBoxSize - 1) / 2, but that's impractical because it can give us a tiny block size.
 
 /// <summary>
 /// Solve for the maximum filter radius.
-/// The final filter width is calculated by: (unsigned int)(ceil(m_MaxRad) * (T)m_Supersample) + (m_Supersample - 1);
+/// The final filter width is calculated by: (uint)(ceil(m_MaxRad) * (T)m_Supersample) + (m_Supersample - 1);
 /// Must solve for what max rad should be in order to give a maximum final width of (maxBoxSize - 1) / 2, assuming
 /// a minimum block size of 1 which processes 1 pixel.
 /// Example: If a box size of 20 was allowed, a filter
@@ -186,9 +186,9 @@ unsigned int DEOpenCLKernelCreator<T>::MaxDEFilterSize() { return 9; }//The true
 /// <param name="ss">The supersample being used</param>
 /// <returns>The maximum filter radius allowed</returns>
 template <typename T>
-T DEOpenCLKernelCreator<T>::SolveMaxDERad(unsigned int maxBoxSize, T desiredFilterSize, T ss)
+T DEOpenCLKernelCreator<T>::SolveMaxDERad(uint maxBoxSize, T desiredFilterSize, T ss)
 {
-	unsigned int finalFilterSize = (unsigned int)((ceil(desiredFilterSize) * ss) + (ss - 1.0));
+	uint finalFilterSize = (uint)((ceil(desiredFilterSize) * ss) + (ss - 1.0));
 
 	//Return the desired size if the final size of it will fit.
 	if (finalFilterSize <= MaxDEFilterSize())
@@ -205,9 +205,9 @@ T DEOpenCLKernelCreator<T>::SolveMaxDERad(unsigned int maxBoxSize, T desiredFilt
 /// <param name="localMem">The local memory available to a block</param>
 /// <returns>The maximum filter box size allowed</returns>
 template <typename T>
-unsigned int DEOpenCLKernelCreator<T>::SolveMaxBoxSize(unsigned int localMem)
+uint DEOpenCLKernelCreator<T>::SolveMaxBoxSize(uint localMem)
 {
-	return (unsigned int)floor(sqrt(floor((T)localMem / 16.0)));//Divide by 16 because each element is float4.
+	return (uint)floor(sqrt(floor((T)localMem / 16.0)));//Divide by 16 because each element is float4.
 }
 
 /// <summary>

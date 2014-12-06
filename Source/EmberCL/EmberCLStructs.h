@@ -48,7 +48,7 @@ static string ConstantDefinesString(bool doublePrecision)
 	else
 	{
 		os << "typedef int intPrec;\n"
-			  "typedef unsigned int atomi;\n"
+			  "typedef uint atomi;\n"
 			  "typedef float real_t;\n"
 			  "typedef float4 real4;\n"
 			  "#define EPS (FLT_EPSILON)\n"
@@ -131,7 +131,7 @@ struct ALIGN PointCL
 	T m_Y;
 	T m_Z;
 	T m_ColorX;
-	unsigned int m_LastXfUsed;
+	uint m_LastXfUsed;
 };
 
 /// <summary>
@@ -239,7 +239,7 @@ template <typename T>
 struct ALIGN CarToRasCL
 {
 	T m_PixPerImageUnitW, m_RasLlX;
-	unsigned int m_RasWidth;
+	uint m_RasWidth;
 	T m_PixPerImageUnitH, m_RasLlY;
 	T m_CarLlX, m_CarUrX, m_CarUrY, m_CarLlY;
 };
@@ -268,13 +268,13 @@ struct ALIGN DensityFilterCL
 	T m_Curve;
 	T m_K1;
 	T m_K2;
-	unsigned int m_Supersample;
-	unsigned int m_SuperRasW;
-	unsigned int m_SuperRasH;
-	unsigned int m_KernelSize;
-	unsigned int m_MaxFilterIndex;
-	unsigned int m_MaxFilteredCounts;
-	unsigned int m_FilterWidth;
+	uint m_Supersample;
+	uint m_SuperRasW;
+	uint m_SuperRasH;
+	uint m_KernelSize;
+	uint m_MaxFilterIndex;
+	uint m_MaxFilteredCounts;
+	uint m_FilterWidth;
 };
 
 /// <summary>
@@ -304,17 +304,17 @@ static const char* DensityFilterCLStructString =
 template <typename T>
 struct ALIGN SpatialFilterCL
 {
-	unsigned int m_SuperRasW;
-	unsigned int m_SuperRasH;
-	unsigned int m_FinalRasW;
-	unsigned int m_FinalRasH;
-	unsigned int m_Supersample;
-	unsigned int m_FilterWidth;
-	unsigned int m_NumChannels;
-	unsigned int m_BytesPerChannel;
-	unsigned int m_DensityFilterOffset;
-	unsigned int m_Transparency;
-	unsigned int m_YAxisUp;
+	uint m_SuperRasW;
+	uint m_SuperRasH;
+	uint m_FinalRasW;
+	uint m_FinalRasH;
+	uint m_Supersample;
+	uint m_FilterWidth;
+	uint m_NumChannels;
+	uint m_BytesPerChannel;
+	uint m_DensityFilterOffset;
+	uint m_Transparency;
+	uint m_YAxisUp;
 	T m_Vibrancy;
 	T m_HighlightPower;
 	T m_Gamma;

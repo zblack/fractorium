@@ -15,7 +15,7 @@ Fractorium::Fractorium(QWidget* parent)
 	Timing t;
 	ui.setupUi(this);
 	qRegisterMetaType<QVector<int>>("QVector<int>");//For previews.
-	qRegisterMetaType<vector<unsigned char>>("vector<unsigned char>");
+	qRegisterMetaType<vector<byte>>("vector<byte>");
 	qRegisterMetaType<EmberTreeWidgetItemBase*>("EmberTreeWidgetItemBase*");
 	
 	m_FontSize = 9;

@@ -355,7 +355,7 @@ public:
 
 		//Keep a list of which variations derive from ParametricVariation.
 		//Note that these are not new copies, rather just pointers to the original instances in m_Variations.
-		for (unsigned int i = 0; i < m_Variations.size(); i++)
+		for (uint i = 0; i < m_Variations.size(); i++)
 		{
 			if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(m_Variations[i]))
 				m_ParametricVariations.push_back(parVar);
@@ -412,7 +412,7 @@ public:
 	/// <returns>A pointer to the variation if found, else nullptr.</returns>
 	Variation<T>* GetVariation(eVariationId id)
 	{
-		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
+		for (uint i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (id == m_Variations[i]->VariationId())
 				return m_Variations[i];
 
@@ -435,7 +435,7 @@ public:
 	/// <returns>A pointer to the variation if found, else nullptr.</returns>
 	Variation<T>* GetVariation(const string& name)
 	{
-		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
+		for (uint i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_Variations[i]->Name().c_str()))
 				return m_Variations[i];
 
@@ -466,7 +466,7 @@ public:
 	/// <returns>The parametric variation with a matching name, else nullptr.</returns>
 	ParametricVariation<T>* GetParametricVariation(const string& name)
 	{
-		for (unsigned int i = 0; i < m_ParametricVariations.size() && m_ParametricVariations[i] != nullptr; i++)
+		for (uint i = 0; i < m_ParametricVariations.size() && m_ParametricVariations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_ParametricVariations[i]->Name().c_str()))
 				return m_ParametricVariations[i];
 
@@ -480,7 +480,7 @@ public:
 	/// <returns>The index of the variation with the matching name, else -1</returns>
 	int GetVariationIndex(const string& name)
 	{
-		for (unsigned int i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
+		for (uint i = 0; i < m_Variations.size() && m_Variations[i] != nullptr; i++)
 			if (!_stricmp(name.c_str(), m_Variations[i]->Name().c_str()))
 				return i;
 

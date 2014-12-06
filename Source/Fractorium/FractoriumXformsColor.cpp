@@ -163,7 +163,7 @@ void FractoriumEmberController<T>::SetCurrentXformColorIndex(double d)
 		entry.g *= 255;
 		entry.b *= 255;
 
-		QRgb rgb = (unsigned int)entry.r << 16 | (unsigned int)entry.g << 8 | (unsigned int)entry.b;
+		QRgb rgb = (uint)entry.r << 16 | (uint)entry.g << 8 | (uint)entry.b;
 		m_Fractorium->ui.XformColorIndexTable->item(0, 0)->setBackgroundColor(QColor::fromRgb(rgb));
 	}, false);
 }

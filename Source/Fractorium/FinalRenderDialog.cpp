@@ -16,7 +16,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	ui.setupUi(this);
 
 	int row = 0, spinHeight = 20;
-	unsigned int i;
+	uint i;
 	double dmax = numeric_limits<double>::max();
 	QTableWidget* table = ui.FinalRenderParamsTable;
 	QTableWidgetItem* item = NULL;
@@ -197,16 +197,16 @@ QString FractoriumFinalRenderDialog::Path() { return ui.FinalRenderParamsTable->
 void FractoriumFinalRenderDialog::Path(const QString& s) { ui.FinalRenderParamsTable->item(m_PathCellIndex, 1)->setText(s); }
 QString FractoriumFinalRenderDialog::Prefix() { return m_PrefixEdit->text(); }
 QString FractoriumFinalRenderDialog::Suffix() { return m_SuffixEdit->text(); }
-unsigned int FractoriumFinalRenderDialog::Current() { return ui.FinalRenderCurrentSpin->value(); }
-unsigned int FractoriumFinalRenderDialog::PlatformIndex() { return ui.FinalRenderPlatformCombo->currentIndex(); }
-unsigned int FractoriumFinalRenderDialog::DeviceIndex() { return ui.FinalRenderDeviceCombo->currentIndex(); }
-unsigned int FractoriumFinalRenderDialog::ThreadCount() { return ui.FinalRenderThreadCountSpin->value(); }
+uint FractoriumFinalRenderDialog::Current() { return ui.FinalRenderCurrentSpin->value(); }
+uint FractoriumFinalRenderDialog::PlatformIndex() { return ui.FinalRenderPlatformCombo->currentIndex(); }
+uint FractoriumFinalRenderDialog::DeviceIndex() { return ui.FinalRenderDeviceCombo->currentIndex(); }
+uint FractoriumFinalRenderDialog::ThreadCount() { return ui.FinalRenderThreadCountSpin->value(); }
 double FractoriumFinalRenderDialog::WidthScale() { return m_WidthScaleSpin->value(); }
 double FractoriumFinalRenderDialog::HeightScale() { return m_HeightScaleSpin->value(); }
 double FractoriumFinalRenderDialog::Quality() { return m_QualitySpin->value(); }
-unsigned int FractoriumFinalRenderDialog::TemporalSamples() { return m_TemporalSamplesSpin->value(); }
-unsigned int FractoriumFinalRenderDialog::Supersample() { return m_SupersampleSpin->value(); }
-unsigned int FractoriumFinalRenderDialog::Strips() { return m_StripsSpin->value(); }
+uint FractoriumFinalRenderDialog::TemporalSamples() { return m_TemporalSamplesSpin->value(); }
+uint FractoriumFinalRenderDialog::Supersample() { return m_SupersampleSpin->value(); }
+uint FractoriumFinalRenderDialog::Strips() { return m_StripsSpin->value(); }
 
 /// <summary>
 /// Capture the current state of the Gui.

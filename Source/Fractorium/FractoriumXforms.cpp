@@ -46,7 +46,7 @@ Xform<T>* FractoriumEmberController<T>::CurrentXform()
 /// Set the current xform to the index passed in.
 /// </summary>
 /// <param name="i">The index to set the current xform to</param>
-void Fractorium::CurrentXform(unsigned int i)
+void Fractorium::CurrentXform(uint i)
 {
 	if (i < ui.CurrentXformCombo->count())
 		ui.CurrentXformCombo->setCurrentIndex(i);

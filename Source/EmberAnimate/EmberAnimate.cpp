@@ -32,11 +32,11 @@ bool EmberAnimate(EmberOptions& opt)
 	bool startXml = false;
 	bool finishXml = false;
 	bool appendXml = false;
-	unsigned char* finalImagep;
-	unsigned int i, channels, ftime;
+	byte* finalImagep;
+	uint i, channels, ftime;
 	string s, flameName, filename, inputPath = GetPath(opt.Input());
 	ostringstream os;
-	vector<unsigned char> finalImage, vecRgb;
+	vector<byte> finalImage, vecRgb;
 	vector<Ember<T>> embers;
 	EmberStats stats;
 	EmberReport emberReport;
@@ -190,8 +190,8 @@ bool EmberAnimate(EmberOptions& opt)
 			embers[i].m_SubBatchSize = opt.SubBatchSize();
 
 		embers[i].m_Quality *= T(opt.QualityScale());
-		embers[i].m_FinalRasW = (unsigned int)((T)embers[i].m_FinalRasW * opt.SizeScale());
-		embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH * opt.SizeScale());
+		embers[i].m_FinalRasW = (uint)((T)embers[i].m_FinalRasW * opt.SizeScale());
+		embers[i].m_FinalRasH = (uint)((T)embers[i].m_FinalRasH * opt.SizeScale());
 		embers[i].m_PixelsPerUnit *= T(opt.SizeScale());
 
 		//Cast to double in case the value exceeds 2^32.
@@ -236,7 +236,7 @@ bool EmberAnimate(EmberOptions& opt)
 			opt.FirstFrame((int)embers[0].m_Time);
 
 		if (opt.LastFrame() == UINT_MAX)
-			opt.LastFrame(ClampGte<unsigned int>((unsigned int)embers.back().m_Time - 1, opt.FirstFrame()));
+			opt.LastFrame(ClampGte<uint>((uint)embers.back().m_Time - 1, opt.FirstFrame()));
 	}
 
 	if (!opt.Out().empty())

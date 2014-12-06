@@ -100,7 +100,7 @@ public:
 	void ChangeVal(std::function<void(void)> func, eProcessAction action);
 	size_t MemoryRequired(size_t strips, bool includeFinal);
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> RandVec();
-	bool PrepFinalAccumVector(vector<unsigned char>& pixels);
+	bool PrepFinalAccumVector(vector<byte>& pixels);
 
 	//Virtual processing functions.
 	virtual bool Ok() const;
@@ -117,7 +117,7 @@ public:
 	virtual bool CreateTemporalFilter(bool& newAlloc) = 0;
 	virtual void ComputeBounds() = 0;
 	virtual void ComputeCamera() = 0;
-	virtual eRenderStatus Run(vector<unsigned char>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) = 0;
+	virtual eRenderStatus Run(vector<byte>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) = 0;
 	virtual EmberImageComments ImageComments(EmberStats& stats, size_t printEditDepth = 0, bool intPalette = false, bool hexPalette = true) = 0;
 	virtual DensityFilterBase* GetDensityFilter() = 0;
 

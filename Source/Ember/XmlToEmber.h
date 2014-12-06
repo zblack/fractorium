@@ -250,7 +250,7 @@ public:
 	/// <param name="filename">Full path and filename, optionally empty</param>
 	/// <param name="embers">The newly constructed embers based on what was parsed</param>
 	/// <returns>True if there were no errors, else false.</returns>
-	bool Parse(unsigned char* buf, const char* filename, vector<Ember<T>>& embers)
+	bool Parse(byte* buf, const char* filename, vector<Ember<T>>& embers)
 	{
 		char* bn;
 		const char* xmlPtr;
@@ -310,7 +310,7 @@ public:
 		//An adjustment of +/- 360 degrees is made until this is true.
 		if (emberSize > 1)
 		{
-			for (unsigned int i = 1; i < emberSize; i++)
+			for (uint i = 1; i < emberSize; i++)
 			{
 				//Only do this adjustment if not in compat mode..
 				if (embers[i - 1].m_AffineInterp != INTERP_COMPAT && embers[i - 1].m_AffineInterp != INTERP_OLDER)
@@ -349,7 +349,7 @@ public:
 		if (ReadFile(filename, buf))
 		{
 			std::replace(buf.begin(), buf.end(), '&', '+');
-			return Parse((unsigned char*)buf.data(), filename, embers);
+			return Parse((byte*)buf.data(), filename, embers);
 		}
 		else
 			return false;
@@ -395,19 +395,19 @@ public:
 	/// See error report for errors.
 	/// </summary>
 	/// <param name="str">The string to convert</param>
-	/// <param name="val">The converted unsigned integer value</param>
+	/// <param name="val">The converted uinteger value</param>
 	/// <returns>True if success, else false.</returns>
-	bool Atoi(const char* str, unsigned int& val)
+	bool Atoi(const char* str, uint& val)
 	{
 		return Atoi(str, (int&)val);
 	}
 
 	/// <summary>
-	/// Convert the string to an unsigned integer value and return a bool indicating success.
+	/// Convert the string to an uinteger value and return a bool indicating success.
 	/// See error report for errors.
 	/// </summary>
 	/// <param name="str">The string to convert</param>
-	/// <param name="val">The converted unsigned integer value</param>
+	/// <param name="val">The converted uinteger value</param>
 	/// <returns>True if success, else false.</returns>
 	bool Atoi(const char* str, int& val)
 	{
@@ -542,11 +542,11 @@ private:
 	bool ParseEmberElement(xmlNode* emberNode, Ember<T>& currentEmber)
 	{
 		bool ret = true;
-		unsigned int newLinear = 0;
+		uint newLinear = 0;
 		char* attStr;
 		const char* loc = __FUNCTION__;
 		int soloXform = -1;
-		unsigned int i, count, index = 0;
+		uint i, count, index = 0;
 		double vals[10];
 		xmlAttrPtr att, curAtt;
 		xmlNodePtr editNode, childNode, motionNode;
@@ -1041,7 +1041,7 @@ private:
 		bool success = true;
 		char* attStr;
 		const char* loc = __FUNCTION__;
-		unsigned int j;
+		uint j;
 		T temp;
 		double a, b, c, d, e, f;
 		double vals[10];
@@ -1203,7 +1203,7 @@ private:
 
 				if (Atof(attStr, temp))
 				{
-					unsigned int iTemp = (unsigned int)temp;
+					uint iTemp = (uint)temp;
 
 					if (iTemp < xform.TotalVariationCount())
 					{
@@ -1246,7 +1246,7 @@ private:
 		}
 
 		//Now that all xforms have been parsed, go through and try to find params for the parametric variations.
-		for (unsigned int i = 0; i < xform.TotalVariationCount(); i++)
+		for (uint i = 0; i < xform.TotalVariationCount(); i++)
 		{
 			if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(xform.GetVariation(i)))
 			{
@@ -1361,7 +1361,7 @@ private:
 	{
 		int colorIndex = 0;
 		int colorCount = 0;
-		unsigned int r, g, b, a;
+		uint r, g, b, a;
 		int ret;
 		char tmps[2];
 		int skip = (int)abs(chan);

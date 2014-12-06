@@ -40,7 +40,7 @@ public:
 	/// <param name="v">The vector containing the RGB pixels [0..255] which will make up the preview image</param>
 	/// <param name="width">The width of the image in pixels</param>
 	/// <param name="height">The height of the image in pixels</param>
-	void SetImage(vector<unsigned char>& v, unsigned int width, unsigned int height)
+	void SetImage(vector<byte>& v, uint width, uint height)
 	{
 		int size = 64;
 

@@ -11,7 +11,7 @@
 /// <summary>
 /// An enum representing the type of edit being done.
 /// </summary>
-enum eEditUndoState : unsigned int { REGULAR_EDIT = 0, UNDO_REDO = 1, EDIT_UNDO = 2 };
+enum eEditUndoState : uint { REGULAR_EDIT = 0, UNDO_REDO = 1, EDIT_UNDO = 2 };
 
 /// <summary>
 /// FractoriumEmberController and Fractorium need each other, but each can't include the other.
@@ -66,16 +66,16 @@ public:
 	virtual size_t TotalXformCount() const { return 0; }
 	virtual QString Name() const { return ""; }
 	virtual void Name(const string& s) { }
-	virtual unsigned int FinalRasW() const { return 0; }
-	virtual void FinalRasW(unsigned int w) { }
-	virtual unsigned int FinalRasH() const { return 0; }
-	virtual void FinalRasH(unsigned int h) { }
+	virtual uint FinalRasW() const { return 0; }
+	virtual void FinalRasW(uint w) { }
+	virtual uint FinalRasH() const { return 0; }
+	virtual void FinalRasH(uint h) { }
 	virtual size_t Index() const { return 0; }
 	virtual void AddSymmetry(int sym, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) { }
 	virtual void CalcNormalizedWeights() { }
 
 	//Menu.
-	virtual void NewFlock(unsigned int count) { }//File.
+	virtual void NewFlock(uint count) { }//File.
 	virtual void NewEmptyFlameInCurrentFile() { }
 	virtual void NewRandomFlameInCurrentFile() { }
 	virtual void CopyFlameInCurrentFile() { }
@@ -106,9 +106,9 @@ public:
 	virtual void GammaThresholdChanged(double d) { }
 	virtual void VibrancyChanged(double d) { }
 	virtual void HighlightPowerChanged(double d) { }
-	virtual void PaletteModeChanged(unsigned int i) { }
-	virtual void WidthChanged(unsigned int i) { }
-	virtual void HeightChanged(unsigned int i) { }
+	virtual void PaletteModeChanged(uint i) { }
+	virtual void WidthChanged(uint i) { }
+	virtual void HeightChanged(uint i) { }
 	virtual void CenterXChanged(double d) { }
 	virtual void CenterYChanged(double d) { }
 	virtual void ScaleChanged(double d) { }
@@ -164,7 +164,7 @@ public:
 
 	//Xforms Xaos.
 	virtual void FillXaosWithCurrentXform() { }
-	virtual QString MakeXaosNameString(unsigned int i) { return ""; }
+	virtual QString MakeXaosNameString(uint i) { return ""; }
 	virtual void XaosChanged(DoubleSpinBox* sender) { }
 	virtual void ClearXaos() { }
 	virtual void RandomXaos() { }
@@ -173,7 +173,7 @@ public:
 	virtual bool InitPaletteTable(const string& s) { return false; }
 	virtual void ApplyPaletteToEmber() { }
 	virtual void PaletteAdjust() { }
-	virtual QRgb GetQRgbFromPaletteIndex(unsigned int i) { return QRgb(); }
+	virtual QRgb GetQRgbFromPaletteIndex(uint i) { return QRgb(); }
 	virtual void PaletteCellClicked(int row, int col) { }
 
 	//Library.
@@ -182,15 +182,15 @@ public:
 	virtual void UpdateLibraryTree() { }
 	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) { }
 	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) { }
-	virtual void RenderPreviews(unsigned int start = UINT_MAX, unsigned int end = UINT_MAX) { }
+	virtual void RenderPreviews(uint start = UINT_MAX, uint end = UINT_MAX) { }
 	virtual void StopPreviewRender() { }
 
 	//Info.
 
 	//Rendering/progress.
 	virtual bool Render() { return false; }
-	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true) { return false; }
-	virtual unsigned int SizeOfT() const { return 0; }
+	virtual bool CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared = true) { return false; }
+	virtual uint SizeOfT() const { return 0; }
 	virtual void ClearUndo() { }
 	virtual GLEmberControllerBase* GLController() { return NULL; }
 	bool RenderTimerRunning();
@@ -202,8 +202,8 @@ public:
 	void DeleteRenderer();
 	void SaveCurrentRender(const QString& filename, bool forcePull);
 	RendererBase* Renderer() { return m_Renderer.get(); }
-	vector<unsigned char>* FinalImage() { return &m_FinalImage; }
-	vector<unsigned char>* PreviewFinalImage() { return &m_PreviewFinalImage; }
+	vector<byte>* FinalImage() { return &m_FinalImage; }
+	vector<byte>* PreviewFinalImage() { return &m_PreviewFinalImage; }
 
 protected:
 	//Rendering/progress.
@@ -215,11 +215,11 @@ protected:
 	bool m_Rendering;
 	bool m_Shared;
 	bool m_LastEditWasUndoRedo;
-	unsigned int m_Platform;
-	unsigned int m_Device;
-	unsigned int m_SubBatchCount;
-	unsigned int m_FailedRenders;
-	unsigned int m_UndoIndex;
+	uint m_Platform;
+	uint m_Device;
+	uint m_SubBatchCount;
+	uint m_FailedRenders;
+	uint m_UndoIndex;
 	eRendererType m_RenderType;
 	eEditUndoState m_EditState;
 	GLuint m_OutputTexID;
@@ -229,8 +229,8 @@ protected:
 	QString m_LastSaveAll;
 	QString m_LastSaveCurrent;
 	CriticalSection m_Cs;
-	vector<unsigned char> m_FinalImage;
-	vector<unsigned char> m_PreviewFinalImage;
+	vector<byte> m_FinalImage;
+	vector<byte> m_PreviewFinalImage;
 	vector<eProcessAction> m_ProcessActions;
 	unique_ptr<EmberNs::RendererBase> m_Renderer;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> m_Rand;
@@ -275,15 +275,15 @@ public:
 	virtual void DeleteCurrentXform() override;
 	virtual void AddFinalXform() override;
 	virtual bool UseFinalXform() override { return m_Ember.UseFinalXform(); }
-	//virtual bool IsFinal(unsigned int i) { return false; }
+	//virtual bool IsFinal(uint i) { return false; }
 	virtual size_t XformCount() const override { return m_Ember.XformCount(); }
 	virtual size_t TotalXformCount() const override { return m_Ember.TotalXformCount(); }
 	virtual QString Name() const override { return QString::fromStdString(m_Ember.m_Name); }
 	virtual void Name(const string& s) override { m_Ember.m_Name = s; }
-	virtual unsigned int FinalRasW() const override { return m_Ember.m_FinalRasW; }
-	virtual void FinalRasW(unsigned int w) override { m_Ember.m_FinalRasW = w; }
-	virtual unsigned int FinalRasH() const override { return m_Ember.m_FinalRasH; }
-	virtual void FinalRasH(unsigned int h) override { m_Ember.m_FinalRasH = h; }
+	virtual uint FinalRasW() const override { return m_Ember.m_FinalRasW; }
+	virtual void FinalRasW(uint w) override { m_Ember.m_FinalRasW = w; }
+	virtual uint FinalRasH() const override { return m_Ember.m_FinalRasH; }
+	virtual void FinalRasH(uint h) override { m_Ember.m_FinalRasH = h; }
 	virtual size_t Index() const override { return m_Ember.m_Index; }
 	virtual void AddSymmetry(int sym, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override { m_Ember.AddSymmetry(sym, rand); }
 	virtual void CalcNormalizedWeights() override { m_Ember.CalcNormalizedWeights(m_NormalizedWeights); }
@@ -291,7 +291,7 @@ public:
 	Ember<T>* CurrentEmber();
 
 	//Menu.
-	virtual void NewFlock(unsigned int count) override;
+	virtual void NewFlock(uint count) override;
 	virtual void NewEmptyFlameInCurrentFile() override;
 	virtual void NewRandomFlameInCurrentFile() override;
 	virtual void CopyFlameInCurrentFile() override;
@@ -322,9 +322,9 @@ public:
 	virtual void GammaThresholdChanged(double d) override;
 	virtual void VibrancyChanged(double d) override;
 	virtual void HighlightPowerChanged(double d) override;
-	virtual void PaletteModeChanged(unsigned int i) override;
-	virtual void WidthChanged(unsigned int i) override;
-	virtual void HeightChanged(unsigned int i) override;
+	virtual void PaletteModeChanged(uint i) override;
+	virtual void WidthChanged(uint i) override;
+	virtual void HeightChanged(uint i) override;
 	virtual void CenterXChanged(double d) override;
 	virtual void CenterYChanged(double d) override;
 	virtual void ScaleChanged(double d) override;
@@ -384,7 +384,7 @@ public:
 
 	//Xforms Xaos.
 	virtual void FillXaosWithCurrentXform() override;
-	virtual QString MakeXaosNameString(unsigned int i) override;
+	virtual QString MakeXaosNameString(uint i) override;
 	virtual void XaosChanged(DoubleSpinBox* sender) override;
 	virtual void ClearXaos() override;
 	virtual void RandomXaos() override;
@@ -393,7 +393,7 @@ public:
 	virtual bool InitPaletteTable(const string& s) override;
 	virtual void ApplyPaletteToEmber() override;
 	virtual void PaletteAdjust() override;
-	virtual QRgb GetQRgbFromPaletteIndex(unsigned int i) override { return QRgb(); }
+	virtual QRgb GetQRgbFromPaletteIndex(uint i) override { return QRgb(); }
 	virtual void PaletteCellClicked(int row, int col) override;
 
 	//Library.
@@ -402,15 +402,15 @@ public:
 	virtual void UpdateLibraryTree() override;
 	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) override;
 	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) override;
-	virtual void RenderPreviews(unsigned int start = UINT_MAX, unsigned int end = UINT_MAX) override;
+	virtual void RenderPreviews(uint start = UINT_MAX, uint end = UINT_MAX) override;
 	virtual void StopPreviewRender() override;
 
 	//Info.
 
 	//Rendering/progress.
 	virtual bool Render() override;
-	virtual bool CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared = true) override;
-	virtual unsigned int SizeOfT() const override { return sizeof(T); }
+	virtual bool CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared = true) override;
+	virtual uint SizeOfT() const override { return sizeof(T); }
 	virtual int ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs) override;
 	virtual void ClearUndo() override;
 	virtual GLEmberControllerBase* GLController() override { return m_GLController.get(); }
@@ -453,7 +453,7 @@ private:
 	unique_ptr<GLEmberController<T>> m_GLController;
 	unique_ptr<EmberNs::Renderer<T, T>> m_PreviewRenderer;
 	QFuture<void> m_PreviewResult;
-	std::function<void (unsigned int, unsigned int)> m_PreviewRenderFunc;
+	std::function<void (uint, uint)> m_PreviewRenderFunc;
 };
 
 template class FractoriumEmberController<float>;

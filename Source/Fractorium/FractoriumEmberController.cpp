@@ -84,7 +84,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 	m_PreviewRenderer->SetEmber(m_Ember);//Give it an initial ember, will be updated many times later.
 	//m_PreviewRenderer->ThreadCount(1);//For debugging.
 
-	m_PreviewRenderFunc = [&](unsigned int start, unsigned int end)
+	m_PreviewRenderFunc = [&](uint start, uint end)
 	{
 		while(m_PreviewRun || m_PreviewRunning)
 		{
@@ -117,9 +117,9 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 						//until the update is complete.
 						QMetaObject::invokeMethod(m_Fractorium, "SetLibraryTreeItemData", Qt::BlockingQueuedConnection,
 							Q_ARG(EmberTreeWidgetItemBase*, (EmberTreeWidgetItemBase*)treeItem),
-							Q_ARG(vector<unsigned char>&, m_PreviewFinalImage),
-							Q_ARG(unsigned int, PREVIEW_SIZE),
-							Q_ARG(unsigned int, PREVIEW_SIZE));
+							Q_ARG(vector<byte>&, m_PreviewFinalImage),
+							Q_ARG(uint, PREVIEW_SIZE),
+							Q_ARG(uint, PREVIEW_SIZE));
 						
 						//treeItem->SetImage(m_PreviewFinalImage, PREVIEW_SIZE, PREVIEW_SIZE);
 					}
@@ -189,7 +189,7 @@ void FractoriumEmberController<T>::SetEmber(size_t index)
 	{
 		if (QTreeWidgetItem* top = m_Fractorium->ui.LibraryTree->topLevelItem(0))
 		{
-			for (unsigned int i = 0; i < top->childCount(); i++)
+			for (uint i = 0; i < top->childCount(); i++)
 			{
 				if (EmberTreeWidgetItem<T>* emberItem = dynamic_cast<EmberTreeWidgetItem<T>*>(top->child(i)))
 					emberItem->setSelected(i == index);

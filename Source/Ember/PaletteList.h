@@ -95,7 +95,7 @@ public:
 	/// <returns>A pointer to the palette if found, else nullptr</returns>
 	Palette<T>* GetPaletteByName(const string&& name)
 	{
-		for (unsigned int i = 0; i < Size(); i++)
+		for (uint i = 0; i < Size(); i++)
 			if (m_Palettes[i].m_Name == name)
 				return &m_Palettes[i];
 
@@ -166,7 +166,7 @@ private:
 					if (!Compare(attr->name, "data"))
 					{
 						int colorIndex = 0;
-						unsigned int r, g, b;
+						uint r, g, b;
 						int colorCount = 0;
 						hexError = false;
 

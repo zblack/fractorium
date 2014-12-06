@@ -42,7 +42,7 @@ bool OpenCLWrapper::CheckOpenCL()
 /// <param name="device">The index device of the device to use</param>
 /// <param name="shared">True if shared with OpenGL, else false.</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::Init(unsigned int platform, unsigned int device, bool shared)
+bool OpenCLWrapper::Init(uint platform, uint device, bool shared)
 {
 	cl_int err;
 
@@ -70,7 +70,7 @@ bool OpenCLWrapper::Init(unsigned int platform, unsigned int device, bool shared
 						m_Device = m_Devices[m_PlatformIndex][device];
 						m_DeviceVec.clear();
 						m_DeviceVec.push_back(m_Device);
-						m_LocalMemSize = (unsigned int)GetInfo<cl_ulong>(m_PlatformIndex, m_DeviceIndex, CL_DEVICE_LOCAL_MEM_SIZE);
+						m_LocalMemSize = (uint)GetInfo<cl_ulong>(m_PlatformIndex, m_DeviceIndex, CL_DEVICE_LOCAL_MEM_SIZE);
 						m_Shared = shared;
 						m_Init = true;//Command queue is ok, it's now ok to begin building and running programs.
 					}
@@ -215,7 +215,7 @@ bool OpenCLWrapper::WriteBuffer(const string& name, void* data, size_t size)
 /// <param name="data">A pointer to the buffer</param>
 /// <param name="size">The size in bytes of the buffer</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::WriteBuffer(unsigned int bufferIndex, void* data, size_t size)
+bool OpenCLWrapper::WriteBuffer(uint bufferIndex, void* data, size_t size)
 {
 	if (m_Init && (bufferIndex < m_Buffers.size()) && (GetBufferSize(bufferIndex) == size))
 	{
@@ -253,7 +253,7 @@ bool OpenCLWrapper::ReadBuffer(const string& name, void* data, size_t size)
 /// <param name="data">A pointer to a buffer to copy the data to</param>
 /// <param name="size">The size in bytes of the buffer</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::ReadBuffer(unsigned int bufferIndex, void* data, size_t size)
+bool OpenCLWrapper::ReadBuffer(uint bufferIndex, void* data, size_t size)
 {
 	if (m_Init && (bufferIndex < m_Buffers.size()) && (GetBufferSize(bufferIndex) == size))
 	{
@@ -277,7 +277,7 @@ bool OpenCLWrapper::ReadBuffer(unsigned int bufferIndex, void* data, size_t size
 /// <returns>The index if found, else -1.</returns>
 int OpenCLWrapper::FindBufferIndex(const string& name)
 {
-	for (unsigned int i = 0; i < m_Buffers.size(); i++)
+	for (uint i = 0; i < m_Buffers.size(); i++)
 		if (m_Buffers[i].m_Name == name)
 			return (int)i;
 
@@ -289,7 +289,7 @@ int OpenCLWrapper::FindBufferIndex(const string& name)
 /// </summary>
 /// <param name="name">The name of the buffer to search for</param>
 /// <returns>The size of the buffer if found, else 0.</returns>
-unsigned int OpenCLWrapper::GetBufferSize(const string& name)
+uint OpenCLWrapper::GetBufferSize(const string& name)
 {
 	int bufferIndex = FindBufferIndex(name);
 
@@ -301,10 +301,10 @@ unsigned int OpenCLWrapper::GetBufferSize(const string& name)
 /// </summary>
 /// <param name="name">The index of the buffer to get the size of</param>
 /// <returns>The size of the buffer if found, else 0.</returns>
-unsigned int OpenCLWrapper::GetBufferSize(unsigned int bufferIndex)
+uint OpenCLWrapper::GetBufferSize(uint bufferIndex)
 {
 	if (m_Init && bufferIndex < m_Buffers.size())
-		return (unsigned int)m_Buffers[bufferIndex].m_Buffer.getInfo<CL_MEM_SIZE>(nullptr);
+		return (uint)m_Buffers[bufferIndex].m_Buffer.getInfo<CL_MEM_SIZE>(nullptr);
 
 	return 0;
 }
@@ -355,7 +355,7 @@ bool OpenCLWrapper::AddAndWriteImage(const string& name, cl_mem_flags flags, con
 					m_GLImages.push_back(namedImageGL);
 
 					if (data)
-						return WriteImage2D((unsigned int)m_GLImages.size() - 1, true, width, height, row_pitch, data);//OpenGL images/textures require a separate write.
+						return WriteImage2D((uint)m_GLImages.size() - 1, true, width, height, row_pitch, data);//OpenGL images/textures require a separate write.
 					else
 						return true;
 				}
@@ -430,7 +430,7 @@ bool OpenCLWrapper::AddAndWriteImage(const string& name, cl_mem_flags flags, con
 /// <param name="row_pitch">The row pitch (usually zero)</param>
 /// <param name="data">The image data</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::WriteImage2D(unsigned int index, bool shared, ::size_t width, ::size_t height, ::size_t row_pitch, void* data)
+bool OpenCLWrapper::WriteImage2D(uint index, bool shared, ::size_t width, ::size_t height, ::size_t row_pitch, void* data)
 {
 	if (m_Init)
 	{
@@ -505,7 +505,7 @@ bool OpenCLWrapper::ReadImage(const string& name, ::size_t width, ::size_t heigh
 /// <param name="shared">True if shared with an OpenGL texture, else false.</param>
 /// <param name="data">A pointer to a buffer to copy the data to</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::ReadImage(unsigned int imageIndex, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data)
+bool OpenCLWrapper::ReadImage(uint imageIndex, ::size_t width, ::size_t height, ::size_t row_pitch, bool shared, void* data)
 {
 	if (m_Init)
 	{
@@ -552,13 +552,13 @@ int OpenCLWrapper::FindImageIndex(const string& name, bool shared)
 {
 	if (shared)
 	{
-		for (unsigned int i = 0; i < m_GLImages.size(); i++)
+		for (uint i = 0; i < m_GLImages.size(); i++)
 			if (m_GLImages[i].m_Name == name)
 				return i;
 	}
 	else
 	{
-		for (unsigned int i = 0; i < m_Images.size(); i++)
+		for (uint i = 0; i < m_Images.size(); i++)
 			if (m_Images[i].m_Name == name)
 				return i;
 	}
@@ -572,7 +572,7 @@ int OpenCLWrapper::FindImageIndex(const string& name, bool shared)
 /// <param name="name">The name of the image to search for</param>
 /// <param name="shared">True if shared with an OpenGL texture, else false.</param>
 /// <returns>The size of the 2D image if found, else 0.</returns>
-unsigned int OpenCLWrapper::GetImageSize(const string& name, bool shared)
+uint OpenCLWrapper::GetImageSize(const string& name, bool shared)
 {
 	int imageIndex = FindImageIndex(name, shared);
 	return GetImageSize(imageIndex, shared);
@@ -584,7 +584,7 @@ unsigned int OpenCLWrapper::GetImageSize(const string& name, bool shared)
 /// <param name="imageIndex">Index of the image to search for</param>
 /// <param name="shared">True if shared with an OpenGL texture, else false.</param>
 /// <returns>The size of the 2D image if found, else 0.</returns>
-unsigned int OpenCLWrapper::GetImageSize(unsigned int imageIndex, bool shared)
+uint OpenCLWrapper::GetImageSize(uint imageIndex, bool shared)
 {
 	size_t size = 0;
 
@@ -608,7 +608,7 @@ unsigned int OpenCLWrapper::GetImageSize(unsigned int imageIndex, bool shared)
 		}
 	}
 
-	return (unsigned int)size;
+	return (uint)size;
 }
 
 /// <summary>
@@ -840,7 +840,7 @@ bool OpenCLWrapper::CreateSampler(cl::Sampler& sampler, cl_bool normalizedCoords
 /// <param name="argIndex">Index of the argument</param>
 /// <param name="name">The name of the buffer</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::SetBufferArg(unsigned int kernelIndex, unsigned int argIndex, const string& name)
+bool OpenCLWrapper::SetBufferArg(uint kernelIndex, uint argIndex, const string& name)
 {
 	int bufferIndex = OpenCLWrapper::FindBufferIndex(name);
 
@@ -855,7 +855,7 @@ bool OpenCLWrapper::SetBufferArg(unsigned int kernelIndex, unsigned int argIndex
 /// <param name="argIndex">Index of the argument</param>
 /// <param name="bufferIndex">Index of the buffer</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::SetBufferArg(unsigned int kernelIndex, unsigned int argIndex, unsigned int bufferIndex)
+bool OpenCLWrapper::SetBufferArg(uint kernelIndex, uint argIndex, uint bufferIndex)
 {
 	if (m_Init && bufferIndex < m_Buffers.size())
 		return SetArg<cl::Buffer>(kernelIndex, argIndex, m_Buffers[bufferIndex].m_Buffer);
@@ -872,7 +872,7 @@ bool OpenCLWrapper::SetBufferArg(unsigned int kernelIndex, unsigned int argIndex
 /// <param name="shared">True if shared with an OpenGL texture, else false</param>
 /// <param name="name">The name of the 2D image</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::SetImageArg(unsigned int kernelIndex, unsigned int argIndex, bool shared, const string& name)
+bool OpenCLWrapper::SetImageArg(uint kernelIndex, uint argIndex, bool shared, const string& name)
 {
 	if (m_Init)
 	{
@@ -892,7 +892,7 @@ bool OpenCLWrapper::SetImageArg(unsigned int kernelIndex, unsigned int argIndex,
 /// <param name="shared">True if shared with an OpenGL texture, else false</param>
 /// <param name="imageIndex">Index of the 2D image</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::SetImageArg(unsigned int kernelIndex, unsigned int argIndex, bool shared, unsigned int imageIndex)
+bool OpenCLWrapper::SetImageArg(uint kernelIndex, uint argIndex, bool shared, uint imageIndex)
 {
 	cl_int err;
 
@@ -920,7 +920,7 @@ bool OpenCLWrapper::SetImageArg(unsigned int kernelIndex, unsigned int argIndex,
 /// <returns>The index if found, else -1.</returns>
 int OpenCLWrapper::FindKernelIndex(const string& name)
 {
-	for (unsigned int i = 0; i < m_Programs.size(); i++)
+	for (uint i = 0; i < m_Programs.size(); i++)
 		if (m_Programs[i].m_Name == name)
 			return (int)i;
 
@@ -938,8 +938,8 @@ int OpenCLWrapper::FindKernelIndex(const string& name)
 /// <param name="blockHeight">Height of each block</param>
 /// <param name="blockDepth">Depth of each block</param>
 /// <returns>True if success, else false.</returns>
-bool OpenCLWrapper::RunKernel(unsigned int kernelIndex, unsigned int totalGridWidth, unsigned int totalGridHeight, unsigned int totalGridDepth,
-	unsigned int blockWidth, unsigned int blockHeight, unsigned int blockDepth)
+bool OpenCLWrapper::RunKernel(uint kernelIndex, uint totalGridWidth, uint totalGridHeight, uint totalGridDepth,
+	uint blockWidth, uint blockHeight, uint blockDepth)
 {
 	if (m_Init && kernelIndex < m_Programs.size())
 	{
@@ -999,7 +999,7 @@ vector<string> OpenCLWrapper::PlatformNames()
 
 	platforms.reserve(m_Platforms.size());
 
-	for (unsigned int i = 0; i < m_Platforms.size(); i++)
+	for (uint i = 0; i < m_Platforms.size(); i++)
 		platforms.push_back(PlatformName(i));
 
 	return platforms;
@@ -1030,7 +1030,7 @@ string OpenCLWrapper::DeviceName(size_t platform, size_t device)
 /// <returns>All available device names on the platform at the specified index as a vector of strings</returns>
 vector<string> OpenCLWrapper::DeviceNames(size_t platform)
 {
-	unsigned int i = 0;
+	uint i = 0;
 	string s;
 	vector<string> devices;
 
@@ -1124,9 +1124,9 @@ string OpenCLWrapper::DumpInfo()
 bool OpenCLWrapper::Ok() const { return m_Init; }
 bool OpenCLWrapper::Shared() const { return m_Shared; }
 cl::Context OpenCLWrapper::Context() const { return m_Context; }
-unsigned int OpenCLWrapper::PlatformIndex() const { return m_PlatformIndex; }
-unsigned int OpenCLWrapper::DeviceIndex() const { return m_DeviceIndex; }
-unsigned int OpenCLWrapper::LocalMemSize() const { return m_LocalMemSize; }
+uint OpenCLWrapper::PlatformIndex() const { return m_PlatformIndex; }
+uint OpenCLWrapper::DeviceIndex() const { return m_DeviceIndex; }
+uint OpenCLWrapper::LocalMemSize() const { return m_LocalMemSize; }
 
 /// <summary>
 /// Makes the even grid dims.
@@ -1135,7 +1135,7 @@ unsigned int OpenCLWrapper::LocalMemSize() const { return m_LocalMemSize; }
 /// <param name="blockH">The block h.</param>
 /// <param name="gridW">The grid w.</param>
 /// <param name="gridH">The grid h.</param>
-void OpenCLWrapper::MakeEvenGridDims(unsigned int blockW, unsigned int blockH, unsigned int& gridW, unsigned int& gridH)
+void OpenCLWrapper::MakeEvenGridDims(uint blockW, uint blockH, uint& gridW, uint& gridH)
 {
 	if (gridW % blockW != 0)
 		gridW += (blockW - (gridW % blockW));

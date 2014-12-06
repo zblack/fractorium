@@ -48,7 +48,7 @@ void Fractorium::InitMenusUI()
 /// </summary>
 /// <param name="count">The number of embers to include in the flock</param>
 template <typename T>
-void FractoriumEmberController<T>::NewFlock(unsigned int count)
+void FractoriumEmberController<T>::NewFlock(uint count)
 {
 	Ember<T> ember;
 
@@ -57,7 +57,7 @@ void FractoriumEmberController<T>::NewFlock(unsigned int count)
 	m_EmberFile.m_Embers.reserve(count);
 	m_EmberFile.m_Filename = EmberFile<T>::DefaultFilename();
 
-	for (unsigned int i = 0; i < count; i++)
+	for (uint i = 0; i < count; i++)
 	{
 		m_SheepTools->Random(ember);
 		ParamsToEmber(ember);
@@ -174,7 +174,7 @@ void FractoriumEmberController<T>::OpenAndPrepFiles(const QStringList& filenames
 		EmberFile<T> emberFile;
 		XmlToEmber<T> parser;
 		vector<Ember<T>> embers;
-		unsigned int previousSize = append ? m_EmberFile.Size() : 0;
+		uint previousSize = append ? m_EmberFile.Size() : 0;
 
 		StopPreviewRender();
 		emberFile.m_Filename = filenames[0];
@@ -423,7 +423,7 @@ void FractoriumEmberController<T>::Redo()
 		int index = m_Ember.GetTotalXformIndex(CurrentXform());
 
 		m_LastEditWasUndoRedo = true;
-		m_UndoIndex = min<unsigned int>(m_UndoIndex + 1, m_UndoList.size() - 1);
+		m_UndoIndex = min<uint>(m_UndoIndex + 1, m_UndoList.size() - 1);
 		SetEmber(m_UndoList[m_UndoIndex], true);
 		m_EditState = UNDO_REDO;
 		
@@ -493,7 +493,7 @@ void Fractorium::OnActionCopyAllXml(bool checked) { m_Controller->CopyAllXml(); 
 template <typename T>
 void FractoriumEmberController<T>::PasteXmlAppend()
 {
-	unsigned int i, previousSize = m_EmberFile.Size();
+	uint i, previousSize = m_EmberFile.Size();
 	string s, errors;
 	XmlToEmber<T> parser;
 	vector<Ember<T>> embers;
@@ -504,13 +504,13 @@ void FractoriumEmberController<T>::PasteXmlAppend()
 
 	for (i = 0; i < b.size(); i++)
 	{
-		if ((unsigned int)b[i] < 128u)
+		if ((uint)b[i] < 128u)
 			s.push_back(b[i]);
 	}
 
 	b.clear();
 	StopPreviewRender();
-	parser.Parse((unsigned char*)s.c_str(), "", embers);
+	parser.Parse((byte*)s.c_str(), "", embers);
 	errors = parser.ErrorReportString();
 
 	if (errors != "")
@@ -548,7 +548,7 @@ void Fractorium::OnActionPasteXmlAppend(bool checked) { m_Controller->PasteXmlAp
 template <typename T>
 void FractoriumEmberController<T>::PasteXmlOver()
 {
-	unsigned int i;
+	uint i;
 	string s, errors;
 	XmlToEmber<T> parser;
 	Ember<T> backupEmber = m_EmberFile.m_Embers[0];
@@ -559,14 +559,14 @@ void FractoriumEmberController<T>::PasteXmlOver()
 	
 	for (i = 0; i < b.size(); i++)
 	{
-		if ((unsigned int)b[i] < 128u)
+		if ((uint)b[i] < 128u)
 			s.push_back(b[i]);
 	}
 
 	b.clear();
 	StopPreviewRender();
 	m_EmberFile.m_Embers.clear();//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
-	parser.Parse((unsigned char*)s.c_str(), "", m_EmberFile.m_Embers);
+	parser.Parse((byte*)s.c_str(), "", m_EmberFile.m_Embers);
 	errors = parser.ErrorReportString();
 
 	if (errors != "")

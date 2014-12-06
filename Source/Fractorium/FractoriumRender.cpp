@@ -114,11 +114,11 @@ void FractoriumEmberControllerBase::SaveCurrentRender(const QString& filename, b
 	if (filename != "")
 	{
 		bool b = false;
-		unsigned int i, j;
-		unsigned int width = m_Renderer->FinalRasW();
-		unsigned int height = m_Renderer->FinalRasH();
-		unsigned char* data = NULL;
-		vector<unsigned char> vecRgb;
+		uint i, j;
+		uint width = m_Renderer->FinalRasW();
+		uint height = m_Renderer->FinalRasH();
+		byte* data = NULL;
+		vector<byte> vecRgb;
 		QFileInfo fileInfo(filename);
 		QString suffix = fileInfo.suffix();
 		FractoriumSettings* settings = m_Fractorium->m_Settings;
@@ -379,7 +379,7 @@ bool FractoriumEmberController<T>::Render()
 			{
 				EmberStats stats = m_Renderer->Stats();
 				QString iters = ToString(stats.m_Iters);
-				QString scaledQuality = ToString((unsigned int)m_Renderer->ScaledQuality());
+				QString scaledQuality = ToString((uint)m_Renderer->ScaledQuality());
 				string renderTime = m_RenderElapsedTimer.Format(m_RenderElapsedTimer.Toc());
 
 				m_Fractorium->m_ProgressBar->setValue(100);
@@ -485,7 +485,7 @@ bool FractoriumEmberController<T>::Render()
 /// <param name="shared">True if shared with OpenGL, else false. Default: true.</param>
 /// <returns>True if nothing went wrong, else false.</returns>
 template <typename T>
-bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, unsigned int platform, unsigned int device, bool shared)
+bool FractoriumEmberController<T>::CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared)
 {
 	bool ok = true;
 	FractoriumSettings* s = m_Fractorium->m_Settings;

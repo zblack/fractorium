@@ -285,7 +285,7 @@ public:
 		else if (mode == MUTATE_POST_XFORMS)
 		{
 			bool same = (m_Rand.Rand() & 3) > 0;//25% chance of using the same post for all of them.
-			unsigned int b = 1 + m_Rand.Rand() % 6;
+			uint b = 1 + m_Rand.Rand() % 6;
 
 			sprintf_s(ministr, 32, "(%d%s)", b, same ? " same" : "");
 			os << "mutate post xforms " << ministr;
@@ -444,7 +444,7 @@ public:
 	/// <returns>A string describing what was done</returns>
 	string Cross(Ember<T>& ember0, Ember<T>& ember1, Ember<T>& emberOut, int crossMode)
 	{
-		unsigned int rb;
+		uint rb;
 		size_t i;
 		T t;
 		ostringstream os;
@@ -582,7 +582,7 @@ public:
 		{
 			//Select the starting parent.
 			size_t ci;
-			unsigned int startParent = m_Rand.RandBit();
+			uint startParent = m_Rand.RandBit();
 
 			os << " cmap_cross " << startParent << ":";
 
@@ -856,7 +856,7 @@ public:
 	/// <returns>The number of histogram cells that weren't black</returns>
 	T TryColors(Ember<T>& ember, int colorResolution)
 	{
-		unsigned char* p;
+		byte* p;
 		size_t i, hits = 0, res = colorResolution;
 		size_t pixTotal, res3 = res * res * res;
 		T scalar;
@@ -1389,8 +1389,8 @@ private:
 	string m_Comment;
 
 	vector<Point<T>> m_Samples;
-	vector<unsigned char> m_FinalImage;
-	vector<unsigned int> m_Hist;
+	vector<byte> m_FinalImage;
+	vector<uint> m_Hist;
 	EmberToXml<T> m_EmberToXml;
 	Iterator<T>* m_Iterator;
 	unique_ptr<StandardIterator<T>> m_StandardIterator;

@@ -322,9 +322,9 @@ static const char* AddToAccumWithCheckFunctionString =
 /// OpenCL equivalent various CarToRas member functions.
 /// </summary>
 static const char* CarToRasFunctionString = 
-	"inline void CarToRasConvertPointToSingle(__constant CarToRasCL* carToRas, Point* point, unsigned int* singleBufferIndex)\n"
+	"inline void CarToRasConvertPointToSingle(__constant CarToRasCL* carToRas, Point* point, uint* singleBufferIndex)\n"
 	"{\n"
-	"	*singleBufferIndex = (unsigned int)(carToRas->m_PixPerImageUnitW * point->m_X - carToRas->m_RasLlX) + (carToRas->m_RasWidth * (unsigned int)(carToRas->m_PixPerImageUnitH * point->m_Y - carToRas->m_RasLlY));\n"
+	"	*singleBufferIndex = (uint)(carToRas->m_PixPerImageUnitW * point->m_X - carToRas->m_RasLlX) + (carToRas->m_RasWidth * (uint)(carToRas->m_PixPerImageUnitH * point->m_Y - carToRas->m_RasLlY));\n"
 	"}\n"
 	"\n"
 	"inline bool CarToRasInBounds(__constant CarToRasCL* carToRas, Point* point)\n"

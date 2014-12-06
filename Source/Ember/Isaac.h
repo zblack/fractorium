@@ -32,7 +32,7 @@
 /// </summary>
 
 #ifndef __ISAAC64
-   typedef unsigned int ISAAC_INT;
+   typedef uint ISAAC_INT;
    const ISAAC_INT GOLDEN_RATIO = ISAAC_INT(0x9e3779b9);
 #else
 	typedef size_t ISAAC_INT;
@@ -48,7 +48,6 @@ template <int ALPHA = 4, class T = ISAAC_INT>
 class EMBER_API QTIsaac
 {
 public:
-	typedef unsigned char byte;
 	enum { N = (1 << ALPHA) };
 
 	/// <summary>
@@ -167,7 +166,7 @@ public:
 	/// Returns a random 0 or 1.
 	/// </summary>
 	/// <returns>A random 0 or 1</returns>
-	inline unsigned int RandBit()
+	inline uint RandBit()
 	{
 		return Rand() & 1;
 	}

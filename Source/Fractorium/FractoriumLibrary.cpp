@@ -17,7 +17,7 @@ void Fractorium::InitLibraryUI()
 /// <param name="v">The vector holding the RGBA bitmap</param>
 /// <param name="width">The width of the bitmap</param>
 /// <param name="height">The height of the bitmap</param>
-void Fractorium::SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<unsigned char>& v, unsigned int width, unsigned int height)
+void Fractorium::SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<byte>& v, uint width, uint height)
 {
 	item->SetImage(v, width, height);
 }
@@ -55,9 +55,9 @@ void FractoriumEmberController<T>::SyncNames()
 template <typename T>
 void FractoriumEmberController<T>::FillLibraryTree(int selectIndex)
 {
-	unsigned int i, j, size = 64;
+	uint i, j, size = 64;
 	QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
-	vector<unsigned char> v(size * size * 4);
+	vector<byte> v(size * size * 4);
 
 	StopPreviewRender();
 	tree->clear();
@@ -107,9 +107,9 @@ void FractoriumEmberController<T>::FillLibraryTree(int selectIndex)
 template <typename T>
 void FractoriumEmberController<T>::UpdateLibraryTree()
 {
-	unsigned int i, size = 64;
+	uint i, size = 64;
 	QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
-	vector<unsigned char> v(size * size * 4);
+	vector<byte> v(size * size * 4);
 
 	if (QTreeWidgetItem* top = tree->topLevelItem(0))
 	{
@@ -229,7 +229,7 @@ void Fractorium::OnEmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) { 
 /// <param name="start">The 0-based index to start rendering previews for</param>
 /// <param name="end">The 0-based index which is one beyond the last ember to render a preview for</param>
 template <typename T>
-void FractoriumEmberController<T>::RenderPreviews(unsigned int start, unsigned int end)
+void FractoriumEmberController<T>::RenderPreviews(uint start, uint end)
 {
 	StopPreviewRender();
 
@@ -242,7 +242,7 @@ void FractoriumEmberController<T>::RenderPreviews(unsigned int start, unsigned i
 		if (QTreeWidgetItem* top = tree->topLevelItem(0))
 		{
 			int childCount = top->childCount();
-			vector<unsigned char> emptyPreview(PREVIEW_SIZE * PREVIEW_SIZE * 3);
+			vector<byte> emptyPreview(PREVIEW_SIZE * PREVIEW_SIZE * 3);
 
 			for (int i = 0; i < childCount; i++)
 				if (EmberTreeWidgetItem<T>* treeItem = dynamic_cast<EmberTreeWidgetItem<T>*>(top->child(i)))
