@@ -45,6 +45,7 @@ namespace EmberNs
 template <typename T, typename bucketT>
 class EMBER_API Renderer : public RendererBase
 {
+//using EmberReport::m_ErrorReport;
 public:
 	Renderer();
 	virtual ~Renderer();
@@ -189,9 +190,9 @@ protected:
 //This class had to be implemented in a cpp file because the compiler was breaking.
 //So the explicit instantiation must be declared here rather than in Ember.cpp where
 //all of the other classes are done.
-template EMBER_API class Renderer<float, float>;
+//template EMBER_API class Renderer<float, float>;
 
-#ifdef DO_DOUBLE
-	template EMBER_API class Renderer<double, double>;
-#endif
+//#ifdef DO_DOUBLE
+//	template EMBER_API class Renderer<double, double>;
+//#endif
 }

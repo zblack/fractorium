@@ -21,7 +21,7 @@ static bool WritePpm(const char* filename, unsigned char* image, size_t width, s
 	if (fopen_s(&file, filename, "wb") == 0)
 	{
 		fprintf_s(file, "P6\n");
-		fprintf_s(file, "%d %d\n255\n", width, height);
+		fprintf_s(file, "%lu %lu\n255\n", width, height);
 
 		b = (size == fwrite(image, 1, size, file));
 		fclose(file);
@@ -57,11 +57,11 @@ static bool WriteJpeg(const char* filename, unsigned char* image, size_t width, 
 		char nickString[64], urlString[128], idString[128];
 		char bvString[64], niString[64], rtString[64];
 		char genomeString[65536], verString[64];
-   
+
 		//Create the mandatory comment strings.
 		snprintf_s(genomeString, 65536, "flam3_genome: %s", comments.m_Genome.c_str());
 		snprintf_s(bvString, 64, "flam3_error_rate: %s", comments.m_Badvals.c_str());
-		snprintf_s(niString, 64, "flam3_samples: %s", comments.m_NumIters);
+		snprintf_s(niString, 64, "flam3_samples: %s", comments.m_NumIters.c_str());
 		snprintf_s(rtString, 64, "flam3_time: %s", comments.m_Runtime.c_str());
 		snprintf_s(verString, 64, "flam3_version: %s", EmberVersion());
 
@@ -75,7 +75,7 @@ static bool WriteJpeg(const char* filename, unsigned char* image, size_t width, 
 		jpeg_set_defaults(&info);
 		jpeg_set_quality(&info, quality, TRUE);
 		jpeg_start_compress(&info, TRUE);
-	
+
 		//Write comments to jpeg.
 		if (enableComments)
 		{
@@ -92,7 +92,7 @@ static bool WriteJpeg(const char* filename, unsigned char* image, size_t width, 
 				snprintf_s(urlString, 128, "flam3_url: %s", url.c_str());
 				jpeg_write_marker(&info, JPEG_COM, (unsigned char*)urlString, (int)strlen(urlString));
 			}
-		
+
 			if (id != "")
 			{
 				snprintf_s(idString, 128, "flam3_id: %s", id.c_str());
@@ -150,41 +150,41 @@ static bool WritePng(const char* filename, unsigned char* image, size_t width, s
 		vector<unsigned char*> rows(height);
 
 		text[0].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[0].key = "flam3_version";
+		text[0].key = (png_charp)"flam3_version";
 		text[0].text = (png_charp)EmberVersion();
 
 		text[1].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[1].key = "flam3_nickname";
+		text[1].key = (png_charp)"flam3_nickname";
 		text[1].text = (png_charp)nick.c_str();
 
 		text[2].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[2].key = "flam3_url";
+		text[2].key = (png_charp)"flam3_url";
 		text[2].text = (png_charp)url.c_str();
-  
+
 		text[3].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[3].key = "flam3_id";
+		text[3].key = (png_charp)"flam3_id";
 		text[3].text = (png_charp)id.c_str();
 
 		text[4].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[4].key = "flam3_error_rate";
+		text[4].key = (png_charp)"flam3_error_rate";
 		text[4].text = (png_charp)comments.m_Badvals.c_str();
 
 		text[5].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[5].key = "flam3_samples";
+		text[5].key = (png_charp)"flam3_samples";
 		text[5].text = (png_charp)comments.m_NumIters.c_str();
 
 		text[6].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[6].key = "flam3_time";
+		text[6].key = (png_charp)"flam3_time";
 		text[6].text = (png_charp)comments.m_Runtime.c_str();
 
 		text[7].compression = PNG_TEXT_COMPRESSION_zTXt;
-		text[7].key = "flam3_genome";
+		text[7].key = (png_charp)"flam3_genome";
 		text[7].text = (png_charp)comments.m_Genome.c_str();
 
 		for (i = 0; i < height; i++)
 			rows[i] = (unsigned char*)image + i * width * 4 * bytesPerChannel;
-	  
-		png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+		png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 		info_ptr = png_create_info_struct(png_ptr);
 
 		if (setjmp(png_jmpbuf(png_ptr)))
@@ -202,7 +202,7 @@ static bool WritePng(const char* filename, unsigned char* image, size_t width, s
 			PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_BASE,
 			PNG_FILTER_TYPE_BASE);
-		   
+
 		if (enableComments == 1)
 			png_set_text(png_ptr, info_ptr, text, PNG_COMMENT_MAX);
 
@@ -232,20 +232,20 @@ static bool WritePng(const char* filename, unsigned char* image, size_t width, s
 /// <param name="height">The height.</param>
 /// <param name="newSize">The size of the new buffer created</param>
 /// <returns>The converted buffer if successful, else NULL.</returns>
-static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, size_t width, size_t height, size_t& newSize)
+static unsigned char* ConvertRGBToBMPBuffer(unsigned char* buffer, size_t width, size_t height, size_t& newSize)
 {
-	if (NULL == buffer || width == 0 || height == 0)
-		return NULL;
-		
+	if (buffer == nullptr || width == 0 || height == 0)
+		return nullptr;
+
 	size_t padding = 0;
 	size_t scanlinebytes = width * 3;
-	while ((scanlinebytes + padding ) % 4 != 0) 
+	while ((scanlinebytes + padding ) % 4 != 0)
 		padding++;
 
 	size_t psw = scanlinebytes + padding;
 
 	newSize = height * psw;
-	BYTE* newBuf = new BYTE[newSize];
+	unsigned char* newBuf = new unsigned char[newSize];
 
 	if (newBuf)
 	{
@@ -274,7 +274,7 @@ static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, size_t width, size_t height, si
 		return newBuf;
 	}
 
-	return NULL;
+	return nullptr;
 }
 
 /// <summary>
@@ -286,8 +286,9 @@ static BYTE* ConvertRGBToBMPBuffer(BYTE* buffer, size_t width, size_t height, si
 /// <param name="height">Height of the image in pixels</param>
 /// <param name="paddedSize">Padded size, greater than or equal to total image size.</param>
 /// <returns>True if success, else false</returns>
-static bool SaveBmp(const char* filename, BYTE* image, size_t width, size_t height, size_t paddedSize)
+static bool SaveBmp(const char* filename, unsigned char* image, size_t width, size_t height, size_t paddedSize)
 {
+#ifdef WIN32
 	BITMAPFILEHEADER bmfh;
 	BITMAPINFOHEADER info;
 	DWORD bwritten;
@@ -304,14 +305,14 @@ static bool SaveBmp(const char* filename, BYTE* image, size_t width, size_t heig
 	info.biSize = sizeof(BITMAPINFOHEADER);
 	info.biWidth = (LONG)width;
 	info.biHeight = (LONG)height;
-	info.biPlanes = 1;	
+	info.biPlanes = 1;
 	info.biBitCount = 24;
-	info.biCompression = BI_RGB;	
+	info.biCompression = BI_RGB;
 	info.biSizeImage = 0;
-	info.biXPelsPerMeter = 0x0ec4;  
-	info.biYPelsPerMeter = 0x0ec4;     
-	info.biClrUsed = 0;	
-	info.biClrImportant = 0; 
+	info.biXPelsPerMeter = 0x0ec4;
+	info.biYPelsPerMeter = 0x0ec4;
+	info.biClrUsed = 0;
+	info.biClrImportant = 0;
 
 	if ((file = CreateFileA(filename, GENERIC_WRITE, FILE_SHARE_READ, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL)) == NULL)
 	{
@@ -320,24 +321,25 @@ static bool SaveBmp(const char* filename, BYTE* image, size_t width, size_t heig
 	}
 
 	if (WriteFile(file, &bmfh, sizeof (BITMAPFILEHEADER), &bwritten, NULL) == false)
-	{	
+	{
 		CloseHandle(file);
 		return false;
 	}
 
 	if (WriteFile(file, &info, sizeof(BITMAPINFOHEADER), &bwritten, NULL) == false)
-	{	
+	{
 		CloseHandle(file);
 		return false;
 	}
 
 	if (WriteFile(file, image, (DWORD)paddedSize, &bwritten, NULL) == false)
-	{	
+	{
 		CloseHandle(file);
 		return false;
 	}
 
 	CloseHandle(file);
+#endif
 	return true;
 }
 
@@ -353,7 +355,7 @@ static bool WriteBmp(const char* filename, unsigned char* image, size_t width, s
 {
 	bool b = false;
 	size_t newSize;
-	unique_ptr<BYTE> bgrBuf(ConvertRGBToBMPBuffer(image, width, height, newSize));
+	unique_ptr<unsigned char> bgrBuf(ConvertRGBToBMPBuffer(image, width, height, newSize));
 
 	if (bgrBuf.get())
 		b = SaveBmp(filename, bgrBuf.get(), width, height, newSize);

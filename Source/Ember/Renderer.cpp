@@ -1588,4 +1588,13 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 			correctedChannels[3] = numeric_limits<accumT>::max();//Final accum, 4 channels, but not using transparency. 255 for 8 bpc, 65535 for 16 bpc.
 	}
 }
+
+//This class had to be implemented in a cpp file because the compiler was breaking.
+//So the explicit instantiation must be declared here rather than in Ember.cpp where
+//all of the other classes are done.
+template EMBER_API class Renderer<float, float>;
+
+#ifdef DO_DOUBLE
+	template EMBER_API class Renderer<double, double>;
+#endif
 }

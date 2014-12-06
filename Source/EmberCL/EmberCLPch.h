@@ -8,9 +8,14 @@
 #define WIN32_LEAN_AND_MEAN//Exclude rarely-used stuff from Windows headers.
 #define _USE_MATH_DEFINES
 
+#include "Timing.h"
+#include "Renderer.h"
+
 #ifdef _WIN32
 	#include <windows.h>
 	#include <SDKDDKVer.h>
+#else
+	#include "GL/glx.h"
 #endif
 
 #include <utility>
@@ -25,13 +30,14 @@
 #include <iterator>
 #include <time.h>
 
-#include "Timing.h"
-#include "Renderer.h"
-
-#if defined(BUILDING_EMBERCL)
-#define EMBERCL_API __declspec(dllexport)
+#ifdef _WIN32
+	#if defined(BUILDING_EMBERCL)
+		#define EMBERCL_API __declspec(dllexport)
+	#else
+		#define EMBERCL_API __declspec(dllimport)
+	#endif
 #else
-#define EMBERCL_API __declspec(dllimport)
+	#define EMBERCL_API
 #endif
 
 using namespace std;

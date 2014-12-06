@@ -117,9 +117,9 @@ public:
 //This class had to be implemented in a cpp file because the compiler was breaking.
 //So the explicit instantiation must be declared here rather than in Ember.cpp where
 //all of the other classes are done.
-template EMBER_API class Affine2D<float>;
+//template EMBER_API class Affine2D<float>;
 
-#ifdef DO_DOUBLE
-	template EMBER_API class Affine2D<double>;
-#endif
+//#ifdef DO_DOUBLE
+//	template EMBER_API class Affine2D<double>;
+//#endif
 }

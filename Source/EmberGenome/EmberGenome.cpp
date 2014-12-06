@@ -47,7 +47,7 @@ bool EmberGenome(EmberOptions& opt)
 
 	if (opt.DumpArgs())
 		cout << opt.GetValues(OPT_USE_GENOME) << endl;
-	
+
 	if (opt.OpenCLInfo())
 	{
 		cout << "\nOpenCL Info: " << endl;
@@ -71,7 +71,7 @@ bool EmberGenome(EmberOptions& opt)
 	eMutateMode mutMeth;
 	Ember<T> orig, save, selp0, selp1, parent0, parent1;
 	Ember<T> result, result1, result2, result3, interpolated;
-	Ember<T>* aselp0, *aselp1, *pTemplate = NULL;
+	Ember<T>* aselp0, *aselp1, *pTemplate = nullptr;
 	XmlToEmber<T> parser;
 	EmberToXml<T> emberToXml;
 	VariationList<T> varList;
@@ -99,12 +99,12 @@ bool EmberGenome(EmberOptions& opt)
 	if (!opt.EmberCL())
 	{
 		if (opt.ThreadCount() != 0)
-			renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : NULL);
+			renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : nullptr);
 	}
 	else
 	{
 		cout << "Using OpenCL to render." << endl;
-		
+
 		if (opt.Verbose())
 		{
 			cout << "Platform: " << wrapper.PlatformName(opt.Platform()) << endl;
@@ -147,7 +147,7 @@ bool EmberGenome(EmberOptions& opt)
 		noVars.push_back(VAR_SEPARATION);
 		noVars.push_back(VAR_SPLIT);
 		noVars.push_back(VAR_SPLITS);
-	  
+
 		//Loop over the novars and set ivars to the complement.
 		for (i = 0; i < varList.Size(); i++)
 		{
@@ -241,7 +241,7 @@ bool EmberGenome(EmberOptions& opt)
 	{
 		if (!ParseEmberFile(parser, opt.TemplateFile(), templateEmbers))
 			return false;
-		
+
 		if (templateEmbers.size() > 1)
 			cout << "More than one control point in template, ignoring all but first." << endl;
 
@@ -290,7 +290,7 @@ bool EmberGenome(EmberOptions& opt)
 		{
 			if (pTemplate)
 				tools.ApplyTemplate(embers[i], *pTemplate);
-			
+
 			tools.Offset(embers[i], (T)opt.OffsetX(), (T)opt.OffsetY());
 			cout << emberToXml.ToString(embers[i], opt.Extras(), opt.PrintEditDepth(), !opt.NoEdits(), false, opt.HexPalette());
 		}
@@ -337,7 +337,7 @@ bool EmberGenome(EmberOptions& opt)
 			if (!exactTimeMatch)
 			{
 				Interpolater<T>::Interpolate(embers, T(ftime), T(opt.Stagger()), interpolated);
-				
+
 				for (i = 0; i < embers.size(); i++)
 				{
 					if (ftime == (unsigned int)(embers[i].m_Time - 1))
@@ -350,7 +350,7 @@ bool EmberGenome(EmberOptions& opt)
 				if (!exactTimeMatch)
 					interpolated.m_AffineInterp = INTERP_LINEAR;
 			}
-		 
+
 			if (pTemplate)
 				tools.ApplyTemplate(interpolated, *pTemplate);
 
@@ -405,7 +405,7 @@ bool EmberGenome(EmberOptions& opt)
 		result = embers.back();
 		tools.Spin(embers.back(), pTemplate, result, frameCount, 0);
 		cout << emberToXml.ToString(result, opt.Extras(), opt.PrintEditDepth(), !opt.NoEdits(), false, opt.HexPalette());
-		
+
 		if (opt.Enclosed())
 			cout << "</sequence>" << endl;
 
@@ -415,7 +415,7 @@ bool EmberGenome(EmberOptions& opt)
 	if (doInter || doRotate)
 	{
 		frame = std::max(opt.Frame(), opt.Time());
-		
+
 		if (opt.Frames() == 0)
 		{
 			cout << "nframes must be positive and non-zero, not " << opt.Frames() << "." << endl;
@@ -463,7 +463,7 @@ bool EmberGenome(EmberOptions& opt)
 
 		if (opt.Enclosed())
 			cout << "</pick>" << endl;
-	  
+
 		return true;
 	}
 
@@ -477,7 +477,7 @@ bool EmberGenome(EmberOptions& opt)
 			T oldX, oldY;
 
 			embers[i].DeleteMotionElements();
-			
+
 			oldX = embers[i].m_CenterX;
 			oldY = embers[i].m_CenterY;
 			embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH / (T)opt.Frames());
@@ -490,7 +490,7 @@ bool EmberGenome(EmberOptions& opt)
 
 			if (pTemplate)
 				tools.ApplyTemplate(embers[i], *pTemplate);
-			
+
 			tools.Offset(embers[i], T(opt.OffsetX()), T(opt.OffsetY()));
 			cout << emberToXml.ToString(embers[i], opt.Extras(), opt.PrintEditDepth(), !opt.NoEdits(), false, opt.HexPalette());
 		}
@@ -534,7 +534,7 @@ bool EmberGenome(EmberOptions& opt)
 			selp0 = embers[rand.Rand() % embers.size()];
 			save = selp0;
 			aselp0 = &selp0;
-			aselp1 = NULL;
+			aselp1 = nullptr;
 			os << tools.TruncateVariations(save, 5);
 			save.m_Edits = emberToXml.CreateNewEditdoc(aselp0, aselp1, os.str(), opt.Nick(), opt.Url(), opt.Id(), opt.Comment(), opt.SheepGen(), opt.SheepId());
 		}
@@ -552,7 +552,7 @@ bool EmberGenome(EmberOptions& opt)
 					selp0 = embers[rand.Rand() % embers.size()];
 					orig = selp0;
 					aselp0 = &selp0;
-					aselp1 = NULL;
+					aselp1 = nullptr;
 
 					if (opt.Method() == "")
 						mutMeth = MUTATE_NOT_SPECIFIED;
@@ -581,7 +581,7 @@ bool EmberGenome(EmberOptions& opt)
 					//Scan string returned for 'mutate color'.
 					if (strstr(os.str().c_str(), "mutate color"))
 						didColor = true;
-				  
+
 					if (orig.m_Name != "")
 					{
 						os2.str("");
@@ -628,8 +628,8 @@ bool EmberGenome(EmberOptions& opt)
 					os << "random";
 					randomMode = true;
 					tools.Random(orig, vars, opt.Symmetry(), 0);
-					aselp0 = NULL;
-					aselp1 = NULL;
+					aselp0 = nullptr;
+					aselp1 = nullptr;
 				}
 
 				//Adjust bounding box half the time.
@@ -711,7 +711,7 @@ bool EmberGenome(EmberOptions& opt)
 
 				if (opt.Debug())
 					cout << "avgPix = " << avgPix << " fractionBlack = " << fractionBlack << " fractionWhite = " << fractionWhite << " n = " << n << endl;
-				
+
 				orig.Clear();
 				count++;
 			} while ((avgPix < opt.AvgThresh() ||
@@ -727,7 +727,7 @@ bool EmberGenome(EmberOptions& opt)
 			tools.ApplyTemplate(save, *pTemplate);
 
 		save.m_Time = T(rep);
-		
+
 		if (opt.MaxXforms() != UINT_MAX)
 		{
 			save.m_Symmetry = 0;
@@ -756,31 +756,36 @@ bool EmberGenome(EmberOptions& opt)
 /// <returns>0 if successful, else 1.</returns>
 int _tmain(int argc, _TCHAR* argv[])
 {
-	bool b, d = true;
+	bool b = false;
 	EmberOptions opt;
-	
+
 	//Required for large allocs, else GPU memory usage will be severely limited to small sizes.
 	//This must be done in the application and not in the EmberCL DLL.
+#ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
+#else
+	putenv((char*)"GPU_MAX_ALLOC_PERCENT=100");
+#endif
 
-	if (opt.Populate(argc, argv, OPT_USE_GENOME))
-		return 0;
+	if (!opt.Populate(argc, argv, OPT_USE_GENOME))
+	{
 
 #ifdef DO_DOUBLE
-	if (opt.Bits() == 64)
-	{
-		b = EmberGenome<double, double>(opt);
-	}
-	else
-#endif		
-	if (opt.Bits() == 33)
-	{
-		b = EmberGenome<float, float>(opt);
-	}
-	else if (opt.Bits() == 32)
-	{
-		cout << "Bits 32/int histogram no longer supported. Using bits == 33 (float)." << endl;
-		b = EmberGenome<float, float>(opt);
+		if (opt.Bits() == 64)
+		{
+			b = EmberGenome<double, double>(opt);
+		}
+		else
+#endif
+		if (opt.Bits() == 33)
+		{
+			b = EmberGenome<float, float>(opt);
+		}
+		else if (opt.Bits() == 32)
+		{
+			cout << "Bits 32/int histogram no longer supported. Using bits == 33 (float)." << endl;
+			b = EmberGenome<float, float>(opt);
+		}
 	}
 
 	return b ? 0 : 1;

@@ -1,7 +1,70 @@
 # depslib dependency file v1.0
-1417821052 source:/home/heretic/Dev/fractorium/Source/Ember/Affine2D.cpp
-	"EmberPch.h"
+1417760119 source:/home/heretic/Dev/fractorium/Source/EmberCommon/EmberCommonPch.cpp
+	"EmberCommonPch.h"
+
+1417812217 /home/heretic/Dev/fractorium/Source/EmberCommon/EmberCommonPch.h
+	<SDKDDKVer.h>
+	<windows.h>
+	<winsock.h>
+	<BaseTsd.h>
+	<crtdbg.h>
+	<tchar.h>
+	<arpa/inet.h>
+	<iostream>
+	<iomanip>
+	<ostream>
+	<sstream>
+	<setjmp.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"jconfig.h"
+	"jpeglib.h"
+	"png.h"
+	"Ember.h"
+	"Variation.h"
+	"EmberToXml.h"
+	"XmlToEmber.h"
+	"PaletteList.h"
+	"Iterator.h"
+	"Renderer.h"
+	"RendererCL.h"
+	"SheepTools.h"
+	"SimpleGlob.h"
+	"SimpleOpt.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/Ember.h
+	"Xform.h"
+	"PaletteList.h"
+	"SpatialFilter.h"
+	"TemporalFilter.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/Xform.h
+	"VariationList.h"
+	"Interpolate.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/VariationList.h
+	"Variations01.h"
+	"Variations02.h"
+	"Variations03.h"
+	"Variations04.h"
+	"Variations05.h"
+	"VariationsDC.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/Variations01.h
+	"Variation.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/Variation.h
+	"Point.h"
+	"Isaac.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/Point.h
+	"EmberDefines.h"
 	"Affine2D.h"
+	"Timing.h"
+
+1417811373 /home/heretic/Dev/fractorium/Source/Ember/EmberDefines.h
+	"EmberPch.h"
 
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/EmberPch.h
 	<SDKDDKVer.h>
@@ -169,72 +232,6 @@
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/Isaac.h
 	"EmberDefines.h"
 
-1417811373 /home/heretic/Dev/fractorium/Source/Ember/EmberDefines.h
-	"EmberPch.h"
-
-1417760119 source:/home/heretic/Dev/fractorium/Source/Ember/DllMain.cpp
-	"EmberPch.h"
-
-1417813888 source:/home/heretic/Dev/fractorium/Source/Ember/Ember.cpp
-	"EmberPch.h"
-	"EmberDefines.h"
-	"Isaac.h"
-	"Ember.h"
-	"Utils.h"
-	"Iterator.h"
-	"Palette.h"
-	"PaletteList.h"
-	"Point.h"
-	"Variation.h"
-	"Variations01.h"
-	"Variations02.h"
-	"Variations03.h"
-	"Variations04.h"
-	"Variations05.h"
-	"VariationsDC.h"
-	"VariationList.h"
-	"Affine2D.h"
-	"Xform.h"
-	"EmberToXml.h"
-	"XmlToEmber.h"
-	"SpatialFilter.h"
-	"DensityFilter.h"
-	"TemporalFilter.h"
-	"Interpolate.h"
-	"Renderer.h"
-	"Timing.h"
-	"SheepTools.h"
-
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/Ember.h
-	"Xform.h"
-	"PaletteList.h"
-	"SpatialFilter.h"
-	"TemporalFilter.h"
-
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/Xform.h
-	"VariationList.h"
-	"Interpolate.h"
-
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/VariationList.h
-	"Variations01.h"
-	"Variations02.h"
-	"Variations03.h"
-	"Variations04.h"
-	"Variations05.h"
-	"VariationsDC.h"
-
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/Variations01.h
-	"Variation.h"
-
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/Variation.h
-	"Point.h"
-	"Isaac.h"
-
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/Point.h
-	"EmberDefines.h"
-	"Affine2D.h"
-	"Timing.h"
-
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/Timing.h
 	"EmberDefines.h"
 
@@ -269,9 +266,6 @@
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/TemporalFilter.h
 	"EmberDefines.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/Iterator.h
-	"Ember.h"
-
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/EmberToXml.h
 	"Utils.h"
 	"PaletteList.h"
@@ -283,8 +277,8 @@
 	"PaletteList.h"
 	"VariationList.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember/DensityFilter.h
-	"SpatialFilter.h"
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/Iterator.h
+	"Ember.h"
 
 1417810944 /home/heretic/Dev/fractorium/Source/Ember/Renderer.h
 	"RendererBase.h"
@@ -300,8 +294,60 @@
 	"Ember.h"
 	"DensityFilter.h"
 
+1417760119 /home/heretic/Dev/fractorium/Source/Ember/DensityFilter.h
+	"SpatialFilter.h"
+
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/CarToRas.h
 	"Point.h"
+
+1417828769 /home/heretic/Dev/fractorium/Source/EmberCL/RendererCL.h
+	"EmberCLPch.h"
+	"OpenCLWrapper.h"
+	"IterOpenCLKernelCreator.h"
+	"DEOpenCLKernelCreator.h"
+	"FinalAccumOpenCLKernelCreator.h"
+
+1417766202 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLPch.h
+	"Timing.h"
+	"Renderer.h"
+	<windows.h>
+	<SDKDDKVer.h>
+	"GL/glx.h"
+	<utility>
+	<CL/cl.hpp>
+	<algorithm>
+	<cstdio>
+	<cstdlib>
+	<fstream>
+	<iostream>
+	<string>
+	<iterator>
+	<time.h>
+
+1417770248 /home/heretic/Dev/fractorium/Source/EmberCL/OpenCLWrapper.h
+	"EmberCLPch.h"
+
+1417816098 /home/heretic/Dev/fractorium/Source/EmberCL/IterOpenCLKernelCreator.h
+	"EmberCLPch.h"
+	"EmberCLStructs.h"
+	"EmberCLFunctions.h"
+
+1417764380 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLStructs.h
+	"EmberCLPch.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLFunctions.h
+	"EmberCLPch.h"
+	"EmberCLStructs.h"
+
+1417816098 /home/heretic/Dev/fractorium/Source/EmberCL/DEOpenCLKernelCreator.h
+	"EmberCLPch.h"
+	"EmberCLStructs.h"
+	"EmberCLFunctions.h"
+
+1417816098 /home/heretic/Dev/fractorium/Source/EmberCL/FinalAccumOpenCLKernelCreator.h
+	"EmberCLPch.h"
+	"EmberCLStructs.h"
+	"EmberCLFunctions.h"
 
 1417760119 /home/heretic/Dev/fractorium/Source/Ember/SheepTools.h
 	"EmberDefines.h"
@@ -309,14 +355,38 @@
 	"VariationList.h"
 	"Renderer.h"
 
-1417760119 source:/home/heretic/Dev/fractorium/Source/Ember/EmberPch.cpp
-	"EmberPch.h"
+1417816836 /home/heretic/Dev/fractorium/Source/EmberCommon/SimpleGlob.h
+	<mbstring.h>
+	<sys/types.h>
+	<sys/stat.h>
+	<glob.h>
+	<limits.h>
+	<stdlib.h>
+	<string.h>
+	<wchar.h>
+	<crtdbg.h>
+	<assert.h>
 
-1417813874 source:/home/heretic/Dev/fractorium/Source/Ember/Renderer.cpp
-	"EmberPch.h"
-	"Renderer.h"
+1417817700 /home/heretic/Dev/fractorium/Source/EmberCommon/SimpleOpt.h
+	<stdlib.h>
+	<string.h>
+	<crtdbg.h>
+	<assert.h>
 
-1417760119 source:/home/heretic/Dev/fractorium/Source/Ember/RendererBase.cpp
-	"EmberPch.h"
-	"RendererBase.h"
+1417821813 source:/home/heretic/Dev/fractorium/Source/EmberAnimate/EmberAnimate.cpp
+	"EmberCommonPch.h"
+	"EmberAnimate.h"
+	"JpegUtils.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/EmberAnimate/EmberAnimate.h
+	"EmberOptions.h"
+
+1417774919 /home/heretic/Dev/fractorium/Source/EmberCommon/EmberOptions.h
+	"EmberCommon.h"
+
+1417760119 /home/heretic/Dev/fractorium/Source/EmberCommon/EmberCommon.h
+	"EmberCommonPch.h"
+
+1417775759 /home/heretic/Dev/fractorium/Source/EmberCommon/JpegUtils.h
+	"EmberCommonPch.h"
 

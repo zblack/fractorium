@@ -13,7 +13,13 @@
 
 namespace EmberCLns
 {
-#define ALIGN __declspec(align(16))//These two must always match.
+//These two must always match.
+#ifdef WIN32
+	#define ALIGN __declspec(align(16))
+#else
+	#define ALIGN __attribute__ ((aligned (16)))
+#endif
+
 #define ALIGN_CL "((aligned (16)))"//The extra parens are necessary.
 
 /// <summary>

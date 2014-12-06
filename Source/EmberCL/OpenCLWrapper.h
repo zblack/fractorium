@@ -37,7 +37,7 @@ public:
 	{
 	}
 
-	NamedBuffer(cl::Buffer& buff, string name)
+	NamedBuffer(const cl::Buffer& buff, const string& name)
 	{
 		m_Buffer = buff;
 		m_Name = name;
@@ -57,7 +57,7 @@ public:
 	{
 	}
 
-	NamedImage2D(cl::Image2D& image, string name)
+	NamedImage2D(const cl::Image2D& image, const string& name)
 	{
 		m_Image = image;
 		m_Name = name;
@@ -78,7 +78,7 @@ public:
 	{
 	}
 
-	NamedImage2DGL(IMAGEGL2D& image, string name)
+	NamedImage2DGL(const IMAGEGL2D& image, const string& name)
 	{
 		m_Image = image;
 		m_Name = name;
@@ -107,7 +107,7 @@ public:
 	bool Init(unsigned int platform, unsigned int device, bool shared = false);
 
 	//Programs.
-	bool AddProgram(std::string name, std::string& program, std::string& entryPoint, bool doublePrecision);
+	bool AddProgram(const string& name, const string& program, const string& entryPoint, bool doublePrecision);
 	void ClearPrograms();
 
 	//Buffers.
@@ -141,13 +141,13 @@ public:
 	bool EnqueueAcquireGLObjects(const VECTOR_CLASS<cl::Memory>* memObjects = NULL);
 	bool EnqueueReleaseGLObjects(const VECTOR_CLASS<cl::Memory>* memObjects = NULL);
 	bool CreateSampler(cl::Sampler& sampler, cl_bool normalizedCoords, cl_addressing_mode addressingMode, cl_filter_mode filterMode);
-	
+
 	//Arguments.
-	bool SetBufferArg(unsigned int kernelIndex, unsigned int argIndex, string name);
+	bool SetBufferArg(unsigned int kernelIndex, unsigned int argIndex, const string& name);
 	bool SetBufferArg(unsigned int kernelIndex, unsigned int argIndex, unsigned int bufferIndex);
-	bool SetImageArg(unsigned int kernelIndex, unsigned int argIndex, bool shared, string name);
+	bool SetImageArg(unsigned int kernelIndex, unsigned int argIndex, bool shared, const string& name);
 	bool SetImageArg(unsigned int kernelIndex, unsigned int argIndex, bool shared, unsigned int imageIndex);
-	
+
 	/// <summary>
 	/// Set an argument in the specified kernel, at the specified argument index.
 	/// Must keep this here in the .h because it's templated.
@@ -195,7 +195,7 @@ public:
 
 private:
 	bool CreateContext(bool shared);
-	bool CreateSPK(std::string& name, std::string& program, std::string& entryPoint, Spk& spk, bool doublePrecision);
+	bool CreateSPK(const string& name, const string& program, const string& entryPoint, Spk& spk, bool doublePrecision);
 	bool CheckCL(cl_int err, const char* name);
 	std::string ErrorToStringCL(cl_int err);
 

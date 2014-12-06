@@ -132,20 +132,20 @@ public:
 	/// Add a vector of strings to report.
 	/// </summary>
 	/// <param name="vec">The vector of strings to add</param>
-	virtual void AddToReport(vector<string>& vec) { m_ErrorReport.insert(m_ErrorReport.end(), vec.begin(), vec.end()); }
+	virtual void AddToReport(const vector<string>& vec) { m_ErrorReport.insert(m_ErrorReport.end(), vec.begin(), vec.end()); }
 
 	/// <summary>
 	/// Static function to dump a vector of strings passed in.
 	/// </summary>
 	/// <param name="errorReport">The vector of strings to dump</param>
-	static void StaticDumpErrorReport(vector<string>& errorReport) { cout << StaticErrorReportString(errorReport); }
+	static void StaticDumpErrorReport(const vector<string>& errorReport) { cout << StaticErrorReportString(errorReport); }
 
 	/// <summary>
 	/// Static function to return the entire error report passed in as a single string.
 	/// </summary>
 	/// <param name="errorReport">The vector of strings to concatenate</param>
 	/// <returns>A string containing all strings in the vector passed in separated by newlines</returns>
-	static string StaticErrorReportString(vector<string>& errorReport)
+	static string StaticErrorReportString(const vector<string>& errorReport)
 	{
 		stringstream ss;
 
@@ -835,7 +835,7 @@ static string GetPath(const string& filename)
 {
 	string s;
 	const size_t lastSlash = filename.find_last_of("\\/");
-	
+
 	if (std::string::npos != lastSlash)
 		s = filename.substr(0, lastSlash + 1);
 	else

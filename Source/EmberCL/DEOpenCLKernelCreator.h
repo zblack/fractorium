@@ -1,5 +1,5 @@
 #pragma once
- 
+
 #include "EmberCLPch.h"
 #include "EmberCLStructs.h"
 #include "EmberCLFunctions.h"
@@ -52,7 +52,7 @@ private:
 	string CreateLogScaleAssignDEKernelString();
 	string CreateGaussianDEKernel(size_t ss);
 	string CreateGaussianDEKernelNoLocalCache(size_t ss);
-	
+
 	string m_LogScaleAssignDEKernel;
 	string m_LogScaleAssignDEEntryPoint;
 
@@ -77,9 +77,9 @@ private:
 	bool m_NVidia;
 };
 
-template EMBERCL_API class DEOpenCLKernelCreator<float>;
-
-#ifdef DO_DOUBLE
-	template EMBERCL_API class DEOpenCLKernelCreator<double>;
-#endif
+//template EMBERCL_API class DEOpenCLKernelCreator<float>;
+//
+//#ifdef DO_DOUBLE
+//	template EMBERCL_API class DEOpenCLKernelCreator<double>;
+//#endif
 }

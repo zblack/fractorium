@@ -166,7 +166,7 @@ void Affine2D<T>::Rotate(T angle)
 {
 	m4T origMat4 = ToMat4ColMajor(true);//Must center and use column major for glm to work.
 	m4T newMat4 = glm::rotate(origMat4, angle * DEG_2_RAD_T, v3T(0, 0, 1));//Assuming only rotating around z.
-	
+
 	A(newMat4[0][0]);//Use direct assignments instead of constructor to skip assigning C and F.
 	B(newMat4[0][1]);
 	D(newMat4[1][0]);
@@ -357,4 +357,13 @@ void Affine2D<T>::CalcRSAC(const v2T& from, const v2T& to, T& a, T& c)
 	a = (from.y * to.y + from.x * to.x) / lsq;
 	c = (from.x * to.y - from.y * to.x) / lsq;
 }
+
+//This class had to be implemented in a cpp file because the compiler was breaking.
+//So the explicit instantiation must be declared here rather than in Ember.cpp where
+//all of the other classes are done.
+template EMBER_API class Affine2D<float>;
+
+#ifdef DO_DOUBLE
+	template EMBER_API class Affine2D<double>;
+#endif
 }

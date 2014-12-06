@@ -91,6 +91,7 @@ enum eRendererType { CPU_RENDERER, OPENCL_RENDERER };
 /// </summary>
 class EMBER_API RendererBase : public EmberReport
 {
+//using EmberReport::m_ErrorReport;
 public:
 	RendererBase();
 	virtual ~RendererBase() { }
@@ -210,8 +211,8 @@ protected:
 	size_t m_ThreadsToUse;
 	size_t m_VibGamCount;
 	size_t m_LastTemporalSample;
-	double m_LastIterPercent;
 	size_t m_LastIter;
+	double m_LastIterPercent;
 	eProcessAction m_ProcessAction;
 	eProcessState m_ProcessState;
 	eInteractiveFilter m_InteractiveFilter;

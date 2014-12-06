@@ -52,7 +52,7 @@ RendererCL<T>::RendererCL(unsigned int platform, unsigned int device, bool share
 	m_PaletteFormat.image_channel_data_type = CL_FLOAT;
 	m_FinalFormat.image_channel_order = CL_RGBA;
 	m_FinalFormat.image_channel_data_type = CL_UNORM_INT8;//Change if this ever supports 2BPC outputs for PNG.
-	
+
 	FillSeeds();
 	Init(platform, device, shared, outputTexID);//Init OpenCL upon construction and create programs that will not change.
 }
@@ -73,7 +73,7 @@ RendererCL<T>::~RendererCL()
 /// Initialize OpenCL.
 /// In addition to initializing, this function will create the zeroization program,
 /// as well as the basic log scale filtering programs. This is done to ensure basic
-/// compilation works. Further compilation will be done later for iteration, density filtering, 
+/// compilation works. Further compilation will be done later for iteration, density filtering,
 /// and final accumulation.
 /// </summary>
 /// <param name="platform">The index platform of the platform to use</param>
@@ -146,7 +146,7 @@ bool RendererCL<T>::SetOutputTexture(GLuint outputTexID)
 		m_ErrorReport.push_back(loc);
 		success = false;
 	}
-	
+
 	LeaveResize();
 	return success;
 }
@@ -312,7 +312,7 @@ bool RendererCL<T>::ClearFinal()
 	vector<unsigned char> v;
 	unsigned int index = m_Wrapper.FindImageIndex(m_FinalImageName, m_Wrapper.Shared());
 
-	if (PrepFinalAccumVector(v))
+	if (this->PrepFinalAccumVector(v))
 	{
 		bool b = m_Wrapper.WriteImage2D(index, m_Wrapper.Shared(), FinalRasW(), FinalRasH(), 0, v.data());
 
@@ -472,7 +472,7 @@ eRendererType RendererCL<T>::RendererType() const
 /// </summary>
 /// <returns>The concatenated error report string</returns>
 template <typename T>
-string RendererCL<T>::ErrorReportString() 
+string RendererCL<T>::ErrorReportString()
 {
 	return EmberReport::ErrorReportString() + m_Wrapper.ErrorReportString();
 }
@@ -527,8 +527,10 @@ bool RendererCL<T>::RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec)
 template <typename T>
 void RendererCL<T>::MakeDmap(T colorScalar)
 {
-	m_Ember.m_Palette.MakeDmap<float>(m_Dmap, colorScalar);
+	//m_Ember.m_Palette.MakeDmap<float>(m_DmapCL, colorScalar);
+	m_Ember.m_Palette.MakeDmap(m_DmapCL, colorScalar);
 }
+
 
 /// <summary>
 /// Allocate all buffers required for running as well as the final
@@ -561,9 +563,10 @@ bool RendererCL<T>::Alloc()
 	if (b && !(b = m_Wrapper.AddBuffer(m_AccumBufferName,  accumLength)))								  { m_ErrorReport.push_back(loc); }//Accum buffer.
 	if (b && !(b = m_Wrapper.AddBuffer(m_PointsBufferName, IterGridKernelCount() * sizeof(PointCL<T>))))  { m_ErrorReport.push_back(loc); }//Points between iter calls.
 
-	if (b && !(b = SetOutputTexture(m_OutputTexID))) { m_ErrorReport.push_back(loc); }
-	
 	LeaveResize();
+
+	if (b && !(b = SetOutputTexture(m_OutputTexID))) { m_ErrorReport.push_back(loc); }
+
 	return b;
 }
 
@@ -706,7 +709,7 @@ EmberStats RendererCL<T>::Iterate(size_t iterCount, size_t temporalSample)
 	else
 	{
 		m_Abort = true;
-		m_ErrorReport.push_back(loc); 
+		m_ErrorReport.push_back(loc);
 	}
 
 	return stats;
@@ -787,9 +790,9 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 		if (b && !(b = m_Wrapper.WriteBuffer	  (m_XformsBufferName,   (void*)m_XformsCL.data(),    sizeof(m_XformsCL[0]) * m_XformsCL.size()))) { m_ErrorReport.push_back(loc); }
 		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DistBufferName,     (void*)XformDistributions(), XformDistributionsSize())))				   { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
 		if (b && !(b = m_Wrapper.WriteBuffer      (m_CarToRasBufferName, (void*)&m_CarToRasCL,        sizeof(m_CarToRasCL))))					   { m_ErrorReport.push_back(loc); }
-		
-		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, m_Dmap.m_Entries.size(), 1, 0, m_Dmap.m_Entries.data()))) { m_ErrorReport.push_back(loc); }
-		
+
+		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, m_DmapCL.m_Entries.size(), 1, 0, m_DmapCL.m_Entries.data()))) { m_ErrorReport.push_back(loc); }
+
 		//If animating, treat each temporal sample as a newly started render for fusing purposes.
 		if (temporalSample > 0)
 			m_Calls = 0;
@@ -830,7 +833,7 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 			if (b && !(b = m_Wrapper.SetArg		 (kernelIndex, argIndex++, supersize)))			   { m_ErrorReport.push_back(loc); }//Histogram size.
 			if (b && !(b = m_Wrapper.SetImageArg (kernelIndex, argIndex++, false, "Palette")))     { m_ErrorReport.push_back(loc); }//Palette.
 			if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_PointsBufferName)))   { m_ErrorReport.push_back(loc); }//Random start points.
-			
+
 			if (b && !(b = m_Wrapper.RunKernel(kernelIndex,
 									 gridW * IterBlockKernelWidth(),//Total grid dims.
 									 gridH * IterBlockKernelHeight(),
@@ -840,10 +843,10 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 									 1)))
 			{
 				m_Abort = true;
-				m_ErrorReport.push_back(loc); 
+				m_ErrorReport.push_back(loc);
 				break;
 			}
-			
+
 			itersRan += iterCountThisLaunch;
 			m_Calls++;
 
@@ -863,14 +866,14 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 
 				double percentDiff = percent - m_LastIterPercent;
 				double toc = m_ProgressTimer.Toc();
-			
+
 				if (percentDiff >= 10 || (toc > 1000 && percentDiff >= 1))//Call callback function if either 10% has passed, or one second (and 1%).
 				{
 					etaMs = ((100.0 - percent) / percent) * m_RenderTimer.Toc();
 
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 0, etaMs))
 						Abort();
-					
+
 					m_LastIterPercent = percent;
 					m_ProgressTimer.Tic();
 				}
@@ -901,7 +904,7 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 	eRenderStatus status = RENDER_OK;
 
 	if (kernelIndex != -1)
-	{	
+	{
 		m_DensityFilterCL = ConvertDensityFilter();
 		unsigned int argIndex = 0;
 		unsigned int blockW = m_WarpSize;
@@ -910,7 +913,7 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 		unsigned int gridH = m_DensityFilterCL.m_SuperRasH;
 
 		OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
-		
+
 		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, (void*)&m_DensityFilterCL, sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
 
 		if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_HistBufferName)))           { m_ErrorReport.push_back(loc); }//Histogram.
@@ -926,7 +929,7 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 		b = false;
 		m_ErrorReport.push_back(loc);
 	}
-	
+
 	if (b && m_Callback)
 		m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0.0);
 
@@ -1030,7 +1033,7 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 				{
 					double percent = (double((rowChunk * chunkSizeW) + (colChunk + 1)) / totalChunks) * 100.0;
 					double etaMs = ((100.0 - percent) / percent) * t.Toc();
-					
+
 					if (!m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, percent, 1, etaMs))
 						Abort();
 				}
@@ -1040,7 +1043,7 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 
 		if (b && m_Callback)
 			m_Callback->ProgressFunc(m_Ember, m_ProgressParameter, 100.0, 1, 0.0);
-		
+
 		//t2.Toc(__FUNCTION__ " all passes");
 	}
 	else
@@ -1048,10 +1051,10 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 		b = false;
 		m_ErrorReport.push_back(loc);
 	}
-	
+
 	return m_Abort ? RENDER_ABORT : (b ? RENDER_OK : RENDER_ERROR);
 }
-	
+
 /// <summary>
 /// Run final accumulation to the 2D output image.
 /// </summary>
@@ -1096,13 +1099,13 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 
 				if (b && !(b = m_Wrapper.SetBufferArg(gammaCorrectKernelIndex, argIndex++, m_AccumBufferName)))               { m_ErrorReport.push_back(loc); }//Accumulator.
 				if (b && !(b = m_Wrapper.SetBufferArg(gammaCorrectKernelIndex, argIndex++, m_SpatialFilterParamsBufferName))) { m_ErrorReport.push_back(loc); }//SpatialFilterCL.
-				
+
 				if (b && !(b = m_Wrapper.RunKernel(gammaCorrectKernelIndex, gridW, gridH, 1, blockW, blockH, 1)))			  { m_ErrorReport.push_back(loc); }
 			}
 			else
 			{
 				b = false;
-				m_ErrorReport.push_back(loc); 
+				m_ErrorReport.push_back(loc);
 			}
 		}
 
@@ -1122,9 +1125,9 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 
 		if (b && m_Wrapper.Shared())
 			if (b && !(b = m_Wrapper.EnqueueAcquireGLObjects(m_FinalImageName))) { m_ErrorReport.push_back(loc); }
-		
+
 		if (b && !(b = m_Wrapper.RunKernel(accumKernelIndex, gridW, gridH, 1, blockW, blockH, 1))) { m_ErrorReport.push_back(loc); }
-		
+
 		if (b && m_Wrapper.Shared())
 			if (b && !(b = m_Wrapper.EnqueueReleaseGLObjects(m_FinalImageName))) { m_ErrorReport.push_back(loc); }
 
@@ -1135,7 +1138,7 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 		b = false;
 		m_ErrorReport.push_back(loc);
 	}
-	
+
 	return b ? RENDER_OK : RENDER_ERROR;
 }
 
@@ -1350,7 +1353,7 @@ SpatialFilterCL<T> RendererCL<T>::ConvertSpatialFilter()
 	Color<T> background;
 	SpatialFilterCL<T> filterCL;
 
-	PrepFinalAccumVals(background, g, linRange, vibrancy);
+	this->PrepFinalAccumVals(background, g, linRange, vibrancy);
 
 	filterCL.m_SuperRasW = (unsigned int)SuperRasW();
 	filterCL.m_SuperRasH = (unsigned int)SuperRasH();
@@ -1368,7 +1371,7 @@ SpatialFilterCL<T> RendererCL<T>::ConvertSpatialFilter()
 	filterCL.m_Gamma = g;
 	filterCL.m_LinRange = linRange;
 	filterCL.m_Background = background;
-	
+
 	return filterCL;
 }
 
@@ -1467,4 +1470,10 @@ void RendererCL<T>::FillSeeds()
 		m_Seeds[i].y = m_Rand[0].Rand();
 	}
 }
+
+template EMBERCL_API class RendererCL<float>;
+
+#ifdef DO_DOUBLE
+	template EMBERCL_API class RendererCL<double>;
+#endif
 }

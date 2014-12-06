@@ -1,5 +1,5 @@
 #pragma once
- 
+
 #include "EmberCLPch.h"
 #include "EmberCLStructs.h"
 #include "EmberCLFunctions.h"
@@ -26,7 +26,7 @@ class EMBERCL_API FinalAccumOpenCLKernelCreator
 {
 public:
 	FinalAccumOpenCLKernelCreator();
-	
+
 	string GammaCorrectionWithAlphaCalcKernel();
 	string GammaCorrectionWithAlphaCalcEntryPoint();
 
@@ -79,9 +79,9 @@ private:
 	string m_FinalAccumLateClipWithoutAlphaCalcWithAlphaAccumEntryPoint;
 };
 
-template EMBERCL_API class FinalAccumOpenCLKernelCreator<float>;
-
-#ifdef DO_DOUBLE
-	template EMBERCL_API class FinalAccumOpenCLKernelCreator<double>;
-#endif
+//template EMBERCL_API class FinalAccumOpenCLKernelCreator<float>;
+//
+//#ifdef DO_DOUBLE
+//	template EMBERCL_API class FinalAccumOpenCLKernelCreator<double>;
+//#endif
 }

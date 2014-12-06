@@ -1,7 +1,7 @@
 #include "EmberCommonPch.h"
 #include "EmberAnimate.h"
 #include "JpegUtils.h"
- 
+
 /// <summary>
 /// The core of the EmberAnimate.exe program.
 /// Template argument expected to be float or double.
@@ -17,7 +17,7 @@ bool EmberAnimate(EmberOptions& opt)
 
 	if (opt.DumpArgs())
 		cout << opt.GetValues(OPT_USE_ANIMATE) << endl;
- 
+
 	if (opt.OpenCLInfo())
 	{
 		cout << "\nOpenCL Info: " << endl;
@@ -59,7 +59,7 @@ bool EmberAnimate(EmberOptions& opt)
 
 	if (opt.EmberCL() && renderer->RendererType() != OPENCL_RENDERER)//OpenCL init failed, so fall back to CPU.
 		opt.EmberCL(false);
- 
+
 	if (!InitPaletteList<T>(opt.PalettePath()))
 		return false;
 
@@ -78,7 +78,7 @@ bool EmberAnimate(EmberOptions& opt)
 			cout << "Using " << opt.ThreadCount() << " manually specified threads." << endl;
 		}
 
-		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : NULL);
+		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : nullptr);
 	}
 	else
 	{
@@ -94,7 +94,7 @@ bool EmberAnimate(EmberOptions& opt)
 			cout << "Cannot specify threads with OpenCL, using 1 thread." << endl;
 
 		opt.ThreadCount(1);
-		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : NULL);
+		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : nullptr);
 
 		if (opt.BitsPerChannel() != 8)
 		{
@@ -110,9 +110,9 @@ bool EmberAnimate(EmberOptions& opt)
 	{
 		cout << "Format must be jpg, png, ppm, or bmp not " << opt.Format() << ". Setting to jpg." << endl;
 	}
- 
+
 	channels = opt.Format() == "png" ? 4 : 3;
- 
+
 	if (opt.BitsPerChannel() == 16 && opt.Format() != "png")
 	{
 		cout << "Support for 16 bits per channel images is only present for the png format. Setting to 8." << endl;
@@ -135,13 +135,13 @@ bool EmberAnimate(EmberOptions& opt)
 		cout << "Invalid pixel aspect ratio " << opt.AspectRatio() << endl << ". Must be positive, setting to 1." << endl;
 		opt.AspectRatio(1);
 	}
- 
+
 	if (opt.Dtime() < 1)
 	{
 		cout << "Warning: dtime must be positive, not " << opt.Dtime() << ". Setting to 1." << endl;
 		opt.Dtime(1);
 	}
- 
+
 	if (opt.Frame())
 	{
 		if (opt.Time())
@@ -182,7 +182,7 @@ bool EmberAnimate(EmberOptions& opt)
 	{
 		if (i > 0 && embers[i].m_Time <= embers[i - 1].m_Time)
 			unsorted = true;
- 
+
 		if (opt.Supersample() > 0)
 			embers[i].m_Supersample = opt.Supersample();
 
@@ -193,43 +193,43 @@ bool EmberAnimate(EmberOptions& opt)
 		embers[i].m_FinalRasW = (unsigned int)((T)embers[i].m_FinalRasW * opt.SizeScale());
 		embers[i].m_FinalRasH = (unsigned int)((T)embers[i].m_FinalRasH * opt.SizeScale());
 		embers[i].m_PixelsPerUnit *= T(opt.SizeScale());
- 
+
 		//Cast to double in case the value exceeds 2^32.
-		double imageMem = (double)channels * (double)embers[i].m_FinalRasW 
+		double imageMem = (double)channels * (double)embers[i].m_FinalRasW
 			   * (double)embers[i].m_FinalRasH * (double)renderer->BytesPerChannel();
 		double maxMem = pow(2.0, double((sizeof(void*) * 8) - 1));
- 
+
 		if (imageMem > maxMem)//Ensure the max amount of memory for a process isn't exceeded.
 		{
 			cout << "Image " << i << " size > " << maxMem << ". Setting to 1920 x 1080." << endl;
 			embers[i].m_FinalRasW = 1920;
 			embers[i].m_FinalRasH = 1080;
 		}
- 
+
 		if (embers[i].m_FinalRasW == 0 || embers[i].m_FinalRasH == 0)
 		{
 			cout << "Warning: Output image " << i << " has dimension 0: " << embers[i].m_FinalRasW  << ", " << embers[i].m_FinalRasH << ". Setting to 1920 x 1080." << endl;
 			embers[i].m_FinalRasW = 1920;
 			embers[i].m_FinalRasH = 1080;
 		}
- 
+
 		if ((embers[i].m_FinalRasW != embers[0].m_FinalRasW) ||
 			(embers[i].m_FinalRasH != embers[0].m_FinalRasH))
 		{
 			cout << "Warning: flame " << i << " at time " << embers[i].m_Time << " size mismatch. (" << embers[i].m_FinalRasW << ", " << embers[i].m_FinalRasH <<
 				") should be (" << embers[0].m_FinalRasW << ", " << embers[0].m_FinalRasH << "). Setting to " << embers[0].m_FinalRasW << ", " << embers[0].m_FinalRasH << "." << endl;
-			
+
 			embers[i].m_FinalRasW = embers[0].m_FinalRasW;
 			embers[i].m_FinalRasH = embers[0].m_FinalRasH;
 		}
 	}
- 
+
 	if (unsorted)
 	{
 		cout << "Embers were unsorted by time. First out of order index was " << i << ". Sorting." << endl;
 		std::sort(embers.begin(), embers.end(), &CompareEmbers<T>);
 	}
- 
+
 	if (!opt.Time() && !opt.Frame())
 	{
 		if (opt.FirstFrame() == UINT_MAX)
@@ -238,7 +238,7 @@ bool EmberAnimate(EmberOptions& opt)
 		if (opt.LastFrame() == UINT_MAX)
 			opt.LastFrame(ClampGte<unsigned int>((unsigned int)embers.back().m_Time - 1, opt.FirstFrame()));
 	}
- 
+
 	if (!opt.Out().empty())
 	{
 		appendXml = true;
@@ -257,7 +257,7 @@ bool EmberAnimate(EmberOptions& opt)
 	renderer->Transparency(opt.Transparency());
 	renderer->NumChannels(channels);
 	renderer->BytesPerChannel(opt.BitsPerChannel() / 8);
-	renderer->Callback(opt.DoProgress() ? progress.get() : NULL);
+	renderer->Callback(opt.DoProgress() ? progress.get() : nullptr);
 
 	//Begin run.
 	for (ftime = opt.FirstFrame(); ftime <= opt.LastFrame(); ftime += opt.Dtime())
@@ -282,7 +282,7 @@ bool EmberAnimate(EmberOptions& opt)
 			os << inputPath << opt.Prefix() << setfill('0') << setw(5) << ftime << opt.Suffix() << "." << opt.Format();
 			filename = os.str();
 		}
-		
+
 		if (opt.WriteGenome())
 		{
 			flameName = filename.substr(0, filename.find_last_of('.')) + ".flam3";
@@ -294,10 +294,10 @@ bool EmberAnimate(EmberOptions& opt)
 				startXml = ftime == opt.FirstFrame();
 				finishXml = ftime == opt.LastFrame();
 			}
-			
+
 			emberToXml.Save(flameName, centerEmber, opt.PrintEditDepth(), true, opt.IntPalette(), opt.HexPalette(), true, startXml, finishXml);
 		}
-		
+
 		writeSuccess = false;
 		stats = renderer->Stats();
 		comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
@@ -309,7 +309,7 @@ bool EmberAnimate(EmberOptions& opt)
 		VerbosePrint("Bad values: " << stats.m_Badvals);
 		VerbosePrint("Render time: " + t.Format(stats.m_RenderMs));
 		VerbosePrint("Pure iter time: " + t.Format(stats.m_IterMs));
-		VerbosePrint("Iters/sec: " << unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
+		VerbosePrint("Iters/sec: " << size_t(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
 		VerbosePrint("Writing " + filename);
 
 		if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
@@ -331,13 +331,13 @@ bool EmberAnimate(EmberOptions& opt)
 			writeSuccess = WritePpm(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH());
 		else if (opt.Format() == "bmp")
 			writeSuccess = WriteBmp(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH());
- 
+
 		if (!writeSuccess)
 			cout << "Error writing " << filename << endl;
-		
+
 		centerEmber.Clear();
 	}
- 
+
 	VerbosePrint("Done.\n");
 	return true;
 }
@@ -350,31 +350,36 @@ bool EmberAnimate(EmberOptions& opt)
 /// <returns>0 if successful, else 1.</returns>
 int _tmain(int argc, _TCHAR* argv[])
 {
-	bool b, d = true;
+	bool b = false;
 	EmberOptions opt;
-	
+
 	//Required for large allocs, else GPU memory usage will be severely limited to small sizes.
 	//This must be done in the application and not in the EmberCL DLL.
+#ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
+#else
+	putenv((char*)"GPU_MAX_ALLOC_PERCENT=100");
+#endif
 
-	if (opt.Populate(argc, argv, OPT_USE_ANIMATE))
-		return 0;
+	if (!opt.Populate(argc, argv, OPT_USE_ANIMATE))
+	{
 
 #ifdef DO_DOUBLE
-	if (opt.Bits() == 64)
-	{
-		b = EmberAnimate<double, double>(opt);
-	}
-	else
+		if (opt.Bits() == 64)
+		{
+			b = EmberAnimate<double, double>(opt);
+		}
+		else
 #endif
-	if (opt.Bits() == 33)
-	{
-		b = EmberAnimate<float, float>(opt);
-	}
-	else if (opt.Bits() == 32)
-	{
-		cout << "Bits 32/int histogram no longer supported. Using bits == 33 (float)." << endl;
-		b = EmberAnimate<float, float>(opt);
+		if (opt.Bits() == 33)
+		{
+			b = EmberAnimate<float, float>(opt);
+		}
+		else if (opt.Bits() == 32)
+		{
+			cout << "Bits 32/int histogram no longer supported. Using bits == 33 (float)." << endl;
+			b = EmberAnimate<float, float>(opt);
+		}
 	}
 
 	return b ? 0 : 1;

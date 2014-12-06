@@ -6,7 +6,7 @@
 /// EmberOptionEntry and EmberOptions classes.
 /// </summary>
 
-static char* DescriptionString = "Ember - Fractal flames C++ port and enhancement with OpenCL GPU support";
+static const char* DescriptionString = "Ember - Fractal flames C++ port and enhancement with OpenCL GPU support";
 
 /// <summary>
 /// Enum for specifying which command line programs an option is meant to be used with.
@@ -142,7 +142,7 @@ private:
 		m_OptionUse = OPT_USE_ALL;
 		m_Option.nArgType = SO_NONE;
 		m_Option.nId = 0;
-		m_Option.pszArg = _T("--fillmein"); 
+		m_Option.pszArg = _T("--fillmein");
 		m_DocString = "Dummy doc";
 	}
 
@@ -175,7 +175,7 @@ public:
 	{
 		*this = entry;
 	}
-		
+
 	/// <summary>
 	/// Functor accessors.
 	/// </summary>
@@ -277,7 +277,7 @@ public:
 		INITBOOLOPTION(DoProgress,     Eob(OPT_USE_ALL,     OPT_PROGRESS,         _T("--progress"),             false,                SO_NONE,    "\t--progress               Display progress. This will slow down processing by about 10%%.\n"));
 		INITBOOLOPTION(OpenCLInfo,     Eob(OPT_USE_ALL,     OPT_DUMP_OPENCL_INFO, _T("--openclinfo"),           false,                SO_NONE,    "\t--openclinfo             Display platforms and devices for OpenCL.\n"));
 
-		//Execution bools.																									
+		//Execution bools.
 		INITBOOLOPTION(EmberCL,        Eob(OPT_USE_ALL,     OPT_OPENCL,           _T("--opencl"),               false,                SO_NONE,    "\t--opencl                 Use OpenCL renderer (EmberCL) for rendering [default: false].\n"));
 		INITBOOLOPTION(EarlyClip,      Eob(OPT_USE_ALL,     OPT_EARLYCLIP,        _T("--earlyclip"),            false,                SO_NONE,    "\t--earlyclip              Perform clipping of RGB values before spatial filtering for better antialiasing and resizing [default: false].\n"));
 		INITBOOLOPTION(YAxisUp,        Eob(OPT_USE_ALL,     OPT_POS_Y_UP,         _T("--yaxisup"),              false,                SO_NONE,    "\t--yaxisup                Orient the image with the positive y axis pointing up [default: false].\n"));
@@ -493,6 +493,10 @@ public:
 					PARSESTRINGOPTION(OPT_USE_VARS, UseVars);
 					PARSESTRINGOPTION(OPT_DONT_USE_VARS, DontUseVars);
 					PARSESTRINGOPTION(OPT_EXTRAS, Extras);
+					default:
+					{
+						break;//Do nothing.
+					}
 				}
 			}
 			else

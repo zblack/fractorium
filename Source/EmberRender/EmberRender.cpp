@@ -9,7 +9,7 @@
 /// <param name="opt">A populated EmberOptions object which specifies all program options to be used</param>
 /// <returns>True if success, else false.</returns>
 template <typename T, typename bucketT>
-bool EmberRender(EmberOptions& opt)	
+bool EmberRender(EmberOptions& opt)
 {
 	OpenCLWrapper wrapper;
 
@@ -76,7 +76,7 @@ bool EmberRender(EmberOptions& opt)
 			cout << "Using " << opt.ThreadCount() << " manually specified threads." << endl;
 		}
 
-		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : NULL);
+		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : nullptr);
 	}
 	else
 	{
@@ -92,7 +92,7 @@ bool EmberRender(EmberOptions& opt)
 			cout << "Cannot specify threads with OpenCL, using 1 thread." << endl;
 
 		opt.ThreadCount(1);
-		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : NULL);
+		renderer->ThreadCount(opt.ThreadCount(), opt.IsaacSeed() != "" ? opt.IsaacSeed().c_str() : nullptr);
 
 		if (opt.BitsPerChannel() != 8)
 		{
@@ -151,7 +151,7 @@ bool EmberRender(EmberOptions& opt)
 	renderer->Transparency(opt.Transparency());
 	renderer->NumChannels(channels);
 	renderer->BytesPerChannel(opt.BitsPerChannel() / 8);
-	renderer->Callback(opt.DoProgress() ? progress.get() : NULL);
+	renderer->Callback(opt.DoProgress() ? progress.get() : nullptr);
 
 	for (i = 0; i < embers.size(); i++)
 	{
@@ -180,7 +180,7 @@ bool EmberRender(EmberOptions& opt)
 		}
 
 		//Cast to double in case the value exceeds 2^32.
-		double imageMem = (double)renderer->NumChannels() * (double)embers[i].m_FinalRasW 
+		double imageMem = (double)renderer->NumChannels() * (double)embers[i].m_FinalRasW
 			   * (double)embers[i].m_FinalRasH * (double)renderer->BytesPerChannel();
 		double maxMem = pow(2.0, double((sizeof(void*) * 8) - 1));
 
@@ -274,7 +274,7 @@ bool EmberRender(EmberOptions& opt)
 			VerbosePrint("Bad values: " << stats.m_Badvals);
 			VerbosePrint("Render time: " + t.Format(stats.m_RenderMs));
 			VerbosePrint("Pure iter time: " + t.Format(stats.m_IterMs));
-			VerbosePrint("Iters/sec: " << unsigned __int64(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
+			VerbosePrint("Iters/sec: " << size_t(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
 			VerbosePrint("Writing " + filename);
 
 			if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
@@ -323,31 +323,36 @@ bool EmberRender(EmberOptions& opt)
 /// <returns>0 if successful, else 1.</returns>
 int _tmain(int argc, _TCHAR* argv[])
 {
-	bool b, d = true;
+	bool b = false;
 	EmberOptions opt;
-	
+
 	//Required for large allocs, else GPU memory usage will be severely limited to small sizes.
 	//This must be done in the application and not in the EmberCL DLL.
+#ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
+#else
+	putenv((char*)"GPU_MAX_ALLOC_PERCENT=100");
+#endif
 
-	if (opt.Populate(argc, argv, OPT_USE_RENDER))
-		return 0;
+	if (!opt.Populate(argc, argv, OPT_USE_RENDER))
+	{
 
 #ifdef DO_DOUBLE
-	if (opt.Bits() == 64)
-	{
-		b = EmberRender<double, double>(opt);
-	}
-	else
+		if (opt.Bits() == 64)
+		{
+			b = EmberRender<double, double>(opt);
+		}
+		else
 #endif
-	if (opt.Bits() == 33)
-	{
-		b = EmberRender<float, float>(opt);
-	}
-	else if (opt.Bits() == 32)
-	{
-		cout << "Bits 32/int histogram no longer supported. Using bits == 33 (float)." << endl;
-		b = EmberRender<float, float>(opt);
+		if (opt.Bits() == 33)
+		{
+			b = EmberRender<float, float>(opt);
+		}
+		else if (opt.Bits() == 32)
+		{
+			cout << "Bits 32/int histogram no longer supported. Using bits == 33 (float)." << endl;
+			b = EmberRender<float, float>(opt);
+		}
 	}
 
 	return b ? 0 : 1;

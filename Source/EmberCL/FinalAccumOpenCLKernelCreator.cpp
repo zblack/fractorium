@@ -275,7 +275,7 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 		"	finalColor.m_Float4.x = (float)newBucket.m_Real4.x;\n"//CPU side clamps, skip here because write_imagef() does the clamping for us.
 		"	finalColor.m_Float4.y = (float)newBucket.m_Real4.y;\n"
 		"	finalColor.m_Float4.z = (float)newBucket.m_Real4.z;\n";
-	
+
 		if (alphaAccum)
 		{
 			if (alphaCalc)
@@ -374,13 +374,13 @@ string FinalAccumOpenCLKernelCreator<T>::CreateGammaCorrectionFunctionString(boo
 	<< "		else\n"
 	<< "			a = 0;\n";
 	}
-	
+
 	os <<
 	"\n"
 	"			correctedChannels[rgbi] = (" << dataType << ")clamp(a, 0.0, 255.0);\n"
 	"		}\n"
 	"\n";
-	
+
 	//The CPU code has 3 cases for assigning alpha:
 	//[3] = alpha.//Early clip.
 	//[3] = alpha * 255.//Final Rgba with transparency.
@@ -513,4 +513,10 @@ string FinalAccumOpenCLKernelCreator<T>::CreateGammaCorrectionKernelString(bool 
 
 	return os.str();
 }
+
+template EMBERCL_API class FinalAccumOpenCLKernelCreator<float>;
+
+#ifdef DO_DOUBLE
+	template EMBERCL_API class FinalAccumOpenCLKernelCreator<double>;
+#endif
 }

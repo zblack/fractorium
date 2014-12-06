@@ -18,6 +18,7 @@ namespace EmberCLns
 class EMBERCL_API RendererCLBase
 {
 public:
+	virtual ~RendererCLBase() { }
 	virtual bool ReadFinal(unsigned char* pixels) = 0;
 	virtual bool ClearFinal() = 0;
 };
@@ -33,8 +34,25 @@ public:
 /// and uses both for the base.
 /// </summary>
 template <typename T>
-class EMBERCL_API RendererCL : public RendererCLBase, public Renderer<T, T>
+class EMBERCL_API RendererCL : public Renderer<T, T>, public RendererCLBase
 {
+using EmberNs::Renderer<T, T>::RendererBase::EmberReport::m_ErrorReport;
+using EmberNs::Renderer<T, T>::RendererBase::m_ProgressParameter;
+using EmberNs::Renderer<T, T>::RendererBase::m_YAxisUp;
+using EmberNs::Renderer<T, T>::RendererBase::m_LockAccum;
+using EmberNs::Renderer<T, T>::RendererBase::m_Abort;
+using EmberNs::Renderer<T, T>::RendererBase::m_NumChannels;
+using EmberNs::Renderer<T, T>::RendererBase::m_LastIter;
+using EmberNs::Renderer<T, T>::RendererBase::m_LastIterPercent;
+using EmberNs::Renderer<T, T>::RendererBase::m_Stats;
+using EmberNs::Renderer<T, T>::RendererBase::m_Callback;
+using EmberNs::Renderer<T, T>::RendererBase::m_Rand;
+using EmberNs::Renderer<T, T>::RendererBase::m_RenderTimer;
+using EmberNs::Renderer<T, T>::RendererBase::m_IterTimer;
+using EmberNs::Renderer<T, T>::RendererBase::m_ProgressTimer;
+using EmberNs::Renderer<T, T>::m_RotMat;
+using EmberNs::Renderer<T, T>::m_Ember;
+
 public:
 	RendererCL(unsigned int platform = 0, unsigned int device = 0, bool shared = false, GLuint outputTexID = 0);
 	~RendererCL();
@@ -158,7 +176,7 @@ private:
 
 	//Kernels.
 	string m_IterKernel;
-	
+
 	OpenCLWrapper m_Wrapper;
 	cl::ImageFormat m_PaletteFormat;
 	cl::ImageFormat m_FinalFormat;
@@ -168,7 +186,7 @@ private:
 	EmberCL<T> m_EmberCL;
 	vector<XformCL<T>> m_XformsCL;
 	vector<glm::highp_uvec2> m_Seeds;
-	Palette<float> m_Dmap;//Used instead of the base class' m_Dmap because OpenCL only supports float textures.
+	Palette<float> m_DmapCL;//Used instead of the base class' m_Dmap because OpenCL only supports float textures.
 	CarToRasCL<T> m_CarToRasCL;
 	DensityFilterCL<T> m_DensityFilterCL;
 	SpatialFilterCL<T> m_SpatialFilterCL;
@@ -179,9 +197,9 @@ private:
 	Ember<T> m_LastBuiltEmber;
 };
 
-template EMBERCL_API class RendererCL<float>;
-
-#ifdef DO_DOUBLE
-	template EMBERCL_API class RendererCL<double>;
-#endif
+//template EMBERCL_API class RendererCL<float>;
+//
+//#ifdef DO_DOUBLE
+//	template EMBERCL_API class RendererCL<double>;
+//#endif
 }

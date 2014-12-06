@@ -8,10 +8,12 @@
 		<Build>
 			<Target title="Debug x64">
 				<Option output="EmberRender" prefix_auto="1" extension_auto="1" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-DWIN32" />
+					<Add option="-g" />
+					<Add option="-D_M_X64" />
 					<Add option="-D_DEBUG" />
 					<Add option="-D_CONSOLE" />
 					<Add directory="../../Source/Ember" />
@@ -25,21 +27,13 @@
 					<Add directory="$(AMDAPPSDKROOT)/include" />
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
-				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Ws2_32.lib" />
-					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
-					<Add directory="$(CUDA_PATH)lib/Linux" />
-				</Linker>
 			</Target>
 			<Target title="ReleaseNvidia Win32">
 				<Option output="EmberRender" prefix_auto="1" extension_auto="1" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_CONSOLE" />
 					<Add directory="../../Source/Ember" />
 					<Add directory="../../Source/EmberCommon" />
 					<Add directory="../../Source/EmberCL" />
@@ -51,21 +45,13 @@
 					<Add directory="$(AMDAPPSDKROOT)/include" />
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
-				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Ws2_32.lib" />
-					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
-					<Add directory="$(CUDA_PATH)lib/Linux" />
-				</Linker>
 			</Target>
 			<Target title="ReleaseNvidia x64">
 				<Option output="EmberRender" prefix_auto="1" extension_auto="1" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_CONSOLE" />
 					<Add directory="../../Source/Ember" />
 					<Add directory="../../Source/EmberCommon" />
 					<Add directory="../../Source/EmberCL" />
@@ -76,46 +62,28 @@
 					<Add directory="../../../libxml2/include" />
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
-				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Ws2_32.lib" />
-					<Add directory="$(CUDA_PATH)lib/Linux" />
-				</Linker>
 			</Target>
 			<Target title="Release x64">
 				<Option output="EmberRender" prefix_auto="1" extension_auto="1" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-DWIN32" />
+					<Add option="-O2" />
+					<Add option="-D_M_X64" />
 					<Add option="-DNDEBUG" />
 					<Add option="-D_CONSOLE" />
-					<Add directory="../../Source/Ember" />
-					<Add directory="../../Source/EmberCommon" />
-					<Add directory="../../Source/EmberCL" />
-					<Add directory="../../../glm" />
-					<Add directory="../../../tbb/include" />
-					<Add directory="../../../libjpeg" />
-					<Add directory="../../../libpng" />
-					<Add directory="../../../libxml2/include" />
-					<Add directory="$(AMDAPPSDKROOT)/include" />
-					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Ws2_32.lib" />
-					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
-					<Add directory="$(CUDA_PATH)lib/Linux" />
+					<Add option="-s" />
 				</Linker>
 			</Target>
 			<Target title="Release Win32">
 				<Option output="EmberRender" prefix_auto="1" extension_auto="1" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_CONSOLE" />
 					<Add directory="../../Source/Ember" />
 					<Add directory="../../Source/EmberCommon" />
 					<Add directory="../../Source/EmberCL" />
@@ -127,21 +95,13 @@
 					<Add directory="$(AMDAPPSDKROOT)/include" />
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
-				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Ws2_32.lib" />
-					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
-					<Add directory="$(CUDA_PATH)lib/Linux" />
-				</Linker>
 			</Target>
 			<Target title="Debug Win32">
 				<Option output="EmberRender" prefix_auto="1" extension_auto="1" />
-				<Option type="0" />
+				<Option type="1" />
 				<Option compiler="gcc" />
+				<Option use_console_runner="0" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-D_DEBUG" />
-					<Add option="-D_CONSOLE" />
 					<Add directory="../../Source/Ember" />
 					<Add directory="../../Source/EmberCommon" />
 					<Add directory="../../Source/EmberCL" />
@@ -154,14 +114,47 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Ws2_32.lib" />
-					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
 			</Target>
 		</Build>
-		<Unit filename="../../EmberRender/EmberRender.rc" />
+		<Compiler>
+			<Add option="-march=k8" />
+			<Add option="-fomit-frame-pointer" />
+			<Add option="-Wnon-virtual-dtor" />
+			<Add option="-Wshadow" />
+			<Add option="-Winit-self" />
+			<Add option="-Wredundant-decls" />
+			<Add option="-Wcast-align" />
+			<Add option="-Wunreachable-code" />
+			<Add option="-Wswitch-enum" />
+			<Add option="-Wswitch-default" />
+			<Add option="-Wmain" />
+			<Add option="-Wzero-as-null-pointer-constant" />
+			<Add option="-std=c++11" />
+			<Add option="-Wfatal-errors" />
+			<Add option="-Wall" />
+			<Add option="-fpermissive" />
+			<Add option="-fPIC" />
+			<Add directory="/usr/include/libxml2" />
+			<Add directory="../../Source/Ember" />
+			<Add directory="../../Source/EmberCL" />
+			<Add directory="../../Source/EmberCommon" />
+		</Compiler>
+		<Linker>
+			<Add library="jpeg" />
+			<Add library="libpng" />
+			<Add library="Ember" />
+			<Add library="EmberCL" />
+			<Add library="libxml2" />
+			<Add library="OpenCL" />
+			<Add library="tbb" />
+			<Add directory="./" />
+		</Linker>
+		<ExtraCommands>
+			<Add after="cp --update ../../Data/flam3-palettes.xml ./flam3-palettes.xml" />
+			<Mode after="always" />
+		</ExtraCommands>
 		<Unit filename="../../Fractorium/Icons/Fractorium.ico" />
 		<Unit filename="../../Source/EmberCommon/EmberCommon.h" />
 		<Unit filename="../../Source/EmberCommon/EmberCommonPch.cpp" />
@@ -173,7 +166,6 @@
 		<Unit filename="../../Source/EmberRender/EmberRender.cpp" />
 		<Unit filename="../../Source/EmberRender/EmberRender.h" />
 		<Unit filename="../../Source/EmberRender/resource.h" />
-		<Unit filename="ReadMe.txt" />
 		<Extensions>
 			<code_completion />
 			<debugger />

@@ -20,22 +20,28 @@
 	#define _stricmp strcmp
 	#define sscanf_s sscanf
 	#define sprintf_s snprintf
+	#define snprintf_s snprintf
 	typedef int errno_t;
 #endif
 
 #define RESTRICT __restrict//This might make things faster, unsure if it really does though.
 //#define RESTRICT
 
-namespace EmberNs
-{
 //Wrap the sincos function for Macs and PC.
 #if defined(__APPLE__) || defined(_MSC_VER)
 	#define sincos(x, s, c) *(s)=sin(x); *(c)=cos(x);
 #else
-	extern void sincos(double x, double *s, double *c);
-	extern void sincos(float x, float *s, float *c);
+	//extern void sincos(double x, double *s, double *c);
+	//extern void sincos(float x, float *s, float *c);
+	static void sincos(float x, float* s, float* c)
+	{
+		*s = sin(x);
+		*c = cos(x);
+	}
 #endif
 
+namespace EmberNs
+{
 #define EMBER_VERSION "0.4.1.6"
 #define EPS6 T(1e-6)
 #define EPS std::numeric_limits<T>::epsilon()//Apoplugin.h uses -20, but it's more mathematically correct to do it this way.

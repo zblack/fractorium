@@ -1,7 +1,7 @@
 #include "EmberCLPch.h"
 #include "DEOpenCLKernelCreator.h"
 
-namespace EmberCLns	
+namespace EmberCLns
 {
 /// <summary>
 /// Empty constructor that does nothing. The user must call the one which takes a bool
@@ -219,7 +219,7 @@ template <typename T>
 string DEOpenCLKernelCreator<T>::CreateLogScaleAssignDEKernelString()
 {
 	ostringstream os;
- 
+
 	os	<<
 		ConstantDefinesString(typeid(T) == typeid(double)) <<
 		DensityFilterCLStructString <<
@@ -243,7 +243,7 @@ string DEOpenCLKernelCreator<T>::CreateLogScaleAssignDEKernelString()
 		"		barrier(CLK_GLOBAL_MEM_FENCE);\n"//Just to be safe. Makes no speed difference to do all of the time or only when there's a hit.
 		"	}\n"
 		"}\n";
- 
+
 	return os.str();
 }
 
@@ -354,7 +354,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"		if (bucket.w != 0)\n"
 		"			cacheLog = (densityFilter->m_K1 * log(1.0 + bucket.w * densityFilter->m_K2)) / bucket.w;\n"
 		"\n";
-		
+
 	if (doSS)
 	{
 		os <<
@@ -626,7 +626,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"		if (bucket.w != 0)\n"
 		"		{\n"
 		"			cacheLog = (densityFilter->m_K1 * log(1.0 + bucket.w * densityFilter->m_K2)) / bucket.w;\n";
- 
+
 	if (doSS)
 	{
 		os <<
@@ -644,7 +644,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"				}\n"
 		"			}\n"
 		"\n";
-			
+
 		if (doScf)
 			os << "	filterSelect *= scfact;\n";
 	}
@@ -653,7 +653,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		os
 			<< "	filterSelect = bucket.w;\n";
 	}
- 
+
 	os <<
 		"\n"
 		"			if (filterSelect > densityFilter->m_MaxFilteredCounts)\n"
@@ -764,7 +764,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"	    ((((BLOCK_ID_Y * chunkSizeH) + chunkH) * BLOCK_SIZE_Y) + THREAD_ID_Y >= densityFilter->m_SuperRasH))\n"
 		"			return;\n"
 		"\n";
- 
+
 	if (doSS)
 	{
 	os <<
@@ -777,7 +777,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 	if (doScf)
 	os << "	real_t scfact = pow((real_t)densityFilter->m_Supersample / ((real_t)densityFilter->m_Supersample + 1.0), 2.0);\n";
 	}
- 
+
 	os <<
 		//Compute the bounds of the area to be sampled, which is just the ends minus the super sample minus 1.
 		"	uint leftBound = densityFilter->m_Supersample - 1;\n"
@@ -807,7 +807,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"		if (bucket.w != 0)\n"
 		"		{\n"
 		"			cacheLog = (densityFilter->m_K1 * log(1.0 + bucket.w * densityFilter->m_K2)) / bucket.w;\n";
- 
+
 	if (doSS)
 	{
 		os <<
@@ -825,7 +825,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"				}\n"
 		"			}\n"
 		"\n";
-			
+
 		if (doScf)
 		os << "		filterSelect *= scfact;\n";
 	}
@@ -834,7 +834,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		os
 	<< "			filterSelect = bucket.w;\n";
 	}
- 
+
 	os <<
 		"\n"
 		"			if (filterSelect > densityFilter->m_MaxFilteredCounts)\n"
@@ -876,4 +876,10 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 
 	return os.str();
 }
+
+template EMBERCL_API class DEOpenCLKernelCreator<float>;
+
+#ifdef DO_DOUBLE
+	template EMBERCL_API class DEOpenCLKernelCreator<double>;
+#endif
 }

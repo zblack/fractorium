@@ -60,7 +60,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 	for (i = 0; i < totalXformCount; i++)
 	{
 		Xform<T>* xform = ember.GetTotalXform(i);
-		size_t totalVarCount = xform->TotalVariationCount();
+		//size_t totalVarCount = xform->TotalVariationCount();
 		bool needPrecalcSumSquares = false;
 		bool needPrecalcSqrtSumSquares = false;
 		bool needPrecalcAngles = false;
@@ -73,7 +73,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 			"{\n"
 			"	real_t transX, transY, transZ;\n"
 			"	real4 vIn, vOut = 0.0;\n";
-		
+
 		//Determine if any variations, regular, pre, or post need precalcs.
 		while (Variation<T>* var = xform->GetVariation(v++))
 		{
@@ -204,7 +204,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 				}
 			}
 		}
-		
+
 		if (xform->HasPost())
 		{
 			xformFuncs <<
@@ -267,7 +267,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"	uint threadXDivRows = (THREAD_ID_X / (NTHREADS / THREADS_PER_WARP));\n"
 		"	uint threadsMinus1 = NTHREADS - 1;\n"
 		;
-	
+
 	os <<
 		"\n"
 #ifndef STRAIGHT_RAND
@@ -294,7 +294,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"		firstPoint = points[pointsIndex];\n"
 		"	}\n"
 		"\n";
-	
+
 		//This is done once initially here and then again after each swap-sync in the main loop.
 		//This along with the randomness that the point shuffle provides gives sufficient randomness
 		//to produce results identical to those produced on the CPU.
@@ -346,7 +346,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"			switch (secondPoint.m_LastXfUsed)\n"
 		"			{\n";
 			}
-			
+
 			os <<
 		"				case " << i << ":\n"
 		"				{\n" <<
@@ -430,7 +430,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"			continue;\n"
 		"		}\n"
 		"\n";
-		
+
 		if (ember.UseFinalXform())
 		{
 			size_t finalIndex = ember.TotalXformCount() - 1;
@@ -446,7 +446,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 			"		}\n"
 			"\n";
 		}
-		
+
 		os << CreateProjectionString(ember);
 
 		if (doAccum)
@@ -549,7 +549,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"\n"
 		"		barrier(CLK_GLOBAL_MEM_FENCE);\n";//Barrier every time, whether or not the point was in bounds, else artifacts will occur when doing strips.
 		}
-		
+
 	os <<
 		"	}\n"//Main for loop.
 		"\n"
@@ -578,7 +578,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 /// the length of the parametric values is unknown.
 /// This is solved by passing a separate buffer of values dedicated specifically
 /// to parametric variations.
-/// In OpenCL, a series of #define constants are declared which specify the indices in 
+/// In OpenCL, a series of #define constants are declared which specify the indices in
 /// the buffer where the various values are stored.
 /// The possibility of a parametric variation type being present in multiple xforms is taken
 /// into account by appending the xform index to the #define, thus making each unique.
@@ -622,7 +622,7 @@ void IterOpenCLKernelCreator<T>::ParVarIndexDefines(Ember<T>& ember, pair<string
 
 	for (i = 0; i < xformCount; i++)
 	{
-		if (xform = ember.GetTotalXform(i))
+		if ((xform = ember.GetTotalXform(i)))
 		{
 			size_t varCount = xform->TotalVariationCount();
 
@@ -672,7 +672,7 @@ template <typename T>
 bool IterOpenCLKernelCreator<T>::IsBuildRequired(Ember<T>& ember1, Ember<T>& ember2)
 {
 	size_t i, j, xformCount = ember1.TotalXformCount();
-	
+
 	if (xformCount != ember2.TotalXformCount())
 		return true;
 
@@ -834,4 +834,10 @@ string IterOpenCLKernelCreator<T>::CreateProjectionString(Ember<T>& ember)
 
 	return os.str();
 }
+
+template EMBERCL_API class IterOpenCLKernelCreator<float>;
+
+#ifdef DO_DOUBLE
+	template EMBERCL_API class IterOpenCLKernelCreator<double>;
+#endif
 }

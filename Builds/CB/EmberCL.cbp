@@ -13,12 +13,12 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-D_DEBUG" />
-					<Add option="-D_WINDOWS" />
+					<Add option="-g" />
+					<Add option="-D_M_X64" />
 					<Add option="-D_USRDLL" />
+					<Add option="-D_DEBUG" />
+					<Add option="-D_CONSOLE" />
 					<Add option="-DBUILDING_EMBERCL" />
-					<Add option="-DAMD_OS_WIN" />
 					<Add directory="../../Source/Ember/" />
 					<Add directory="../../../glm" />
 					<Add directory="../../../tbb/include" />
@@ -27,8 +27,6 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Opengl32.lib" />
 					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
@@ -40,12 +38,6 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_WINDOWS" />
-					<Add option="-D_USRDLL" />
-					<Add option="-DBUILDING_EMBERCL" />
-					<Add option="-DAMD_OS_WIN" />
 					<Add directory="../../Source/Ember/" />
 					<Add directory="../../../glm" />
 					<Add directory="../../../tbb/include" />
@@ -54,8 +46,6 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Opengl32.lib" />
 					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
@@ -67,12 +57,6 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_WINDOWS" />
-					<Add option="-D_USRDLL" />
-					<Add option="-DBUILDING_EMBERCL" />
-					<Add option="-DAMD_OS_WIN" />
 					<Add directory="../../Source/Ember/" />
 					<Add directory="../../../glm" />
 					<Add directory="../../../tbb/include" />
@@ -80,8 +64,6 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Opengl32.lib" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
 			</Target>
@@ -92,12 +74,12 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_WINDOWS" />
+					<Add option="-O2" />
+					<Add option="-D_M_X64" />
 					<Add option="-D_USRDLL" />
+					<Add option="-DNDEBUG" />
+					<Add option="-D_CONSOLE" />
 					<Add option="-DBUILDING_EMBERCL" />
-					<Add option="-DAMD_OS_WIN" />
 					<Add directory="../../Source/Ember/" />
 					<Add directory="../../../glm" />
 					<Add directory="../../../tbb/include" />
@@ -106,8 +88,7 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Opengl32.lib" />
+					<Add option="-s" />
 					<Add directory="$(AMDAPPSDKROOT)/lib/x86_64" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
@@ -119,12 +100,6 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-DNDEBUG" />
-					<Add option="-D_WINDOWS" />
-					<Add option="-D_USRDLL" />
-					<Add option="-DBUILDING_EMBERCL" />
-					<Add option="-DAMD_OS_WIN" />
 					<Add directory="../../Source/Ember/" />
 					<Add directory="../../../glm" />
 					<Add directory="../../../tbb/include" />
@@ -133,8 +108,6 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Opengl32.lib" />
 					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
@@ -146,12 +119,6 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-DWIN32" />
-					<Add option="-D_DEBUG" />
-					<Add option="-D_WINDOWS" />
-					<Add option="-D_USRDLL" />
-					<Add option="-DBUILDING_EMBERCL" />
-					<Add option="-DAMD_OS_WIN" />
 					<Add directory="../../Source/Ember/" />
 					<Add directory="../../../glm" />
 					<Add directory="../../../tbb/include" />
@@ -160,13 +127,34 @@
 					<Add directory="$(CUDA_PATH)include" />
 				</Compiler>
 				<Linker>
-					<Add library="opencl.lib" />
-					<Add library="Opengl32.lib" />
 					<Add directory="$(AMDAPPSDKROOT)/lib/x86" />
 					<Add directory="$(CUDA_PATH)lib/Linux" />
 				</Linker>
 			</Target>
 		</Build>
+		<Compiler>
+			<Add option="-march=k8" />
+			<Add option="-fomit-frame-pointer" />
+			<Add option="-Wnon-virtual-dtor" />
+			<Add option="-Wshadow" />
+			<Add option="-Winit-self" />
+			<Add option="-Wredundant-decls" />
+			<Add option="-Wcast-align" />
+			<Add option="-Wunreachable-code" />
+			<Add option="-Wswitch-enum" />
+			<Add option="-Wswitch-default" />
+			<Add option="-Wmain" />
+			<Add option="-Wzero-as-null-pointer-constant" />
+			<Add option="-std=c++11" />
+			<Add option="-Wall" />
+			<Add option="-fpermissive" />
+			<Add option="-fPIC" />
+			<Add directory="/usr/include/libxml2" />
+		</Compiler>
+		<Linker>
+			<Add library="GL" />
+			<Add library="OpenCL" />
+		</Linker>
 		<Unit filename="../../Source/EmberCL/DEOpenCLKernelCreator.cpp" />
 		<Unit filename="../../Source/EmberCL/DEOpenCLKernelCreator.h" />
 		<Unit filename="../../Source/EmberCL/DllMain.cpp" />

@@ -41,12 +41,12 @@ private:
 	string m_ZeroizeEntryPoint;
 	bool m_NVidia;
 };
-
-template EMBERCL_API class IterOpenCLKernelCreator<float>;
-
-#ifdef DO_DOUBLE
-	template EMBERCL_API class IterOpenCLKernelCreator<double>;
-#endif
+//
+//template EMBERCL_API class IterOpenCLKernelCreator<float>;
+//
+//#ifdef DO_DOUBLE
+//	template EMBERCL_API class IterOpenCLKernelCreator<double>;
+//#endif
 
 //
 //template EMBERCL_API string IterOpenCLKernelCreator::CreateIterKernelString<float>(Ember<float>& ember, string& parVarDefines, bool lockAccum, bool doAccum);
