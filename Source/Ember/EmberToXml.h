@@ -79,6 +79,7 @@ public:
 				if ((append && start) || !append)
 				{
 					temp = "<flames>\n";
+					//temp = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n<flames>\n";
 					f.write(temp.c_str(), temp.size());
 				}
 

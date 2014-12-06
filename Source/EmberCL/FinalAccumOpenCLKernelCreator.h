@@ -78,10 +78,4 @@ private:
 	string m_FinalAccumLateClipWithoutAlphaCalcWithAlphaAccumKernel;//False, true.
 	string m_FinalAccumLateClipWithoutAlphaCalcWithAlphaAccumEntryPoint;
 };
-
-//template EMBERCL_API class FinalAccumOpenCLKernelCreator<float>;
-//
-//#ifdef DO_DOUBLE
-//	template EMBERCL_API class FinalAccumOpenCLKernelCreator<double>;
-//#endif
 }

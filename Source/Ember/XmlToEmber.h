@@ -267,7 +267,7 @@ public:
 		xmlPtr = (const char*)(&buf[0]);
 		bufSize = strlen(xmlPtr);
 		embers.reserve(bufSize / 2500);//The Xml text for an ember is around 2500 bytes, but can be much more. Pre-allocate to aovid unnecessary resizing.
-		doc = xmlReadMemory(xmlPtr, (int)bufSize, filename, nullptr, XML_PARSE_NONET);//Forbid network access during read.
+		doc = xmlReadMemory(xmlPtr, (int)bufSize, filename, "ISO-8859-1", XML_PARSE_NONET);//Forbid network access during read.
 		//t.Toc("xmlReadMemory");
 
 		if (doc == nullptr)

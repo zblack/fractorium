@@ -345,7 +345,7 @@ void FinalRenderEmberController<T>::SetEmber(size_t index)
 		m_Ember = &(m_EmberFile.m_Embers[index]);
 		SyncCurrentToGui();
 	}
-	else
+	else if (m_EmberFile.Size() > 1)
 	{
 		m_Ember = &(m_EmberFile.m_Embers[0]);//Should never happen.
 	}

@@ -76,10 +76,4 @@ private:
 
 	bool m_NVidia;
 };
-
-//template EMBERCL_API class DEOpenCLKernelCreator<float>;
-//
-//#ifdef DO_DOUBLE
-//	template EMBERCL_API class DEOpenCLKernelCreator<double>;
-//#endif
 }

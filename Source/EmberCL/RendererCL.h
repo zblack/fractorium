@@ -196,10 +196,4 @@ private:
 	pair<string, vector<T>> m_Params;
 	Ember<T> m_LastBuiltEmber;
 };
-
-//template EMBERCL_API class RendererCL<float>;
-//
-//#ifdef DO_DOUBLE
-//	template EMBERCL_API class RendererCL<double>;
-//#endif
 }

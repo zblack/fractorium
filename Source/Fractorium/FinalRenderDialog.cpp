@@ -580,6 +580,7 @@ void FractoriumFinalRenderDialog::showEvent(QShowEvent* e)
 {
 	if (CreateControllerFromGUI(true))
 	{
+		int index = m_Fractorium->m_Controller->Index() + 1;
 #ifdef DO_DOUBLE
 		Ember<double> ed;
 		EmberFile<double> efi;
@@ -601,8 +602,11 @@ void FractoriumFinalRenderDialog::showEvent(QShowEvent* e)
 		});//Copy the whole file, will take about 0.2ms per ember in the file.
 #endif
 		m_Controller->SetEmberFile(efi);//Copy the temp file into the final render controller.
-		m_Controller->SetEmber(m_Fractorium->m_Controller->Index());//Set the currently selected ember to the one that was being edited.
 		ui.FinalRenderCurrentSpin->setMaximum(efi.Size());
+		ui.FinalRenderCurrentSpin->blockSignals(true);
+		ui.FinalRenderCurrentSpin->setValue(index);//Set the currently selected ember to the one that was being edited.
+		ui.FinalRenderCurrentSpin->blockSignals(false);
+		OnFinalRenderCurrentSpinChanged(index);//Force update in case the ember was new, but at the same index as the previous one.
 		m_Controller->m_ImageCount = 0;
 		SetMemory();
 		m_Controller->ResetProgress();
@@ -640,6 +644,8 @@ void FractoriumFinalRenderDialog::reject()
 bool FractoriumFinalRenderDialog::CreateControllerFromGUI(bool createRenderer)
 {
 	bool ok = true;
+	int index = Current() - 1;
+
 #ifdef DO_DOUBLE
 	size_t size = Double() ? sizeof(double) : sizeof(float);
 #else
@@ -677,7 +683,10 @@ bool FractoriumFinalRenderDialog::CreateControllerFromGUI(bool createRenderer)
 
 		//Restore the ember and ember file.
 		if (m_Controller.get())
+		{
 			m_Controller->SetEmberFile(efd);//Convert float to double or set double verbatim;
+			m_Controller->SetEmber(index);
+		}
 	}
 
 	if (m_Controller.get())
