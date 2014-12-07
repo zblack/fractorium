@@ -79,30 +79,30 @@ static bool WriteJpeg(const char* filename, byte* image, size_t width, size_t he
 		//Write comments to jpeg.
 		if (enableComments)
 		{
-			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(verString), strlen(verString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(verString), (uint)strlen(verString));
 
 			if (nick != "")
 			{
 				snprintf_s(nickString, 64, "flam3_nickname: %s", nick.c_str());
-				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(nickString), strlen(nickString));
+				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(nickString), (uint)strlen(nickString));
 			}
 
 			if (url != "")
 			{
 				snprintf_s(urlString, 128, "flam3_url: %s", url.c_str());
-				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(urlString), strlen(urlString));
+				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(urlString), (uint)strlen(urlString));
 			}
 
 			if (id != "")
 			{
 				snprintf_s(idString, 128, "flam3_id: %s", id.c_str());
-				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(idString), strlen(idString));
+				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(idString), (uint)strlen(idString));
 			}
 
-			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(bvString), strlen(bvString));
-			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(niString), strlen(niString));
-			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(rtString), strlen(rtString));
-			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(genomeString), strlen(genomeString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(bvString), (uint)strlen(bvString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(niString), (uint)strlen(niString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(rtString), (uint)strlen(rtString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(genomeString), (uint)strlen(genomeString));
 		}
 
 		for (i = 0; i < height; i++)
