@@ -107,8 +107,8 @@ bool RendererCL<T>::Init(uint platform, uint device, bool shared, GLuint outputT
 
 		if (b && !(b = m_Wrapper.AddProgram(m_IterOpenCLKernelCreator.ZeroizeEntryPoint(),		  zeroizeProgram,	m_IterOpenCLKernelCreator.ZeroizeEntryPoint(),        m_DoublePrecision))) { m_ErrorReport.push_back(loc); }
 		if (b && !(b = m_Wrapper.AddProgram(m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint(), logAssignProgram, m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint(), m_DoublePrecision))) { m_ErrorReport.push_back(loc); }
-		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, 256, 1, 0, NULL))) { m_ErrorReport.push_back(loc); }
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SeedsBufferName, (void*)m_Seeds.data(), SizeOf(m_Seeds)))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, 256, 1, 0, nullptr))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SeedsBufferName, reinterpret_cast<void*>(m_Seeds.data()), SizeOf(m_Seeds)))) { m_ErrorReport.push_back(loc); }
 
 		//This is the maximum box dimension for density filtering which consists of (blockSize  * blockSize) + (2 * filterWidth).
 		//These blocks must be square, and ideally, 32x32.
@@ -141,7 +141,7 @@ bool RendererCL<T>::SetOutputTexture(GLuint outputTexID)
 	m_OutputTexID = outputTexID;
 	EnterResize();
 
-	if (!m_Wrapper.AddAndWriteImage(m_FinalImageName, CL_MEM_WRITE_ONLY, m_FinalFormat, FinalRasW(), FinalRasH(), 0, NULL, m_Wrapper.Shared(), m_OutputTexID))
+	if (!m_Wrapper.AddAndWriteImage(m_FinalImageName, CL_MEM_WRITE_ONLY, m_FinalFormat, FinalRasW(), FinalRasH(), 0, nullptr, m_Wrapper.Shared(), m_OutputTexID))
 	{
 		m_ErrorReport.push_back(loc);
 		success = false;
@@ -187,7 +187,7 @@ template <typename T>
 bool RendererCL<T>::ReadHist()
 {
 	if (Renderer<T, T>::Alloc())//Allocate the memory to read into.
-		return m_Wrapper.ReadBuffer(m_HistBufferName, (void*)HistBuckets(), SuperSize() * sizeof(v4T));
+		return m_Wrapper.ReadBuffer(m_HistBufferName, reinterpret_cast<void*>(HistBuckets()), SuperSize() * sizeof(v4T));
 
 	return false;
 }
@@ -201,7 +201,7 @@ template <typename T>
 bool RendererCL<T>::ReadAccum()
 {
 	if (Renderer<T, T>::Alloc())//Allocate the memory to read into.
-		return m_Wrapper.ReadBuffer(m_AccumBufferName, (void*)AccumulatorBuckets(), SuperSize() * sizeof(v4T));
+		return m_Wrapper.ReadBuffer(m_AccumBufferName, reinterpret_cast<void*>(AccumulatorBuckets()), SuperSize() * sizeof(v4T));
 
 	return false;
 }
@@ -218,7 +218,7 @@ bool RendererCL<T>::ReadPoints(vector<PointCL<T>>& vec)
 	vec.resize(IterGridKernelCount());//Allocate the memory to read into.
 
 	if (vec.size() >= IterGridKernelCount())
-		return m_Wrapper.ReadBuffer(m_PointsBufferName, (void*)vec.data(), IterGridKernelCount() * sizeof(PointCL<T>));
+		return m_Wrapper.ReadBuffer(m_PointsBufferName, reinterpret_cast<void*>(vec.data()), IterGridKernelCount() * sizeof(PointCL<T>));
 
 	return false;
 }
@@ -230,7 +230,7 @@ bool RendererCL<T>::ReadPoints(vector<PointCL<T>>& vec)
 template <typename T>
 bool RendererCL<T>::ClearHist()
 {
-	return ClearBuffer(m_HistBufferName, (uint)SuperRasW(), (uint)SuperRasH(), sizeof(v4T));
+	return ClearBuffer(m_HistBufferName, uint(SuperRasW()), uint(SuperRasH()), sizeof(v4T));
 }
 
 /// <summary>
@@ -240,7 +240,7 @@ bool RendererCL<T>::ClearHist()
 template <typename T>
 bool RendererCL<T>::ClearAccum()
 {
-	return ClearBuffer(m_AccumBufferName, (uint)SuperRasW(), (uint)SuperRasH(), sizeof(v4T));
+	return ClearBuffer(m_AccumBufferName, uint(SuperRasW()), uint(SuperRasH()), sizeof(v4T));
 }
 
 /// <summary>
@@ -252,7 +252,7 @@ bool RendererCL<T>::ClearAccum()
 template <typename T>
 bool RendererCL<T>::WritePoints(vector<PointCL<T>>& vec)
 {
-	return m_Wrapper.WriteBuffer(m_PointsBufferName, (void*)vec.data(), vec.size() * sizeof(vec[0]));
+	return m_Wrapper.WriteBuffer(m_PointsBufferName, reinterpret_cast<void*>(vec.data()), SizeOf(vec));
 }
 
 #ifdef TEST_CL
@@ -422,9 +422,9 @@ bool RendererCL<T>::CreateDEFilter(bool& newAlloc)
 			const char* loc = __FUNCTION__;
 			DensityFilter<T>* filter = dynamic_cast<DensityFilter<T>*>(GetDensityFilter());
 
-			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DECoefsBufferName, (void*)filter->Coefs(), filter->CoefsSizeBytes())))					   { m_ErrorReport.push_back(loc); }
-			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEWidthsBufferName, (void*)filter->Widths(), filter->WidthsSizeBytes())))				   { m_ErrorReport.push_back(loc); }
-			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DECoefIndicesBufferName, (void*)filter->CoefIndices(), filter->CoefsIndicesSizeBytes()))) { m_ErrorReport.push_back(loc); }
+			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DECoefsBufferName, reinterpret_cast<void*>(const_cast<T*>(filter->Coefs())), filter->CoefsSizeBytes())))					   { m_ErrorReport.push_back(loc); }
+			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEWidthsBufferName, reinterpret_cast<void*>(const_cast<T*>(filter->Widths())), filter->WidthsSizeBytes())))				   { m_ErrorReport.push_back(loc); }
+			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DECoefIndicesBufferName, reinterpret_cast<void*>(const_cast<uint*>(filter->CoefIndices())), filter->CoefsIndicesSizeBytes()))) { m_ErrorReport.push_back(loc); }
 		}
 	}
 	else
@@ -447,7 +447,7 @@ bool RendererCL<T>::CreateSpatialFilter(bool& newAlloc)
 	if (Renderer<T, T>::CreateSpatialFilter(newAlloc))
 	{
 		if (newAlloc)
-			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SpatialFilterCoefsBufferName, (void*)GetSpatialFilter()->Filter(), GetSpatialFilter()->BufferSizeBytes()))) { m_ErrorReport.push_back(__FUNCTION__); }
+			if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SpatialFilterCoefsBufferName, reinterpret_cast<void*>(GetSpatialFilter()->Filter()), GetSpatialFilter()->BufferSizeBytes()))) { m_ErrorReport.push_back(__FUNCTION__); }
 
 	}
 	else
@@ -507,7 +507,7 @@ bool RendererCL<T>::RandVec(vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>>& randVec)
 	if (m_Wrapper.Ok())
 	{
 		FillSeeds();
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SeedsBufferName, (void*)m_Seeds.data(), SizeOf(m_Seeds)))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SeedsBufferName, reinterpret_cast<void*>(m_Seeds.data()), SizeOf(m_Seeds)))) { m_ErrorReport.push_back(loc); }
 	}
 
 	return b;
@@ -633,11 +633,11 @@ eRenderStatus RendererCL<T>::GaussianDensityFilter()
 
 /// <summary>
 /// Run final accumulation.
-/// If pixels is NULL, the output will remain in the OpenCL 2D image.
-/// However, if pixels is not NULL, the output will be copied. This is
+/// If pixels is nullptr, the output will remain in the OpenCL 2D image.
+/// However, if pixels is not nullptr, the output will be copied. This is
 /// useful when rendering in OpenCL, but saving the output to a file.
 /// </summary>
-/// <param name="pixels">The pixels to copy the final image to if not NULL</param>
+/// <param name="pixels">The pixels to copy the final image to if not nullptr</param>
 /// <param name="finalOffset">Offset in the buffer to store the pixels to</param>
 /// <returns>True if success and not aborted, else false.</returns>
 template <typename T>
@@ -645,7 +645,7 @@ eRenderStatus RendererCL<T>::AccumulatorToFinalImage(byte* pixels, size_t finalO
 {
 	eRenderStatus status = RunFinalAccum();
 
-	if (status == RENDER_OK && pixels != NULL && !m_Wrapper.Shared())
+	if (status == RENDER_OK && pixels != nullptr && !m_Wrapper.Shared())
 	{
 		pixels += finalOffset;
 
@@ -769,10 +769,10 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 	uint fuse, argIndex;
 	uint iterCountPerKernel = IterCountPerKernel();
 	uint iterCountPerBlock = IterCountPerBlock();
-	uint supersize = (uint)SuperSize();
+	uint supersize = uint(SuperSize());
 	int kernelIndex = m_Wrapper.FindKernelIndex(m_IterOpenCLKernelCreator.IterEntryPoint());
 	size_t fuseFreq = Renderer<T, T>::SubBatchSize() / m_IterCountPerKernel;//Use the base sbs to determine when to fuse.
-	size_t itersRemaining, localIterCount = 0;
+	size_t itersRemaining;
 	double percent, etaMs;
 	const char* loc = __FUNCTION__;
 
@@ -786,10 +786,10 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 		ConvertEmber(m_Ember, m_EmberCL, m_XformsCL);
 		m_CarToRasCL = ConvertCarToRas(*CoordMap());
 
-		if (b && !(b = m_Wrapper.WriteBuffer      (m_EmberBufferName,    (void*)&m_EmberCL,           sizeof(m_EmberCL))))						   { m_ErrorReport.push_back(loc); }
-		if (b && !(b = m_Wrapper.WriteBuffer	  (m_XformsBufferName,   (void*)m_XformsCL.data(),    sizeof(m_XformsCL[0]) * m_XformsCL.size()))) { m_ErrorReport.push_back(loc); }
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DistBufferName,     (void*)XformDistributions(), XformDistributionsSize())))				   { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
-		if (b && !(b = m_Wrapper.WriteBuffer      (m_CarToRasBufferName, (void*)&m_CarToRasCL,        sizeof(m_CarToRasCL))))					   { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.WriteBuffer      (m_EmberBufferName,    reinterpret_cast<void*>(&m_EmberCL),           sizeof(m_EmberCL))))						   { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.WriteBuffer	  (m_XformsBufferName,   reinterpret_cast<void*>(m_XformsCL.data()),    sizeof(m_XformsCL[0]) * m_XformsCL.size()))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DistBufferName,     reinterpret_cast<void*>(const_cast<byte*>(XformDistributions())), XformDistributionsSize())))				   { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
+		if (b && !(b = m_Wrapper.WriteBuffer      (m_CarToRasBufferName, reinterpret_cast<void*>(&m_CarToRasCL),        sizeof(m_CarToRasCL))))					   { m_ErrorReport.push_back(loc); }
 
 		if (b && !(b = m_Wrapper.AddAndWriteImage("Palette", CL_MEM_READ_ONLY, m_PaletteFormat, m_DmapCL.m_Entries.size(), 1, 0, m_DmapCL.m_Entries.data()))) { m_ErrorReport.push_back(loc); }
 
@@ -805,19 +805,19 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 #else
 			//fuse = 100;
 			//fuse = ((m_Calls % fuseFreq) == 0 ? (EarlyClip() ? 100u : 15u) : 0u);
-			fuse = (uint)((m_Calls % fuseFreq) == 0u ? FuseCount() : 0u);
+			fuse = uint((m_Calls % fuseFreq) == 0u ? FuseCount() : 0u);
 			//fuse = ((m_Calls % 4) == 0 ? 100u : 0u);
 #endif
 			itersRemaining = iterCount - itersRan;
-			uint gridW = (uint)min(ceil((double)itersRemaining / (double)iterCountPerBlock), (double)IterGridBlockWidth());
-			uint gridH = (uint)min(ceil((double)itersRemaining / ((double)gridW * iterCountPerBlock)), (double)IterGridBlockHeight());
+			uint gridW = uint(min(ceil(double(itersRemaining) / double(iterCountPerBlock)), double(IterGridBlockWidth())));
+			uint gridH = uint(min(ceil(double(itersRemaining) / double(gridW * iterCountPerBlock)), double(IterGridBlockHeight())));
 			uint iterCountThisLaunch = iterCountPerBlock * gridW * gridH;
 
 			//Similar to what's done in the base class.
 			//The number of iters per thread must be adjusted if they've requested less iters than is normally ran in a block (256 * 256).
 			if (iterCountThisLaunch > iterCount)
 			{
-				iterCountPerKernel = (uint)ceil((double)iterCount / (double)(gridW * gridH * IterBlockKernelCount()));
+				iterCountPerKernel = uint(ceil(double(iterCount) / double(gridW * gridH * IterBlockKernelCount())));
 				iterCountThisLaunch = iterCountPerKernel * (gridW * gridH * IterBlockKernelCount());
 			}
 
@@ -861,7 +861,7 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 							(
 								double(m_LastIter + itersRan) / double(ItersPerTemporalSample())
 							) + temporalSample
-						) / (double)TemporalSamples()
+						) / double(TemporalSamples())
 					);
 
 				double percentDiff = percent - m_LastIterPercent;
@@ -901,7 +901,6 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 	bool b = true;
 	int kernelIndex = m_Wrapper.FindKernelIndex(m_DEOpenCLKernelCreator.LogScaleAssignDEEntryPoint());
 	const char* loc = __FUNCTION__;
-	eRenderStatus status = RENDER_OK;
 
 	if (kernelIndex != -1)
 	{
@@ -914,7 +913,7 @@ eRenderStatus RendererCL<T>::RunLogScaleFilter()
 
 		OpenCLWrapper::MakeEvenGridDims(blockW, blockH, gridW, gridH);
 
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, (void*)&m_DensityFilterCL, sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, reinterpret_cast<void*>(&m_DensityFilterCL), sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
 
 		if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_HistBufferName)))           { m_ErrorReport.push_back(loc); }//Histogram.
 		if (b && !(b = m_Wrapper.SetBufferArg(kernelIndex, argIndex++, m_AccumBufferName)))          { m_ErrorReport.push_back(loc); }//Accumulator.
@@ -977,13 +976,13 @@ eRenderStatus RendererCL<T>::RunDensityFilter()
 		//that are far enough apart such that their filters do not overlap.
 		//Do the latter.
 		//Gap is in terms of blocks. How many blocks must separate two blocks running at the same time.
-		uint gapW = (uint)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeW);
+		uint gapW = uint(ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / double(blockSizeW)));
 		uint chunkSizeW = gapW + 1;
-		uint gapH = (uint)ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / (double)blockSizeH);
+		uint gapH = uint(ceil((m_DensityFilterCL.m_FilterWidth * 2.0) / double(blockSizeH)));
 		uint chunkSizeH = gapH + 1;
 		double totalChunks = chunkSizeW * chunkSizeH;
 
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, (void*)&m_DensityFilterCL, sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_DEFilterParamsBufferName, reinterpret_cast<void*>(&m_DensityFilterCL), sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
 
 #ifdef ROW_ONLY_DE
 		blockSizeW = 64;//These *must* both be divisible by 16 or else pixels will go missing.
@@ -1079,7 +1078,7 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 		//This is needed with or without early clip.
 		m_SpatialFilterCL = ConvertSpatialFilter();
 
-		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SpatialFilterParamsBufferName, (void*)&m_SpatialFilterCL, sizeof(m_SpatialFilterCL)))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SpatialFilterParamsBufferName, reinterpret_cast<void*>(&m_SpatialFilterCL), sizeof(m_SpatialFilterCL)))) { m_ErrorReport.push_back(loc); }
 
 		//Since early clip requires gamma correcting the entire accumulator first,
 		//it can't be done inside of the normal final accumulation kernel, so
@@ -1323,19 +1322,19 @@ DensityFilterCL<T> RendererCL<T>::ConvertDensityFilter()
 	DensityFilterCL<T> filterCL;
 	DensityFilter<T>* densityFilter = dynamic_cast<DensityFilter<T>*>(GetDensityFilter());
 
-	filterCL.m_Supersample = (uint)Supersample();
-	filterCL.m_SuperRasW = (uint)SuperRasW();
-	filterCL.m_SuperRasH = (uint)SuperRasH();
+	filterCL.m_Supersample = uint(Supersample());
+	filterCL.m_SuperRasW = uint(SuperRasW());
+	filterCL.m_SuperRasH = uint(SuperRasH());
 	filterCL.m_K1 = K1();
 	filterCL.m_K2 = K2();
 
 	if (densityFilter)
 	{
 		filterCL.m_Curve = densityFilter->Curve();
-		filterCL.m_KernelSize = (uint)densityFilter->KernelSize();
-		filterCL.m_MaxFilterIndex = (uint)densityFilter->MaxFilterIndex();
-		filterCL.m_MaxFilteredCounts = (uint)densityFilter->MaxFilteredCounts();
-		filterCL.m_FilterWidth = (uint)densityFilter->FilterWidth();
+		filterCL.m_KernelSize = uint(densityFilter->KernelSize());
+		filterCL.m_MaxFilterIndex = uint(densityFilter->MaxFilterIndex());
+		filterCL.m_MaxFilteredCounts = uint(densityFilter->MaxFilteredCounts());
+		filterCL.m_FilterWidth = uint(densityFilter->FilterWidth());
 	}
 
 	return filterCL;
@@ -1355,17 +1354,17 @@ SpatialFilterCL<T> RendererCL<T>::ConvertSpatialFilter()
 
 	this->PrepFinalAccumVals(background, g, linRange, vibrancy);
 
-	filterCL.m_SuperRasW = (uint)SuperRasW();
-	filterCL.m_SuperRasH = (uint)SuperRasH();
-	filterCL.m_FinalRasW = (uint)FinalRasW();
-	filterCL.m_FinalRasH = (uint)FinalRasH();
-	filterCL.m_Supersample = (uint)Supersample();
-	filterCL.m_FilterWidth = (uint)GetSpatialFilter()->FinalFilterWidth();
-	filterCL.m_NumChannels = (uint)Renderer<T, T>::NumChannels();
-	filterCL.m_BytesPerChannel = (uint)BytesPerChannel();
-	filterCL.m_DensityFilterOffset = (uint)DensityFilterOffset();
+	filterCL.m_SuperRasW = uint(SuperRasW());
+	filterCL.m_SuperRasH = uint(SuperRasH());
+	filterCL.m_FinalRasW = uint(FinalRasW());
+	filterCL.m_FinalRasH = uint(FinalRasH());
+	filterCL.m_Supersample = uint(Supersample());
+	filterCL.m_FilterWidth = uint(GetSpatialFilter()->FinalFilterWidth());
+	filterCL.m_NumChannels = uint(Renderer<T, T>::NumChannels());
+	filterCL.m_BytesPerChannel = uint(BytesPerChannel());
+	filterCL.m_DensityFilterOffset = uint(DensityFilterOffset());
 	filterCL.m_Transparency = Transparency();
-	filterCL.m_YAxisUp = (uint)m_YAxisUp;
+	filterCL.m_YAxisUp = uint(m_YAxisUp);
 	filterCL.m_Vibrancy = vibrancy;
 	filterCL.m_HighlightPower = HighlightPower();
 	filterCL.m_Gamma = g;
@@ -1441,7 +1440,7 @@ CarToRasCL<T> RendererCL<T>::ConvertCarToRas(const CarToRas<T>& carToRas)
 {
 	CarToRasCL<T> carToRasCL;
 
-	carToRasCL.m_RasWidth = (uint)carToRas.RasWidth();
+	carToRasCL.m_RasWidth = uint(carToRas.RasWidth());
 	carToRasCL.m_PixPerImageUnitW = carToRas.PixPerImageUnitW();
 	carToRasCL.m_RasLlX = carToRas.RasLlX();
 	carToRasCL.m_PixPerImageUnitH = carToRas.PixPerImageUnitH();

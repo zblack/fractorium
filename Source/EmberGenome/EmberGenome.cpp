@@ -169,10 +169,10 @@ bool EmberGenome(EmberOptions& opt)
 
 			while (std::getline(iss, token, ','))
 			{
-				if (parser.Atoi((char*)token.c_str(), val))
+				if (parser.Atoi(token.c_str(), val))
 				{
 					if (val < varList.Size())
-						vars.push_back((eVariationId)val);
+						vars.push_back(static_cast<eVariationId>(val));
 				}
 			}
 		}
@@ -182,10 +182,10 @@ bool EmberGenome(EmberOptions& opt)
 
 			while (std::getline(iss, token, ','))
 			{
-				if (parser.Atoi((char*)token.c_str(), val))
+				if (parser.Atoi(token.c_str(), val))
 				{
 					if (val < varList.Size())
-						noVars.push_back((eVariationId)val);
+						noVars.push_back(static_cast<eVariationId>(val));
 				}
 			}
 
@@ -291,7 +291,7 @@ bool EmberGenome(EmberOptions& opt)
 			if (pTemplate)
 				tools.ApplyTemplate(embers[i], *pTemplate);
 
-			tools.Offset(embers[i], (T)opt.OffsetX(), (T)opt.OffsetY());
+			tools.Offset(embers[i], T(opt.OffsetX()), T(opt.OffsetY()));
 			cout << emberToXml.ToString(embers[i], opt.Extras(), opt.PrintEditDepth(), !opt.NoEdits(), false, opt.HexPalette());
 		}
 
@@ -312,8 +312,8 @@ bool EmberGenome(EmberOptions& opt)
 			embers[i].DeleteMotionElements();
 		}
 
-		firstFrame = (uint)(opt.FirstFrame() == UINT_MAX ? embers[0].m_Time : opt.FirstFrame());
-		lastFrame  = (uint)(opt.LastFrame()  == UINT_MAX ? embers.back().m_Time : opt.LastFrame());
+		firstFrame = uint(opt.FirstFrame() == UINT_MAX ? embers[0].m_Time : opt.FirstFrame());
+		lastFrame  = uint(opt.LastFrame()  == UINT_MAX ? embers.back().m_Time : opt.LastFrame());
 
 		if (lastFrame < firstFrame)
 			lastFrame = firstFrame;
@@ -326,7 +326,7 @@ bool EmberGenome(EmberOptions& opt)
 
 			for (i = 0; i < embers.size(); i++)
 			{
-				if (ftime == (uint)embers[i].m_Time)
+				if (ftime == uint(embers[i].m_Time))
 				{
 					interpolated = embers[i];
 					exactTimeMatch = true;
@@ -340,7 +340,7 @@ bool EmberGenome(EmberOptions& opt)
 
 				for (i = 0; i < embers.size(); i++)
 				{
-					if (ftime == (uint)(embers[i].m_Time - 1))
+					if (ftime == uint(embers[i].m_Time - 1))
 					{
 						exactTimeMatch = true;
 						break;
@@ -383,7 +383,7 @@ bool EmberGenome(EmberOptions& opt)
 			{
 				for (frame = 0; frame < opt.Frames(); frame++)
 				{
-					blend = (T)frame / (T)opt.Frames();
+					blend = T(frame) / T(opt.Frames());
 					tools.Spin(embers[i], pTemplate, result, frameCount++, blend);//Result is cleared and reassigned each time inside of Spin().
 					cout << emberToXml.ToString(result, opt.Extras(), opt.PrintEditDepth(), !opt.NoEdits(), false, opt.HexPalette());
 				}
@@ -394,7 +394,7 @@ bool EmberGenome(EmberOptions& opt)
 				for (frame = 0; frame < opt.Frames(); frame++)
 				{
 					seqFlag = (frame == 0 || frame == opt.Frames() - 1);
-					blend = frame / (T)opt.Frames();
+					blend = frame / T(opt.Frames());
 					result.Clear();
 					tools.SpinInter(&embers[i], pTemplate, result, frameCount++, seqFlag, blend);
 					cout << emberToXml.ToString(result, opt.Extras(), opt.PrintEditDepth(), !opt.NoEdits(), false, opt.HexPalette());
@@ -480,7 +480,7 @@ bool EmberGenome(EmberOptions& opt)
 
 			oldX = embers[i].m_CenterX;
 			oldY = embers[i].m_CenterY;
-			embers[i].m_FinalRasH = (uint)((T)embers[i].m_FinalRasH / (T)opt.Frames());
+			embers[i].m_FinalRasH = uint(T(embers[i].m_FinalRasH) / T(opt.Frames()));
 
 			embers[i].m_CenterY = embers[i].m_CenterY - ((opt.Frames() - 1) * embers[i].m_FinalRasH) /
 				(2 * embers[i].m_PixelsPerUnit * pow(T(2.0), embers[i].m_Zoom));
@@ -764,7 +764,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
 #else
-	putenv((char*)"GPU_MAX_ALLOC_PERCENT=100");
+	putenv(const_cast<char*>("GPU_MAX_ALLOC_PERCENT=100"));
 #endif
 
 	if (!opt.Populate(argc, argv, OPT_USE_GENOME))

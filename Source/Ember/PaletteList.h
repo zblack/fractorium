@@ -45,7 +45,7 @@ public:
 
 			if (ReadFile(filename.c_str(), buf))
 			{
-				xmlDocPtr doc = xmlReadMemory((const char*)buf.data(), (int)buf.size(), filename.c_str(), nullptr, XML_PARSE_NONET);
+				xmlDocPtr doc = xmlReadMemory(static_cast<const char*>(buf.data()), int(buf.size()), filename.c_str(), nullptr, XML_PARSE_NONET);
 
 				if (doc != nullptr)
 				{
@@ -81,7 +81,7 @@ public:
 		{
 			if (i == -1)
 				return &m_Palettes[QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand() % Size()];
-			else if (i < (int)m_Palettes.size())
+			else if (i < int(m_Palettes.size()))
 				return &m_Palettes[i];
 		}
 
@@ -161,7 +161,7 @@ private:
 
 				while (attr)
 				{
-					val = (char*)xmlGetProp(node, attr->name);
+					val = reinterpret_cast<char*>(xmlGetProp(node, attr->name));
 
 					if (!Compare(attr->name, "data"))
 					{
@@ -172,7 +172,7 @@ private:
 
 						do
 						{
-							int ret = sscanf_s((char*)&(val[colorIndex]),"00%2x%2x%2x", &r, &g, &b);
+							int ret = sscanf_s(static_cast<char*>(&(val[colorIndex])),"00%2x%2x%2x", &r, &g, &b);
 
 							if (ret != 3)
 							{
@@ -183,7 +183,7 @@ private:
 
 							colorIndex += 8;
 
-							while (isspace((int)val[colorIndex]))
+							while (isspace(int(val[colorIndex])))
 								colorIndex++;
 
 							palette[colorCount].r = T(r) / T(255);//Store as normalized colors in the range of 0-1.

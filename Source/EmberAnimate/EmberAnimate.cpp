@@ -190,13 +190,13 @@ bool EmberAnimate(EmberOptions& opt)
 			embers[i].m_SubBatchSize = opt.SubBatchSize();
 
 		embers[i].m_Quality *= T(opt.QualityScale());
-		embers[i].m_FinalRasW = (uint)((T)embers[i].m_FinalRasW * opt.SizeScale());
-		embers[i].m_FinalRasH = (uint)((T)embers[i].m_FinalRasH * opt.SizeScale());
+		embers[i].m_FinalRasW = uint(T(embers[i].m_FinalRasW) * opt.SizeScale());
+		embers[i].m_FinalRasH = uint(T(embers[i].m_FinalRasH) * opt.SizeScale());
 		embers[i].m_PixelsPerUnit *= T(opt.SizeScale());
 
 		//Cast to double in case the value exceeds 2^32.
-		double imageMem = (double)channels * (double)embers[i].m_FinalRasW
-			   * (double)embers[i].m_FinalRasH * (double)renderer->BytesPerChannel();
+		double imageMem = double(channels) * double(embers[i].m_FinalRasW)
+			   * double(embers[i].m_FinalRasH) * double(renderer->BytesPerChannel());
 		double maxMem = pow(2.0, double((sizeof(void*) * 8) - 1));
 
 		if (imageMem > maxMem)//Ensure the max amount of memory for a process isn't exceeded.
@@ -233,10 +233,10 @@ bool EmberAnimate(EmberOptions& opt)
 	if (!opt.Time() && !opt.Frame())
 	{
 		if (opt.FirstFrame() == UINT_MAX)
-			opt.FirstFrame((int)embers[0].m_Time);
+			opt.FirstFrame(int(embers[0].m_Time));
 
 		if (opt.LastFrame() == UINT_MAX)
-			opt.LastFrame(ClampGte<uint>((uint)embers.back().m_Time - 1, opt.FirstFrame()));
+			opt.LastFrame(ClampGte<uint>(uint(embers.back().m_Time - 1), opt.FirstFrame()));
 	}
 
 	if (!opt.Out().empty())
@@ -303,7 +303,7 @@ bool EmberAnimate(EmberOptions& opt)
 		comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 		os.str("");
 		size_t iterCount = renderer->TotalIterCount(1);
-		os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << ((double)stats.m_Iters / (double)iterCount * 100) << "%)";
+		os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << double(stats.m_Iters) / double(iterCount * 100) << "%)";
 
 		VerbosePrint("\nIters ran/requested: " + os.str());
 		VerbosePrint("Bad values: " << stats.m_Badvals);
@@ -358,7 +358,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
 #else
-	putenv((char*)"GPU_MAX_ALLOC_PERCENT=100");
+	putenv(const_cast<char*>("GPU_MAX_ALLOC_PERCENT=100"));
 #endif
 
 	if (!opt.Populate(argc, argv, OPT_USE_ANIMATE))

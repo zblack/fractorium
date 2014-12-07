@@ -88,10 +88,10 @@ public:
 
 			for (uint i = 0; i < size; i++)
 			{
-				m_Entries[i].a = (T)palette15[i * 4 + 0];
-				m_Entries[i].r = (T)palette15[i * 4 + 1];
-				m_Entries[i].g = (T)palette15[i * 4 + 2];
-				m_Entries[i].b = (T)palette15[i * 4 + 3];
+				m_Entries[i].a = T(palette15[i * 4 + 0]);
+				m_Entries[i].r = T(palette15[i * 4 + 1]);
+				m_Entries[i].g = T(palette15[i * 4 + 2]);
+				m_Entries[i].b = T(palette15[i * 4 + 3]);
 			}
 		}
 	}
@@ -307,7 +307,7 @@ public:
 				rgb[1] = 0;
 				rgb[2] = 0;
 
-				for (int j = i - (int)blur; j <= i + (int)blur; j++)
+				for (int j = i - int(blur); j <= i + int(blur); j++)
 				{
 					n++;
 					int k = (256 + j) % 256;
@@ -369,9 +369,9 @@ public:
 			{
 				for (uint j = 0; j < width; j++)
 				{
-					v[(width * 3 * i) + (j * 3)]     = (byte)(m_Entries[j][0] * T(255));//Palettes are as [0..1], so convert to [0..255] here since it's for GUI display.
-					v[(width * 3 * i) + (j * 3) + 1] = (byte)(m_Entries[j][1] * T(255));
-					v[(width * 3 * i) + (j * 3) + 2] = (byte)(m_Entries[j][2] * T(255));
+					v[(width * 3 * i) + (j * 3)]     = byte(m_Entries[j][0] * T(255));//Palettes are as [0..1], so convert to [0..255] here since it's for GUI display.
+					v[(width * 3 * i) + (j * 3) + 1] = byte(m_Entries[j][1] * T(255));
+					v[(width * 3 * i) + (j * 3) + 2] = byte(m_Entries[j][2] * T(255));
 				}
 			}
 		}
@@ -545,11 +545,11 @@ public:
 
 			//Calculate the max-value color (ranged 0 - 1).
 			for (rgbi = 0; rgbi < 3; rgbi++)
-				newRgb[rgbi] = (bucketT)newls * cBuf[rgbi] / bucketT(255.0);
+				newRgb[rgbi] = bucketT(newls) * cBuf[rgbi] / bucketT(255.0);
 
 			//Reduce saturation by the lsratio.
 			Palette<bucketT>::RgbToHsv(newRgb, newhsv);
-			newhsv[1] *= (bucketT)lsratio;
+			newhsv[1] *= bucketT(lsratio);
 			Palette<bucketT>::HsvToRgb(newhsv, newRgb);
 
 			for (rgbi = 0; rgbi < 3; rgbi++)

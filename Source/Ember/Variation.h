@@ -1085,7 +1085,7 @@ public:
 		m_AssignType = variation.AssignType();
 		m_VariationId = variation.VariationId();
 		m_Weight = T(variation.m_Weight);
-		m_Xform = typeid(T) == typeid(U) ? (Xform<T>*)variation.ParentXform() : nullptr;
+		m_Xform = typeid(T) == typeid(U) ? const_cast<Xform<T>*>(reinterpret_cast<const Xform<T>*>(variation.ParentXform())) : nullptr;
 		m_NeedPrecalcSumSquares = variation.NeedPrecalcSumSquares();
 		m_NeedPrecalcSqrtSumSquares = variation.NeedPrecalcSqrtSumSquares();
 		m_NeedPrecalcAngles = variation.NeedPrecalcAngles();
@@ -1536,17 +1536,17 @@ public:
 
 			case INTEGER :
 			{
-				*m_Param = T((int)max(min<T>((T)Floor<T>(val + T(0.5)), m_Max), m_Min));
+				*m_Param = T(int(max(min<T>(T(Floor<T>(val + T(0.5))), m_Max), m_Min)));
 				break;
 			}
 
 			case INTEGER_NONZERO :
 			default:
 			{
-				int vi = (int)max(min<T>((T)Floor<T>(val + T(0.5)), m_Max), m_Min);
+				int vi = int(max(min<T>(T(Floor<T>(val + T(0.5))), m_Max), m_Min));
 
 				if (vi == 0)
-					vi = (int)SignNz<T>(val);
+					vi = int(SignNz<T>(val));
 
 				*m_Param = T(vi);
 				break;

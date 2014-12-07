@@ -280,8 +280,8 @@ size_t		   RendererBase::FinalBufferSize()			   const { return FinalRowSize() * 
 size_t		   RendererBase::PixelSize()				   const { return NumChannels() * BytesPerChannel(); }
 size_t		   RendererBase::GutterWidth()				   const { return m_GutterWidth; }
 size_t		   RendererBase::DensityFilterOffset()		   const { return m_DensityFilterOffset; }
-size_t         RendererBase::TotalIterCount(size_t strips) const { return (size_t)((size_t)Round(ScaledQuality()) * FinalRasW() * FinalRasH() * strips); }//Use Round() because there can be some roundoff error when interpolating.
-size_t         RendererBase::ItersPerTemporalSample()	   const { return (size_t)ceil(double(TotalIterCount(1)) / double(TemporalSamples())); }//Temporal samples is used with animation, which doesn't support strips, so pass 1.
+size_t         RendererBase::TotalIterCount(size_t strips) const { return size_t(size_t(Round(ScaledQuality())) * FinalRasW() * FinalRasH() * strips); }//Use Round() because there can be some roundoff error when interpolating.
+size_t         RendererBase::ItersPerTemporalSample()	   const { return size_t(ceil(double(TotalIterCount(1)) / double(TemporalSamples()))); }//Temporal samples is used with animation, which doesn't support strips, so pass 1.
 eProcessState  RendererBase::ProcessState()				   const { return m_ProcessState; }
 eProcessAction RendererBase::ProcessAction()			   const { return m_ProcessAction; }
 EmberStats     RendererBase::Stats()					   const { return m_Stats; }
@@ -449,7 +449,7 @@ void RendererBase::ThreadCount(size_t threads, const char* seedString)
 		if (seedString)
 		{
 			memset(seeds, 0, isaacSize * sizeof(ISAAC_INT));
-			memcpy((char*)seeds, seedString, min(strlen(seedString), isaacSize * sizeof(ISAAC_INT)));
+			memcpy(reinterpret_cast<char*>(seeds), seedString, min(strlen(seedString), isaacSize * sizeof(ISAAC_INT)));
 		}
 
 		//This is critical for multithreading, otherwise the threads all happen
@@ -460,7 +460,7 @@ void RendererBase::ThreadCount(size_t threads, const char* seedString)
 
 			if (seedString)
 			{
-				ISAAC_INT newSize = (ISAAC_INT)(size + 5 + (t.Toc() + t.EndTime()));
+				ISAAC_INT newSize = ISAAC_INT(size + 5 + (t.Toc() + t.EndTime()));
 
 #ifdef ISAAC_FLAM3_DEBUG
 				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(0, 0, 0, seeds);
@@ -470,18 +470,18 @@ void RendererBase::ThreadCount(size_t threads, const char* seedString)
 				m_Rand.push_back(isaac);
 
 				for (i = 0; i < (isaacSize * sizeof(ISAAC_INT)); i++)
-					((byte*)seeds)[i]++;
+					reinterpret_cast<byte*>(seeds)[i]++;
 			}
 			else
 			{
 				for (i = 0; i < isaacSize; i++)
 				{
 					t.Toc();
-					seeds[i] = (ISAAC_INT)((t.EndTime() * i) + (size + 1));
+					seeds[i] = ISAAC_INT((t.EndTime() * i) + (size + 1));
 				}
 
 				t.Toc();
-				ISAAC_INT r = (ISAAC_INT)((size * i) + i + t.EndTime());
+				ISAAC_INT r = ISAAC_INT((size * i) + i + t.EndTime());
 				QTIsaac<ISAAC_SIZE, ISAAC_INT> isaac(r, r * 2, r * 3, seeds);
 
 				m_Rand.push_back(isaac);

@@ -36,7 +36,21 @@ public:
 template <typename T>
 class EMBERCL_API RendererCL : public Renderer<T, T>, public RendererCLBase
 {
-using EmberNs::Renderer<T, T>::RendererBase::EmberReport::m_ErrorReport;
+using EmberNs::Renderer<T, T>::RendererBase::Abort;
+using EmberNs::Renderer<T, T>::RendererBase::EarlyClip;
+using EmberNs::Renderer<T, T>::RendererBase::Transparency;
+using EmberNs::Renderer<T, T>::RendererBase::EnterResize;
+using EmberNs::Renderer<T, T>::RendererBase::LeaveResize;
+using EmberNs::Renderer<T, T>::RendererBase::FinalRasW;
+using EmberNs::Renderer<T, T>::RendererBase::FinalRasH;
+using EmberNs::Renderer<T, T>::RendererBase::SuperRasW;
+using EmberNs::Renderer<T, T>::RendererBase::SuperRasH;
+using EmberNs::Renderer<T, T>::RendererBase::SuperSize;
+using EmberNs::Renderer<T, T>::RendererBase::BytesPerChannel;
+using EmberNs::Renderer<T, T>::RendererBase::TemporalSamples;
+using EmberNs::Renderer<T, T>::RendererBase::ItersPerTemporalSample;
+using EmberNs::Renderer<T, T>::RendererBase::FuseCount;
+using EmberNs::Renderer<T, T>::RendererBase::DensityFilterOffset;
 using EmberNs::Renderer<T, T>::RendererBase::m_ProgressParameter;
 using EmberNs::Renderer<T, T>::RendererBase::m_YAxisUp;
 using EmberNs::Renderer<T, T>::RendererBase::m_LockAccum;
@@ -50,8 +64,22 @@ using EmberNs::Renderer<T, T>::RendererBase::m_Rand;
 using EmberNs::Renderer<T, T>::RendererBase::m_RenderTimer;
 using EmberNs::Renderer<T, T>::RendererBase::m_IterTimer;
 using EmberNs::Renderer<T, T>::RendererBase::m_ProgressTimer;
+using EmberNs::Renderer<T, T>::RendererBase::EmberReport::m_ErrorReport;
 using EmberNs::Renderer<T, T>::m_RotMat;
 using EmberNs::Renderer<T, T>::m_Ember;
+using EmberNs::Renderer<T, T>::CenterX;
+using EmberNs::Renderer<T, T>::CenterY;
+using EmberNs::Renderer<T, T>::K1;
+using EmberNs::Renderer<T, T>::K2;
+using EmberNs::Renderer<T, T>::Supersample;
+using EmberNs::Renderer<T, T>::HighlightPower;
+using EmberNs::Renderer<T, T>::HistBuckets;
+using EmberNs::Renderer<T, T>::AccumulatorBuckets;
+using EmberNs::Renderer<T, T>::GetDensityFilter;
+using EmberNs::Renderer<T, T>::GetSpatialFilter;
+using EmberNs::Renderer<T, T>::CoordMap;
+using EmberNs::Renderer<T, T>::XformDistributions;
+using EmberNs::Renderer<T, T>::XformDistributionsSize;
 
 public:
 	RendererCL(uint platform = 0, uint device = 0, bool shared = false, GLuint outputTexID = 0);

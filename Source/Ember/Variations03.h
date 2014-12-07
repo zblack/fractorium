@@ -278,7 +278,7 @@ public:
 	{
 		T r = Zeps(pow(helper.m_PrecalcSqrtSumSquares, m_Dist));
 		int n = Floor<T>(m_Power * rand.Frand01<T>());
-		T alpha = helper.m_PrecalcAtanyx + n * M_2PI / Zeps<T>((T)Floor<T>(m_Power));
+		T alpha = helper.m_PrecalcAtanyx + n * M_2PI / Zeps<T>(T(Floor<T>(m_Power)));
 		T sina = sin(alpha);
 		T cosa = cos(alpha);
 
@@ -923,17 +923,17 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T f = rand.Frand01<T>() * m_Power * 2;
-		T angle = (T)(int)(f);
+		T angle = T(int(f));
 
 		f -= angle;
 
 		T x = f * m_Length;
 		T z = sqrt(1 + SQR(x) - 2 * x * cos(m_Alpha));
 
-		if (((int)angle) % 2)
-			angle = M_2PI / m_Power * (((int)angle) / 2) + asin(sin(m_Alpha) * x / z);
+		if (int(angle) % 2)
+			angle = M_2PI / m_Power * (int(angle) / 2) + asin(sin(m_Alpha) * x / z);
 		else
-			angle = M_2PI / m_Power * (((int)angle) / 2) - asin(sin(m_Alpha) * x / z);
+			angle = M_2PI / m_Power * (int(angle) / 2) - asin(sin(m_Alpha) * x / z);
 
 		z *= sqrt(rand.Frand01<T>());
 
@@ -1186,7 +1186,7 @@ public:
 	{
 		T xang = (helper.m_PrecalcAtanyx + T(M_PI)) / m_Alpha;
 
-		xang = (xang - (int) xang) * m_Alpha;
+		xang = (xang - int(xang)) * m_Alpha;
 		xang = cos((xang < m_Alpha / 2) ? xang : m_Alpha - xang);
 
 		T xr = xang > 0 ? m_Radius / xang : 1;
@@ -1310,7 +1310,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T xang = (helper.m_PrecalcAtanyx + M_3PI + m_Alpha / 2) / m_Alpha;
-		T zang = ((xang - (int)xang) * m_Width + (int)xang) * m_Alpha - T(M_PI) - m_Alpha / 2 * m_Width;
+		T zang = ((xang - int(xang)) * m_Width + int(xang)) * m_Alpha - T(M_PI) - m_Alpha / 2 * m_Width;
 
 		helper.Out.x = m_Weight * helper.m_PrecalcSqrtSumSquares * cos(zang);
 		helper.Out.y = m_Weight * helper.m_PrecalcSqrtSumSquares * sin(zang);
@@ -1495,7 +1495,7 @@ public:
 		T z = helper.In.z / m_AbsN;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares + SQR(z), m_Cn);
 		T tmp = r * helper.m_PrecalcSqrtSumSquares;
-		T ang = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((uint)m_AbsN)) / m_N;
+		T ang = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand(uint(m_AbsN))) / m_N;
 
 		helper.Out.x = tmp * cos(ang);
 		helper.Out.y = tmp * sin(ang);
@@ -1574,7 +1574,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
-		T temp = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((uint)m_AbsN)) / m_N;
+		T temp = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand(uint(m_AbsN))) / m_N;
 
 		helper.Out.x = r * cos(temp);
 		helper.Out.y = r * sin(temp);
@@ -3200,7 +3200,7 @@ public:
 
 		if (a >= 0)
 		{
-			alt = (int)(a * m_KnPi);
+			alt = int(a * m_KnPi);
 
 			if (alt % 2 == 0)
 				a = alt * m_PiKn + fmod(m_KaKn + a, m_PiKn);
@@ -3209,7 +3209,7 @@ public:
 		}
 		else
 		{
-			alt = (int)(-a * m_KnPi);
+			alt = int(-a * m_KnPi);
 
 			if (alt % 2 == 1)
 				a = -(alt * m_PiKn + fmod(-m_KaKn - a, m_PiKn));
@@ -3539,7 +3539,7 @@ public:
 	{
 		T tau = T(0.5) * (log(Sqr(helper.In.x + 1) + SQR(helper.In.y)) - log(Sqr(helper.In.x - 1) + SQR(helper.In.y)));
 		T sigma = T(M_PI) - atan2(helper.In.y, helper.In.x + 1) - atan2(helper.In.y, 1 - helper.In.x);
-		int alt = (int)(sigma * m_CnPi);
+		int alt = int(sigma * m_CnPi);
 
 		if (alt % 2 == 0)
 			sigma = alt * m_PiCn + fmod(sigma + m_CaCn, m_PiCn);
@@ -3857,7 +3857,7 @@ public:
 
 		if (helper.In.y > 0)
 		{
-			alt = (int)(nu * m_CnPi);
+			alt = int(nu * m_CnPi);
 
 			if (alt % 2 == 0)
 				nu = alt * m_PiCn + fmod(nu + m_CaCn, m_PiCn);
@@ -3866,7 +3866,7 @@ public:
 		}
 		else
 		{
-			alt = (int)(nu * m_CnPi);
+			alt = int(nu * m_CnPi);
 
 			if (alt % 2 == 0)
 				nu = alt * m_PiCn + fmod(nu + m_CaCn, m_PiCn);

@@ -188,11 +188,11 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 			{
 				buf.resize(statBuf.st_size + (nullTerminate ? 1 : 0));//Allocate vector to be the size of the entire file, with an optional additional character for nullptr.
 
-				if (buf.size() == (size_t)(statBuf.st_size + 1))//Ensure allocation succeeded.
+				if (buf.size() == static_cast<size_t>(statBuf.st_size + 1))//Ensure allocation succeeded.
 				{
 					size_t bytesRead = fread(&buf[0], 1, statBuf.st_size, f);//Read the entire file at once.
 
-					if (bytesRead == (size_t)statBuf.st_size)//Ensure the number of bytes read matched what was requested.
+					if (bytesRead == (static_cast<size_t>(statBuf.st_size)))//Ensure the number of bytes read matched what was requested.
 					{
 						if (nullTerminate)//Optionally nullptr terminate if they want to treat it as a string.
 							buf[buf.size() - 1] = 0;
@@ -229,7 +229,7 @@ static void CopyVec(vector<T>& dest, const vector<U>& source)
 	dest.resize(source.size());
 
 	for (size_t i = 0; i < source.size(); i++)
-		dest[i] = (T)source[i];//Valid assignment operator between T and U types must be defined somewhere.
+		dest[i] = static_cast<T>(source[i]);//Valid assignment operator between T and U types must be defined somewhere.
 }
 
 /// <summary>
@@ -248,7 +248,7 @@ static void CopyVec(vector<T>& dest, const vector<U>& source, std::function<void
 
 	for (size_t i = 0; i < source.size(); i++)
 	{
-		dest[i] = (T)source[i];//Valid assignment operator between T and U types must be defined somewhere.
+		dest[i] = static_cast<T>(source[i]);//Valid assignment operator between T and U types must be defined somewhere.
 		perElementOperation(dest[i]);
 	}
 }
@@ -287,7 +287,7 @@ static void ClearVec(vector<T*>& vec, bool arrayDelete = false)
 template<typename T>
 static inline void Memset(vector<T>& vec, int val = 0)
 {
-	memset((void*)vec.data(), val, SizeOf(vec));
+	memset(static_cast<void*>(vec.data()), val, SizeOf(vec));
 }
 
 /// <summary>
@@ -301,11 +301,11 @@ static inline int Floor(T val)
 {
 	if (val >= 0)
 	{
-		return (int)val;
+		return static_cast<int>(val);
 	}
 	else
 	{
-		int i = (int)val;//Truncate.
+		int i = static_cast<int>(val);//Truncate.
 		return i - (i > val);//Convert trunc to floor.
 	}
 }
@@ -430,7 +430,7 @@ static inline void ClampGte0Ref(T& val)
 template <typename T>
 static inline T Round(T r)
 {
-	return (r > 0) ? (T)Floor<T>(r + T(0.5)) : ceil(r - T(0.5));
+	return (r > 0) ? static_cast<T>(Floor<T>(r + T(0.5))) : ceil(r - T(0.5));
 }
 
 /// <summary>
@@ -440,8 +440,8 @@ static inline T Round(T r)
 /// <returns>The rounded value</returns>
 static inline float LRint(float x)
 {
-	int temp = (x >= 0 ? (int)(x + 0.5f) : (int)(x - 0.5f));
-	return (float)temp;
+	int temp = (x >= 0 ? static_cast<int>(x + 0.5f) : static_cast<int>(x - 0.5f));
+	return static_cast<float>(temp);
 }
 
 /// <summary>
@@ -451,8 +451,8 @@ static inline float LRint(float x)
 /// <returns>The rounded value</returns>
 static inline double LRint(double x)
 {
-	glm::int64_t temp = (x >= 0 ? (int64_t)(x + 0.5) : (int64_t)(x - 0.5));
-	return (double)temp;
+	glm::int64_t temp = (x >= 0 ? static_cast<int64_t>(x + 0.5) : static_cast<int64_t>(x - 0.5));
+	return static_cast<double>(temp);
 }
 
 /// <summary>
@@ -468,7 +468,7 @@ static inline T Round6(T r)
 	if (r < 0)
 		r -= 1;
 
-	return T(1e-6 * (int)(r + T(0.5)));
+	return static_cast<T>(1e-6 * static_cast<int>(r + T(0.5)));
 }
 
 /// <summary>
@@ -480,7 +480,7 @@ static inline T Round6(T r)
 template <typename T>
 static inline T Sign(T v)
 {
-	return (v < 0) ? T(-1) : (v > 0) ? T(1) : T(0);
+	return (v < 0) ? static_cast<T>(-1) : (v > 0) ? static_cast<T>(1) : static_cast<T>(0);
 }
 
 /// <summary>
@@ -492,7 +492,7 @@ static inline T Sign(T v)
 template <typename T>
 static inline T SignNz(T v)
 {
-	return (v < 0) ? T(-1) : T(1);
+	return (v < 0) ? static_cast<T>(-1) : static_cast<T>(1);
 }
 
 /// <summary>
@@ -701,7 +701,7 @@ static inline T LogMap(T x)
 /// <returns>True if the comparison matched, else false</returns>
 static inline bool Compare(const xmlChar* name, const char* val)
 {
-	return xmlStrcmp(name, XC val) != 0;
+	return xmlStrcmp(name, XC(val)) != 0;
 }
 
 /// <summary>
@@ -904,7 +904,7 @@ static
 #endif
 uint Arg<uint>(char* name, uint def)
 {
-	return Arg<int>(name, (int)def);
+	return Arg<int>(name, static_cast<int>(def));
 }
 
 /// <summary>

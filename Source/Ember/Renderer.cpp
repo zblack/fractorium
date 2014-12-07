@@ -124,11 +124,11 @@ void Renderer<T, bucketT>::ComputeBounds()
 	//If the radius of the density estimation filter is greater than the
 	//gutter width, have to pad with more.  Otherwise, use the same value.
 	for (size_t i = 0; i < m_Embers.size(); i++)
-		maxDEFilterWidth = max((size_t)(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
+		maxDEFilterWidth = max(size_t(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
 
 	//Need an extra ss = (int)floor(m_Supersample / 2.0) of pixels so that a local iteration count for DE can be determined.//SMOULDER
 	if (maxDEFilterWidth > 0)
-		maxDEFilterWidth += (size_t)Floor<T>(m_Ember.m_Supersample / T(2));
+		maxDEFilterWidth += size_t(Floor<T>(m_Ember.m_Supersample / T(2)));
 
 	//To have a fully present set of pixels for the spatial filter, must
 	//add the DE filter width to the spatial filter width.//SMOULDER
@@ -546,7 +546,7 @@ FilterAndAccum:
 		//to be very dark. Correct it by pretending the number of iters done is the exact quality desired and then scale according to that.
 		if (forceOutput)
 		{
-			T quality = ((T)m_Stats.m_Iters / (T)FinalDimensions()) * (m_Scale * m_Scale);
+			T quality = (T(m_Stats.m_Iters) / T(FinalDimensions())) * (m_Scale * m_Scale);
 			m_K2 = (Supersample() * Supersample()) / (area * quality * m_TemporalFilter->SumFilt());
 		}
 		else
@@ -654,7 +654,7 @@ EmberImageComments Renderer<T, bucketT>::ImageComments(EmberStats& stats, size_t
 
 	ss.imbue(std::locale(""));
 	comments.m_Genome = m_EmberToXml.ToString(m_Ember, "", printEditDepth, false, intPalette, hexPalette);
-	ss << ((double)stats.m_Badvals / (double)stats.m_Iters);//Percentage of bad values to iters.
+	ss << (double(stats.m_Badvals) / double(stats.m_Iters));//Percentage of bad values to iters.
 	comments.m_Badvals = ss.str(); ss.str("");
 	ss << stats.m_Iters;
 	comments.m_NumIters = ss.str(); ss.str("");//Total iters.
@@ -804,7 +804,7 @@ eRenderStatus Renderer<T, bucketT>::LogScaleDensityFilter()
 
 				//Original did a temporary assignment, then *= logScale, then passed the result to bump_no_overflow().
 				//Combine here into one operation for a slight speedup.
-				m_AccumulatorBuckets[index] = m_HistBuckets[index] * (bucketT)logScale;
+				m_AccumulatorBuckets[index] = m_HistBuckets[index] * bucketT(logScale);
 			}
 		}
 	});
@@ -833,14 +833,14 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 	size_t endRow = m_SuperRasH - (Supersample() - 1);//Original did + which is most likely wrong.
 	intmax_t startCol = Supersample() - 1;
 	intmax_t endCol = m_SuperRasW - (Supersample() - 1);
-	size_t chunkSize = (size_t)ceil(double(endRow - startRow) / double(threads));
+	size_t chunkSize = size_t(ceil(double(endRow - startRow) / double(threads)));
 
 	//parallel_for scales very well, dividing the work almost perfectly among all processors.
 	parallel_for(size_t(0), threads, [&] (size_t threadIndex)
 	{
 		size_t pixelNumber = 0;
-		int localStartRow = (int)min(startRow + (threadIndex * chunkSize), endRow - 1);
-		int localEndRow = (int)min(localStartRow + chunkSize, endRow);
+		int localStartRow = int(min(startRow + (threadIndex * chunkSize), endRow - 1));
+		int localEndRow = int(min(localStartRow + chunkSize, endRow));
 		size_t pixelsThisThread = size_t(localEndRow - localStartRow) * m_SuperRasW;
 		double lastPercent = 0;
 		glm::detail::tvec4<bucketT, glm::defaultp> logScaleBucket;
@@ -876,9 +876,9 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 					//when calculating the density for a box centered on the last row or column.
 					//Clamp here to not run over the edge.
 					intmax_t densityBoxLeftX = (i - min(i, ss));
-					intmax_t densityBoxRightX = (i + min(ss, (intmax_t)m_SuperRasW - i - 1));
+					intmax_t densityBoxRightX = (i + min(ss, intmax_t(m_SuperRasW) - i - 1));
 					intmax_t densityBoxTopY = (j - min(j, ss));
-					intmax_t densityBoxBottomY = (j + min(ss, (intmax_t)m_SuperRasH - j - 1));
+					intmax_t densityBoxBottomY = (j + min(ss, intmax_t(m_SuperRasH) - j - 1));
 
 					//Count density in ssxss area.
 					//Original went one col at a time, which is cache inefficient. Go one row at at time here for a slight speedup.
@@ -894,9 +894,9 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 				if (filterSelect > m_DensityFilter->MaxFilteredCounts())
 					filterSelectInt = m_DensityFilter->MaxFilterIndex();
 				else if (filterSelect <= DE_THRESH)
-					filterSelectInt = (size_t)ceil(filterSelect) - 1;
+					filterSelectInt = size_t(ceil(filterSelect)) - 1;
 				else
-					filterSelectInt = DE_THRESH + (size_t)Floor<T>(pow(filterSelect - DE_THRESH, m_DensityFilter->Curve()));
+					filterSelectInt = DE_THRESH + size_t(Floor<T>(pow(filterSelect - DE_THRESH, m_DensityFilter->Curve())));
 
 				//If the filter selected below the min specified clamp it to the min.
 				if (filterSelectInt > m_DensityFilter->MaxFilterIndex())
@@ -904,7 +904,7 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 
 				//Only have to calculate the values for ~1/8 of the square.
 				filterCoefIndex = filterSelectInt * m_DensityFilter->KernelSize();
-				arrFilterWidth = (intmax_t)ceil(filterWidths[filterSelectInt]) - 1;
+				arrFilterWidth = intmax_t(ceil(filterWidths[filterSelectInt])) - 1;
 
 				for (jj = 0; jj <= arrFilterWidth; jj++)
 				{
@@ -1074,46 +1074,46 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t
 
 			if (BytesPerChannel() == 2)
 			{
-				p16 = (uint16*)(pixels + pixelsRowStart);
+				p16 = reinterpret_cast<uint16*>(pixels + pixelsRowStart);
 
 				if (EarlyClip())
 				{
-					p16[0] = (uint16)(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
-					p16[1] = (uint16)(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
-					p16[2] = (uint16)(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
+					p16[0] = uint16(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
+					p16[1] = uint16(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
+					p16[2] = uint16(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
 
 					if (NumChannels() > 3)
 					{
 						if (Transparency())
-							p16[3] = (byte)(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(65535.0));
+							p16[3] = byte(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(65535.0));
 						else
 							p16[3] = 65535;
 					}
 				}
 				else
 				{
-					GammaCorrection(*(glm::detail::tvec4<bucketT, glm::defaultp>*)(&newBucket), background, g, linRange, vibrancy, NumChannels() > 3, true, p16);
+					GammaCorrection(*(reinterpret_cast<glm::detail::tvec4<bucketT, glm::defaultp>*>(&newBucket)), background, g, linRange, vibrancy, NumChannels() > 3, true, p16);
 				}
 			}
 			else
 			{
 				if (EarlyClip())
 				{
-					pixels[pixelsRowStart]     = (byte)Clamp<bucketT>(newBucket.r, 0, 255);
-					pixels[pixelsRowStart + 1] = (byte)Clamp<bucketT>(newBucket.g, 0, 255);
-					pixels[pixelsRowStart + 2] = (byte)Clamp<bucketT>(newBucket.b, 0, 255);
+					pixels[pixelsRowStart]     = byte(Clamp<bucketT>(newBucket.r, 0, 255));
+					pixels[pixelsRowStart + 1] = byte(Clamp<bucketT>(newBucket.g, 0, 255));
+					pixels[pixelsRowStart + 2] = byte(Clamp<bucketT>(newBucket.b, 0, 255));
 
 					if (NumChannels() > 3)
 					{
 						if (Transparency())
-							pixels[pixelsRowStart + 3] = (byte)(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(255.0));
+							pixels[pixelsRowStart + 3] = byte(Clamp<bucketT>(newBucket.a, 0, 1) * bucketT(255.0));
 						else
 							pixels[pixelsRowStart + 3] = 255;
 					}
 				}
 				else
 				{
-					GammaCorrection(*(glm::detail::tvec4<bucketT, glm::defaultp>*)(&newBucket), background, g, linRange, vibrancy, NumChannels() > 3, true, pixels + pixelsRowStart);
+					GammaCorrection(*(reinterpret_cast<glm::detail::tvec4<bucketT, glm::defaultp>*>(&newBucket)), background, g, linRange, vibrancy, NumChannels() > 3, true, pixels + pixelsRowStart);
 				}
 			}
 		}
@@ -1133,9 +1133,9 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t
 			{
 				byte* p = pixels + (NumChannels() * (i + j * FinalRasW()));
 
-				p[0] = (byte)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][0] * WHITE);//The palette is [0..1], output image is [0..255].
-				p[1] = (byte)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][1] * WHITE);
-				p[2] = (byte)(m_TempEmber.m_Palette[i * 256 / FinalRasW()][2] * WHITE);
+				p[0] = byte(m_TempEmber.m_Palette[i * 256 / FinalRasW()][0] * WHITE);//The palette is [0..1], output image is [0..255].
+				p[1] = byte(m_TempEmber.m_Palette[i * 256 / FinalRasW()][1] * WHITE);
+				p[2] = byte(m_TempEmber.m_Palette[i * 256 / FinalRasW()][2] * WHITE);
 			}
 		}
 	}
@@ -1164,7 +1164,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 {
 	//Timing t2(4);
 	m_IterTimer.Tic();
-	size_t totalItersPerThread = (size_t)ceil((double)iterCount / (double)m_ThreadsToUse);
+	size_t totalItersPerThread = size_t(ceil(double(iterCount) / double(m_ThreadsToUse)));
 	double percent, etaMs;
 	EmberStats stats;
 
@@ -1232,7 +1232,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 							//This assumes the threads progress at roughly the same speed.
 							double(m_LastIter + (m_SubBatch[threadIndex] * m_ThreadsToUse)) / double(ItersPerTemporalSample())
 						) + temporalSample
-					) / (double)TemporalSamples()
+					) / double(TemporalSamples())
 				);
 
 				double percentDiff = percent - m_LastIterPercent;
@@ -1305,11 +1305,11 @@ template <typename T, typename bucketT> TemporalFilter<T>*							Renderer<T, buc
 /// Virtual renderer properties overridden from RendererBase, getters only.
 /// </summary>
 
-template <typename T, typename bucketT> double			   Renderer<T, bucketT>::ScaledQuality()		  const { return (double)m_ScaledQuality; }
-template <typename T, typename bucketT> double			   Renderer<T, bucketT>::LowerLeftX(bool  gutter) const { return (double)(gutter ? m_CarToRas.CarLlX() : m_LowerLeftX); }
-template <typename T, typename bucketT> double			   Renderer<T, bucketT>::LowerLeftY(bool  gutter) const { return (double)(gutter ? m_CarToRas.CarLlY() : m_LowerLeftY); }
-template <typename T, typename bucketT> double			   Renderer<T, bucketT>::UpperRightX(bool gutter) const { return (double)(gutter ? m_CarToRas.CarUrX() : m_UpperRightX); }
-template <typename T, typename bucketT> double			   Renderer<T, bucketT>::UpperRightY(bool gutter) const { return (double)(gutter ? m_CarToRas.CarUrY() : m_UpperRightY); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::ScaledQuality()		  const { return double(m_ScaledQuality); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::LowerLeftX(bool  gutter) const { return double(gutter ? m_CarToRas.CarLlX() : m_LowerLeftX); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::LowerLeftY(bool  gutter) const { return double(gutter ? m_CarToRas.CarLlY() : m_LowerLeftY); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::UpperRightX(bool gutter) const { return double(gutter ? m_CarToRas.CarUrX() : m_UpperRightX); }
+template <typename T, typename bucketT> double			   Renderer<T, bucketT>::UpperRightY(bool gutter) const { return double(gutter ? m_CarToRas.CarUrY() : m_UpperRightY); }
 template <typename T, typename bucketT> DensityFilterBase* Renderer<T, bucketT>::GetDensityFilter()			    { return m_DensityFilter.get(); }
 
 /// <summary>
@@ -1357,9 +1357,9 @@ template <typename T, typename bucketT> size_t Renderer<T, bucketT>::FuseCount()
 /// Non-virtual iterator wrappers.
 /// </summary>
 
-template <typename T, typename bucketT> const byte* Renderer<T, bucketT>::XformDistributions()        const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr; }
-template <typename T, typename bucketT> const size_t		 Renderer<T, bucketT>::XformDistributionsSize()    const { return m_Iterator != nullptr ? m_Iterator->XformDistributionsSize() : 0; }
-template <typename T, typename bucketT> Point<T>*            Renderer<T, bucketT>::Samples(size_t threadIndex) const { return threadIndex < m_Samples.size() ? (Point<T>*)m_Samples[threadIndex].data() : nullptr; }
+template <typename T, typename bucketT> const byte* Renderer<T, bucketT>::XformDistributions() 		  const { return m_Iterator != nullptr ? m_Iterator->XformDistributions() : nullptr; }
+template <typename T, typename bucketT> size_t		Renderer<T, bucketT>::XformDistributionsSize()    const { return m_Iterator != nullptr ? m_Iterator->XformDistributionsSize() : 0; }
+template <typename T, typename bucketT> Point<T>*   Renderer<T, bucketT>::Samples(size_t threadIndex) const { return threadIndex < m_Samples.size() ? const_cast<Point<T>*>(m_Samples[threadIndex].data()) : nullptr; }
 
 /// <summary>
 /// Non-virtual functions that might be needed by a derived class.
@@ -1465,8 +1465,8 @@ void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Poin
 					//Use overloaded addition and multiplication operators in vec4 to perform the accumulation.
 					if (PaletteMode() == PALETTE_LINEAR)
 					{
-						colorIndex = (bucketT)p.m_ColorX * COLORMAP_LENGTH;
-						intColorIndex = (size_t)colorIndex;
+						colorIndex = bucketT(p.m_ColorX) * COLORMAP_LENGTH;
+						intColorIndex = size_t(colorIndex);
 
 						if (intColorIndex < 0)
 						{
@@ -1480,22 +1480,22 @@ void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Poin
 						}
 						else
 						{
-							colorIndexFrac = colorIndex - (bucketT)intColorIndex;//Interpolate between intColorIndex and intColorIndex + 1.
+							colorIndexFrac = colorIndex - bucketT(intColorIndex);//Interpolate between intColorIndex and intColorIndex + 1.
 						}
 
 						if (p.m_VizAdjusted == 1)
 							m_HistBuckets[histIndex] += ((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac));
 						else
-							m_HistBuckets[histIndex] += (((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac)) * (bucketT)p.m_VizAdjusted);
+							m_HistBuckets[histIndex] += (((dmap[intColorIndex] * (1 - colorIndexFrac)) + (dmap[intColorIndex + 1] * colorIndexFrac)) * bucketT(p.m_VizAdjusted));
 					}
 					else if (PaletteMode() == PALETTE_STEP)
 					{
-						intColorIndex = Clamp<size_t>((size_t)(p.m_ColorX * COLORMAP_LENGTH), 0, COLORMAP_LENGTH_MINUS_1);
+						intColorIndex = Clamp<size_t>(size_t(p.m_ColorX * COLORMAP_LENGTH), 0, COLORMAP_LENGTH_MINUS_1);
 
 						if (p.m_VizAdjusted == 1)
 							m_HistBuckets[histIndex] += dmap[intColorIndex];
 						else
-							m_HistBuckets[histIndex] += (dmap[intColorIndex] * (bucketT)p.m_VizAdjusted);
+							m_HistBuckets[histIndex] += (dmap[intColorIndex] * bucketT(p.m_VizAdjusted));
 					}
 				}
 			}
@@ -1514,7 +1514,7 @@ void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Poin
 template <typename T, typename bucketT>
 void Renderer<T, bucketT>::AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj)
 {
-	if (j + jj >= 0 && j + jj < (intmax_t)m_SuperRasH && i + ii >= 0 && i + ii < (intmax_t)m_SuperRasW)
+	if (j + jj >= 0 && j + jj < intmax_t(m_SuperRasH) && i + ii >= 0 && i + ii < intmax_t(m_SuperRasW))
 		m_AccumulatorBuckets[(i + ii) + ((j + jj) * m_SuperRasW)] += bucket;
 }
 
@@ -1573,17 +1573,17 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 		}
 
 		if (!scale)
-			correctedChannels[rgbi] = (accumT)Clamp<T>(a, 0, 255);//Early clip, just assign directly.
+			correctedChannels[rgbi] = accumT(Clamp<T>(a, 0, 255));//Early clip, just assign directly.
 		else
-			correctedChannels[rgbi] = (accumT)(Clamp<T>(a, 0, 255) * scaleVal);//Final accum, multiply by 1 for 8 bpc, or 256 for 16 bpc.
+			correctedChannels[rgbi] = accumT(Clamp<T>(a, 0, 255) * scaleVal);//Final accum, multiply by 1 for 8 bpc, or 256 for 16 bpc.
 	}
 
 	if (doAlpha)
 	{
 		if (!scale)
-			correctedChannels[3] = (accumT)alpha;//Early clip, just assign alpha directly.
+			correctedChannels[3] = accumT(alpha);//Early clip, just assign alpha directly.
 		else if (Transparency())
-			correctedChannels[3] = (accumT)(alpha * numeric_limits<accumT>::max());//Final accum, 4 channels, using transparency. Scale alpha from 0-1 to 0-255 for 8 bpc or 0-65535 for 16 bpc.
+			correctedChannels[3] = accumT(alpha * numeric_limits<accumT>::max());//Final accum, 4 channels, using transparency. Scale alpha from 0-1 to 0-255 for 8 bpc or 0-65535 for 16 bpc.
 		else
 			correctedChannels[3] = numeric_limits<accumT>::max();//Final accum, 4 channels, but not using transparency. 255 for 8 bpc, 65535 for 16 bpc.
 	}

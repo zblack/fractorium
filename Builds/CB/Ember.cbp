@@ -98,6 +98,8 @@
 			<Add option="-Wall" />
 			<Add option="-fpermissive" />
 			<Add option="-fPIC" />
+			<Add option="-Wno-unused-function" />
+			<Add option="-Wold-style-cast" />
 			<Add directory="/usr/include/libxml2" />
 		</Compiler>
 		<Linker>

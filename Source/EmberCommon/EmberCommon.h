@@ -161,7 +161,7 @@ static uint CalcStrips(double memRequired, double memAvailable, double useMem)
 	if (memAvailable >= memRequired)
 		return 1;
 
-	strips = (uint)ceil(memRequired / memAvailable);
+	strips = uint(ceil(memRequired / memAvailable));
 
 	return strips;
 }
@@ -290,7 +290,7 @@ static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<byte>& 
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> randVec;
 
 	ember.m_Quality *= strips;
-	ember.m_FinalRasH = (size_t)ceil(floatStripH);
+	ember.m_FinalRasH = size_t(ceil(floatStripH));
 
 	if (strips > 1)
 		randVec = renderer->RandVec();
@@ -298,7 +298,7 @@ static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<byte>& 
 	for (size_t strip = 0; strip < strips; strip++)
 	{
 		size_t stripOffset;
-		
+
 		if (yAxisUp)
 			stripOffset = ember.m_FinalRasH * ((strips - strip) - 1) * renderer->FinalRowSize();
 		else
@@ -346,7 +346,7 @@ static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<byte>& 
 			allStripsFinished(ember);
 		}
 	}
-	
+
 	Memset(finalImage);
 
 	return success;
@@ -370,7 +370,7 @@ static size_t VerifyStrips(size_t height, size_t strips,
 	{
 		os << "A strips value of " << strips << " does not divide evenly into a height of " << height << ".";
 		stripError2(os.str()); os.str("");
-		
+
 		strips = NextHighestEvenDiv(height, strips);
 
 		if (strips == 1)//No higher divisor, check for a lower one.

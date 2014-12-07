@@ -168,8 +168,8 @@ bool EmberRender(EmberOptions& opt)
 
 		embers[i].m_TemporalSamples = 1;//Force temporal samples to 1 for render.
 		embers[i].m_Quality *= T(opt.QualityScale());
-		embers[i].m_FinalRasW = (uint)((T)embers[i].m_FinalRasW * opt.SizeScale());
-		embers[i].m_FinalRasH = (uint)((T)embers[i].m_FinalRasH * opt.SizeScale());
+		embers[i].m_FinalRasW = uint(T(embers[i].m_FinalRasW) * opt.SizeScale());
+		embers[i].m_FinalRasH = uint(T(embers[i].m_FinalRasH) * opt.SizeScale());
 		embers[i].m_PixelsPerUnit *= T(opt.SizeScale());
 
 		if (embers[i].m_FinalRasW == 0 || embers[i].m_FinalRasH == 0)
@@ -180,8 +180,8 @@ bool EmberRender(EmberOptions& opt)
 		}
 
 		//Cast to double in case the value exceeds 2^32.
-		double imageMem = (double)renderer->NumChannels() * (double)embers[i].m_FinalRasW
-			   * (double)embers[i].m_FinalRasH * (double)renderer->BytesPerChannel();
+		double imageMem = double(renderer->NumChannels()) * double(embers[i].m_FinalRasW)
+			   * double(embers[i].m_FinalRasH) * double(renderer->BytesPerChannel());
 		double maxMem = pow(2.0, double((sizeof(void*) * 8) - 1));
 
 		if (imageMem > maxMem)//Ensure the max amount of memory for a process is not exceeded.
@@ -201,7 +201,7 @@ bool EmberRender(EmberOptions& opt)
 		}
 		else
 		{
-			strips = CalcStrips((double)renderer->MemoryRequired(1, true), (double)renderer->MemoryAvailable(), opt.UseMem());
+			strips = CalcStrips(double(renderer->MemoryRequired(1, true)), double(renderer->MemoryAvailable()), opt.UseMem());
 
 			if (strips > 1)
 				VerbosePrint("Setting strips to " << strips << " with specified memory usage of " << opt.UseMem());
@@ -268,7 +268,7 @@ bool EmberRender(EmberOptions& opt)
 			iterCount = renderer->TotalIterCount(1);
 			comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 			os.str("");
-			os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << (((double)stats.m_Iters / (double)iterCount) * 100) << "%)";
+			os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << ((double(stats.m_Iters) / double(iterCount)) * 100) << "%)";
 
 			VerbosePrint("\nIters ran/requested: " + os.str());
 			VerbosePrint("Bad values: " << stats.m_Badvals);
@@ -304,7 +304,7 @@ bool EmberRender(EmberOptions& opt)
 		});
 
 		if (opt.EmberCL() && opt.DumpKernel())
-			cout << "Iteration kernel: \n" << ((RendererCL<T>*)renderer.get())->IterKernel() << endl;
+			cout << "Iteration kernel: \n" << reinterpret_cast<RendererCL<T>*>(renderer.get())->IterKernel() << endl;
 
 		VerbosePrint("Done.");
 	}
@@ -331,7 +331,7 @@ int _tmain(int argc, _TCHAR* argv[])
 #ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
 #else
-	putenv((char*)"GPU_MAX_ALLOC_PERCENT=100");
+	putenv(const_cast<char*>("GPU_MAX_ALLOC_PERCENT=100"));
 #endif
 
 	if (!opt.Populate(argc, argv, OPT_USE_RENDER))

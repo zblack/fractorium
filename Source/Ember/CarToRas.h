@@ -128,10 +128,10 @@ public:
 		T invSizeW = T(1.0) / carW;
 		T invSizeH = T(1.0) / carH;
 
-		m_PixPerImageUnitW = (T)rasW * invSizeW;
+		m_PixPerImageUnitW = static_cast<T>(rasW) * invSizeW;
 		m_RasLlX = m_PixPerImageUnitW * carLlX;
 
-		m_PixPerImageUnitH = (T)rasH * invSizeH;
+		m_PixPerImageUnitH = static_cast<T>(rasH) * invSizeH;
 		m_RasLlY = m_PixPerImageUnitH * carLlY;
 
 		m_OneRow = abs(m_CarUrY - m_CarLlY) / m_RasHeight;
@@ -158,8 +158,8 @@ public:
 	/// <param name="rasY">The converted raster y</param>
 	inline void Convert(T cartX, T cartY, size_t& rasX, size_t& rasY)
 	{
-		rasX = (size_t)(m_PixPerImageUnitW * cartX - m_RasLlX);
-		rasY = (size_t)(m_RasLlY - (m_PixPerImageUnitH * cartY));
+		rasX = static_cast<size_t>(m_PixPerImageUnitW * cartX - m_RasLlX);
+		rasY = static_cast<size_t>(m_RasLlY - (m_PixPerImageUnitH * cartY));
 	}
 
 	/// <summary>
@@ -175,7 +175,7 @@ public:
 	/// <param name="singleBufferIndex">The converted single raster buffer index</param>
 	inline void Convert(T cartX, T cartY, size_t& singleBufferIndex)
 	{
-		singleBufferIndex = (size_t)(m_PixPerImageUnitW * cartX - m_RasLlX) + (m_RasWidth * (size_t)(m_PixPerImageUnitH * cartY - m_RasLlY));
+		singleBufferIndex = static_cast<size_t>(m_PixPerImageUnitW * cartX - m_RasLlX) + (m_RasWidth * static_cast<size_t>(m_PixPerImageUnitH * cartY - m_RasLlY));
 	}
 
 	/// <summary>
@@ -192,7 +192,7 @@ public:
 	/// <param name="singleBufferIndex">The converted single raster buffer index</param>
 	inline void Convert(Point<T>& point, size_t& singleBufferIndex)
 	{
-		singleBufferIndex = (size_t)(m_PixPerImageUnitW * point.m_X - m_RasLlX) + (m_RasWidth * (size_t)(m_PixPerImageUnitH * point.m_Y - m_RasLlY));
+		singleBufferIndex = static_cast<size_t>(m_PixPerImageUnitW * point.m_X - m_RasLlX) + (m_RasWidth * static_cast<size_t>(m_PixPerImageUnitH * point.m_Y - m_RasLlY));
 	}
 
 	/// <summary>

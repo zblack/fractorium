@@ -70,8 +70,8 @@ static bool WriteJpeg(const char* filename, byte* image, size_t width, size_t he
 		jpeg_stdio_dest(&info, file);
 		info.in_color_space = JCS_RGB;
 		info.input_components = 3;
-		info.image_width = (JDIMENSION)width;
-		info.image_height = (JDIMENSION)height;
+		info.image_width = JDIMENSION(width);
+		info.image_height = JDIMENSION(height);
 		jpeg_set_defaults(&info);
 		jpeg_set_quality(&info, quality, TRUE);
 		jpeg_start_compress(&info, TRUE);
@@ -79,36 +79,36 @@ static bool WriteJpeg(const char* filename, byte* image, size_t width, size_t he
 		//Write comments to jpeg.
 		if (enableComments)
 		{
-			jpeg_write_marker(&info, JPEG_COM, (byte*)verString, (int)strlen(verString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(verString), strlen(verString));
 
 			if (nick != "")
 			{
 				snprintf_s(nickString, 64, "flam3_nickname: %s", nick.c_str());
-				jpeg_write_marker(&info, JPEG_COM, (byte*)nickString, (int)strlen(nickString));
+				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(nickString), strlen(nickString));
 			}
 
 			if (url != "")
 			{
 				snprintf_s(urlString, 128, "flam3_url: %s", url.c_str());
-				jpeg_write_marker(&info, JPEG_COM, (byte*)urlString, (int)strlen(urlString));
+				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(urlString), strlen(urlString));
 			}
 
 			if (id != "")
 			{
 				snprintf_s(idString, 128, "flam3_id: %s", id.c_str());
-				jpeg_write_marker(&info, JPEG_COM, (byte*)idString, (int)strlen(idString));
+				jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(idString), strlen(idString));
 			}
 
-			jpeg_write_marker(&info, JPEG_COM, (byte*)bvString, (int)strlen(bvString));
-			jpeg_write_marker(&info, JPEG_COM, (byte*)niString, (int)strlen(niString));
-			jpeg_write_marker(&info, JPEG_COM, (byte*)rtString, (int)strlen(rtString));
-			jpeg_write_marker(&info, JPEG_COM, (byte*)genomeString, (int)strlen(genomeString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(bvString), strlen(bvString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(niString), strlen(niString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(rtString), strlen(rtString));
+			jpeg_write_marker(&info, JPEG_COM, reinterpret_cast<byte*>(genomeString), strlen(genomeString));
 		}
 
 		for (i = 0; i < height; i++)
 		{
 			JSAMPROW row_pointer[1];
-			row_pointer[0] = (byte*)image + (3 * width * i);
+			row_pointer[0] = reinterpret_cast<byte*>(image) + (3 * width * i);
 			jpeg_write_scanlines(&info, row_pointer, 1);
 		}
 
@@ -150,39 +150,39 @@ static bool WritePng(const char* filename, byte* image, size_t width, size_t hei
 		vector<byte*> rows(height);
 
 		text[0].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[0].key = (png_charp)"flam3_version";
-		text[0].text = (png_charp)EmberVersion();
+		text[0].key = const_cast<png_charp>("flam3_version");
+		text[0].text = const_cast<png_charp>(EmberVersion());
 
 		text[1].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[1].key = (png_charp)"flam3_nickname";
-		text[1].text = (png_charp)nick.c_str();
+		text[1].key = const_cast<png_charp>("flam3_nickname");
+		text[1].text = const_cast<png_charp>(nick.c_str());
 
 		text[2].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[2].key = (png_charp)"flam3_url";
-		text[2].text = (png_charp)url.c_str();
+		text[2].key = const_cast<png_charp>("flam3_url");
+		text[2].text = const_cast<png_charp>(url.c_str());
 
 		text[3].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[3].key = (png_charp)"flam3_id";
-		text[3].text = (png_charp)id.c_str();
+		text[3].key = const_cast<png_charp>("flam3_id");
+		text[3].text = const_cast<png_charp>(id.c_str());
 
 		text[4].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[4].key = (png_charp)"flam3_error_rate";
-		text[4].text = (png_charp)comments.m_Badvals.c_str();
+		text[4].key = const_cast<png_charp>("flam3_error_rate");
+		text[4].text = const_cast<png_charp>(comments.m_Badvals.c_str());
 
 		text[5].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[5].key = (png_charp)"flam3_samples";
-		text[5].text = (png_charp)comments.m_NumIters.c_str();
+		text[5].key = const_cast<png_charp>("flam3_samples");
+		text[5].text = const_cast<png_charp>(comments.m_NumIters.c_str());
 
 		text[6].compression = PNG_TEXT_COMPRESSION_NONE;
-		text[6].key = (png_charp)"flam3_time";
-		text[6].text = (png_charp)comments.m_Runtime.c_str();
+		text[6].key = const_cast<png_charp>("flam3_time");
+		text[6].text = const_cast<png_charp>(comments.m_Runtime.c_str());
 
 		text[7].compression = PNG_TEXT_COMPRESSION_zTXt;
-		text[7].key = (png_charp)"flam3_genome";
-		text[7].text = (png_charp)comments.m_Genome.c_str();
+		text[7].key = const_cast<png_charp>("flam3_genome");
+		text[7].text = const_cast<png_charp>(comments.m_Genome.c_str());
 
 		for (i = 0; i < height; i++)
-			rows[i] = (byte*)image + i * width * 4 * bytesPerChannel;
+			rows[i] = image + i * width * 4 * bytesPerChannel;
 
 		png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, nullptr, nullptr, nullptr);
 		info_ptr = png_create_info_struct(png_ptr);
@@ -197,7 +197,7 @@ static bool WritePng(const char* filename, byte* image, size_t width, size_t hei
 
 		png_init_io(png_ptr, file);
 
-		png_set_IHDR(png_ptr, info_ptr, (png_uint_32)width, (png_uint_32)height, 8 * (png_uint_32)bytesPerChannel,
+		png_set_IHDR(png_ptr, info_ptr, png_uint_32(width), png_uint_32(height), 8 * png_uint_32(bytesPerChannel),
 			PNG_COLOR_TYPE_RGBA,
 			PNG_INTERLACE_NONE,
 			PNG_COMPRESSION_TYPE_BASE,
@@ -214,7 +214,7 @@ static bool WritePng(const char* filename, byte* image, size_t width, size_t hei
 			png_set_swap(png_ptr);
 		}
 
-		png_write_image(png_ptr, (png_bytepp) rows.data());
+		png_write_image(png_ptr, const_cast<png_bytepp>(rows.data()));
 		png_write_end(png_ptr, info_ptr);
 		png_destroy_write_struct(&png_ptr, &info_ptr);
 		fclose(file);

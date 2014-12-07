@@ -610,7 +610,7 @@ public:
 	{
 		vector<eVariationId> useVars;
 
-		Random(ember, useVars, (int)m_Rand.Frand<T>(-2, 2), 0);
+		Random(ember, useVars, static_cast<int>(m_Rand.Frand<T>(-2, 2)), 0);
 	}
 
 	/// <summary>
@@ -747,7 +747,7 @@ public:
 							if (var != -2)
 							{
 								//Pick a random variation and use a random weight from 0-1.
-								Variation<T>* v = m_VariationList.GetVariationCopy((size_t)(m_Rand.Rand() % varCount), m_Rand.Frand<T>(T(0.001), 1));
+								Variation<T>* v = m_VariationList.GetVariationCopy(static_cast<size_t>(m_Rand.Rand() % varCount), m_Rand.Frand<T>(T(0.001), 1));
 
 								if (v && !xform->AddVariation(v))
 									delete v;//It already existed and therefore was not added.
@@ -782,7 +782,7 @@ public:
 					if (var != -2)
 					{
 						//Pick a random variation and use a random weight from 0-1.
-						xform->AddVariation(m_VariationList.GetVariationCopy((size_t)(m_Rand.Rand() % varCount), m_Rand.Frand<T>(T(0.001), 1)));
+						xform->AddVariation(m_VariationList.GetVariationCopy(static_cast<size_t>(m_Rand.Rand() % varCount), m_Rand.Frand<T>(T(0.001), 1)));
 					}
 					else
 					{
@@ -869,8 +869,8 @@ public:
 		//Scale the image so that the total number of pixels is ~10,000.
 		pixTotal = ember.m_FinalRasW * ember.m_FinalRasH;
 		scalar = sqrt(T(10000) / pixTotal);
-		adjustedEmber.m_FinalRasW = (size_t)(ember.m_FinalRasW  * scalar);
-		adjustedEmber.m_FinalRasH = (size_t)(ember.m_FinalRasH  * scalar);
+		adjustedEmber.m_FinalRasW = static_cast<size_t>(ember.m_FinalRasW  * scalar);
+		adjustedEmber.m_FinalRasH = static_cast<size_t>(ember.m_FinalRasH  * scalar);
 		adjustedEmber.m_PixelsPerUnit *= scalar;
 		adjustedEmber.m_TemporalSamples = 1;
 
@@ -889,7 +889,7 @@ public:
 
 		m_Hist.resize(res3);
 		memset(m_Hist.data(), 0, res3);
-		
+
 		p = m_FinalImage.data();
 
 		for (i = 0; i < m_Renderer->FinalDimensions(); i++)
@@ -1310,7 +1310,7 @@ public:
 		if (eps > T(0.3))
 			eps = T(0.3);
 
-		lowTarget = (size_t)(samples * eps);
+		lowTarget = static_cast<size_t>(samples * eps);
 		highTarget = samples - lowTarget;
 
 		min[0] = min[1] =  1e10;

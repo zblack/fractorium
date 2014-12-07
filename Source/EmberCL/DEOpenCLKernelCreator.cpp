@@ -188,14 +188,14 @@ uint DEOpenCLKernelCreator<T>::MaxDEFilterSize() { return 9; }//The true max wou
 template <typename T>
 T DEOpenCLKernelCreator<T>::SolveMaxDERad(uint maxBoxSize, T desiredFilterSize, T ss)
 {
-	uint finalFilterSize = (uint)((ceil(desiredFilterSize) * ss) + (ss - 1.0));
+	uint finalFilterSize = uint((ceil(desiredFilterSize) * ss) + (ss - 1.0));
 
 	//Return the desired size if the final size of it will fit.
 	if (finalFilterSize <= MaxDEFilterSize())
 		return desiredFilterSize;
 
 	//The final size doesn't fit, so scale the original down until it fits.
-	return (T)floor((MaxDEFilterSize() - (ss - 1.0)) / ss);
+	return T(floor((MaxDEFilterSize() - (ss - 1.0)) / ss));
 }
 
 /// <summary>
@@ -207,7 +207,7 @@ T DEOpenCLKernelCreator<T>::SolveMaxDERad(uint maxBoxSize, T desiredFilterSize, 
 template <typename T>
 uint DEOpenCLKernelCreator<T>::SolveMaxBoxSize(uint localMem)
 {
-	return (uint)floor(sqrt(floor((T)localMem / 16.0)));//Divide by 16 because each element is float4.
+	return uint(floor(sqrt(floor(T(localMem) / 16.0))));//Divide by 16 because each element is float4.
 }
 
 /// <summary>

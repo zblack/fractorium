@@ -110,7 +110,7 @@ public:
 			T fw = T(2.0) * m_Support * m_Supersample * m_FilterRadius / m_PixelAspectRatio;
 			T adjust, ii, jj;
 
-			int fwidth = ((int)fw) + 1;
+			int fwidth = int(fw) + 1;
 			int i, j;
 
 			//Make sure the filter kernel has same parity as oversample.
@@ -147,7 +147,7 @@ public:
 				m_FinalFilterWidth = fwidth;
 				break;
 			}
-			
+
 			m_FilterRadius += T(0.01);//Values were too small.
 		} while (1);
 	}

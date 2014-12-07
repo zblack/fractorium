@@ -370,7 +370,7 @@ public:
 	Xform<T>* GetXform(size_t i) const
 	{
 		if (i < XformCount())
-			return (Xform<T>*)&m_Xforms[i];
+			return const_cast<Xform<T>*>(&m_Xforms[i]);
 		else
 			return nullptr;
 	}
@@ -384,9 +384,9 @@ public:
 	Xform<T>* GetTotalXform(size_t i, bool forceFinal = false) const
 	{
 		if (i < XformCount())
-			return (Xform<T>*)&m_Xforms[i];
+			return const_cast<Xform<T>*>(&m_Xforms[i]);
 		else if (i == XformCount() || forceFinal)
-			return (Xform<T>*)&m_FinalXform;
+			return const_cast<Xform<T>*>(&m_FinalXform);
 		else
 			return nullptr;
 	}
@@ -402,7 +402,7 @@ public:
 
 		for (size_t i = 0; i < m_Xforms.size(); i++)
 			if (GetXform(i) == xform)
-				return (intmax_t)i;
+				return intmax_t(i);
 
 		return index;
 	}
@@ -418,7 +418,7 @@ public:
 
 		for (size_t i = 0; i < totalXformCount; i++)
 			if (GetTotalXform(i) == xform)
-				return (intmax_t)i;
+				return intmax_t(i);
 
 		return -1;
 	}
@@ -1478,7 +1478,7 @@ public:
 	//The multiplier in size of the histogram and DE filtering buffers. Must be at least one, preferrably never larger than 4, only useful at 2.
 	//Xml field: "supersample" or "overample (deprecated)".
 	size_t m_Supersample;
-	
+
 	//When animating, split each pass into this many pieces, each doing a fraction of the total iterations. Each temporal sample
 	//will render an interpolated instance of the ember that is a fraction of the current ember and the next one.
 	//When rendering a single image, this field is always set to 1.
@@ -1711,7 +1711,7 @@ private:
 		for (size_t k = 0; k < size; k++)
 			t += coefs[k] * embers[k].*m;
 
-		this->*m = (size_t)Rint(t);
+		this->*m = size_t(Rint(t));
 	}
 
 	/// <summary>

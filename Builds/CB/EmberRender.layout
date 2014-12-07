@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release x64" />
+	<File name="../../Source/EmberCommon/JpegUtils.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6646" topLine="170" />
+		</Cursor>
+	</File>
+	<File name="../../Source/EmberCommon/EmberOptions.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3660" topLine="147" />
+		</Cursor>
+	</File>
 	<File name="../../Source/EmberCommon/EmberCommonPch.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="546" topLine="0" />
@@ -8,27 +18,22 @@
 	</File>
 	<File name="../../Source/EmberCommon/SimpleOpt.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="23911" topLine="734" />
-		</Cursor>
-	</File>
-	<File name="../../Source/EmberCommon/SimpleGlob.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="28795" topLine="894" />
+			<Cursor1 position="19841" topLine="580" />
 		</Cursor>
 	</File>
 	<File name="../../Source/EmberRender/EmberRender.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="11058" topLine="309" />
+			<Cursor1 position="11353" topLine="330" />
 		</Cursor>
 	</File>
-	<File name="../../Source/EmberCommon/EmberOptions.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../Source/EmberCommon/SimpleGlob.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="32737" topLine="469" />
+			<Cursor1 position="28888" topLine="905" />
 		</Cursor>
 	</File>
-	<File name="../../Source/EmberCommon/JpegUtils.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../Source/EmberCommon/EmberCommon.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="10816" topLine="287" />
+			<Cursor1 position="2710" topLine="73" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

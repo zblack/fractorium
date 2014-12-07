@@ -231,9 +231,9 @@ public:
 				{
 					size_t idx = 8 * i + j;
 
-					os << hex << setw(2) << setfill('0') << (int)Rint(ember.m_Palette[idx][0] * 255);
-					os << hex << setw(2) << setfill('0') << (int)Rint(ember.m_Palette[idx][1] * 255);
-					os << hex << setw(2) << setfill('0') << (int)Rint(ember.m_Palette[idx][2] * 255);
+					os << hex << setw(2) << setfill('0') << int(Rint(ember.m_Palette[idx][0] * 255));
+					os << hex << setw(2) << setfill('0') << int(Rint(ember.m_Palette[idx][1] * 255));
+					os << hex << setw(2) << setfill('0') << int(Rint(ember.m_Palette[idx][2] * 255));
 				}
 
 				os << endl;
@@ -255,14 +255,14 @@ public:
 				if (IsClose(a, 255.0))
 				{
 					if (intPalette)
-						os << "<color index=\"" << i << "\" rgb=\"" << (int)Rint(r) << " " << (int)Rint(g) << " " << (int)Rint(b) << "\"/>";
+						os << "<color index=\"" << i << "\" rgb=\"" << int(Rint(r)) << " " << int(Rint(g)) << " " << int(Rint(b)) << "\"/>";
 					else
 						os << "<color index=\"" << i << "\" rgb=\"" << std::fixed << std::setprecision(2) << r << " " << g << " " << b << "\"/>";
 				}
 				else
 				{
 					if (intPalette)
-						os << "   <color index=\"" << i << "\" rgba=\"" << (int)Rint(r) << " " << (int)Rint(g) << " " << (int)Rint(b) << " " << (int)Rint(a) << "\"/>";
+						os << "   <color index=\"" << i << "\" rgba=\"" << int(Rint(r)) << " " << int(Rint(g)) << " " << int(Rint(b)) << " " << int(Rint(a)) << "\"/>";
 					else
 						os << "   <color index=\"" << i << "\" rgba=\"" << std::fixed << std::setprecision(2) << r << " " << g << " " << b << " " << a << "\"/>";
 				}
@@ -300,13 +300,13 @@ public:
 		time_t myTime;
 		string s;
 		xmlDocPtr commentDoc = nullptr;
-		xmlDocPtr doc = xmlNewDoc(XC "1.0");
+		xmlDocPtr doc = xmlNewDoc(XC("1.0"));
 		xmlNodePtr rootNode = nullptr, node = nullptr, nodeCopy = nullptr;
 		xmlNodePtr rootComment = nullptr;
 		ostringstream os;
 
 		//Create the root node, called "edit".
-		rootNode = xmlNewNode(nullptr, XC "edit");
+		rootNode = xmlNewNode(nullptr, XC("edit"));
 		xmlDocSetRootElement(doc, rootNode);
 
 		//Add the edit attributes.
@@ -321,37 +321,37 @@ public:
 		localt = localtime(&myTime);
 		strftime(timeString, 128, "%a %b %d %H:%M:%S %z %Y", localt);//XXX use standard time format including timezone.
 #endif
-		xmlNewProp(rootNode, XC "date", XC timeString);
+		xmlNewProp(rootNode, XC("date"), XC(timeString));
 
 		//Nick.
 		if (nick != "")
-			xmlNewProp(rootNode, XC "nick", XC nick.c_str());
+			xmlNewProp(rootNode, XC("nick"), XC(nick.c_str()));
 
 		//Url.
 		if (url != "")
-			xmlNewProp(rootNode, XC "url", XC url.c_str());
+			xmlNewProp(rootNode, XC("url"), XC(url.c_str()));
 
 		if (id != "")
-			xmlNewProp(rootNode, XC "id", XC id.c_str());
+			xmlNewProp(rootNode, XC("id"), XC(id.c_str()));
 
 		//Action.
-		xmlNewProp(rootNode, XC "action", XC action.c_str());
+		xmlNewProp(rootNode, XC("action"), XC(action.c_str()));
 
 		//Sheep info.
 		if (sheepGen > 0 && sheepId > 0)
 		{
 			//Create a child node of the root node called sheep.
-			node = xmlNewChild(rootNode, nullptr, XC "sheep", nullptr);
+			node = xmlNewChild(rootNode, nullptr, XC("sheep"), nullptr);
 
 			//Create the sheep attributes.
 			os << sheepGen;
 			s = os.str();
-			xmlNewProp(node, XC "generation", XC s.c_str());
+			xmlNewProp(node, XC("generation"), XC(s.c_str()));
 			os.str("");
 
 			os << sheepId;
 			s = os.str();
-			xmlNewProp(node, XC "id", XC s.c_str());
+			xmlNewProp(node, XC("id"), XC(s.c_str()));
 			os.str("");
 		}
 
@@ -368,16 +368,16 @@ public:
 				node = xmlDocGetRootElement(parent0->m_Edits);
 				nodeCopy = xmlCopyNode(node, 1);
 				AddFilenameWithoutAmpersand(nodeCopy, parent0->m_ParentFilename);
-				
-				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
+
+				xmlNewProp(nodeCopy, XC("index"), XC(s.c_str()));
 				xmlAddChild(rootNode, nodeCopy);
 			}
 			else
 			{
 				//Insert a (parent has no edit) message.
-				nodeCopy = xmlNewChild(rootNode, nullptr, XC "edit", nullptr);
+				nodeCopy = xmlNewChild(rootNode, nullptr, XC("edit"), nullptr);
 				AddFilenameWithoutAmpersand(nodeCopy, parent0->m_ParentFilename);
-				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
+				xmlNewProp(nodeCopy, XC("index"), XC(s.c_str()));
 			}
 
 			os.str("");
@@ -394,15 +394,15 @@ public:
 				node = xmlDocGetRootElement(parent1->m_Edits);
 				nodeCopy = xmlCopyNode(node, 1);
 				AddFilenameWithoutAmpersand(nodeCopy, parent1->m_ParentFilename);
-				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
+				xmlNewProp(nodeCopy, XC("index"), XC(s.c_str()));
 				xmlAddChild(rootNode, nodeCopy);
 			}
 			else
 			{
 				//Insert a (parent has no edit) message.
-				nodeCopy = xmlNewChild(rootNode, nullptr, XC "edit",nullptr);
+				nodeCopy = xmlNewChild(rootNode, nullptr, XC("edit"),nullptr);
 				AddFilenameWithoutAmpersand(nodeCopy, parent1->m_ParentFilename);
-				xmlNewProp(nodeCopy, XC "index", XC s.c_str());
+				xmlNewProp(nodeCopy, XC("index"), XC(s.c_str()));
 			}
 
 			os.str("");
@@ -419,7 +419,7 @@ public:
 		{
 			os << "<comm>" << comment << "</comm>";
 			s = os.str();
-			commentDoc = xmlReadMemory(s.c_str(), (int)s.length(), "comment.env", nullptr, XML_PARSE_NONET);
+			commentDoc = xmlReadMemory(s.c_str(), int(s.length()), "comment.env", nullptr, XML_PARSE_NONET);
 			os.str("");
 
 			//Check for errors.
@@ -617,9 +617,9 @@ private:
 
 			for (curAtt = attPtr; curAtt; curAtt = curAtt->next)
 			{
-				attStr = (char*)xmlGetProp(editNode, curAtt->name);
+				attStr = CX(xmlGetProp(editNode, curAtt->name));
 				os << " " << curAtt->name << "=\"" << attStr << "\"";
-				xmlFree((void*)attStr);
+				xmlFree(reinterpret_cast<void*>(const_cast<char*>(attStr)));
 			}
 
 			//Does this node have children?
@@ -695,7 +695,7 @@ private:
 		}
 		else if (editNode->type == XML_TEXT_NODE)
 		{
-			string s((char*)xmlNodeGetContent(editNode));
+			string s(reinterpret_cast<char*>(xmlNodeGetContent(editNode)));
 			os << Trim(s);
 		}
 
@@ -709,11 +709,11 @@ private:
 			string filenameWithoutAmpersands = filename;
 
 			FindAndReplace<string>(filenameWithoutAmpersands, "&", "&amp;");
-			xmlNewProp(node, XC "filename", XC filenameWithoutAmpersands.c_str());
+			xmlNewProp(node, XC("filename"), XC(filenameWithoutAmpersands.c_str()));
 		}
 		else
 		{
-			xmlNewProp(node, XC "filename", XC filename.c_str());
+			xmlNewProp(node, XC("filename"), XC(filename.c_str()));
 		}
 	}
 };

@@ -214,7 +214,7 @@ class SimpleGlobUtil
 {
 public:
     static const char * strchr(const char *s, char c) {
-        return (char *) sg_strchr((const SOCHAR_T *)s, c);
+        return sg_strchr(reinterpret_cast<const SOCHAR_T *>(s), c);
     }
     static const wchar_t * strchr(const wchar_t *s, wchar_t c) {
         return ::wcschr(s, c);
@@ -226,7 +226,7 @@ public:
 #endif
 
     static const char * strrchr(const char *s, char c) {
-        return (char *) sg_strrchr((const SOCHAR_T *)s, c);
+        return sg_strrchr(reinterpret_cast<const SOCHAR_T *>(s), c);
     }
     static const wchar_t * strrchr(const wchar_t *s, wchar_t c) {
         return ::wcsrchr(s, c);
@@ -246,7 +246,7 @@ public:
 
     static void strcpy_s(char *dst, size_t n, const char *src)  {
         (void) n;
-        sg_strcpy_s((SOCHAR_T *)dst, n, (const SOCHAR_T *)src);
+        sg_strcpy_s(reinterpret_cast<SOCHAR_T *>(dst), n, reinterpret_cast<const SOCHAR_T *>(src));
     }
     static void strcpy_s(wchar_t *dst, size_t n, const wchar_t *src) {
 # if __STDC_WANT_SECURE_LIB__
@@ -263,7 +263,7 @@ public:
 #endif
 
     static int strcmp(const char *s1, const char *s2) {
-        return sg_strcmp((const SOCHAR_T *)s1, (const SOCHAR_T *)s2);
+        return sg_strcmp(reinterpret_cast<const SOCHAR_T *>(s1), reinterpret_cast<const SOCHAR_T *>(s2));
     }
     static int strcmp(const wchar_t *s1, const wchar_t *s2) {
         return ::wcscmp(s1, s2);
@@ -275,7 +275,7 @@ public:
 #endif
 
     static int strcasecmp(const char *s1, const char *s2) {
-        return sg_strcasecmp((const SOCHAR_T *)s1, (const SOCHAR_T *)s2);
+        return sg_strcasecmp(reinterpret_cast<const SOCHAR_T *>(s1), reinterpret_cast<const SOCHAR_T *>(s2));
     }
 #if _WIN32
     static int strcasecmp(const wchar_t *s1, const wchar_t *s2) {
@@ -389,7 +389,7 @@ struct SimpleGlobBase
 {
     SimpleGlobBase() {
         memset(&m_glob, 0, sizeof(m_glob));
-        m_uiCurr = (size_t)-1;
+        m_uiCurr = size_t(-1);
     }
 
     ~SimpleGlobBase() {
@@ -446,11 +446,11 @@ struct SimpleGlobBase
     void FindDone() {
         globfree(&m_glob);
         memset(&m_glob, 0, sizeof(m_glob));
-        m_uiCurr = (size_t)-1;
+        m_uiCurr = size_t(-1);
     }
 
     const char * GetFileNameS(char) const {
-        SG_ASSERT(m_uiCurr != (size_t)-1);
+        SG_ASSERT(m_uiCurr != size_t(-1));
         return m_glob.gl_pathv[m_uiCurr];
     }
 
@@ -467,7 +467,7 @@ struct SimpleGlobBase
 #endif
 
     bool IsDirS(char) const {
-        SG_ASSERT(m_uiCurr != (size_t)-1);
+        SG_ASSERT(m_uiCurr != size_t(-1));
         return m_bIsDir;
     }
 
@@ -747,8 +747,8 @@ CSimpleGlobTempl<SOCHAR>::Add(
     int nError, nStartLen = m_nArgsLen;
     bool bSuccess;
     do {
-        nError = AppendName(this->GetFileNameS((SOCHAR)0), this->IsDirS((SOCHAR)0));
-        bSuccess = this->FindNextFileS((SOCHAR)0);
+        nError = AppendName(this->GetFileNameS(SOCHAR(0)), this->IsDirS(SOCHAR(0)));
+        bSuccess = this->FindNextFileS(SOCHAR(0));
     }
     while (nError == SG_SUCCESS && bSuccess);
     SimpleGlobBase<SOCHAR>::FindDone();
@@ -829,7 +829,7 @@ CSimpleGlobTempl<SOCHAR>::AppendName(
     }
 
     // add this entry. m_uiBufferLen is offset from beginning of buffer.
-    m_rgpArgs[m_nArgsLen++] = (SOCHAR*)m_uiBufferLen;
+    m_rgpArgs[m_nArgsLen++] = reinterpret_cast<SOCHAR*>(m_uiBufferLen);
     SimpleGlobUtil::strcpy_s(m_pBuffer + m_uiBufferLen,
         m_uiBufferSize - m_uiBufferLen, m_szPathPrefix);
     SimpleGlobUtil::strcpy_s(m_pBuffer + m_uiBufferLen + uiPrefixLen,
@@ -856,8 +856,8 @@ CSimpleGlobTempl<SOCHAR>::SetArgvArrayType(
     if (a_nNewType == POINTERS) {
         SG_ASSERT(m_nArgArrayType == OFFSETS);
         for (int n = 0; n < m_nArgsLen; ++n) {
-            m_rgpArgs[n] = (m_rgpArgs[n] == (SOCHAR*)-1) ?
-                nullptr : m_pBuffer + (size_t) m_rgpArgs[n];
+            m_rgpArgs[n] = (m_rgpArgs[n] == reinterpret_cast<SOCHAR*>(-1)) ?
+                nullptr : m_pBuffer + size_t(m_rgpArgs[n]);
         }
     }
     else {
@@ -865,7 +865,7 @@ CSimpleGlobTempl<SOCHAR>::SetArgvArrayType(
         SG_ASSERT(m_nArgArrayType == POINTERS);
         for (int n = 0; n < m_nArgsLen; ++n) {
             m_rgpArgs[n] = (m_rgpArgs[n] == nullptr) ?
-                (SOCHAR*) -1 : (SOCHAR*) (m_rgpArgs[n] - m_pBuffer);
+                reinterpret_cast<SOCHAR*>(-1) : reinterpret_cast<SOCHAR*>(m_rgpArgs[n] - m_pBuffer);
         }
     }
     m_nArgArrayType = a_nNewType;
@@ -887,7 +887,7 @@ CSimpleGlobTempl<SOCHAR>::GrowArgvArray(
         void * pNewBuffer = realloc(m_rgpArgs, nNewSize * sizeof(SOCHAR*));
         if (!pNewBuffer) return false;
         m_nArgsSize = nNewSize;
-        m_rgpArgs = (SOCHAR**) pNewBuffer;
+        m_rgpArgs = reinterpret_cast<SOCHAR**>(pNewBuffer);
     }
     return true;
 }
@@ -908,7 +908,7 @@ CSimpleGlobTempl<SOCHAR>::GrowStringBuffer(
         void * pNewBuffer = realloc(m_pBuffer, uiNewSize * sizeof(SOCHAR));
         if (!pNewBuffer) return false;
         m_uiBufferSize = uiNewSize;
-        m_pBuffer = (SOCHAR*) pNewBuffer;
+        m_pBuffer = reinterpret_cast<SOCHAR*>(pNewBuffer);
     }
     return true;
 }
@@ -920,8 +920,8 @@ CSimpleGlobTempl<SOCHAR>::fileSortCompare(
     const void *a2
     )
 {
-    const SOCHAR * s1 = *(const SOCHAR **)a1;
-    const SOCHAR * s2 = *(const SOCHAR **)a2;
+    const SOCHAR * s1 = *(reinterpret_cast<const SOCHAR **>(a1));
+    const SOCHAR * s2 = *(reinterpret_cast<const SOCHAR **>(a2));
     if (s1 && s2) {
         return SimpleGlobUtil::strcasecmp(s1, s2);
     }

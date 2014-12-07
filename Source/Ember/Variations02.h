@@ -474,8 +474,8 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T x = (T)Floor<T>(helper.In.x * m_InvSize);
-		T y = (T)Floor<T>(helper.In.y * m_InvSize);
+		T x = T(Floor<T>(helper.In.x * m_InvSize));
+		T y = T(Floor<T>(helper.In.y * m_InvSize));
 
 		helper.Out.x = m_V * (x + m_BlurPixelizeScale * (rand.Frand01<T>() - T(0.5)) + T(0.5));
 		helper.Out.y = m_V * (y + m_BlurPixelizeScale * (rand.Frand01<T>() - T(0.5)) + T(0.5));
@@ -1366,8 +1366,8 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T roundX = (T)(int)(helper.In.x >= 0 ? (int)(helper.In.x + T(0.5)) : (int)(helper.In.x - T(0.5)));
-		T roundY = (T)(int)(helper.In.y >= 0 ? (int)(helper.In.y + T(0.5)) : (int)(helper.In.y - T(0.5)));
+		T roundX = T(int(helper.In.x >= 0 ? int(helper.In.x + T(0.5)) : int(helper.In.x - T(0.5))));
+		T roundY = T(int(helper.In.y >= 0 ? int(helper.In.y + T(0.5)) : int(helper.In.y - T(0.5))));
 		T offsetX = helper.In.x - roundX;
 		T offsetY = helper.In.y - roundY;
 
@@ -1578,7 +1578,7 @@ public:
 		T rnx = m_Rnd * rand.Frand01<T>();
 		T rny = m_Rnd * rand.Frand01<T>();
 
-		int isXY = (int)(LRint(helper.In.x * m_Cs) + LRint(helper.In.y * m_Cs));
+		int isXY = int(LRint(helper.In.x * m_Cs) + LRint(helper.In.y * m_Cs));
 
 		if (isXY % 2)
 		{
@@ -3456,7 +3456,7 @@ public:
 	{
 		T x = m_A * helper.In.x + m_B * helper.In.y + m_E;
 		T y = m_C * helper.In.x + m_D * helper.In.y + m_F;
-		T angle = (atan2(y, x) + M_2PI * rand.Rand((int)m_AbsN)) / m_Power;
+		T angle = (atan2(y, x) + M_2PI * rand.Rand(int(m_AbsN))) / m_Power;
 		T sina = sin(angle);
 		T cosa = cos(angle);
 		T r = m_Weight * pow(SQR(x) + SQR(y), m_Cn);
@@ -3504,7 +3504,7 @@ public:
 		if (m_Power == 0)
 			m_Power = 2;
 
-		m_AbsN = T((int)abs(m_Power));
+		m_AbsN = T(int(abs(m_Power)));
 		m_Cn = m_Dist / m_Power / 2;
 	}
 
@@ -3837,7 +3837,7 @@ public:
 	{
 		T x = (m_IsOdd != 0) ? helper.In.x : m_Vvar * helper.m_PrecalcAtanxy;
 		T y = (m_IsOdd != 0) ? helper.In.y : m_Vvar2 * log(helper.m_PrecalcSumSquares);
-		T angle = (atan2(y, x) + M_2PI * rand.Rand((int)m_AbsN)) / m_Nnz;
+		T angle = (atan2(y, x) + M_2PI * rand.Rand(int(m_AbsN))) / m_Nnz;
 		T r = m_Weight * pow(SQR(x) + SQR(y), m_Cn) * ((m_IsOdd == 0) ? 1 : m_Parity);
 		T sina = sin(angle) * r;
 		T cosa = cos(angle) * r;
@@ -3889,7 +3889,7 @@ public:
 		m_Vvar2 = m_Vvar * T(0.5);
 		m_AbsN = abs(m_Nnz);
 		m_Cn = 1 / m_Nnz / 2;
-		m_IsOdd = T(abs((int)m_Parity) % 2);
+		m_IsOdd = T(abs(int(m_Parity)) % 2);
 	}
 
 protected:
@@ -5161,7 +5161,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T angle = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((int)m_AbsN)) / m_Power;
+		T angle = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand(int(m_AbsN))) / m_Power;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
 		T sina = sin(angle);
 		T cosa = cos(angle);
@@ -5218,7 +5218,7 @@ public:
 		if (m_Power == 0)
 			m_Power = 2;
 
-		m_AbsN = T((int)fabs(m_Power));
+		m_AbsN = T(int(fabs(m_Power)));
 
 		m_Cn = 1 / m_Power / 2;
 	}
@@ -5594,7 +5594,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T a = helper.m_PrecalcAtanyx;
-		int n = rand.Rand((uint)m_Spread);
+		int n = rand.Rand(uint(m_Spread));
 
 		if (a < 0)
 			n++;

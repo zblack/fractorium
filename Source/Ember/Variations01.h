@@ -1149,7 +1149,7 @@ public:
 	{
 		m_BlobLow   = T(0.2) + T(0.5) * rand.Frand01<T>();
 		m_BlobHigh  = T(0.8) + T(0.4) * rand.Frand01<T>();
-		m_BlobWaves = (T)(int)(2 + 5  * rand.Frand01<T>());
+		m_BlobWaves = T(int(2 + 5 * rand.Frand01<T>()));
 	}
 
 protected:
@@ -1293,7 +1293,7 @@ public:
 	{
 		T a = helper.m_PrecalcAtanxy;
 		T r = m_Weight * helper.m_PrecalcSqrtSumSquares;
-		T t = a + m_Fan2Y - m_Fan2Dx * (int)((a + m_Fan2Y) / m_Fan2Dx);
+		T t = a + m_Fan2Y - m_Fan2Dx * int((a + m_Fan2Y) / m_Fan2Dx);
 
 		if (t > m_Fan2Dx2)
 			a = a - m_Fan2Dx2;
@@ -1390,7 +1390,7 @@ public:
 	{
 		T r = helper.m_PrecalcSqrtSumSquares;
 
-		r += -2 * m_Rings2Val2 * (int)((r + m_Rings2Val2) / (2 * m_Rings2Val2)) + r * (1 - m_Rings2Val2);
+		r += -2 * m_Rings2Val2 * int((r + m_Rings2Val2) / (2 * m_Rings2Val2)) + r * (1 - m_Rings2Val2);
 		helper.Out.x = m_Weight * helper.m_PrecalcSina * r;
 		helper.Out.y = m_Weight * helper.m_PrecalcCosa * r;
 		helper.Out.z = m_Weight * helper.In.z;
@@ -1689,7 +1689,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T tempr = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand((ISAAC_INT)m_Rn)) / m_Power;
+		T tempr = (helper.m_PrecalcAtanyx + M_2PI * rand.Rand(ISAAC_INT(m_Rn))) / m_Power;
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
 
 		helper.Out.x = r * cos(tempr);
@@ -1731,7 +1731,7 @@ public:
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Dist = 1;
-		m_Power = (T)(int)(5 * rand.Frand01<T>() + 2);
+		m_Power = T(int(5 * rand.Frand01<T>() + 2));
 	}
 
 protected:
@@ -1769,7 +1769,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		int rnd = (int)(m_Rn * rand.Frand01<T>());
+		int rnd = int(m_Rn * rand.Frand01<T>());
 		T tempr, r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
 
 		if ((rnd & 1) == 0)
@@ -1851,7 +1851,7 @@ public:
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Dist = 1;
-		m_Power = (T)(int)(5 * rand.Frand01<T>() + 2);
+		m_Power = T(int(5 * rand.Frand01<T>() + 2));
 	}
 
 protected:
@@ -2051,7 +2051,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		int sl = (int)(rand.Frand01<T>() * m_Slices + T(0.5));
+		int sl = int(rand.Frand01<T>() * m_Slices + T(0.5));
 		T a = m_Rotation + M_2PI * (sl + rand.Frand01<T>() * m_Thickness) / m_Slices;
 		T r = m_Weight * rand.Frand01<T>();
 
@@ -2187,7 +2187,7 @@ public:
 
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		m_Sides = (T)(int)(rand.Frand01<T>() * 10 + 3);
+		m_Sides = T(int(rand.Frand01<T>() * 10 + 3));
 		m_Power = 3 * rand.Frand01<T>() + 1;
 		m_Circle = 3 * rand.Frand01<T>();
 		m_Corners = 2 * rand.Frand01<T>() * m_Circle;
@@ -2874,7 +2874,7 @@ public:
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Rnd   = rand.Frand01<T>();
-		m_M     = (T)(int)(rand.Frand01<T>() * 6);
+		m_M     = T(int(rand.Frand01<T>() * 6));
 		m_N1    = rand.Frand01<T>() * 40;
 		m_N2    = rand.Frand01<T>() * 20;
 		m_N3    = m_N2;
@@ -4985,7 +4985,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T roundx = (T)(int)(helper.In.x >= 0 ? (helper.In.x + T(0.5)) : (helper.In.x - T(0.5)));
+		T roundx = T(int(helper.In.x >= 0 ? (helper.In.x + T(0.5)) : (helper.In.x - T(0.5))));
 		T offsetx = helper.In.x - roundx;
 
 		helper.Out.x = m_Weight * (offsetx * (1 - m_Space) + roundx);
@@ -5053,7 +5053,7 @@ public:
 	{
 		T r = helper.m_PrecalcSqrtSumSquares;
 		T a = helper.m_PrecalcAtanyx + m_Swirl * r;
-		T c = (T)Floor<T>((m_Count * a + T(M_PI)) * T(M_1_PI) * T(0.5));
+		T c = T(Floor<T>((m_Count * a + T(M_PI)) * T(M_1_PI) * T(0.5)));
 
 		a = a * m_CompFac + c * m_Angle;
 		r = m_Weight * (r + m_Hole);
@@ -5098,7 +5098,7 @@ public:
 	{
 		m_Angle = T(M_PI) * rand.Frand01<T>();
 		m_Hole  = T(0.5)  * rand.Frand11<T>();
-		m_Count = (T)Floor<T>(5 * rand.Frand01<T>()) + 1;
+		m_Count = T(Floor<T>(5 * rand.Frand01<T>())) + 1;
 		m_Swirl = rand.Frand01<T>();
 	}
 
@@ -5140,9 +5140,9 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T r = m_Weight * pow(helper.m_PrecalcSumSquares, m_Cn);
-		int tRand = (int)(m_Rn * rand.Frand01<T>());
+		int tRand = int(m_Rn * rand.Frand01<T>());
 		T a = (helper.m_PrecalcAtanyx + M_2PI * tRand) / m_Power;
-		T c = (T)Floor<T>((m_Count * a + T(M_PI)) * T(M_1_PI) * T(0.5));
+		T c = T(Floor<T>((m_Count * a + T(M_PI)) * T(M_1_PI) * T(0.5)));
 
 		a = a * m_Cf + c * m_Angle;
 		helper.Out.x = r * cos(a);
@@ -5188,9 +5188,9 @@ public:
 
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		m_Power = (T)(int)(5 * rand.Frand01<T>() + 2);
+		m_Power = T(int(5 * rand.Frand01<T>() + 2));
 		m_Dist  = 1;
-		m_Count = (T)(int)(3 * rand.Frand01<T>() + 1);
+		m_Count = T(int(3 * rand.Frand01<T>() + 1));
 		m_Angle = T(M_PI) * rand.Frand01<T>();
 	}
 
@@ -5237,7 +5237,7 @@ public:
 	{
 		T r = 1 / Zeps(helper.m_PrecalcSqrtSumSquares);
 		T a = helper.m_PrecalcAtanyx + m_Swirl * r;
-		T c = (T)Floor<T>((m_Count * a + T(M_PI)) * T(M_1_PI) * T(0.5));
+		T c = T(Floor<T>((m_Count * a + T(M_PI)) * T(M_1_PI) * T(0.5)));
 		T compFac = 1 - m_Angle * m_Count * T(M_1_PI) * T(0.5);
 
 		a = a * compFac + c * m_Angle;
@@ -5277,7 +5277,7 @@ public:
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		m_Angle = T(M_PI) * rand.Frand01<T>();
-		m_Count = (T)Floor<T>(5 * rand.Frand01<T>()) + 1;
+		m_Count = T(Floor<T>(5 * rand.Frand01<T>())) + 1;
 		m_Hole  = T(0.5)  * rand.Frand11<T>();
 		m_Swirl = rand.Frand01<T>();
 	}
@@ -6116,7 +6116,7 @@ public:
 	{
 		m_Symmetry    = 0;
 		m_AugerWeight = T(0.5) + rand.Frand01<T>() / 2;
-		m_Freq        = (T)Floor<T>(5 * rand.Frand01<T>()) + 1;
+		m_Freq        = T(Floor<T>(5 * rand.Frand01<T>())) + 1;
 		m_Scale       = rand.Frand01<T>();
 	}
 

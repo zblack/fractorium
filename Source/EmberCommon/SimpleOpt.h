@@ -522,7 +522,7 @@ private:
 
 	// Find the '=' character within a string.
 	inline SOCHAR * FindEquals(SOCHAR *s) const {
-		while (*s && *s != (SOCHAR)'=') ++s;
+		while (*s && *s != SOCHAR('=')) ++s;
 		return *s ? s : nullptr;
 	}
 	bool IsEqual(SOCHAR a_cLeft, SOCHAR a_cRight, int a_nArgType) const;
@@ -576,8 +576,8 @@ CSimpleOptTempl<SOCHAR>::Init(
 	m_pszOptionText  = nullptr;
 	m_pszOptionArg   = nullptr;
 	m_nNextOption    = (a_nFlags & SO_O_USEALL) ? 0 : 1;
-	m_szShort[0]     = (SOCHAR)'-';
-	m_szShort[2]     = (SOCHAR)'\0';
+	m_szShort[0]     = SOCHAR('-');
+	m_szShort[2]     = SOCHAR('\0');
 	m_nFlags         = a_nFlags;
 	m_pszClump       = nullptr;
 
@@ -592,7 +592,7 @@ CSimpleOptTempl<SOCHAR>::Init(
 		free(m_rgShuffleBuf);
 	}
 	if (m_argc > SO_STATICBUF) {
-		m_rgShuffleBuf = (SOCHAR**) malloc(sizeof(SOCHAR*) * m_argc);
+		m_rgShuffleBuf = reinterpret_cast<SOCHAR**>(malloc(sizeof(SOCHAR*) * m_argc));
 		if (!m_rgShuffleBuf) {
 			return false;
 		}
@@ -646,11 +646,11 @@ CSimpleOptTempl<SOCHAR>::Next()
 
 		// find this option in the options table
 		cFirst = PrepareArg(pszArg);
-		if (pszArg[0] == (SOCHAR)'-') {
+		if (pszArg[0] == SOCHAR('-')) {
 			// find any combined argument string and remove equals sign
 			m_pszOptionArg = FindEquals(pszArg);
 			if (m_pszOptionArg) {
-				*m_pszOptionArg++ = (SOCHAR)'\0';
+				*m_pszOptionArg++ = SOCHAR('\0');
 			}
 		}
 		nTableIdx = LookupOption(pszArg);
@@ -659,9 +659,9 @@ CSimpleOptTempl<SOCHAR>::Next()
 		// option then we try the alternative forms
 		if (nTableIdx < 0
 			&& !m_pszOptionArg
-			&& pszArg[0] == (SOCHAR)'-'
+			&& pszArg[0] == SOCHAR('-')
 			&& pszArg[1]
-			&& pszArg[1] != (SOCHAR)'-'
+			&& pszArg[1] != SOCHAR('-')
 			&& pszArg[2])
 		{
 			// test for a short-form with argument if appropriate
@@ -694,7 +694,7 @@ CSimpleOptTempl<SOCHAR>::Next()
 		// and we are not suppressing errors for invalid options then it
 		// is reported as an error, otherwise it is data.
 		if (nTableIdx < 0) {
-			if (!HasFlag(SO_O_NOERR) && pszArg[0] == (SOCHAR)'-') {
+			if (!HasFlag(SO_O_NOERR) && pszArg[0] == SOCHAR('-')) {
 				m_pszOptionText = pszArg;
 				break;
 			}
@@ -702,7 +702,7 @@ CSimpleOptTempl<SOCHAR>::Next()
 			pszArg[0] = cFirst;
 			++nOptIdx;
 			if (m_pszOptionArg) {
-				*(--m_pszOptionArg) = (SOCHAR)'=';
+				*(--m_pszOptionArg) = SOCHAR('=');
 			}
 		}
 	}
@@ -719,7 +719,7 @@ CSimpleOptTempl<SOCHAR>::Next()
 	// get the option id
 	ESOArgType nArgType = SO_NONE;
 	if (nTableIdx < 0) {
-		m_nLastError    = (ESOError) nTableIdx; // error code
+		m_nLastError    = ESOError(nTableIdx); // error code
 	}
 	else {
 		m_nOptionId     = m_rgOptions[nTableIdx].nId;
@@ -836,7 +836,7 @@ CSimpleOptTempl<SOCHAR>::NextClumped()
 	// unknown option
 	if (nTableIdx < 0) {
 		m_pszOptionText = m_szShort; // invalid option
-		m_nLastError = (ESOError) nTableIdx; // error code
+		m_nLastError = ESOError(nTableIdx); // error code
 		return false;
 	}
 
@@ -951,11 +951,11 @@ CSimpleOptTempl<SOCHAR>::CalcMatch(
 	}
 
 	// match and skip leading hyphens
-	while (*a_pszSource == (SOCHAR)'-' && *a_pszSource == *a_pszTest) {
+	while (*a_pszSource == SOCHAR('-') && *a_pszSource == *a_pszTest) {
 		++a_pszSource;
 		++a_pszTest;
 	}
-	if (*a_pszSource == (SOCHAR)'-' || *a_pszTest == (SOCHAR)'-') {
+	if (*a_pszSource == SOCHAR('-') || *a_pszTest == SOCHAR('-')) {
 		return 0;
 	}
 
@@ -1027,7 +1027,7 @@ CSimpleOptTempl<SOCHAR>::MultiArg(
 	if (!HasFlag(SO_O_NOERR)) {
 		for (int n = 0; n < a_nCount; ++n) {
 			SOCHAR ch = PrepareArg(rgpszArg[n]);
-			if (rgpszArg[n][0] == (SOCHAR)'-') {
+			if (rgpszArg[n][0] == SOCHAR('-')) {
 				rgpszArg[n][0] = ch;
 				m_nLastError = SO_ARG_INVALID_DATA;
 				return nullptr;

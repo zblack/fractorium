@@ -118,7 +118,7 @@ public:
 	template<typename floatType>
 	inline floatType Frand(floatType fMin, floatType fMax)
 	{
-		floatType f = (floatType)Rand() / (floatType)std::numeric_limits<T>::max();
+		floatType f = static_cast<floatType>(Rand()) / static_cast<floatType>(std::numeric_limits<T>::max());
 		return fMin + (f * (fMax - fMin));
 	}
 
@@ -261,7 +261,7 @@ public:
 		if (s == nullptr)//Default to using time plus index as the seed if s was nullptr.
 		{
 			for (int i = 0; i < N; i++)
-				m_Rc.randrsl[i] = (T)time(0) + i;
+				m_Rc.randrsl[i] = static_cast<T>(time(nullptr)) + i;
 		}
 		else
 		{
@@ -272,9 +272,9 @@ public:
 #ifndef ISAAC_FLAM3_DEBUG
 		if (a == 0 && b == 0 && c == 0)
 		{
-			m_Rc.randa = (T)time(nullptr);
-			m_Rc.randb = (T)time(nullptr) * (T)time(nullptr);
-			m_Rc.randc = (T)time(nullptr) * (T)time(nullptr) * (T)time(nullptr);
+			m_Rc.randa = static_cast<T>(time(nullptr));
+			m_Rc.randb = static_cast<T>(time(nullptr)) * static_cast<T>(time(nullptr));
+			m_Rc.randc = static_cast<T>(time(nullptr)) * static_cast<T>(time(nullptr)) * static_cast<T>(time(nullptr));
 		}
 		else
 #endif
@@ -351,9 +351,9 @@ protected:
 	inline T Ind(T* mm, T x)
 	{
 #ifndef __ISAAC64
-		return (*(T*)((byte*)(mm) + ((x) & ((N - 1) << 2))));
+		return (*reinterpret_cast<T*>(reinterpret_cast<byte*>(mm) + ((x) & ((N - 1) << 2))));
 #else   // __ISAAC64
-		return (*(T*)((byte*)(mm) + ((x) & ((N - 1) << 3))));
+		return (*reinterpret_cast<T*>(reinterpret_cast<byte*>(mm) + ((x) & ((N - 1) << 3))));
 #endif  // __ISAAC64
 	}
 

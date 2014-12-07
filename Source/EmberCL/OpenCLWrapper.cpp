@@ -70,7 +70,7 @@ bool OpenCLWrapper::Init(uint platform, uint device, bool shared)
 						m_Device = m_Devices[m_PlatformIndex][device];
 						m_DeviceVec.clear();
 						m_DeviceVec.push_back(m_Device);
-						m_LocalMemSize = (uint)GetInfo<cl_ulong>(m_PlatformIndex, m_DeviceIndex, CL_DEVICE_LOCAL_MEM_SIZE);
+						m_LocalMemSize = uint(GetInfo<cl_ulong>(m_PlatformIndex, m_DeviceIndex, CL_DEVICE_LOCAL_MEM_SIZE));
 						m_Shared = shared;
 						m_Init = true;//Command queue is ok, it's now ok to begin building and running programs.
 					}
@@ -277,9 +277,9 @@ bool OpenCLWrapper::ReadBuffer(uint bufferIndex, void* data, size_t size)
 /// <returns>The index if found, else -1.</returns>
 int OpenCLWrapper::FindBufferIndex(const string& name)
 {
-	for (uint i = 0; i < m_Buffers.size(); i++)
+	for (size_t i = 0; i < m_Buffers.size(); i++)
 		if (m_Buffers[i].m_Name == name)
-			return (int)i;
+			return int(i);
 
 	return -1;
 }
@@ -303,8 +303,8 @@ uint OpenCLWrapper::GetBufferSize(const string& name)
 /// <returns>The size of the buffer if found, else 0.</returns>
 uint OpenCLWrapper::GetBufferSize(uint bufferIndex)
 {
-	if (m_Init && bufferIndex < m_Buffers.size())
-		return (uint)m_Buffers[bufferIndex].m_Buffer.getInfo<CL_MEM_SIZE>(nullptr);
+	if (m_Init && (bufferIndex < m_Buffers.size()))
+		return uint(m_Buffers[bufferIndex].m_Buffer.getInfo<CL_MEM_SIZE>(nullptr));
 
 	return 0;
 }
@@ -355,7 +355,7 @@ bool OpenCLWrapper::AddAndWriteImage(const string& name, cl_mem_flags flags, con
 					m_GLImages.push_back(namedImageGL);
 
 					if (data)
-						return WriteImage2D((uint)m_GLImages.size() - 1, true, width, height, row_pitch, data);//OpenGL images/textures require a separate write.
+						return WriteImage2D(uint(m_GLImages.size() - 1), true, width, height, row_pitch, data);//OpenGL images/textures require a separate write.
 					else
 						return true;
 				}
@@ -552,13 +552,13 @@ int OpenCLWrapper::FindImageIndex(const string& name, bool shared)
 {
 	if (shared)
 	{
-		for (uint i = 0; i < m_GLImages.size(); i++)
+		for (size_t i = 0; i < m_GLImages.size(); i++)
 			if (m_GLImages[i].m_Name == name)
 				return i;
 	}
 	else
 	{
-		for (uint i = 0; i < m_Images.size(); i++)
+		for (size_t i = 0; i < m_Images.size(); i++)
 			if (m_Images[i].m_Name == name)
 				return i;
 	}
@@ -608,7 +608,7 @@ uint OpenCLWrapper::GetImageSize(uint imageIndex, bool shared)
 		}
 	}
 
-	return (uint)size;
+	return uint(size);
 }
 
 /// <summary>
@@ -920,9 +920,9 @@ bool OpenCLWrapper::SetImageArg(uint kernelIndex, uint argIndex, bool shared, ui
 /// <returns>The index if found, else -1.</returns>
 int OpenCLWrapper::FindKernelIndex(const string& name)
 {
-	for (uint i = 0; i < m_Programs.size(); i++)
+	for (size_t i = 0; i < m_Programs.size(); i++)
 		if (m_Programs[i].m_Name == name)
-			return (int)i;
+			return int(i);
 
 	return -1;
 }
@@ -999,7 +999,7 @@ vector<string> OpenCLWrapper::PlatformNames()
 
 	platforms.reserve(m_Platforms.size());
 
-	for (uint i = 0; i < m_Platforms.size(); i++)
+	for (size_t i = 0; i < m_Platforms.size(); i++)
 		platforms.push_back(PlatformName(i));
 
 	return platforms;
@@ -1172,7 +1172,7 @@ bool OpenCLWrapper::CreateContext(bool shared)
 				{
 					CL_GL_CONTEXT_KHR, (cl_context_properties)wglGetCurrentContext(),
 					CL_WGL_HDC_KHR, (cl_context_properties)wglGetCurrentDC(),
-					CL_CONTEXT_PLATFORM, (cl_context_properties)(m_Platforms[m_PlatformIndex])(),
+					CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>((m_Platforms[m_PlatformIndex])()),
 					0
 				};
 
@@ -1180,9 +1180,9 @@ bool OpenCLWrapper::CreateContext(bool shared)
 			#else
 				cl_context_properties props[] =
 				{
-					CL_GL_CONTEXT_KHR, (cl_context_properties)glXGetCurrentContext(),
-					CL_GLX_DISPLAY_KHR, (cl_context_properties)glXGetCurrentDisplay(),
-					CL_CONTEXT_PLATFORM, (cl_context_properties)(m_Platforms[m_PlatformIndex])(),
+					CL_GL_CONTEXT_KHR, cl_context_properties(glXGetCurrentContext()),
+					CL_GLX_DISPLAY_KHR, cl_context_properties(glXGetCurrentDisplay()),
+					CL_CONTEXT_PLATFORM, reinterpret_cast<cl_context_properties>((m_Platforms[m_PlatformIndex])()),
 					0
 				};
 
@@ -1195,7 +1195,7 @@ bool OpenCLWrapper::CreateContext(bool shared)
 		cl_context_properties props[3] =
 		{
 			CL_CONTEXT_PLATFORM,
-			(cl_context_properties)(m_Platforms[m_PlatformIndex])(),
+			reinterpret_cast<cl_context_properties>((m_Platforms[m_PlatformIndex])()),
 			0
 		};
 

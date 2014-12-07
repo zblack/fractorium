@@ -139,9 +139,9 @@ public:
 	virtual size_t FuseCount()		 const override;
 
 	//Non-virtual iterator wrappers.
-	const byte* XformDistributions()		 const;
-	const size_t		 XformDistributionsSize()    const;
-	Point<T>*			 Samples(size_t threadIndex) const;
+	const byte* XformDistributions()		const;
+	size_t 		XformDistributionsSize()    const;
+	Point<T>*	Samples(size_t threadIndex) const;
 
 protected:
 	//Non-virtual functions that might be needed by a derived class.

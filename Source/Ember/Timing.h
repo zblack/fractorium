@@ -62,13 +62,13 @@ public:
 	/// Return the begin time as a double.
 	/// </summary>
 	/// <returns></returns>
-	double BeginTime() { return (double)m_BeginTime.time_since_epoch().count(); }
+	double BeginTime() { return static_cast<double>(m_BeginTime.time_since_epoch().count()); }
 
 	/// <summary>
 	/// Return the end time as a double.
 	/// </summary>
 	/// <returns></returns>
-	double EndTime() { return (double)m_EndTime.time_since_epoch().count(); }
+	double EndTime() { return static_cast<double>(m_EndTime.time_since_epoch().count()); }
 
 	/// <summary>
 	/// Return the elapsed time in milliseconds.
@@ -103,13 +103,13 @@ public:
 		double days = x;
 
 		if (days >= 1)
-			ss << (int)days << "d ";
+			ss << static_cast<int>(days) << "d ";
 
 		if (hours >= 1)
-			ss << (int)hours << "h ";
+			ss << static_cast<int>(hours) << "h ";
 
 		if (mins >= 1)
-			ss << (int)mins << "m ";
+			ss << static_cast<int>(mins) << "m ";
 
 		ss << std::fixed << std::setprecision(m_Precision) << secs << "s";
 		return ss.str();

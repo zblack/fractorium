@@ -128,13 +128,13 @@ public:
 		if (decFilterCount > 1e7)//Too many filters.
 			return false;
 
-		intFilterCount = (int)ceil(decFilterCount);
+		intFilterCount = static_cast<int>(ceil(decFilterCount));
 
 		//Condense the smaller kernels to save space.
 		if (intFilterCount > keepThresh)
 		{
-			maxIndex = (int)ceil(DE_THRESH + pow(T(intFilterCount - DE_THRESH), m_Curve)) + 1;
-			m_MaxFilteredCounts = (int)pow(T(maxIndex - DE_THRESH), T(1.0) / m_Curve) + DE_THRESH;
+			maxIndex = static_cast<int>(ceil(DE_THRESH + pow(T(intFilterCount - DE_THRESH), m_Curve))) + 1;
+			m_MaxFilteredCounts = static_cast<int>(pow(T(maxIndex - DE_THRESH), T(1.0) / m_Curve)) + DE_THRESH;
 		}
 		else
 		{
@@ -143,7 +143,7 @@ public:
 		}
 
 		//Allocate the memory for these filters and the hit/width lookup array.
-		rowSize = (int)(2 * ceil(finalMaxRad) - 1);
+		rowSize = static_cast<int>(2 * ceil(finalMaxRad) - 1);
 		m_FilterWidth = (rowSize - 1) / 2;
 		m_KernelSize = (m_FilterWidth + 1) * (2 + m_FilterWidth) / 2;
 
@@ -185,7 +185,7 @@ public:
 			{
 				for (dek = -m_FilterWidth; dek <= m_FilterWidth; dek++)
 				{
-					filterVal = sqrt((T)(dej * dej + dek * dek)) / filterHeight;
+					filterVal = sqrt(T(dej * dej + dek * dek)) / filterHeight;
 
 					//Only populate the coefs within this radius.
 					if (filterVal <= 1.0)

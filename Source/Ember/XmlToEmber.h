@@ -178,7 +178,7 @@ public:
 			m_FlattenNames.push_back("post_falloff2");
 			m_FlattenNames.push_back("post_rotate_x");
 			m_FlattenNames.push_back("post_rotate_y");
-			
+
 			m_FlattenNames.push_back("curl3D_cz");
 
 			//This is a vector of the param names as they are in the legacy, badly named flam3/Apophysis code.
@@ -264,10 +264,10 @@ public:
 		m_ErrorReport.clear();
 
 		//Parse XML string into internal document.
-		xmlPtr = (const char*)(&buf[0]);
+		xmlPtr = CX(&buf[0]);
 		bufSize = strlen(xmlPtr);
 		embers.reserve(bufSize / 2500);//The Xml text for an ember is around 2500 bytes, but can be much more. Pre-allocate to aovid unnecessary resizing.
-		doc = xmlReadMemory(xmlPtr, (int)bufSize, filename, "ISO-8859-1", XML_PARSE_NONET);//Forbid network access during read.
+		doc = xmlReadMemory(xmlPtr, int(bufSize), filename, "ISO-8859-1", XML_PARSE_NONET);//Forbid network access during read.
 		//t.Toc("xmlReadMemory");
 
 		if (doc == nullptr)
@@ -281,7 +281,7 @@ public:
 
 		//Scan for <flame> nodes, starting with this node.
 		//t.Tic();
-		bn = basename((char*)filename);
+		bn = basename(const_cast<char*>(filename));
 		ScanForEmberNodes(rootnode, bn, embers);
 		xmlFreeDoc(doc);
 		emberSize = embers.size();
@@ -349,7 +349,7 @@ public:
 		if (ReadFile(filename, buf))
 		{
 			std::replace(buf.begin(), buf.end(), '&', '+');
-			return Parse((byte*)buf.data(), filename, embers);
+			return Parse(reinterpret_cast<byte*>(const_cast<char*>(buf.data())), filename, embers);
 		}
 		else
 			return false;
@@ -372,7 +372,7 @@ public:
 		errno = 0;//Note that this is not thread-safe.
 
 		//Convert the string using strtod().
-		val = (T)strtod(str, &endp);
+		val = T(strtod(str, &endp));
 
 		//Check errno & return string.
 		if (endp != str + strlen(str))
@@ -399,7 +399,7 @@ public:
 	/// <returns>True if success, else false.</returns>
 	bool Atoi(const char* str, uint& val)
 	{
-		return Atoi(str, (int&)val);
+		return Atoi(str, reinterpret_cast<int&>(val));
 	}
 
 	/// <summary>
@@ -562,7 +562,7 @@ private:
 
 		for (curAtt = att; curAtt; curAtt = curAtt->next)
 		{
-			attStr = (char*)xmlGetProp(emberNode, curAtt->name);
+			attStr = reinterpret_cast<char*>(xmlGetProp(emberNode, curAtt->name));
 
 			//First parse out simple float reads.
 			if		(ParseAndAssignFloat(curAtt->name, attStr, "time",                  currentEmber.m_Time,                ret)) { }
@@ -723,7 +723,7 @@ private:
 
 				for (curAtt = att; curAtt; curAtt = curAtt->next)
 				{
-					attStr = (char*)xmlGetProp(childNode, curAtt->name);
+					attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 					a = 255;
 
 					//This signifies that a palette is not being retrieved from the palette file, rather it's being parsed directly out of the ember xml.
@@ -752,7 +752,7 @@ private:
 					}
 					else
 					{
-						m_ErrorReport.push_back(string(loc) + " : Unknown color attribute " + string((const char*)curAtt->name));
+						m_ErrorReport.push_back(string(loc) + " : Unknown color attribute " + string(CCX(curAtt->name)));
 					}
 
 					xmlFree(attStr);
@@ -789,7 +789,7 @@ private:
 
 				for (curAtt = att; curAtt; curAtt = curAtt->next)
 				{
-					attStr = (char*)xmlGetProp(childNode, curAtt->name);
+					attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
 					if (!Compare(curAtt->name, "count"))
 					{
@@ -804,7 +804,7 @@ private:
 					}
 					else
 					{
-						m_ErrorReport.push_back(string(loc) + " : Unknown color attribute " + string((const char*)curAtt->name));
+						m_ErrorReport.push_back(string(loc) + " : Unknown color attribute " + string(CCX(curAtt->name)));
 					}
 
 					xmlFree(attStr);
@@ -835,7 +835,7 @@ private:
 
 				for (curAtt = att; curAtt; curAtt = curAtt->next)
 				{
-					attStr = (char*)xmlGetProp(childNode, curAtt->name);
+					attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
 					if (!Compare(curAtt->name, "index0"))
 					{
@@ -883,7 +883,7 @@ private:
 					}
 					else
 					{
-						m_ErrorReport.push_back(string(loc) + " : Unknown palette attribute " + string((const char*)curAtt->name));
+						m_ErrorReport.push_back(string(loc) + " : Unknown palette attribute " + string(CCX(curAtt->name)));
 					}
 
 					xmlFree(attStr);
@@ -903,7 +903,7 @@ private:
 				else
 				{
 					//Read formatted string from contents of tag.
-					char* palStr = (char*)xmlNodeGetContent(childNode);
+					char* palStr = CX(xmlNodeGetContent(childNode));
 
 					if (!ParseHexColors(palStr, currentEmber, numColors, numBytes))
 					{
@@ -928,7 +928,7 @@ private:
 
 				for (curAtt = att; curAtt; curAtt = curAtt->next)
 				{
-					attStr = (char*)xmlGetProp(childNode, curAtt->name);
+					attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
 					if (!Compare(curAtt->name, "kind"))
 					{
@@ -1013,7 +1013,7 @@ private:
 			else if (!Compare(childNode->name, "edit"))
 			{
 				//Create a new XML document with this edit node as the root node.
-				currentEmber.m_Edits = xmlNewDoc((const xmlChar*)"1.0");
+				currentEmber.m_Edits = xmlNewDoc(XC("1.0"));
 				editNode = xmlCopyNode(childNode, 1);
 				xmlDocSetRootElement(currentEmber.m_Edits, editNode);
 			}
@@ -1058,7 +1058,7 @@ private:
 
 		for (curAtt = attPtr; curAtt; curAtt = curAtt->next)
 		{
-			attStr = (char*)xmlGetProp(childNode, curAtt->name);
+			attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
 			//First parse out simple float reads.
 			if (ParseAndAssignFloat(curAtt->name, attStr, "weight", xform.m_Weight, success)) { }
@@ -1196,14 +1196,14 @@ private:
 
 			if (!Compare(curAtt->name, "var1"))
 			{
-				attStr = (char*)xmlGetProp(childNode, curAtt->name);
+				attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
 				for (j = 0; j < xform.TotalVariationCount(); j++)
 					xform.GetVariation(j)->m_Weight = 0;
 
 				if (Atof(attStr, temp))
 				{
-					uint iTemp = (uint)temp;
+					uint iTemp = static_cast<uint>(temp);
 
 					if (iTemp < xform.TotalVariationCount())
 					{
@@ -1227,7 +1227,7 @@ private:
 
 			if (!Compare(curAtt->name, "var"))
 			{
-				attStr = (char*)xmlGetProp(childNode, curAtt->name);
+				attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
 				if (Atof(attStr, temp))
 				{
@@ -1252,13 +1252,13 @@ private:
 			{
 				for (curAtt = attPtr; curAtt; curAtt = curAtt->next)
 				{
-					string s = GetCorrectedParamName(m_BadParamNames, (const char*)curAtt->name);
+					string s = GetCorrectedParamName(m_BadParamNames, CCX(curAtt->name));
 					const char* name = s.c_str();
 
 					if (parVar->ContainsParam(name))
 					{
 						T val = 0;
-						attStr = (char*)xmlGetProp(childNode, curAtt->name);
+						attStr = CX(xmlGetProp(childNode, curAtt->name));
 
 						if (Atof(attStr, val))
 						{
@@ -1309,7 +1309,7 @@ private:
 	{
 		for (size_t i = 0; i < vec.size(); i++)
 		{
-			if (!_stricmp(vec[i].first.first.c_str(), (const char*)att->name))//Do case insensitive here.
+			if (!_stricmp(vec[i].first.first.c_str(), CCX(att->name)))//Do case insensitive here.
 			{
 				if (!vec[i].second.empty())
 				{
@@ -1326,7 +1326,7 @@ private:
 			}
 		}
 
-		return string((const char*)att->name);
+		return string(CCX(att->name));
 	}
 
 	/// <summary>
@@ -1341,7 +1341,7 @@ private:
 
 		do
 		{
-			if (!_stricmp(name, (const char*)temp->name))
+			if (!_stricmp(name, CCX(temp->name)))
 				return true;
 		} while ((temp = temp->next));
 
@@ -1364,12 +1364,12 @@ private:
 		uint r, g, b, a;
 		int ret;
 		char tmps[2];
-		int skip = (int)abs(chan);
+		int skip = static_cast<int>(abs(chan));
 		bool ok = true;
 		const char* loc = __FUNCTION__;
 
 		//Strip whitespace prior to first color.
-		while (isspace((int)colstr[colorIndex]))
+		while (isspace(static_cast<int>(colstr[colorIndex])))
 			colorIndex++;
 
 		do
@@ -1394,7 +1394,7 @@ private:
 
 			colorIndex += 2 * skip;
 
-			while (isspace((int)colstr[colorIndex]))
+			while (isspace(static_cast<int>(colstr[colorIndex])))
 				colorIndex++;
 
 			ember.m_Palette.m_Entries[colorCount].r = T(r) / T(255);//Hex palette is [0..255], convert to [0..1].
@@ -1504,7 +1504,7 @@ private:
 		if (!Compare(name, str))
 		{
 			b &= Atof(attStr, fval);
-			val = (intT)fval;
+			val = static_cast<intT>(fval);
 			ret = true;//Means the strcmp() was right, but doesn't necessarily mean the conversion went ok.
 		}
 

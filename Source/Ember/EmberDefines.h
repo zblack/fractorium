@@ -61,7 +61,10 @@ namespace EmberNs
 #define COLORMAP_LENGTH_MINUS_1 255
 #define WHITE 255
 #define DEFAULT_SBS (1024 * 10)
-#define XC (const xmlChar*)
+//#define XC(c) ((const xmlChar*)(c))
+#define XC(c) (reinterpret_cast<const xmlChar*>(c))
+#define CX(c) (reinterpret_cast<char*>(c))
+#define CCX(c) (reinterpret_cast<const char*>(c))
 #define BadVal(x) (((x) != (x)) || ((x) > 1e10) || ((x) < -1e10))
 #define Rint(A) floor((A) + (((A) < 0) ? T(-0.5) : T(0.5)))
 #define Vlen(x) (sizeof(x) / sizeof(*x))

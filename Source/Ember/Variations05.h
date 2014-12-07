@@ -293,7 +293,7 @@ public:
 			if (++iters > 10)
 				break;
 		}
-		while ((DiscreteNoise2((int)(m + m_Seed), n) > m_Dens) || (u > (T(0.3) + T(0.7) * DiscreteNoise2(m + 10, n + 3)) * m_Sc));
+		while ((DiscreteNoise2(int(m + m_Seed), n) > m_Dens) || (u > (T(0.3) + T(0.7) * DiscreteNoise2(m + 10, n + 3)) * m_Sc));
 
 		helper.Out.x = m_Weight * (x + (m * 2 + 1) * m_Sc);
 		helper.Out.y = m_Weight * (y + (n * 2 + 1) * m_Sc);
@@ -413,7 +413,7 @@ public:
 		y = uy - (n * 2 + 1) * m_Sc;
 		u = Hypot(x, y);
 
-		if ((DiscreteNoise2((int)(m + m_Seed), n) > m_Dens) || (u > (T(0.3) + T(0.7) * DiscreteNoise2(m + 10, n + 3)) * m_Sc))
+		if ((DiscreteNoise2(int(m + m_Seed), n) > m_Dens) || (u > (T(0.3) + T(0.7) * DiscreteNoise2(m + 10, n + 3)) * m_Sc))
 		{
 			ux = ux;
 			uy = uy;
@@ -565,7 +565,7 @@ private:
 			if (++iters > 10)
 				break;
 		}
-		while (DiscreteNoise2((int)(m + m_Seed), n) > m_Dens);
+		while (DiscreteNoise2(int(m + m_Seed), n) > m_Dens);
 
 		*ux = x + (m * 2 + 1) * m_Sc;
 		*vy = y + (n * 2 + 1) * m_Sc;
@@ -1551,7 +1551,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		int sl = (int)(rand.Frand01<T>() * m_Slices + T(0.5));
+		int sl = int(rand.Frand01<T>() * m_Slices + T(0.5));
 		T a = m_Rotation + M_2PI * (sl + rand.Frand01<T>() * m_Thickness) / m_Slices;
 		T r = m_Weight * rand.Frand01<T>();
 
@@ -1585,7 +1585,7 @@ public:
 
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		m_Params[0].Set((int)10 * rand.Frand01<T>());//Slices.
+		m_Params[0].Set(10 * rand.Frand01<T>());//Slices.
 		m_Params[1].Set(M_2PI * rand.Frand11<T>());//Rotation.
 		m_Thickness = rand.Frand01<T>();
 	}
@@ -1835,8 +1835,8 @@ public:
 		const T xrng = helper.In.x / m_XDistance;
 		const T yrng = helper.In.y / m_YDistance;
 
-		helper.Out.x = m_Xw * ((xrng - (int)xrng) * m_XWidth + (int)xrng + (T(0.5) - xpos) * m_1mX);
-		helper.Out.y = m_Yw * ((yrng - (int)yrng) * m_YWidth + (int)yrng + (T(0.5) - ypos) * m_1mY);
+		helper.Out.x = m_Xw * ((xrng - int(xrng)) * m_XWidth + int(xrng) + (T(0.5) - xpos) * m_1mX);
+		helper.Out.y = m_Yw * ((yrng - int(yrng)) * m_YWidth + int(yrng) + (T(0.5) - ypos) * m_1mY);
 		helper.Out.z = m_Weight * helper.In.z;
 		//outPoint.m_X = 0;
 		//outPoint.m_Y = 0;
@@ -2125,7 +2125,7 @@ public:
 		T sigma, phi, rad, sigmas, sigmac, phis, phic;
 		T scale, denom;
 
-		switch ((int)m_Type)
+		switch (int(m_Type))
 		{
 			case 0://Linear.
 				helper.Out.x = m_Weight * (helper.In.x + m_MulX * ax * rs);
@@ -2282,7 +2282,7 @@ public:
 		const T distB = m_Invert != 0 ? max<T>(1 - distA, 0) : max<T>(distA, 0);//Original called a macro named min, which internally performed max.
 		const T dist = max<T>((distB - m_MinDist) * m_RMax, 0);
 
-		switch ((int)m_Type)
+		switch (int(m_Type))
 		{
 			case 0://Linear.
 				{
@@ -2477,7 +2477,7 @@ public:
 		const v4T random(rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)));
 		T radius;
 
-		switch ((int)m_BlurShape)
+		switch (int(m_BlurShape))
 		{
 			case 0://Circle.
 				radius = sqrt(Sqr(helper.In.x - m_CenterX) + Sqr(helper.In.y - m_CenterY) + Sqr(helper.In.z - m_CenterZ));
@@ -2490,7 +2490,7 @@ public:
 
 		const T dist = max<T>(((m_InvertDistance != 0 ? max<T>(1 - radius, 0) : max<T>(radius, 0)) - m_MinDistance) * m_RMax, 0);
 
-		switch ((int)m_BlurType)
+		switch (int(m_BlurType))
 		{
 		case 0://Gaussian.
 			{
@@ -3041,7 +3041,7 @@ public:
 		if (m_Power == 0)
 			m_Power = 2;
 
-		m_AbsN = T((int)fabs(m_Power));
+		m_AbsN = T(int(fabs(m_Power)));
 		m_Cn = m_Dist / m_Power / 2;
 	}
 
@@ -3092,7 +3092,7 @@ private:
 	{
 		T inx = (be - m_Radius + (al - m_Radius) * m_CosC) / m_SinC;
 		T iny = al - m_Radius;
-		T angle = (atan2(iny, inx) + M_2PI * (rand.Rand((int)m_AbsN))) / m_Power;
+		T angle = (atan2(iny, inx) + M_2PI * (rand.Rand(int(m_AbsN)))) / m_Power;
 		T r = m_Weight * pow(SQR(inx) + SQR(iny), m_Cn);
 
 		x = r * cos(angle);

@@ -159,12 +159,12 @@ public:
 	EmberOptionEntry(eOptionUse optUsage, eOptionIDs optId, const CharT* arg, T defaultVal, ESOArgType argType, string docString)
 	{
 		m_OptionUse = optUsage;
-		m_Option.nId = (int)optId;
+		m_Option.nId = int(optId);
 		m_Option.pszArg = arg;
 		m_Option.nArgType = argType;
 		m_DocString = docString;
 		m_NameWithoutDashes = Trim(string(arg), '-');
-		m_Val = Arg<T>((char*)m_NameWithoutDashes.c_str(), defaultVal);
+		m_Val = Arg<T>(const_cast<char*>(m_NameWithoutDashes.c_str()), defaultVal);
 	}
 
 	/// <summary>

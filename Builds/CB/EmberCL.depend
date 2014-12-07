@@ -1,9 +1,9 @@
 # depslib dependency file v1.0
-1417814313 source:/home/heretic/Dev/fractorium/Source/EmberCL/DEOpenCLKernelCreator.cpp
+1417928577 source:/home/heretic/Dev/fractorium/Source/EmberCL/DEOpenCLKernelCreator.cpp
 	"EmberCLPch.h"
 	"DEOpenCLKernelCreator.h"
 
-1417766202 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLPch.h
+1417901704 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLPch.h
 	"Timing.h"
 	"Renderer.h"
 	<windows.h>
@@ -20,13 +20,13 @@
 	<iterator>
 	<time.h>
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Timing.h
+1417906341 /home/heretic/Dev/fractorium/Source/Ember//Timing.h
 	"EmberDefines.h"
 
-1417811373 /home/heretic/Dev/fractorium/Source/Ember//EmberDefines.h
+1417917311 /home/heretic/Dev/fractorium/Source/Ember//EmberDefines.h
 	"EmberPch.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//EmberPch.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//EmberPch.h
 	<SDKDDKVer.h>
 	<windows.h>
 	<libgen.h>
@@ -58,6 +58,7 @@
 	"tbb/parallel_for.h"
 	"tbb/task_scheduler_init.h"
 	"glm/glm.hpp"
+	"glm/detail/type_int.hpp"
 	"glm/gtc/matrix_transform.hpp"
 	"glm/gtc/type_ptr.hpp"
 	"glm/gtx/string_cast.hpp"
@@ -183,7 +184,7 @@
 	<libxml/parser.h>
 	<libxml/encoding.h>
 
-1417810944 /home/heretic/Dev/fractorium/Source/Ember//Renderer.h
+1417921679 /home/heretic/Dev/fractorium/Source/Ember//Renderer.h
 	"RendererBase.h"
 	"Iterator.h"
 	"SpatialFilter.h"
@@ -192,28 +193,28 @@
 	"CarToRas.h"
 	"EmberToXml.h"
 
-1417770762 /home/heretic/Dev/fractorium/Source/Ember//RendererBase.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//RendererBase.h
 	"Utils.h"
 	"Ember.h"
 	"DensityFilter.h"
 
-1417776440 /home/heretic/Dev/fractorium/Source/Ember//Utils.h
+1417905955 /home/heretic/Dev/fractorium/Source/Ember//Utils.h
 	"Isaac.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Isaac.h
+1417921234 /home/heretic/Dev/fractorium/Source/Ember//Isaac.h
 	"EmberDefines.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Ember.h
+1417915457 /home/heretic/Dev/fractorium/Source/Ember//Ember.h
 	"Xform.h"
 	"PaletteList.h"
 	"SpatialFilter.h"
 	"TemporalFilter.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Xform.h
+1417908868 /home/heretic/Dev/fractorium/Source/Ember//Xform.h
 	"VariationList.h"
 	"Interpolate.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//VariationList.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//VariationList.h
 	"Variations01.h"
 	"Variations02.h"
 	"Variations03.h"
@@ -221,112 +222,112 @@
 	"Variations05.h"
 	"VariationsDC.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Variations01.h
+1417907217 /home/heretic/Dev/fractorium/Source/Ember//Variations01.h
 	"Variation.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Variation.h
+1417917944 /home/heretic/Dev/fractorium/Source/Ember//Variation.h
 	"Point.h"
 	"Isaac.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Point.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//Point.h
 	"EmberDefines.h"
 	"Affine2D.h"
 	"Timing.h"
 
-1417810095 /home/heretic/Dev/fractorium/Source/Ember//Affine2D.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//Affine2D.h
 	"Utils.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Variations02.h
+1417908486 /home/heretic/Dev/fractorium/Source/Ember//Variations02.h
 	"Variation.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Variations03.h
+1417907820 /home/heretic/Dev/fractorium/Source/Ember//Variations03.h
 	"Variation.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Variations04.h
+1417908559 /home/heretic/Dev/fractorium/Source/Ember//Variations04.h
 	"Variation.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Variations05.h
+1417908258 /home/heretic/Dev/fractorium/Source/Ember//Variations05.h
 	"Variation.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//VariationsDC.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//VariationsDC.h
 	"Variation.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Interpolate.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//Interpolate.h
 	"Ember.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//PaletteList.h
+1417909715 /home/heretic/Dev/fractorium/Source/Ember//PaletteList.h
 	"Palette.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Palette.h
+1417908559 /home/heretic/Dev/fractorium/Source/Ember//Palette.h
 	"Utils.h"
 	"Isaac.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//SpatialFilter.h
+1417907380 /home/heretic/Dev/fractorium/Source/Ember//SpatialFilter.h
 	"EmberDefines.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//TemporalFilter.h
+1417901704 /home/heretic/Dev/fractorium/Source/Ember//TemporalFilter.h
 	"EmberDefines.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//DensityFilter.h
+1417915259 /home/heretic/Dev/fractorium/Source/Ember//DensityFilter.h
 	"SpatialFilter.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//Iterator.h
+1417928702 /home/heretic/Dev/fractorium/Source/Ember//Iterator.h
 	"Ember.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//CarToRas.h
+1417905627 /home/heretic/Dev/fractorium/Source/Ember//CarToRas.h
 	"Point.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/Ember//EmberToXml.h
+1417918151 /home/heretic/Dev/fractorium/Source/Ember//EmberToXml.h
 	"Utils.h"
 	"PaletteList.h"
 	"VariationList.h"
 	"Ember.h"
 
-1417816098 /home/heretic/Dev/fractorium/Source/EmberCL/DEOpenCLKernelCreator.h
+1417901704 /home/heretic/Dev/fractorium/Source/EmberCL/DEOpenCLKernelCreator.h
 	"EmberCLPch.h"
 	"EmberCLStructs.h"
 	"EmberCLFunctions.h"
 
-1417764380 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLStructs.h
+1417928227 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLStructs.h
 	"EmberCLPch.h"
 
-1417760119 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLFunctions.h
+1417901704 /home/heretic/Dev/fractorium/Source/EmberCL/EmberCLFunctions.h
 	"EmberCLPch.h"
 	"EmberCLStructs.h"
 
-1417760119 source:/home/heretic/Dev/fractorium/Source/EmberCL/DllMain.cpp
+1417901704 source:/home/heretic/Dev/fractorium/Source/EmberCL/DllMain.cpp
 	"EmberCLPch.h"
 
-1417814313 source:/home/heretic/Dev/fractorium/Source/EmberCL/FinalAccumOpenCLKernelCreator.cpp
+1417901704 source:/home/heretic/Dev/fractorium/Source/EmberCL/FinalAccumOpenCLKernelCreator.cpp
 	"EmberCLPch.h"
 	"FinalAccumOpenCLKernelCreator.h"
 
-1417816098 /home/heretic/Dev/fractorium/Source/EmberCL/FinalAccumOpenCLKernelCreator.h
+1417901704 /home/heretic/Dev/fractorium/Source/EmberCL/FinalAccumOpenCLKernelCreator.h
 	"EmberCLPch.h"
 	"EmberCLStructs.h"
 	"EmberCLFunctions.h"
 
-1417814434 source:/home/heretic/Dev/fractorium/Source/EmberCL/IterOpenCLKernelCreator.cpp
+1417901704 source:/home/heretic/Dev/fractorium/Source/EmberCL/IterOpenCLKernelCreator.cpp
 	"EmberCLPch.h"
 	"IterOpenCLKernelCreator.h"
 
-1417816098 /home/heretic/Dev/fractorium/Source/EmberCL/IterOpenCLKernelCreator.h
+1417901704 /home/heretic/Dev/fractorium/Source/EmberCL/IterOpenCLKernelCreator.h
 	"EmberCLPch.h"
 	"EmberCLStructs.h"
 	"EmberCLFunctions.h"
 
-1417814434 source:/home/heretic/Dev/fractorium/Source/EmberCL/OpenCLWrapper.cpp
+1417929845 source:/home/heretic/Dev/fractorium/Source/EmberCL/OpenCLWrapper.cpp
 	"EmberCLPch.h"
 	"OpenCLWrapper.h"
 
-1417770248 /home/heretic/Dev/fractorium/Source/EmberCL/OpenCLWrapper.h
+1417901704 /home/heretic/Dev/fractorium/Source/EmberCL/OpenCLWrapper.h
 	"EmberCLPch.h"
 
-1417829447 source:/home/heretic/Dev/fractorium/Source/EmberCL/RendererCL.cpp
+1417926792 source:/home/heretic/Dev/fractorium/Source/EmberCL/RendererCL.cpp
 	"EmberCLPch.h"
 	"RendererCL.h"
 
-1417828769 /home/heretic/Dev/fractorium/Source/EmberCL/RendererCL.h
+1417928136 /home/heretic/Dev/fractorium/Source/EmberCL/RendererCL.h
 	"EmberCLPch.h"
 	"OpenCLWrapper.h"
 	"IterOpenCLKernelCreator.h"

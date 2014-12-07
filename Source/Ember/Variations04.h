@@ -1533,24 +1533,24 @@ public:
 		switch (rand.Rand(5))
 		{
 			case 0:
-				a = (rand.Rand((ISAAC_INT)m_Slices) + rand.Frand01<T>() * m_XThickness) / m_Slices;
-				r = (rand.Rand((ISAAC_INT)m_Slices) + rand.Frand01<T>() * m_YThickness) / m_Slices;
+				a = (rand.Rand(ISAAC_INT(m_Slices)) + rand.Frand01<T>() * m_XThickness) / m_Slices;
+				r = (rand.Rand(ISAAC_INT(m_Slices)) + rand.Frand01<T>() * m_YThickness) / m_Slices;
 				break;
 			case 1:
-				a = (rand.Rand((ISAAC_INT)m_Slices) + rand.Frand01<T>()) / m_Slices;
-				r = (rand.Rand((ISAAC_INT)m_Slices) + m_YThickness)      / m_Slices;
+				a = (rand.Rand(ISAAC_INT(m_Slices)) + rand.Frand01<T>()) / m_Slices;
+				r = (rand.Rand(ISAAC_INT(m_Slices)) + m_YThickness)      / m_Slices;
 				break;
 			case 2:
-				a = (rand.Rand((ISAAC_INT)m_Slices) + m_XThickness)      / m_Slices;
-				r = (rand.Rand((ISAAC_INT)m_Slices) + rand.Frand01<T>()) / m_Slices;
+				a = (rand.Rand(ISAAC_INT(m_Slices)) + m_XThickness)      / m_Slices;
+				r = (rand.Rand(ISAAC_INT(m_Slices)) + rand.Frand01<T>()) / m_Slices;
 				break;
 			case 3:
 				a = rand.Frand01<T>();
-				r = (rand.Rand((ISAAC_INT)m_Slices) + m_YThickness + rand.Frand01<T>() * (1 - m_YThickness)) / m_Slices;
+				r = (rand.Rand(ISAAC_INT(m_Slices)) + m_YThickness + rand.Frand01<T>() * (1 - m_YThickness)) / m_Slices;
 				break;
 			case 4:
 			default:
-				a = (rand.Rand((ISAAC_INT)m_Slices) + m_XThickness + rand.Frand01<T>() * (1 - m_XThickness)) / m_Slices;
+				a = (rand.Rand(ISAAC_INT(m_Slices)) + m_XThickness + rand.Frand01<T>() * (1 - m_XThickness)) / m_Slices;
 				r = rand.Frand01<T>();
 				break;
 		}
@@ -1713,7 +1713,7 @@ public:
 		r1 = pow(fabs(pr1), m_N1_1) + m_Spiral * rho1;
 		r2 = pow(fabs(pr2), m_N1_2);
 
-		if ((int)m_Toroidmap == 1)
+		if (int(m_Toroidmap) == 1)
 		{
 			helper.Out.x = m_Weight * cosr * (r1 + r2 * cosp);
 			helper.Out.y = m_Weight * sinr * (r1 + r2 * cosp);
@@ -1908,7 +1908,7 @@ public:
 		helper.Out.y = helper.In.y * rY;
 
 		//Optional 3D calculation.
-		if ((int)m_ZOn == 1)
+		if (int(m_ZOn) == 1)
 		{
 			rZ = m_Weight / pow(t, m_StretchZ);
 			helper.Out.z = helper.In.z * rZ;
@@ -1992,7 +1992,7 @@ public:
 		const T c = cos(ang);
 
 		const int esc = rad > m_Radius;
-		const int cr0 = (int)m_Zero;
+		const int cr0 = int(m_Zero);
 
 		if (cr0 &&  esc)
 		{
@@ -2133,7 +2133,7 @@ public:
 		const T radiusOut = m_Weight * pow(helper.m_PrecalcSumSquares + z * z, m_Cn);
 		const T x = m_A * helper.In.x + m_B * helper.In.y + m_E;
 		const T y = m_C * helper.In.x + m_D * helper.In.y + m_F;
-		const T tempRand = (T)(int)(rand.Frand01<T>() * m_AbsN);
+		const T tempRand = T(int(rand.Frand01<T>() * m_AbsN));
 		const T alpha = (atan2(y, x) + M_2PI * tempRand) / m_Power;
 		const T gamma = radiusOut * helper.m_PrecalcSqrtSumSquares;
 
@@ -2963,7 +2963,7 @@ public:
 		T fp2x;
 		T fp2y;
 
-		switch ((int)m_T1)
+		switch (int(m_T1))
 		{
 			case 0:
 				fp1x = Sine(m_A1, m_B1, m_C1, m_P1, helper.In.x);
@@ -2983,7 +2983,7 @@ public:
 				break;
 		}
 
-		switch ((int)m_T2)
+		switch (int(m_T2))
 		{
 			case 0:
 				fp2x = Sine(m_A2, m_B2, m_C2, m_P2, helper.In.x);
@@ -4115,7 +4115,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		int extended = (int)m_Extended;
+		int extended = int(m_Extended);
 		T seed = m_AbsSeed;
 		T r = -m_Rotation;
 		T r0 = 0;
@@ -4128,8 +4128,8 @@ public:
 		T niter = 0;
 		T x = helper.In.x * m_Scale;
 		T y = helper.In.y * m_Scale;
-		int intx = (int)Round(x);
-		int inty = (int)Round(y);
+		int intx = int(Round(x));
+		int inty = int(Round(y));
 		int randiter;
 
 		r = x - intx;
@@ -4166,11 +4166,11 @@ public:
 			}
 			else
 			{
-				int xrand = (int)Round(helper.In.x);
-				int yrand = (int)Round(helper.In.y);
+				int xrand = int(Round(helper.In.x));
+				int yrand = int(Round(helper.In.y));
 
-				seed = (T)Floor<T>(seed);
-				niter = (T)abs(xrand + yrand + xrand * yrand);
+				seed = T(Floor<T>(seed));
+				niter = T(abs(xrand + yrand + xrand * yrand));
 				randInt = seed + niter;
 				randiter = 0;
 
@@ -4557,7 +4557,7 @@ protected:
 	}
 
 private:
-	static inline T GdoffsFcip(T a) { return (T)((a < 0) ? -((int)(fabs(a)) + 1) : 0) + ((a > 1) ? ((int)(a)) : 0); }
+	static inline T GdoffsFcip(T a) { return T((a < 0) ? -(int(fabs(a)) + 1) : 0) + ((a > 1) ? (int(a)) : 0); }
 	static inline T GdoffsFclp(T a) { return ((a < 0) ? -(fmod(fabs(a), T(1))) : fmod(fabs(a), T(1))); }
 	static inline T GdoffsFscl(T a) { return GdoffsFclp((a + 1) / 2); }
 	static inline T GdoffsFosc(T p, T a) { return GdoffsFscl(-1 * cos(p * a * M_2PI)); }
@@ -5043,7 +5043,7 @@ public:
 	{
 		m_BlobLow   = T(0.2) + T(0.5) * rand.Frand01<T>();
 		m_BlobHigh  = T(0.8) + T(0.4) * rand.Frand01<T>();
-		m_BlobWaves = (T)(int)(2 + 5  * rand.Frand01<T>());
+		m_BlobWaves = T(int(2 + 5 * rand.Frand01<T>()));
 	}
 
 protected:
