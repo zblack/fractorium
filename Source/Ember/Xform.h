@@ -185,7 +185,7 @@ public:
 
 		//If this xform was already part of a different ember, then do not assign, else do.
 		if (!m_ParentEmber && (typeid(T) == typeid(U)))
-			m_ParentEmber = static_cast<Ember<T>*>(xform.ParentEmber());
+			m_ParentEmber = reinterpret_cast<Ember<T>*>(xform.ParentEmber());
 
 		CopyVec<T, U>(m_Xaos, xform.XaosVec());
 		CopyVec(m_Motion, xform.m_Motion);
