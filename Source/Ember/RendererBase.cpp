@@ -116,12 +116,10 @@ void RendererBase::ChangeVal(std::function<void(void)> func, eProcessAction acti
 }
 
 /// <summary>
-/// Return the amount of memory needed to render the current ember.
-/// Optionally include the memory needed for the final output image.
+/// Return the amount of memory needed for the histogram.
 /// </summary>
-/// <param name="includeFinal">If true include the memory needed for the final output image, else don't.</param>
-/// <returns>The memory required to render the current ember</returns>
-size_t RendererBase::MemoryRequired(size_t strips, bool includeFinal)
+/// <returns>The memory required for the histogram to render the current ember</returns>
+size_t RendererBase::HistMemoryRequired(size_t strips)
 {
 	bool newFilterAlloc = false;
 
@@ -130,9 +128,24 @@ size_t RendererBase::MemoryRequired(size_t strips, bool includeFinal)
 	ComputeBounds();
 
 	//Because ComputeBounds() was called, this includes gutter.
-	size_t histSize = (SuperSize() * HistBucketSize()) / strips;
+	return (SuperSize() * HistBucketSize()) / strips;
+}
 
-	return (histSize * 2) + (includeFinal ? FinalBufferSize() : 0);//Multiply hist by 2 to account for the density filtering buffer which is the same size as the histogram.
+/// <summary>
+/// Return a pair whose first member contains the amount of memory needed for the histogram,
+/// and whose second member contains the total the amount of memory needed to render the current ember.
+/// Optionally include the memory needed for the final output image in pair.second.
+/// </summary>
+/// <param name="includeFinal">If true include the memory needed for the final output image, else don't.</param>
+/// <returns>The histogram memory required in first, and the total memory required in second</returns>
+pair<size_t, size_t> RendererBase::MemoryRequired(size_t strips, bool includeFinal)
+{
+	pair<size_t, size_t> p;
+
+	p.first = HistMemoryRequired(strips);
+	p.second = (p.first * 2) + (includeFinal ? FinalBufferSize() : 0);//Multiply hist by 2 to account for the density filtering buffer which is the same size as the histogram.
+
+	return p;
 }
 
 /// <summary>

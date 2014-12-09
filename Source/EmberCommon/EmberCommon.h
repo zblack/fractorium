@@ -281,7 +281,7 @@ static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<byte>& 
 	std::function<void(size_t strip)> perStripError,
 	std::function<void(Ember<T>& finalEmber)> allStripsFinished)
 {
-	bool success = true;
+	bool success = false;
 	size_t origHeight, realHeight = ember.m_FinalRasH;
 	T centerY = ember.m_CenterY;
 	T floatStripH = T(ember.m_FinalRasH) / T(strips);
@@ -321,31 +321,28 @@ static bool StripsRender(RendererBase* renderer, Ember<T>& ember, vector<byte>& 
 			renderer->SetEmber(ember);//Set one final time after modifications for strips.
 		}
 
-		if ((renderer->Run(finalImage, time, 0, false, stripOffset) != RENDER_OK) || renderer->Aborted() || finalImage.empty())
-		{
-			perStripError(strip);
-			success = false;
-			break;
-		}
-		else
+		if ((renderer->Run(finalImage, time, 0, false, stripOffset) == RENDER_OK) && !renderer->Aborted() && !finalImage.empty())
 		{
 			perStripFinish(strip);
 		}
+		else
+		{
+			perStripError(strip);
+			break;
+		}
 
 		if (strip == strips - 1)
-		{
-			//Restore the ember values to their original values.
-			if (strips > 1)
-			{
-				ember.m_Quality /= strips;
-				ember.m_FinalRasH = realHeight;
-				ember.m_CenterY = centerY;
-				renderer->SetEmber(ember);//Further processing will require the dimensions to match the original ember, so re-assign.
-			}
-
-			allStripsFinished(ember);
-		}
+			success = true;
 	}
+
+	//Restore the ember values to their original values.
+	ember.m_Quality /= strips;
+	ember.m_FinalRasH = realHeight;
+	ember.m_CenterY = centerY;
+	renderer->SetEmber(ember);//Further processing will require the dimensions to match the original ember, so re-assign.
+
+	if (success)
+		allStripsFinished(ember);
 
 	Memset(finalImage);
 

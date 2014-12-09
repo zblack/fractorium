@@ -1,3 +1,15 @@
+--User changes
+	Use actual strips count when computing memory requirements in the final render dialog.
+	Output CL_DEVICE_ADDRESS_BITS when passing --openclinfo to command line programs.
+	Warn if single/total allocations are greater than the max allowed for OpenCL in the final render dialog.
+	
+--Bug Fixes
+	Fix bad values left in an ember when a render with strips > 1 fails in the final render dialog.
+
+--Code Changes
+	Break RendererBase::MemoryRequired() into two functions, it and HistMemRequired() and return a tuple.
+	Add GlobalMemSize() and MaxAllocSize() functions in OpenCLWrapper.
+
 0.4.1.6 Beta 11/29/2014
 --User Changes
 	None.

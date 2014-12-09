@@ -175,7 +175,7 @@ public:
 
 	//Info.
 	template<typename T>
-	T GetInfo(size_t platform, size_t device, cl_device_info name);
+	T GetInfo(size_t platform, size_t device, cl_device_info name) const;
 	string PlatformName(size_t platform);
 	vector<string> PlatformNames();
 	string DeviceName(size_t platform, size_t device);
@@ -190,6 +190,8 @@ public:
 	uint PlatformIndex() const;
 	uint DeviceIndex() const;
 	uint LocalMemSize() const;
+	size_t GlobalMemSize() const;
+	size_t MaxAllocSize() const;
 
 	static void MakeEvenGridDims(uint blockW, uint blockH, uint& gridW, uint& gridH);
 

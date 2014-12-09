@@ -554,13 +554,13 @@ int OpenCLWrapper::FindImageIndex(const string& name, bool shared)
 	{
 		for (size_t i = 0; i < m_GLImages.size(); i++)
 			if (m_GLImages[i].m_Name == name)
-				return i;
+				return int(i);
 	}
 	else
 	{
 		for (size_t i = 0; i < m_Images.size(); i++)
 			if (m_Images[i].m_Name == name)
-				return i;
+				return int(i);
 	}
 
 	return -1;
@@ -966,7 +966,7 @@ bool OpenCLWrapper::RunKernel(uint kernelIndex, uint totalGridWidth, uint totalG
 /// <param name="name">The device field/feature to query</param>
 /// <returns>The value of the field</returns>
 template<typename T>
-T OpenCLWrapper::GetInfo(size_t platform, size_t device, cl_device_info name)
+T OpenCLWrapper::GetInfo(size_t platform, size_t device, cl_device_info name) const
 {
 	T val;
 
@@ -1094,6 +1094,7 @@ string OpenCLWrapper::DumpInfo()
 			os << "CL_DEVICE_MAX_READ_IMAGE_ARGS: "		  << GetInfo<cl_uint> (platform, device, CL_DEVICE_MAX_READ_IMAGE_ARGS)		  << endl;
 			os << "CL_DEVICE_MAX_WRITE_IMAGE_ARGS: "	  << GetInfo<cl_uint> (platform, device, CL_DEVICE_MAX_WRITE_IMAGE_ARGS)	  << endl;
 			os << "CL_DEVICE_MAX_MEM_ALLOC_SIZE: "		  << GetInfo<cl_ulong>(platform, device, CL_DEVICE_MAX_MEM_ALLOC_SIZE)		  << endl;
+			os << "CL_DEVICE_ADDRESS_BITS: "			  << GetInfo<cl_uint> (platform, device, CL_DEVICE_ADDRESS_BITS)			  << endl;
 
 			os << "CL_DEVICE_GLOBAL_MEM_CACHE_TYPE: "	  << GetInfo<cl_uint> (platform, device, CL_DEVICE_GLOBAL_MEM_CACHE_TYPE)	  << endl;
 			os << "CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE: " << GetInfo<cl_uint> (platform, device, CL_DEVICE_GLOBAL_MEM_CACHELINE_SIZE) << endl;
@@ -1126,7 +1127,9 @@ bool OpenCLWrapper::Shared() const { return m_Shared; }
 cl::Context OpenCLWrapper::Context() const { return m_Context; }
 uint OpenCLWrapper::PlatformIndex() const { return m_PlatformIndex; }
 uint OpenCLWrapper::DeviceIndex() const { return m_DeviceIndex; }
+size_t OpenCLWrapper::GlobalMemSize() const { return GetInfo<cl_ulong>(PlatformIndex(), DeviceIndex(), CL_DEVICE_GLOBAL_MEM_SIZE); }
 uint OpenCLWrapper::LocalMemSize() const { return m_LocalMemSize; }
+size_t OpenCLWrapper::MaxAllocSize() const { return GetInfo<cl_ulong>(PlatformIndex(), DeviceIndex(), CL_DEVICE_MAX_MEM_ALLOC_SIZE); }
 
 /// <summary>
 /// Makes the even grid dims.

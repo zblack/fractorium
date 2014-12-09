@@ -63,7 +63,7 @@ public:
 	virtual void SyncGuiToEmbers(size_t widthOverride = 0, size_t heightOverride = 0) { }
 	virtual void SyncCurrentToSizeSpinners(bool scale, bool size) { }
 	virtual void ResetProgress(bool total = true) { }
-	virtual pair<size_t, size_t> SyncAndComputeMemory() { return pair<size_t, size_t>(0, 0); }
+	virtual tuple<size_t, size_t, size_t> SyncAndComputeMemory() { return tuple<size_t, size_t, size_t>(0, 0, 0); }
 	virtual double OriginalAspect() { return 1; }
 	virtual QString ComposePath(const QString& name) { return ""; }
 
@@ -121,7 +121,7 @@ public:
 	virtual void SyncGuiToEmbers(size_t widthOverride = 0, size_t heightOverride = 0) override;
 	virtual void SyncCurrentToSizeSpinners(bool scale, bool size) override;
 	virtual void ResetProgress(bool total = true)  override;
-	virtual pair<size_t, size_t> SyncAndComputeMemory() override;
+	virtual tuple<size_t, size_t, size_t> SyncAndComputeMemory() override;
 	virtual double OriginalAspect() override { return double(m_Ember->m_OrigFinalRasW) / m_Ember->m_OrigFinalRasH; }
 	virtual QString Name() const override { return QString::fromStdString(m_Ember->m_Name); }
 	virtual QString ComposePath(const QString& name) override;

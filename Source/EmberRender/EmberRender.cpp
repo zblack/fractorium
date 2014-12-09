@@ -330,6 +330,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//This must be done in the application and not in the EmberCL DLL.
 #ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
+	//_putenv_s("GPU_FORCE_64BIT_PTR", "1");
 #else
 	putenv(const_cast<char*>("GPU_MAX_ALLOC_PERCENT=100"));
 #endif

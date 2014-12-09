@@ -708,10 +708,48 @@ bool FractoriumFinalRenderDialog::SetMemory()
 {
 	if (isVisible() && CreateControllerFromGUI(true))
 	{
-		pair<size_t, size_t> p = m_Controller->SyncAndComputeMemory();
+		bool error = false;
+		tuple<size_t, size_t, size_t> p = m_Controller->SyncAndComputeMemory();
 
-		ui.FinalRenderParamsTable->item(m_MemoryCellIndex, 1)->setText(ToString(p.first));
-		ui.FinalRenderParamsTable->item(m_ItersCellIndex, 1)->setText(ToString(p.second));
+		ui.FinalRenderParamsTable->item(m_MemoryCellIndex, 1)->setText(ToString(get<1>(p)));
+		ui.FinalRenderParamsTable->item(m_ItersCellIndex, 1)->setText(ToString(get<2>(p)));
+
+		if (OpenCL())
+		{
+			if (!m_Wrapper.Ok() || PlatformIndex() != m_Wrapper.PlatformIndex() || DeviceIndex() != m_Wrapper.DeviceIndex())
+				m_Wrapper.Init(PlatformIndex(), DeviceIndex());
+
+			if (m_Wrapper.Ok())
+			{
+				size_t histSize = get<0>(p);
+				size_t totalSize = get<1>(p);
+				size_t maxAlloc = m_Wrapper.MaxAllocSize();
+				size_t totalAvail = m_Wrapper.GlobalMemSize();
+				QString s;
+
+				if (histSize > maxAlloc)
+				{
+					s = "Histogram/Accumulator memory size of " + ToString(histSize) +
+						" is greater than the max OpenCL allocation size of " + ToString(maxAlloc);
+				}
+
+				if (totalSize > totalAvail)
+				{
+					s += "\n\nTotal required memory size of " + ToString(totalSize) +
+						" is greater than the max OpenCL available memory of " + ToString(totalAvail);
+				}
+
+				if (!s.isEmpty())
+				{
+					error = true;
+					ui.FinalRenderTextOutput->setText(s + ".\n\nRendering will most likely fail.");
+				}
+			}
+		}
+
+		if (!error)
+			ui.FinalRenderTextOutput->clear();
+
 		return true;
 	}
 

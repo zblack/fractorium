@@ -98,7 +98,8 @@ public:
 
 	//Non-virtual processing functions.
 	void ChangeVal(std::function<void(void)> func, eProcessAction action);
-	size_t MemoryRequired(size_t strips, bool includeFinal);
+	size_t HistMemoryRequired(size_t strips);
+	pair<size_t, size_t> MemoryRequired(size_t strips, bool includeFinal);
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> RandVec();
 	bool PrepFinalAccumVector(vector<byte>& pixels);
 

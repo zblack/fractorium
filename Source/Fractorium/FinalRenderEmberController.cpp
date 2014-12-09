@@ -151,8 +151,9 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 	{
 		m_Run = true;
 		m_TotalTimer.Tic();//Begin timing for progress of all operations.
-		size_t i;
 		m_GuiState = m_FinalRenderDialog->State();//Cache render settings from the GUI before running.
+		
+		size_t i;
 		bool doAll = m_GuiState.m_DoAll && m_EmberFile.Size() > 1;
 		uint currentStripForProgress = 0;//Sort of a hack to get the strip value to the progress function.
 		QString path = doAll ? ComposePath(QString::fromStdString(m_EmberFile.m_Embers[0].m_Name)) : ComposePath(Name());
@@ -566,8 +567,9 @@ void FinalRenderEmberController<T>::ResetProgress(bool total)
 /// </summary>
 /// <returns>If successful, memory required in bytes, else zero.</returns>
 template <typename T>
-pair<size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemory()
+tuple<size_t, size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemory()
 {
+	size_t iterCount;
 	pair<size_t, size_t> p(0, 0);
 
 	if (m_Renderer.get())
@@ -587,11 +589,12 @@ pair<size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemory()
 		m_Renderer->ComputeCamera();
 		CancelPreviewRender();
 		m_FinalPreviewRenderFunc();
-		p.first = m_Renderer->MemoryRequired(m_FinalRenderDialog->Strips(), true);
-		p.second = m_Renderer->TotalIterCount(strips);
+
+		p = m_Renderer->MemoryRequired(strips, true);
+		iterCount = m_Renderer->TotalIterCount(strips);
 	}
 
-	return p;
+	return tuple<size_t, size_t, size_t>(p.first, p.second, iterCount);
 }
 
 /// <summary>
