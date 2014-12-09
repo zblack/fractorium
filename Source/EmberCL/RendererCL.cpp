@@ -336,7 +336,7 @@ bool RendererCL<T>::ClearFinal()
 template <typename T>
 size_t RendererCL<T>::MemoryAvailable()
 {
-	return Ok() ? m_Wrapper.GetInfo<cl_ulong>(PlatformIndex(), DeviceIndex(), CL_DEVICE_GLOBAL_MEM_SIZE) : 0ULL;
+	return Ok() ? m_Wrapper.GlobalMemSize() : 0ULL;
 }
 
 /// <summary>

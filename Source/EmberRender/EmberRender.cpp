@@ -34,6 +34,7 @@ bool EmberRender(EmberOptions& opt)
 	string filename;
 	string inputPath = GetPath(opt.Input());
 	ostringstream os;
+	pair<size_t, size_t> p;
 	vector<Ember<T>> embers;
 	vector<byte> finalImage, vecRgb;
 	EmberStats stats;
@@ -201,7 +202,8 @@ bool EmberRender(EmberOptions& opt)
 		}
 		else
 		{
-			strips = CalcStrips(double(renderer->MemoryRequired(1, true)), double(renderer->MemoryAvailable()), opt.UseMem());
+			p = renderer->MemoryRequired(1, true);
+			strips = CalcStrips(double(p.second), double(renderer->MemoryAvailable()), opt.UseMem());
 
 			if (strips > 1)
 				VerbosePrint("Setting strips to " << strips << " with specified memory usage of " << opt.UseMem());

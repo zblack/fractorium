@@ -255,7 +255,7 @@ public:
 		   << "\t\treal_t x, y, z;\n"
 		   << "\t\treal_t p = 2 * MwcNext01(mwc) - 1;\n"
 		   << "\t\treal_t q = 2 * MwcNext01(mwc) - 1;\n"
-		   << "\t\tuint i = MwcNext(mwc) & 3;\n"
+		   << "\t\tuint i = MwcNext(mwc) % 3;\n"
 		   << "\t\tuint j = MwcNext(mwc) & 1;\n"
 		   << "\n"
 		   << "\t\tswitch (i)\n"

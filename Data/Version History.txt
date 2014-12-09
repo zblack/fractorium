@@ -5,6 +5,7 @@
 	
 --Bug Fixes
 	Fix bad values left in an ember when a render with strips > 1 fails in the final render dialog.
+	Fix incorrect calculation in dc_cube variation when using OpenCL.
 
 --Code Changes
 	Break RendererBase::MemoryRequired() into two functions, it and HistMemRequired() and return a tuple.
