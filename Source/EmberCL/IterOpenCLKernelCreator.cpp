@@ -301,7 +301,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 	os <<
 #ifndef STRAIGHT_RAND
 		"	if (THREAD_ID_Y == 0 && THREAD_ID_X < NWARPS)\n"
-		"		xfsel[THREAD_ID_X] = MwcNext(&mwc) % " << CHOOSE_XFORM_GRAIN << ";\n"//It's faster to do the % here ahead of time than every time an xform is looked up to use inside the loop.
+		"		xfsel[THREAD_ID_X] = MwcNext(&mwc) & " << CHOOSE_XFORM_GRAIN_M1 << ";\n"//It's faster to do the & here ahead of time than every time an xform is looked up to use inside the loop.
 		"\n"
 #endif
 		"	barrier(CLK_LOCAL_MEM_FENCE);\n"
@@ -322,7 +322,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		{
 			os <<
 #ifdef STRAIGHT_RAND
-		"			secondPoint.m_LastXfUsed = xformDistributions[MwcNext(&mwc) % " << CHOOSE_XFORM_GRAIN << " + (" << CHOOSE_XFORM_GRAIN << " * (firstPoint.m_LastXfUsed + 1u))];\n\n";
+		"			secondPoint.m_LastXfUsed = xformDistributions[MwcNext(&mwc) & " << CHOOSE_XFORM_GRAIN_M1 << " + (" << CHOOSE_XFORM_GRAIN << " * (firstPoint.m_LastXfUsed + 1u))];\n\n";
 #else
 		"			secondPoint.m_LastXfUsed = xformDistributions[xfsel[THREAD_ID_Y] + (" << CHOOSE_XFORM_GRAIN << " * (firstPoint.m_LastXfUsed + 1u))];\n\n";//Partial cuburn hybrid.
 #endif
@@ -331,7 +331,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		{
 			os <<
 #ifdef STRAIGHT_RAND
-		"			secondPoint.m_LastXfUsed = xformDistributions[MwcNext(&mwc) % " << CHOOSE_XFORM_GRAIN << "];\n\n";//For testing, using straight rand flam4/fractron style instead of cuburn.
+		"			secondPoint.m_LastXfUsed = xformDistributions[MwcNext(&mwc) & " << CHOOSE_XFORM_GRAIN_M1 << "];\n\n";//For testing, using straight rand flam4/fractron style instead of cuburn.
 #else
 		"			secondPoint.m_LastXfUsed = xformDistributions[xfsel[THREAD_ID_Y]];\n\n";
 #endif
@@ -408,7 +408,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 		"\n"
 		//Populate randomized xform index buffer with new random values.
 		"		if (THREAD_ID_Y == 0 && THREAD_ID_X < NWARPS)\n"
-		"			xfsel[THREAD_ID_X] = MwcNext(&mwc) % " << CHOOSE_XFORM_GRAIN << ";\n"
+		"			xfsel[THREAD_ID_X] = MwcNext(&mwc) & " << CHOOSE_XFORM_GRAIN_M1 << ";\n"
 		"\n"
 		"		barrier(CLK_LOCAL_MEM_FENCE);\n"
 		//Another thread will have written to this thread's location, so read the new value and use it for accumulation below.

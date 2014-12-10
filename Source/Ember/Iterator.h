@@ -6,8 +6,8 @@
 /// Iterator and derived classes.
 /// </summary>
 
-//#define CHOOSE_XFORM_GRAIN 256
-#define CHOOSE_XFORM_GRAIN 10000//The size of xform random selection buffer. Multiply by the (number of non-final xforms present + 1) if xaos is used.
+#define CHOOSE_XFORM_GRAIN 16384//The size of xform random selection buffer. Multiply by the (number of non-final xforms present + 1) if xaos is used.
+#define CHOOSE_XFORM_GRAIN_M1 16383//All 1s, so it's logically and-able.
 
 namespace EmberNs
 {
@@ -259,7 +259,7 @@ protected:
 	/// <returns></returns>
 	size_t NextXformFromIndex(size_t index, size_t distribOffset = 0)
 	{
-		return size_t(m_XformDistributions[(index % CHOOSE_XFORM_GRAIN) + (CHOOSE_XFORM_GRAIN * distribOffset)]);
+		return size_t(m_XformDistributions[(index & CHOOSE_XFORM_GRAIN_M1) + (CHOOSE_XFORM_GRAIN * distribOffset)]);
 	}
 
 	vector<byte> m_XformDistributions;
