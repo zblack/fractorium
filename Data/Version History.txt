@@ -10,6 +10,7 @@
 --Code Changes
 	Break RendererBase::MemoryRequired() into two functions, it and HistMemRequired() and return a tuple.
 	Add GlobalMemSize() and MaxAllocSize() functions in OpenCLWrapper.
+	Change CHOOSE_XFORM_GRAIN to be 16384, so we can & with 16383 instead of using modulo when selecting an xform. This results in a 9% speed increase on the CPU.
 
 0.4.1.6 Beta 11/29/2014
 --User Changes
