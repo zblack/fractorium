@@ -16,7 +16,7 @@ VERSION = 0.1.4.7
 DESTDIR = ../../../Bin
 
 LIBS += -L/usr/lib -lOpenCL
-#LIBS += -L/usr/lib -lGL
+LIBS += -L/usr/lib -lGL
 LIBS += -L/usr/lib -ljpeg
 LIBS += -L/usr/lib -lpng
 LIBS += -L/usr/lib -ltbb

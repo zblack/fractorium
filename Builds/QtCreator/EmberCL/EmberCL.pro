@@ -9,7 +9,7 @@ VERSION = 0.1.4.7
 DESTDIR = ../../../Bin
 
 LIBS += -L/usr/lib -lOpenCL
-#LIBS += -L/usr/lib -lGL
+LIBS += -L/usr/lib -lGL
 
 INCLUDEPATH += /usr/include/CL
 INCLUDEPATH += /usr/include/GL

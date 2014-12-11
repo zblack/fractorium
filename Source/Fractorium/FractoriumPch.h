@@ -1,6 +1,13 @@
 #define GL_GLEXT_PROTOTYPES 1
 #define XFORM_COLOR_COUNT 14
 
+#undef QT_OPENGL_ES_2//Make absolutely sure OpenGL ES is not used.
+#define QT_NO_OPENGL_ES_2
+
+#ifndef WIN32
+#include <QtWidgets>
+#endif
+
 #include "Renderer.h"
 #include "RendererCL.h"
 #include "VariationList.h"
@@ -10,11 +17,12 @@
 #include "SheepTools.h"
 #include "JpegUtils.h"
 #include "EmberCommon.h"
-#include <deque>
 
-#undef QT_OPENGL_ES_2//Make absolutely sure OpenGL ES is not used.
-#define QT_NO_OPENGL_ES_2
+#ifdef WIN32
 #include <QtWidgets>
+#endif
+
+#include <deque>
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
@@ -28,7 +36,6 @@
 #include <QSettings>
 #include <QStandardPaths>
 #include <QGLWidget>
-//#include <QOpenGLFunctions_2_0.h>
 #include <qopenglfunctions_2_0.h>
 #include <QtWidgets/QMainWindow>
 #include <QFuture>
