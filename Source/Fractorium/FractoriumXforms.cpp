@@ -48,7 +48,7 @@ Xform<T>* FractoriumEmberController<T>::CurrentXform()
 /// <param name="i">The index to set the current xform to</param>
 void Fractorium::CurrentXform(uint i)
 {
-	if (i < ui.CurrentXformCombo->count())
+	if (i < uint(ui.CurrentXformCombo->count()))
 		ui.CurrentXformCombo->setCurrentIndex(i);
 }
 
@@ -305,7 +305,7 @@ void FractoriumEmberController<T>::SetNormalizedWeightText(Xform<T>* xform)
 		m_Ember.CalcNormalizedWeights(m_NormalizedWeights);
 
 		if (index != -1 && index < m_NormalizedWeights.size())
-			m_Fractorium->m_XformWeightSpin->setSuffix(QString(" (") + QLocale::system().toString((double)m_NormalizedWeights[index], 'g', 3) + ")");
+			m_Fractorium->m_XformWeightSpin->setSuffix(QString(" (") + QLocale::system().toString(double(m_NormalizedWeights[index]), 'g', 3) + ")");
 	}
 }
 
@@ -332,7 +332,7 @@ void Fractorium::FillXforms()
 	combo->blockSignals(true);
 	combo->clear();
 	
-	for (i = 0; i < m_Controller->XformCount(); i++)
+	for (i = 0; i < int(m_Controller->XformCount()); i++)
 	{
 		combo->addItem(ToString(i + 1));
 		combo->setItemIcon(i, m_XformComboIcons[i % XFORM_COLOR_COUNT]);
@@ -350,3 +350,9 @@ void Fractorium::FillXforms()
 	OnSoloXformCheckBoxStateChanged(Qt::Unchecked);
 	OnCurrentXformComboChanged(0);//Make sure the event gets called, because it won't if the zero index is already selected.
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

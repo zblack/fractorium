@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FractoriumPch.h"
+#include "FractoriumCommon.h"
 
 /// <summary>
 /// EmberFile class.

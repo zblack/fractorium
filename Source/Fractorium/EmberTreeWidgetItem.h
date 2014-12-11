@@ -18,9 +18,9 @@ public:
 	/// Constructor that takes a pointer to a QTreeWidget as a parent widget.
 	/// This is meant to be a root level item.
 	/// </summary>
-	/// <param name="parent">The parent widget of this item</param>
-	explicit EmberTreeWidgetItemBase(QTreeWidget* parent = 0)
-		: QTreeWidgetItem(parent)
+	/// <param name="p">The parent widget of this item</param>
+	explicit EmberTreeWidgetItemBase(QTreeWidget* p = 0)
+		: QTreeWidgetItem(p)
 	{
 	}
 
@@ -28,9 +28,9 @@ public:
 	/// Constructor that takes a pointer to a QTreeWidgetItem as a parent widget.
 	/// This is meant to be the child of a root level item.
 	/// </summary>
-	/// <param name="parent">The parent widget of this item</param>
-	explicit EmberTreeWidgetItemBase(QTreeWidgetItem* parent = 0)
-		: QTreeWidgetItem(parent)
+	/// <param name="p">The parent widget of this item</param>
+	explicit EmberTreeWidgetItemBase(QTreeWidgetItem* p = 0)
+		: QTreeWidgetItem(p)
 	{
 	}
 	
@@ -68,9 +68,9 @@ public:
 	/// This is meant to be a root level item.
 	/// </summary>
 	/// <param name="ember">A pointer to the ember this item will represent</param>
-	/// <param name="parent">The parent widget of this item</param>
-	explicit EmberTreeWidgetItem(Ember<T>* ember, QTreeWidget* parent = 0)
-		: EmberTreeWidgetItemBase(parent)
+	/// <param name="p">The parent widget of this item</param>
+	explicit EmberTreeWidgetItem(Ember<T>* ember, QTreeWidget* p = 0)
+		: EmberTreeWidgetItemBase(p)
 	{
 		m_Ember = ember;
 	}
@@ -80,9 +80,9 @@ public:
 	/// This is meant to be the child of a root level item.
 	/// </summary>
 	/// <param name="ember">A pointer to the ember this item will represent</param>
-	/// <param name="parent">The parent widget of this item</param>
-	explicit EmberTreeWidgetItem(Ember<T>* ember, QTreeWidgetItem* parent = 0)
-		: EmberTreeWidgetItemBase(parent)
+	/// <param name="p">The parent widget of this item</param>
+	explicit EmberTreeWidgetItem(Ember<T>* ember, QTreeWidgetItem* p = 0)
+		: EmberTreeWidgetItemBase(p)
 	{
 		m_Ember = ember;
 	}

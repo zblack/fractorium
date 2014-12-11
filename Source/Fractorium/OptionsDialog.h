@@ -24,7 +24,7 @@ class FractoriumOptionsDialog : public QDialog
 	friend Fractorium;
 
 public:
-	FractoriumOptionsDialog(FractoriumSettings* settings, QWidget* parent = 0, Qt::WindowFlags f = 0);
+	FractoriumOptionsDialog(FractoriumSettings* settings, QWidget* p = 0, Qt::WindowFlags f = 0);
 
 public slots:
 	void OnOpenCLCheckBoxStateChanged(int state);

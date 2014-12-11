@@ -26,14 +26,14 @@ public:
 	/// <param name="w1">The width of the first button</param>
 	/// <param name="w2">The width of the second button</param>
 	/// <param name="h">The height of both buttons</param>
-	/// <param name="parent">The parent widget</param>
-	TwoButtonComboWidget(const QString& caption1, const QString& caption2, QStringList comboStrings, int w1, int w2, int h, QWidget* parent)
-		: QWidget(parent)
+	/// <param name="p">The parent widget</param>
+	TwoButtonComboWidget(const QString& caption1, const QString& caption2, QStringList comboStrings, int w1, int w2, int h, QWidget* p)
+		: QWidget(p)
 	{
-		QHBoxLayout* layout = new QHBoxLayout(this);
-		m_Button1 = new QPushButton(caption1, parent);
-		m_Button2 = new QPushButton(caption2, parent);
-		m_Combo = new QComboBox(parent);
+		QHBoxLayout* l = new QHBoxLayout(this);
+		m_Button1 = new QPushButton(caption1, p);
+		m_Button2 = new QPushButton(caption2, p);
+		m_Combo = new QComboBox(p);
 
 		m_Combo->addItems(comboStrings);
 
@@ -56,14 +56,14 @@ public:
 		m_Combo->setMinimumHeight(h - 3);
 		m_Combo->setMaximumHeight(h - 3);
  
-		layout->addWidget(m_Combo);
-		layout->addWidget(m_Button1);
-		layout->addWidget(m_Button2);
-		layout->setAlignment(Qt::AlignLeft);
-		layout->setMargin(0);
-		layout->setSpacing(2);
+		l->addWidget(m_Combo);
+		l->addWidget(m_Button1);
+		l->addWidget(m_Button2);
+		l->setAlignment(Qt::AlignLeft);
+		l->setMargin(0);
+		l->setSpacing(2);
 
-		setLayout(layout);
+		setLayout(l);
 	}
 
 	QPushButton* m_Button1;
@@ -89,12 +89,12 @@ public:
 	/// <param name="buttonCaption">The caption of the button</param>
 	/// <param name="w">The width of the button</param>
 	/// <param name="h">The height of the button</param>
-	/// <param name="parent">The parent widget</param>
-	SpinnerButtonWidget(DoubleSpinBox* spinBox, QString buttonCaption, int w, int h, QWidget* parent)
-		: QWidget(parent)
+	/// <param name="p">The parent widget</param>
+	SpinnerButtonWidget(DoubleSpinBox* spinBox, QString buttonCaption, int w, int h, QWidget* p)
+		: QWidget(p)
 	{
-		QHBoxLayout* layout = new QHBoxLayout(this);
-		m_Button = new QPushButton(buttonCaption, parent);
+		QHBoxLayout* l = new QHBoxLayout(this);
+		m_Button = new QPushButton(buttonCaption, p);
 		m_SpinBox = spinBox;
 
 		if (w != -1)
@@ -106,13 +106,13 @@ public:
 		m_Button->setMinimumHeight(h);
 		m_Button->setMaximumHeight(h);
  
-		layout->addWidget(spinBox);
-		layout->addWidget(m_Button);
-		layout->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-		layout->setMargin(0);
-		layout->setSpacing(0);
+		l->addWidget(spinBox);
+		l->addWidget(m_Button);
+		l->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+		l->setMargin(0);
+		l->setSpacing(0);
 
-		setLayout(layout);
+		setLayout(l);
 	}
 
 	DoubleSpinBox* m_SpinBox;

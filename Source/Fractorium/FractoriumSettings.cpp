@@ -5,9 +5,9 @@
 /// Constructor that passes the parent to the base and sets up reasonable defaults
 /// if the settings file was not present or corrupted.
 /// </summary>
-/// <param name="parent">The parent widget</param>
-FractoriumSettings::FractoriumSettings(QObject* parent)
-	: QSettings(QSettings::IniFormat, QSettings::UserScope, "Fractorium", "Fractorium", parent)
+/// <param name="p">The parent widget</param>
+FractoriumSettings::FractoriumSettings(QObject* p)
+	: QSettings(QSettings::IniFormat, QSettings::UserScope, "Fractorium", "Fractorium", p)
 {
 	EnsureDefaults();
 }
@@ -39,7 +39,7 @@ void FractoriumSettings::EnsureDefaults()
 		XmlSupersample(2);
 
 	if (ThreadCount() == 0 || ThreadCount() > Timing::ProcessorCount())
-		ThreadCount(max(1, Timing::ProcessorCount() - 1));//Default to one less to keep the UI responsive for first time users.
+		ThreadCount(max(1u, Timing::ProcessorCount() - 1));//Default to one less to keep the UI responsive for first time users.
 
 	if (FinalThreadCount() == 0 || FinalThreadCount() > Timing::ProcessorCount())
 		FinalThreadCount(Timing::ProcessorCount());

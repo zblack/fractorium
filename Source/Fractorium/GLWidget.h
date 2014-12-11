@@ -7,6 +7,9 @@
 /// </summary>
 
 class Fractorium;//Forward declaration since Fractorium uses this widget.
+class GLEmberControllerBase;
+template<typename T> class GLEmberController;
+template<typename T> class FractoriumEmberController;
 
 static const float GridStep = 1.0f / 8.0f;
 
@@ -31,13 +34,16 @@ class GLWidget : public QGLWidget, protected QOpenGLFunctions_2_0//QOpenGLFuncti
 
 	friend Fractorium;
 	friend FractoriumEmberController<float>;
-	friend FractoriumEmberController<double>;
 	friend GLEmberControllerBase;
 	friend GLEmberController<float>;
+    
+#ifdef DO_DOUBLE
 	friend GLEmberController<double>;
-
+    friend FractoriumEmberController<double>;
+#endif
+    
 public:
-	GLWidget(QWidget* parent);
+	GLWidget(QWidget* p);
 	~GLWidget();
 	void DrawQuad();
 	void SetMainWindow(Fractorium* f);

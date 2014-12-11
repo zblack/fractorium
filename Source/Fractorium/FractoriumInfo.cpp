@@ -14,8 +14,8 @@ void Fractorium::UpdateHistogramBounds()
 		sprintf_s(m_URString, 32, "UR: %3.3f, %3.3f", -r->LowerLeftX(),  r->UpperRightY());
 		sprintf_s(m_LRString, 32, "LR: %3.3f, %3.3f", -r->LowerLeftX(),  r->LowerLeftY());
 		sprintf_s(m_LLString, 32, "LL: %3.3f, %3.3f",  r->LowerLeftX(),  r->LowerLeftY());
-		sprintf_s(m_WString,  16,  "W: %4d"			,  r->SuperRasW());
-		sprintf_s(m_HString,  16,  "H: %4d"			,  r->SuperRasH());
+		sprintf_s(m_WString,  16,  "W: %4lu"		,  r->SuperRasW());
+		sprintf_s(m_HString,  16,  "H: %4lu"		,  r->SuperRasH());
 
 		ui.InfoBoundsLabelUL->setText(QString(m_ULString));
 		ui.InfoBoundsLabelUR->setText(QString(m_URString));
@@ -24,7 +24,7 @@ void Fractorium::UpdateHistogramBounds()
 		ui.InfoBoundsLabelW->setText(QString(m_WString));
 		ui.InfoBoundsLabelH->setText(QString(m_HString));
 
-		ui.InfoBoundsTable->item(0, 1)->setText(ToString(r->GutterWidth()));
+		ui.InfoBoundsTable->item(0, 1)->setText(ToString<qulonglong>(r->GutterWidth()));
 
 		if (r->GetDensityFilter())
 		{
@@ -48,7 +48,7 @@ void Fractorium::UpdateHistogramBounds()
 /// <param name="errors">The vector of error strings</param>
 /// <param name="textEdit">The QTextEdit to fill</param>
 /// <param name="clear">Clear if true, else don't.</param>
-void Fractorium::ErrorReportToQTextEdit(vector<string>& errors, QTextEdit* textEdit, bool clear)
+void Fractorium::ErrorReportToQTextEdit(const vector<string>& errors, QTextEdit* textEdit, bool clear)
 {
 	if (clear)
 		QMetaObject::invokeMethod(textEdit, "clear", Qt::QueuedConnection);

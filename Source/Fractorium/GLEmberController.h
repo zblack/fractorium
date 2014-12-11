@@ -54,8 +54,8 @@ public:
 	virtual void DrawImage() { }
 	virtual void DrawAffines(bool pre, bool post) { }
 	virtual void ClearWindow() { }
-	virtual bool KeyPress(QKeyEvent* e);
-	virtual bool KeyRelease(QKeyEvent* e);
+	virtual bool KeyPress_(QKeyEvent* e);
+	virtual bool KeyRelease_(QKeyEvent* e);
 	virtual void MousePress(QMouseEvent* e) { }
 	virtual void MouseRelease(QMouseEvent* e) { }
 	virtual void MouseMove(QMouseEvent* e) { }
@@ -139,8 +139,3 @@ private:
 	T GridStep;
 };
 
-template class GLEmberController<float>;
-
-#ifdef DO_DOUBLE
-	template class GLEmberController<double>;
-#endif

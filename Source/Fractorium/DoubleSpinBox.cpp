@@ -7,11 +7,11 @@
 /// and change its value using the mouse wheel without explicitly having to click
 /// inside of it.
 /// </summary>
-/// <param name="parent">The parent widget. Default: NULL.</param>
+/// <param name="p">The parent widget. Default: NULL.</param>
 /// <param name="height">The height of the spin box. Default: 16.</param>
 /// <param name="step">The step used to increment/decrement the spin box when using the mouse wheel. Default: 0.05.</param>
-DoubleSpinBox::DoubleSpinBox(QWidget* parent, int height, double step)
-	: QDoubleSpinBox(parent)
+DoubleSpinBox::DoubleSpinBox(QWidget* p, int h, double step)
+	: QDoubleSpinBox(p)
 {
 	m_Select = false;
 	m_DoubleClick = false;
@@ -23,8 +23,8 @@ DoubleSpinBox::DoubleSpinBox(QWidget* parent, int height, double step)
 	setFrame(false);
 	setButtonSymbols(QAbstractSpinBox::NoButtons);
 	setFocusPolicy(Qt::StrongFocus);
-	setMinimumHeight(height);//setGeometry() has no effect, so must set both of these instead.
-	setMaximumHeight(height);
+	setMinimumHeight(h);//setGeometry() has no effect, so must set both of these instead.
+	setMaximumHeight(h);
 	lineEdit()->installEventFilter(this);
 	lineEdit()->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	connect(this, SIGNAL(valueChanged(double)), this, SLOT(onSpinBoxValueChanged(double)), Qt::QueuedConnection);
@@ -151,9 +151,9 @@ bool DoubleSpinBox::eventFilter(QObject* o, QEvent* e)
 		{
 			//Take special action for shift to reduce the scroll amount. Control already
 			//increases it automatically.
-			if (QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(e))
+			if (QWheelEvent* we = dynamic_cast<QWheelEvent*>(e))
 			{
-				Qt::KeyboardModifiers mod = wheelEvent->modifiers();
+				Qt::KeyboardModifiers mod = we->modifiers();
 
 				if (mod.testFlag(Qt::ShiftModifier))
 					setSingleStep(m_SmallStep);

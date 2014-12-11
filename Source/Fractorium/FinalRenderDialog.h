@@ -12,6 +12,8 @@
 /// </summary>
 
 class Fractorium;//Forward declaration since Fractorium uses this dialog.
+class FinalRenderEmberControllerBase;
+template <typename T> class FinalRenderEmberController;
 
 /// <summary>
 /// The final render dialog is for when the user is satisfied with the parameters they've
@@ -38,12 +40,13 @@ class FractoriumFinalRenderDialog : public QDialog
 	friend Fractorium;
 	friend FinalRenderEmberControllerBase;
 	friend FinalRenderEmberController<float>;
+    
 #ifdef DO_DOUBLE
 	friend FinalRenderEmberController<double>;
 #endif
 
 public:
-	FractoriumFinalRenderDialog(FractoriumSettings* settings, QWidget* parent, Qt::WindowFlags f = 0);
+	FractoriumFinalRenderDialog(FractoriumSettings* settings, QWidget* p, Qt::WindowFlags f = 0);
 	bool EarlyClip();
 	bool YAxisUp();
 	bool Transparency();

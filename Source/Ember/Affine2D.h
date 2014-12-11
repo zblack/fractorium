@@ -75,9 +75,9 @@ public:
 	bool IsID() const;
 	bool IsZero() const;
 	void Rotate(T angle);
-	void Translate(v2T& v);
-	void RotateScaleXTo(v2T& v);
-	void RotateScaleYTo(v2T& v);
+	void Translate(const v2T& v);
+	void RotateScaleXTo(const v2T& v);
+	void RotateScaleYTo(const v2T& v);
 	Affine2D<T> Inverse() const;
 	v2T TransformNormal(const v2T& v) const;
 	v2T TransformVector(const v2T& v) const;

@@ -111,11 +111,11 @@ void FractoriumEmberController<T>::ApplyPaletteToEmber()
 	int i, rot = 0;
 	uint blur = m_Fractorium->m_PaletteBlurSpin->value();
 	uint freq = m_Fractorium->m_PaletteFrequencySpin->value();
-	double sat = (double)m_Fractorium->m_PaletteSaturationSpin->value() / 100.0;
-	double brightness = (double)m_Fractorium->m_PaletteBrightnessSpin->value() / 255.0;
-	double contrast = (double)(m_Fractorium->m_PaletteContrastSpin->value() > 0 ? (m_Fractorium->m_PaletteContrastSpin->value() * 2) : m_Fractorium->m_PaletteContrastSpin->value()) / 100.0;
+	double sat = double(m_Fractorium->m_PaletteSaturationSpin->value() / 100.0);
+	double brightness = double(m_Fractorium->m_PaletteBrightnessSpin->value() / 255.0);
+	double contrast = double(m_Fractorium->m_PaletteContrastSpin->value() > 0 ? (m_Fractorium->m_PaletteContrastSpin->value() * 2) : m_Fractorium->m_PaletteContrastSpin->value()) / 100.0;
 
-	m_Ember.m_Hue = (double)(m_Fractorium->m_PaletteHueSpin->value()) / 360.0;//This is the only palette adjustment value that gets saved with the ember, so just assign it here.
+	m_Ember.m_Hue = double(m_Fractorium->m_PaletteHueSpin->value()) / 360.0;//This is the only palette adjustment value that gets saved with the ember, so just assign it here.
 	
 	//Use the temp palette as the base and apply the adjustments gotten from the GUI and save the result in the ember palette.
 	m_TempPalette.MakeAdjustedPalette(m_Ember.m_Palette, 0, m_Ember.m_Hue, sat, brightness, contrast, blur, freq);
@@ -235,7 +235,7 @@ void Fractorium::OnPaletteRandomSelectButtonClicked(bool checked)
 	uint i = 0;
 	int rowCount = ui.PaletteListTable->rowCount() - 1;
 
-	while ((i = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand(rowCount)) == m_PreviousPaletteRow);
+	while ((i = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand(rowCount)) == uint(m_PreviousPaletteRow));
 
 	OnPaletteCellClicked(i, 1);
 }
@@ -282,3 +282,9 @@ void Fractorium::ResetPaletteControls()
 	m_PaletteBlurSpin->SetValueStealth(0);
 	m_PaletteFrequencySpin->SetValueStealth(1);
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

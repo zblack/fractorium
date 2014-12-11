@@ -15,11 +15,11 @@ void Fractorium::InitLibraryUI()
 /// </summary>
 /// <param name="item">The item double clicked on</param>
 /// <param name="v">The vector holding the RGBA bitmap</param>
-/// <param name="width">The width of the bitmap</param>
-/// <param name="height">The height of the bitmap</param>
-void Fractorium::SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<byte>& v, uint width, uint height)
+/// <param name="w">The width of the bitmap</param>
+/// <param name="h">The height of the bitmap</param>
+void Fractorium::SetLibraryTreeItemData(EmberTreeWidgetItemBase* item, vector<byte>& v, uint w, uint h)
 {
-	item->SetImage(v, width, height);
+	item->SetImage(v, w, h);
 }
 
 /// <summary>
@@ -275,3 +275,9 @@ void FractoriumEmberController<T>::StopPreviewRender()
 	QCoreApplication::sendPostedEvents(m_Fractorium->ui.LibraryTree);
 	QCoreApplication::flush();
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

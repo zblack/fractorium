@@ -510,3 +510,9 @@ void Fractorium::SetupAffineSpinner(QTableWidget* table, const QObject* receiver
 bool Fractorium::DrawAllPre()  { return ui.ShowPreAffineAllRadio->isChecked();  }
 bool Fractorium::DrawAllPost() { return ui.ShowPostAffineAllRadio->isChecked(); }
 bool Fractorium::LocalPivot()  { return ui.LocalPivotRadio->isChecked();        }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

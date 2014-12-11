@@ -8,10 +8,10 @@
 /// This function contains the render function as a lambda.
 /// </summary>
 /// <param name="settings">Pointer to the global settings object to use</param>
-/// <param name="parent">The parent widget</param>
+/// <param name="p">The parent widget</param>
 /// <param name="f">The window flags. Default: 0.</param>
-FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* settings, QWidget* parent, Qt::WindowFlags f)
-	: QDialog(parent, f)
+FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* settings, QWidget* p, Qt::WindowFlags f)
+	: QDialog(p, f)
 {	
 	ui.setupUi(this);
 
@@ -21,7 +21,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	QTableWidget* table = ui.FinalRenderParamsTable;
 	QTableWidgetItem* item = NULL;
 
-	m_Fractorium = (Fractorium*)parent;
+	m_Fractorium = dynamic_cast<Fractorium*>(p);
 	m_Settings = settings;
 	ui.FinalRenderThreadCountSpin->setRange(1, Timing::ProcessorCount());
 	connect(ui.FinalRenderEarlyClipCheckBox,	   SIGNAL(stateChanged(int)),		 this, SLOT(OnEarlyClipCheckBoxStateChanged(int)),		 Qt::QueuedConnection);
@@ -124,7 +124,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	m_SupersampleSpin->setValue(m_Settings->FinalSupersample());
 	m_StripsSpin->setValue(m_Settings->FinalStrips());
 
-	Scale((eScaleType)m_Settings->FinalScale());
+	Scale(eScaleType(m_Settings->FinalScale()));
 
 	if (m_Settings->FinalExt() == "jpg")
 		m_Tbcw->m_Combo->setCurrentIndex(0);
@@ -139,7 +139,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	QSize s = size();
 	int desktopHeight = qApp->desktop()->availableGeometry().height();
 
-	s.setHeight(min(s.height(), (int)((double)desktopHeight * 0.90)));
+	s.setHeight(min(s.height(), int(double(desktopHeight * 0.90))));
 	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, qApp->desktop()->availableGeometry()));
 
 	QWidget* w = SetTabOrder(this, ui.FinalRenderEarlyClipCheckBox, ui.FinalRenderYAxisUpCheckBox);
@@ -647,20 +647,18 @@ bool FractoriumFinalRenderDialog::CreateControllerFromGUI(bool createRenderer)
 	int index = Current() - 1;
 
 #ifdef DO_DOUBLE
-	size_t size = Double() ? sizeof(double) : sizeof(float);
+	size_t elementSize = Double() ? sizeof(double) : sizeof(float);
 #else
-	size_t size = sizeof(float);
+    size_t elementSize = sizeof(float);
 #endif
-
-	if (!m_Controller.get() || (m_Controller->SizeOfT() != size))
+    
+	if (!m_Controller.get() || (m_Controller->SizeOfT() != elementSize))
 	{
 #ifdef DO_DOUBLE
-		size_t size = Double() ? sizeof(double) : sizeof(float);
 		Ember<double> ed;
 		Ember<double> orig;
 		EmberFile<double> efd;
 #else
-		size_t size = sizeof(float);
 		Ember<float> ed;
 		Ember<float> orig;
 		EmberFile<float> efd;
@@ -711,8 +709,8 @@ bool FractoriumFinalRenderDialog::SetMemory()
 		bool error = false;
 		tuple<size_t, size_t, size_t> p = m_Controller->SyncAndComputeMemory();
 
-		ui.FinalRenderParamsTable->item(m_MemoryCellIndex, 1)->setText(ToString(get<1>(p)));
-		ui.FinalRenderParamsTable->item(m_ItersCellIndex, 1)->setText(ToString(get<2>(p)));
+		ui.FinalRenderParamsTable->item(m_MemoryCellIndex, 1)->setText(ToString<qulonglong>(get<1>(p)));
+		ui.FinalRenderParamsTable->item(m_ItersCellIndex, 1)->setText(ToString<qulonglong>(get<2>(p)));
 
 		if (OpenCL())
 		{
@@ -729,14 +727,14 @@ bool FractoriumFinalRenderDialog::SetMemory()
 
 				if (histSize > maxAlloc)
 				{
-					s = "Histogram/Accumulator memory size of " + ToString(histSize) +
-						" is greater than the max OpenCL allocation size of " + ToString(maxAlloc);
+					s = "Histogram/Accumulator memory size of " + ToString<qulonglong>(histSize) +
+						" is greater than the max OpenCL allocation size of " + ToString<qulonglong>(maxAlloc);
 				}
 
 				if (totalSize > totalAvail)
 				{
-					s += "\n\nTotal required memory size of " + ToString(totalSize) +
-						" is greater than the max OpenCL available memory of " + ToString(totalAvail);
+					s += "\n\nTotal required memory size of " + ToString<qulonglong>(totalSize) +
+						" is greater than the max OpenCL available memory of " + ToString<qulonglong>(totalAvail);
 				}
 
 				if (!s.isEmpty())

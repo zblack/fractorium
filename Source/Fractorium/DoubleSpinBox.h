@@ -62,14 +62,14 @@ public:
 	/// <summary>
 	/// Constructor that passes agruments to the base and assigns the m_Param and m_Variation members.
 	/// </summary>
-	/// <param name="parent">The parent widget</param>
+	/// <param name="p">The parent widget</param>
 	/// <param name="widgetItem">The widget item this spinner is contained in</param>
 	/// <param name="var">The variation this spinner is for</param>
 	/// <param name="param">The name of the parameter this is for</param>
-	/// <param name="height">The height of the spin box. Default: 16.</param>
+	/// <param name="h">The height of the spin box. Default: 16.</param>
 	/// <param name="step">The step used to increment/decrement the spin box when using the mouse wheel. Default: 0.05.</param>
-	explicit VariationTreeDoubleSpinBox(QWidget* parent, VariationTreeWidgetItem<T>* widgetItem, Variation<T>* var, string param, int height = 16, double step = 0.05)
-		: DoubleSpinBox(parent, height, step)
+	explicit VariationTreeDoubleSpinBox(QWidget* p, VariationTreeWidgetItem<T>* widgetItem, Variation<T>* var, string param, int h = 16, double step = 0.05)
+		: DoubleSpinBox(p, h, step)
 	{
 		m_WidgetItem = widgetItem;
 		m_Param = param;

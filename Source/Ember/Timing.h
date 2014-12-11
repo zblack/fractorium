@@ -119,7 +119,7 @@ public:
 	/// Return the number of cores in the system.
 	/// </summary>
 	/// <returns>The number of cores in the system</returns>
-	static int ProcessorCount()
+	static uint ProcessorCount()
 	{
 		Init();
 		return m_ProcessorCount;
@@ -144,7 +144,7 @@ private:
 	time_point<Clock> m_BeginTime;//The start of the timing, set with Tic().
 	time_point<Clock> m_EndTime;//The end of the timing, set with Toc().
 	static bool m_TimingInit;//Whether the performance info has bee queried.
-	static int m_ProcessorCount;//The number of cores on the system, set in Init().
+	static uint m_ProcessorCount;//The number of cores on the system, set in Init().
 };
 
 /// <summary>

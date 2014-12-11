@@ -36,7 +36,7 @@
 namespace EmberNs
 {
 bool Timing::m_TimingInit = false;
-int Timing::m_ProcessorCount;
+uint Timing::m_ProcessorCount;
 template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand = unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>>(new QTIsaac<ISAAC_SIZE, ISAAC_INT>());
 
 #define EXPORTPREPOSTREGVAR(varName, T) \

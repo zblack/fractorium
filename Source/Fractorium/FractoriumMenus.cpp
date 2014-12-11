@@ -191,7 +191,7 @@ void FractoriumEmberController<T>::OpenAndPrepFiles(const QStringList& filenames
 
 					//Also ensure it has a name.
 					if (embers[i].m_Name == "" || embers[i].m_Name == "No name")
-						embers[i].m_Name = ToString(i).toStdString();
+						embers[i].m_Name = ToString<qulonglong>(i).toStdString();
 
 					embers[i].m_Quality = m_Fractorium->m_QualitySpin->value();
 					embers[i].m_Supersample = m_Fractorium->m_SupersampleSpin->value();
@@ -504,13 +504,13 @@ void FractoriumEmberController<T>::PasteXmlAppend()
 
 	for (i = 0; i < b.size(); i++)
 	{
-		if ((uint)b[i] < 128u)
+		if (uint(b[i]) < 128u)
 			s.push_back(b[i]);
 	}
 
 	b.clear();
 	StopPreviewRender();
-	parser.Parse((byte*)s.c_str(), "", embers);
+	parser.Parse(reinterpret_cast<byte*>(const_cast<char*>(s.c_str())), "", embers);
 	errors = parser.ErrorReportString();
 
 	if (errors != "")
@@ -527,7 +527,7 @@ void FractoriumEmberController<T>::PasteXmlAppend()
 		
 			//Also ensure it has a name.
 			if (embers[i].m_Name == "" || embers[i].m_Name == "No name")
-				embers[i].m_Name = ToString(embers[i].m_Index).toStdString();
+				embers[i].m_Name = ToString<qulonglong>(embers[i].m_Index).toStdString();
 
 			m_EmberFile.m_Embers.push_back(embers[i]);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
 		}
@@ -559,14 +559,14 @@ void FractoriumEmberController<T>::PasteXmlOver()
 	
 	for (i = 0; i < b.size(); i++)
 	{
-		if ((uint)b[i] < 128u)
+		if (uint(b[i]) < 128u)
 			s.push_back(b[i]);
 	}
 
 	b.clear();
 	StopPreviewRender();
 	m_EmberFile.m_Embers.clear();//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.
-	parser.Parse((byte*)s.c_str(), "", m_EmberFile.m_Embers);
+	parser.Parse(reinterpret_cast<byte*>(const_cast<char*>(s.c_str())), "", m_EmberFile.m_Embers);
 	errors = parser.ErrorReportString();
 
 	if (errors != "")
@@ -583,7 +583,7 @@ void FractoriumEmberController<T>::PasteXmlOver()
 		
 			//Also ensure it has a name.
 			if (m_EmberFile.m_Embers[i].m_Name == "" || m_EmberFile.m_Embers[i].m_Name == "No name")
-				m_EmberFile.m_Embers[i].m_Name = ToString(m_EmberFile.m_Embers[i].m_Index).toStdString();
+				m_EmberFile.m_Embers[i].m_Name = ToString<qulonglong>(m_EmberFile.m_Embers[i].m_Index).toStdString();
 		}
 	}
 	else
@@ -758,3 +758,9 @@ void Fractorium::OnActionAbout(bool checked)
 {
 	m_AboutDialog->exec();
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

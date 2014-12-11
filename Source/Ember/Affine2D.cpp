@@ -178,7 +178,7 @@ void Affine2D<T>::Rotate(T angle)
 /// </summary>
 /// <param name="v">The vec2 describing how far to move in the x and y directions</param>
 template <typename T>
-void Affine2D<T>::Translate(v2T& v)
+void Affine2D<T>::Translate(const v2T& v)
 {
 	O(O() + v);
 }
@@ -188,7 +188,7 @@ void Affine2D<T>::Translate(v2T& v)
 /// </summary>
 /// <param name="v">The vec2 describing how much to rotate and scale the X and Y components</param>
 template <typename T>
-void Affine2D<T>::RotateScaleXTo(v2T& v)
+void Affine2D<T>::RotateScaleXTo(const v2T& v)
 {
 	Affine2D<T> rs = CalcRotateScale(X(), v);
 
@@ -201,7 +201,7 @@ void Affine2D<T>::RotateScaleXTo(v2T& v)
 /// </summary>
 /// <param name="v">The vec2 describing how much to rotate and scale the X and Y components</param>
 template <typename T>
-void Affine2D<T>::RotateScaleYTo(v2T& v)
+void Affine2D<T>::RotateScaleYTo(const v2T& v)
 {
 	Affine2D<T> rs = CalcRotateScale(Y(), v);
 

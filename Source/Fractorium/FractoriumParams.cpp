@@ -523,7 +523,7 @@ void FractoriumEmberController<T>::FillParamTablesAndPalette()
 	m_Fractorium->m_HighlightSpin->SetValueStealth(m_Ember.m_HighlightPower);
 	m_Fractorium->m_ColorDialog->setCurrentColor(QColor(m_Ember.m_Background.r * 255, m_Ember.m_Background.g * 255, m_Ember.m_Background.b * 255));
 	m_Fractorium->ui.ColorTable->item(5, 1)->setBackgroundColor(m_Fractorium->m_ColorDialog->currentColor());
-	m_Fractorium->m_PaletteModeCombo->SetCurrentIndexStealth((int)m_Ember.m_PaletteMode);
+	m_Fractorium->m_PaletteModeCombo->SetCurrentIndexStealth(int(m_Ember.m_PaletteMode));
 	m_Fractorium->m_WidthSpin->SetValueStealth(m_Ember.m_FinalRasW);//Geometry.
 	m_Fractorium->m_HeightSpin->SetValueStealth(m_Ember.m_FinalRasH);
 	m_Fractorium->m_CenterXSpin->SetValueStealth(m_Ember.m_CenterX);
@@ -537,9 +537,9 @@ void FractoriumEmberController<T>::FillParamTablesAndPalette()
 	m_Fractorium->m_YawSpin->SetValueStealth(m_Ember.m_CamYaw * RAD_2_DEG_T);
 	m_Fractorium->m_DepthBlurSpin->SetValueStealth(m_Ember.m_CamDepthBlur);
 	m_Fractorium->m_SpatialFilterWidthSpin->SetValueStealth(m_Ember.m_SpatialFilterRadius);//Filter.
-	m_Fractorium->m_SpatialFilterTypeCombo->SetCurrentIndexStealth((int)m_Ember.m_SpatialFilterType);
+	m_Fractorium->m_SpatialFilterTypeCombo->SetCurrentIndexStealth(int(m_Ember.m_SpatialFilterType));
 	m_Fractorium->m_TemporalFilterWidthSpin->SetValueStealth(m_Ember.m_TemporalFilterWidth);
-	m_Fractorium->m_TemporalFilterTypeCombo->SetCurrentIndexStealth((int)m_Ember.m_TemporalFilterType);
+	m_Fractorium->m_TemporalFilterTypeCombo->SetCurrentIndexStealth(int(m_Ember.m_TemporalFilterType));
 	m_Fractorium->m_DEFilterMinRadiusSpin->SetValueStealth(m_Ember.m_MinRadDE);
 	m_Fractorium->m_DEFilterMaxRadiusSpin->SetValueStealth(m_Ember.m_MaxRadDE);
 	m_Fractorium->m_DECurveSpin->SetValueStealth(m_Ember.m_CurveDE);
@@ -587,7 +587,7 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_Background.r = color.red() / 255.0;
 	ember.m_Background.g = color.green() / 255.0;
 	ember.m_Background.b = color.blue() / 255.0;
-	ember.m_PaletteMode = (ePaletteMode)m_Fractorium->m_PaletteModeCombo->currentIndex();
+	ember.m_PaletteMode = ePaletteMode(m_Fractorium->m_PaletteModeCombo->currentIndex());
 	ember.m_FinalRasW = m_Fractorium->m_WidthSpin->value();//Geometry.
 	ember.m_FinalRasH = m_Fractorium->m_HeightSpin->value();
 	ember.m_CenterX = m_Fractorium->m_CenterXSpin->value();
@@ -601,9 +601,9 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_CamYaw = m_Fractorium->m_YawSpin->value() * DEG_2_RAD_T;
 	ember.m_CamDepthBlur = m_Fractorium->m_DepthBlurSpin->value();
 	ember.m_SpatialFilterRadius = m_Fractorium->m_SpatialFilterWidthSpin->value();//Filter.
-	ember.m_SpatialFilterType = (eSpatialFilterType)m_Fractorium->m_SpatialFilterTypeCombo->currentIndex();
+	ember.m_SpatialFilterType = eSpatialFilterType(m_Fractorium->m_SpatialFilterTypeCombo->currentIndex());
 	ember.m_TemporalFilterWidth = m_Fractorium->m_TemporalFilterWidthSpin->value();
-	ember.m_TemporalFilterType = (eTemporalFilterType)m_Fractorium->m_TemporalFilterTypeCombo->currentIndex();
+	ember.m_TemporalFilterType = eTemporalFilterType(m_Fractorium->m_TemporalFilterTypeCombo->currentIndex());
 	ember.m_MinRadDE = m_Fractorium->m_DEFilterMinRadiusSpin->value();
 	ember.m_MaxRadDE = m_Fractorium->m_DEFilterMaxRadiusSpin->value();
 	ember.m_CurveDE = m_Fractorium->m_DECurveSpin->value();
@@ -612,8 +612,8 @@ void FractoriumEmberController<T>::ParamsToEmber(Ember<T>& ember)
 	ember.m_Quality = m_Fractorium->m_QualitySpin->value();
 	ember.m_Supersample = m_Fractorium->m_SupersampleSpin->value();
 	ember.m_TemporalSamples = m_Fractorium->m_TemporalSamplesSpin->value();
-	ember.m_AffineInterp = (eAffineInterp)m_Fractorium->m_AffineInterpTypeCombo->currentIndex();
-	ember.m_Interp = (eInterp)m_Fractorium->m_InterpTypeCombo->currentIndex();
+	ember.m_AffineInterp = eAffineInterp(m_Fractorium->m_AffineInterpTypeCombo->currentIndex());
+	ember.m_Interp = eInterp(m_Fractorium->m_InterpTypeCombo->currentIndex());
 
 	ember.SyncSize();
 }
@@ -644,3 +644,9 @@ void Fractorium::SetScale(double scale)
 {
 	m_ScaleSpin->setValue(scale);
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

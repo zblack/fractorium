@@ -29,7 +29,7 @@ void FractoriumEmberController<T>::FillXaosWithCurrentXform()
 			if (m_Fractorium->ui.XaosToRadio->isChecked())//"To": Single xform, advance index.
 				spinBox->SetValueStealth(currXform->Xaos(i));
 			else//"From": Advance xforms, single index.
-				if (currXform = m_Ember.GetXform(i))
+				if ((currXform = m_Ember.GetXform(i)))
 					spinBox->SetValueStealth(currXform->Xaos(m_Fractorium->ui.CurrentXformCombo->currentIndex()));
 
 			//Fill in name column.
@@ -57,15 +57,15 @@ QString FractoriumEmberController<T>::MakeXaosNameString(uint i)
 
 	if (xform)
 	{
-		int i = m_Ember.GetXformIndex(xform) + 1;//GUI is 1 indexed to avoid confusing the user.
+		int indexPlus1 = m_Ember.GetXformIndex(xform) + 1;//GUI is 1 indexed to avoid confusing the user.
 		int curr = m_Fractorium->ui.CurrentXformCombo->currentIndex() + 1;
 
-		if (i != -1)
+		if (indexPlus1 != -1)
 		{
 			if (m_Fractorium->ui.XaosToRadio->isChecked())
-				name = QString("From ") + ToString(curr) + QString(" To ") + ToString(i);
+				name = QString("From ") + ToString(curr) + QString(" To ") + ToString(indexPlus1);
 			else
-				name = QString("From ") + ToString(i) + QString(" To ") + ToString(curr);
+				name = QString("From ") + ToString(indexPlus1) + QString(" To ") + ToString(curr);
 
 			//if (xform->m_Name != "")
 			//	name = name + " (" + QString::fromStdString(xform->m_Name) + ")";
@@ -103,7 +103,7 @@ void FractoriumEmberController<T>::XaosChanged(DoubleSpinBox* sender)
 					}
 					else//"From": Advance xforms, single index.
 					{
-						if (xform = m_Ember.GetXform(i))//Single = is intentional.
+						if ((xform = m_Ember.GetXform(i)))//Single = is intentional.
 							xform->SetXaos(m_Fractorium->ui.CurrentXformCombo->currentIndex(), spinBox->value());
 					}
 
@@ -137,10 +137,10 @@ void Fractorium::OnXaosFromToToggled(bool checked)
 void Fractorium::FillXaosTable()
 {
 	int spinHeight = 20;
-	QWidget* w;
+	QWidget* w = nullptr;
 	ui.XaosTable->setRowCount(m_Controller->XformCount());//This will grow or shrink the number of rows and call the destructor for previous DoubleSpinBoxes.
 
-	for (int i = 0; i < m_Controller->XformCount(); i++)
+	for (int i = 0; i < int(m_Controller->XformCount()); i++)
 	{
 		DoubleSpinBox* spinBox = new DoubleSpinBox(ui.XaosTable, spinHeight, 0.1);
 		QTableWidgetItem* xformNameItem = new QTableWidgetItem(m_Controller->MakeXaosNameString(i));
@@ -199,14 +199,14 @@ void FractoriumEmberController<T>::RandomXaos()
 	{
 		for (size_t i = 0; i < m_Ember.XformCount(); i++)
 		{
-			if (Xform<T>* xform = m_Ember.GetXform(i))
+			if (Xform<T>* localXform = m_Ember.GetXform(i))
 			{
 				for (size_t j = 0; j < m_Ember.XformCount(); j++)
 				{
 					if (m_Rand.RandBit())
-						xform->SetXaos(j, (T)m_Rand.RandBit());
+						localXform->SetXaos(j, T(m_Rand.RandBit()));
 					else
-						xform->SetXaos(j, m_Rand.Frand<T>(0, 3));
+						localXform->SetXaos(j, m_Rand.Frand<T>(0, 3));
 				}
 			}
 		}
@@ -217,3 +217,9 @@ void FractoriumEmberController<T>::RandomXaos()
 }
 
 void Fractorium::OnRandomXaosButtonClicked(bool checked) { m_Controller->RandomXaos(); }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

@@ -8,9 +8,9 @@
 /// Constructor which passes parent widget to the base and initializes OpenGL profile.
 /// This will need to change in the future to implement all drawing as shader programs.
 /// </summary>
-/// <param name="parent">The parent widget</param>
-GLWidget::GLWidget(QWidget* parent)
-	: QGLWidget(QGLFormat(QGL::SampleBuffers), parent)
+/// <param name="p">The parent widget</param>
+GLWidget::GLWidget(QWidget* p)
+	: QGLWidget(QGLFormat(QGL::SampleBuffers), p)
 {
 	QGLFormat qglFormat;
 
@@ -59,7 +59,7 @@ void GLWidget::DrawQuad()
 		glBindTexture(GL_TEXTURE_2D, m_OutputTexID);//The texture to draw to.
 		
 		//Only draw if the dimensions match exactly.
-		if (m_TexWidth == width() && m_TexHeight == height() && ((m_TexWidth * m_TexHeight * 4) == finalImage->size()))
+		if (m_TexWidth == width() && m_TexHeight == height() && ((m_TexWidth * m_TexHeight * 4) == GLint(finalImage->size())))
 		{
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix();
@@ -363,7 +363,7 @@ void GLEmberController<T>::DrawAffines(bool pre, bool post)
 /// Set drag modifiers based on key press.
 /// </summary>
 /// <param name="e">The event</param>
-bool GLEmberControllerBase::KeyPress(QKeyEvent* e)
+bool GLEmberControllerBase::KeyPress_(QKeyEvent* e)
 {
 #ifdef OLDDRAG
 	if (e->key() == Qt::Key_Shift)
@@ -388,12 +388,12 @@ bool GLEmberControllerBase::KeyPress(QKeyEvent* e)
 }
 
 /// <summary>
-/// Call controller KeyPress().
+/// Call controller KeyPress_().
 /// </summary>
 /// <param name="e">The event</param>
 void GLWidget::keyPressEvent(QKeyEvent* e)
 {
-	if (!GLController() || !GLController()->KeyPress(e))
+	if (!GLController() || !GLController()->KeyPress_(e))
 		QGLWidget::keyPressEvent(e);
 
 	update();
@@ -403,7 +403,7 @@ void GLWidget::keyPressEvent(QKeyEvent* e)
 /// Set drag modifiers based on key release.
 /// </summary>
 /// <param name="e">The event</param>
-bool GLEmberControllerBase::KeyRelease(QKeyEvent* e)
+bool GLEmberControllerBase::KeyRelease_(QKeyEvent* e)
 {
 #ifdef OLDDRAG
 	if (e->key() == Qt::Key_Shift)
@@ -428,12 +428,12 @@ bool GLEmberControllerBase::KeyRelease(QKeyEvent* e)
 }
 
 /// <summary>
-/// Call controller KeyRelease().
+/// Call controller KeyRelease_().
 /// </summary>
 /// <param name="e">The event</param>
 void GLWidget::keyReleaseEvent(QKeyEvent* e)
 {	
-	if (!GLController() || !GLController()->KeyRelease(e))
+	if (!GLController() || !GLController()->KeyRelease_(e))
 		QGLWidget::keyReleaseEvent(e);
 
 	update();
@@ -598,7 +598,7 @@ void GLEmberController<T>::MouseMove(QMouseEvent* e)
 
 	m_MousePos = mouse;
 	m_MouseWorldPos = WindowToWorld(mouseFlipped, false);
-	v3T mouseDelta = m_MouseWorldPos - m_MouseDownWorldPos;//Determine how far the mouse has moved in world cartesian coordinates.
+	//v3T mouseDelta = m_MouseWorldPos - m_MouseDownWorldPos;//Determine how far the mouse has moved in world cartesian coordinates.
 
 	//Update status bar on main window, regardless of whether anything is being dragged.
 	if (m_Fractorium->m_Controller->RenderTimerRunning())
@@ -752,8 +752,8 @@ void GLWidget::SetDimensions(int w, int h)
 bool GLWidget::Allocate(bool force)
 {
 	bool alloc = false;
-	bool resize = force || m_TexWidth != width() || m_TexHeight != height();
-	bool doIt = resize || m_OutputTexID == 0;
+	bool doResize = force || m_TexWidth != width() || m_TexHeight != height();
+	bool doIt = doResize || m_OutputTexID == 0;
 
 	if (doIt)
 	{
@@ -762,7 +762,7 @@ bool GLWidget::Allocate(bool force)
 		glEnable(GL_TEXTURE_2D);
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
-		if (resize)
+		if (doResize)
 		{
 			glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
 			Deallocate();
@@ -814,7 +814,7 @@ void GLWidget::SetViewport()
 {
 	if (m_Init && (m_ViewWidth != m_TexWidth || m_ViewHeight != m_TexHeight))
 	{
-		glViewport(0, 0, (GLint)m_TexWidth, (GLint)m_TexHeight);
+		glViewport(0, 0, GLint(m_TexWidth), GLint(m_TexHeight));
 		m_ViewWidth = m_TexWidth;
 		m_ViewHeight = m_TexHeight;
 	}
@@ -863,16 +863,16 @@ void GLWidget::DrawGrid()
 	{
 		glColor4f(0.5f, 0.5f, 0.5f, 0.5f);
 
-		for (float x = xLow; x <= xHigh; x += GridStep)
+		for (float fx = xLow; fx <= xHigh; fx += GridStep)
 		{
-			glVertex2f(x, yLow);
-			glVertex2f(x, yHigh);
+			glVertex2f(fx, yLow);
+			glVertex2f(fx, yHigh);
 		}
 
-		for (float y = yLow; y < yHigh; y += GridStep)
+		for (float fy = yLow; fy < yHigh; fy += GridStep)
 		{
-			glVertex2f(xLow,  y);
-			glVertex2f(xHigh, y);
+			glVertex2f(xLow,  fy);
+			glVertex2f(xHigh, fy);
 		}
 	}
 
@@ -880,16 +880,16 @@ void GLWidget::DrawGrid()
 	{
 		glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 
-		for (float x = xLow; x <= xHigh; x += 1.0f)
+		for (float fx = xLow; fx <= xHigh; fx += 1.0f)
 		{
-			glVertex2f(x, yLow);
-			glVertex2f(x, yHigh);
+			glVertex2f(fx, yLow);
+			glVertex2f(fx, yHigh);
 		}
 
-		for (float y = yLow; y < yHigh; y += 1.0f)
+		for (float fy = yLow; fy < yHigh; fy += 1.0f)
 		{
-			glVertex2f(xLow,  y);
-			glVertex2f(xHigh, y);
+			glVertex2f(xLow,  fy);
+			glVertex2f(xHigh, fy);
 		}
 	}
 
@@ -1023,14 +1023,14 @@ void GLWidget::DrawAffineHelper(int index, bool selected, bool pre, bool final, 
 	{
 		for (int i = 1; i <= 64; i++)//The circle.
 		{
-			float theta = (float)M_PI * 2.0f * (float)(i % 64) / 64.0f;
-			float x = (float)cos(theta);
-			float y = (float)sin(theta);
+			float theta = float(M_PI) * 2.0f * float(i % 64) / 64.0f;
+			float fx = float(cos(theta));
+			float fy = float(sin(theta));
 
 			glVertex2f(px, py);
-			glVertex2f(x, y);
-			px = x;
-			py = y;
+			glVertex2f(fx, fy);
+			px = fx;
+			py = fy;
 		}
 	}
 
@@ -1445,3 +1445,9 @@ GLEmberControllerBase* GLWidget::GLController()
 
 	return NULL;
 }
+
+template class GLEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class GLEmberController<double>;
+#endif

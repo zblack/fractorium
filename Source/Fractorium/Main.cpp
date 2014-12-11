@@ -24,8 +24,13 @@ int main(int argc, char *argv[])
 
 	//Required for large allocs, else GPU memory usage will be severely limited to small sizes.
 	//This must be done in the application and not in the EmberCL DLL.
+#ifdef WIN32
 	_putenv_s("GPU_MAX_ALLOC_PERCENT", "100");
+#else
+	putenv(const_cast<char*>("GPU_MAX_ALLOC_PERCENT=100"));
+#endif
 	Fractorium w;
 	w.show();
 	return a.exec();
 }
+

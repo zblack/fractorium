@@ -68,7 +68,7 @@ void FractoriumEmberController<T>::XformScrollColorIndexChanged(int d)
 {
 	UpdateCurrentXform([&] (Xform<T>* xform)
 	{
-		m_Fractorium->m_XformColorIndexSpin->setValue(d / (double)m_Fractorium->ui.XformColorScroll->maximum());//Will trigger an update.
+		m_Fractorium->m_XformColorIndexSpin->setValue(d / double(m_Fractorium->ui.XformColorScroll->maximum()));//Will trigger an update.
 	}, false);
 }
 
@@ -163,7 +163,7 @@ void FractoriumEmberController<T>::SetCurrentXformColorIndex(double d)
 		entry.g *= 255;
 		entry.b *= 255;
 
-		QRgb rgb = (uint)entry.r << 16 | (uint)entry.g << 8 | (uint)entry.b;
+		QRgb rgb = uint(entry.r) << 16 | uint(entry.g) << 8 | uint(entry.b);
 		m_Fractorium->ui.XformColorIndexTable->item(0, 0)->setBackgroundColor(QColor::fromRgb(rgb));
 	}, false);
 }
@@ -202,3 +202,9 @@ void FractoriumEmberControllerBase::SetPaletteRefTable(QPixmap* pixmap)
 		m_Fractorium->m_PaletteRefItem->setData(Qt::DecorationRole, pixTemp.scaled(size, Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 	}
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

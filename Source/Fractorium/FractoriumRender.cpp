@@ -224,7 +224,7 @@ int FractoriumEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, doubl
 {
 	QString status;
 
-	m_Fractorium->m_ProgressBar->setValue((int)fraction);//Only really applies to iter and filter, because final accum only gives progress 0 and 100.
+	m_Fractorium->m_ProgressBar->setValue(int(fraction));//Only really applies to iter and filter, because final accum only gives progress 0 and 100.
 
 	if (stage == 0)
 		status = "Iterating";
@@ -275,7 +275,7 @@ bool FractoriumEmberController<T>::SyncSizes()
 		gl->Allocate();
 		gl->SetViewport();
 
-		if (m_Renderer->RendererType() == OPENCL_RENDERER && (rendererCL = (RendererCL<T>*)m_Renderer.get()))
+		if (m_Renderer->RendererType() == OPENCL_RENDERER && (rendererCL = dynamic_cast<RendererCL<T>*>(m_Renderer.get())))
 			rendererCL->SetOutputTexture(gl->OutputTexID());
 
 		changed = true;
@@ -300,7 +300,7 @@ bool FractoriumEmberController<T>::Render()
 	eProcessAction action = CondenseAndClearProcessActions();
 
 	if (m_Renderer->RendererType() == OPENCL_RENDERER)
-		rendererCL = (RendererCL<T>*)m_Renderer.get();
+		rendererCL = dynamic_cast<RendererCL<T>*>(m_Renderer.get());
 
 	//Force temporal samples to always be 1. Perhaps change later when animation is implemented.
 	m_Ember.m_TemporalSamples = 1;
@@ -378,8 +378,8 @@ bool FractoriumEmberController<T>::Render()
 			if (ProcessState() == ACCUM_DONE)
 			{
 				EmberStats stats = m_Renderer->Stats();
-				QString iters = ToString(stats.m_Iters);
-				QString scaledQuality = ToString((uint)m_Renderer->ScaledQuality());
+				QString iters = ToString<qulonglong>(stats.m_Iters);
+				QString scaledQuality = ToString(uint(m_Renderer->ScaledQuality()));
 				string renderTime = m_RenderElapsedTimer.Format(m_RenderElapsedTimer.Toc());
 
 				m_Fractorium->m_ProgressBar->setValue(100);
@@ -391,8 +391,8 @@ bool FractoriumEmberController<T>::Render()
 				}
 				else
 				{
-					double percent = (double)stats.m_Badvals / (double)stats.m_Iters;
-					QString badVals = ToString(stats.m_Badvals);
+					double percent = double(stats.m_Badvals) / double(stats.m_Iters);
+					QString badVals = ToString<qulonglong>(stats.m_Badvals);
 					QString badPercent = QLocale::system().toString(percent * 100, 'f', 2);
 
 					m_Fractorium->m_RenderStatusLabel->setText("Iters: " + iters + ". Scaled quality: " + scaledQuality + ". Bad values: " + badVals + " (" + badPercent + "%). Total time: " + QString::fromStdString(renderTime));
@@ -609,13 +609,13 @@ bool Fractorium::CreateControllerFromOptions()
 {
 	bool ok = true;
 
-	size_t size =
+	size_t elementSize =
 #ifdef DO_DOUBLE
 		m_Settings->Double() ? sizeof(double) :
 #endif
 		sizeof(float);
 	
-	if (!m_Controller.get() || (m_Controller->SizeOfT() != size))
+	if (!m_Controller.get() || (m_Controller->SizeOfT() != elementSize))
 	{
 		double hue = m_PaletteHueSpin->value();
 		double sat = m_PaletteSaturationSpin->value();
@@ -703,3 +703,9 @@ void Fractorium::IdleTimer() { m_Controller->Render(); }
 /// </summary>
 /// <returns>True if the ember controller and GL controllers are both not NULL, else false.</returns>
 bool Fractorium::ControllersOk() { return m_Controller.get() && m_Controller->GLController(); }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

@@ -13,6 +13,7 @@
 /// </summary>
 class Fractorium;
 class FractoriumFinalRenderDialog;
+//class FractoriumEmberControllerBase;
 
 /// <summary>
 /// Used to hold the options specified in the current state of the Gui for performing the final render.
@@ -138,8 +139,3 @@ protected:
 	unique_ptr<EmberNs::Renderer<T, T>> m_FinalPreviewRenderer;
 };
 
-template class FinalRenderEmberController<float>;
-
-#ifdef DO_DOUBLE
-	template class FinalRenderEmberController<double>;
-#endif

@@ -1,5 +1,5 @@
-TEMPLATE = lib
-CONFIG += shared
+TEMPLATE = app
+CONFIG += console
 CONFIG += warn_off
 CONFIG += precompile_header
 CONFIG -= app_bundle
@@ -9,7 +9,12 @@ VERSION = 0.1.4.7
 DESTDIR = ../../../Bin
 
 LIBS += -L/usr/lib -lOpenCL
-#LIBS += -L/usr/lib -lGL
+LIBS += -L/usr/lib -lGL
+LIBS += -L/usr/lib -ljpeg
+LIBS += -L/usr/lib -lpng
+LIBS += -L/usr/lib/x86_64-linux-gnu -lxml2
+LIBS += -L../../../Bin -lEmber
+LIBS += -L../../../Bin -lEmberCL
 
 INCLUDEPATH += /usr/include/CL
 INCLUDEPATH += /usr/include/GL
@@ -17,6 +22,8 @@ INCLUDEPATH += /usr/include/glm
 INCLUDEPATH += /usr/include/tbb
 INCLUDEPATH += /usr/include/libxml2
 INCLUDEPATH += ../../../Source/Ember
+INCLUDEPATH += ../../../Source/EmberCL
+INCLUDEPATH += ../../../Source/EmberCommon
 
 QMAKE_CXXFLAGS += -O2
 QMAKE_CXXFLAGS += -march=k8
@@ -47,30 +54,24 @@ QMAKE_CXXFLAGS += -D_M_X64
 QMAKE_CXXFLAGS += -D_USRDLL 
 QMAKE_CXXFLAGS += -DNDEBUG
 QMAKE_CXXFLAGS += -D_CONSOLE
-QMAKE_CXXFLAGS += -BUILDING_EMBERCL
 
 QMAKE_LFLAGS += -s
 
-PRECOMPILED_HEADER = ../../../Source/EmberCL/EmberCLPch.h
+PRECOMPILED_HEADER = ../../../Source/EmberCommon/EmberCommonPch.h
 
 SOURCES += \
-    ../../../Source/EmberCL/DllMain.cpp \
-    ../../../Source/EmberCL/FinalAccumOpenCLKernelCreator.cpp \
-    ../../../Source/EmberCL/IterOpenCLKernelCreator.cpp \
-    ../../../Source/EmberCL/OpenCLWrapper.cpp \
-    ../../../Source/EmberCL/RendererCL.cpp \
-    ../../../Source/EmberCL/DEOpenCLKernelCreator.cpp
+    ../../../Source/EmberAnimate/EmberAnimate.cpp \
+    ../../../Source/EmberCommon/EmberCommonPch.cpp
 
 include(deployment.pri)
 qtcAddDeployment()
 
 HEADERS += \
-    ../../../Source/EmberCL/DEOpenCLKernelCreator.h \
-    ../../../Source/EmberCL/EmberCLFunctions.h \
-    ../../../Source/EmberCL/EmberCLPch.h \
-    ../../../Source/EmberCL/EmberCLStructs.h \
-    ../../../Source/EmberCL/FinalAccumOpenCLKernelCreator.h \
-    ../../../Source/EmberCL/IterOpenCLKernelCreator.h \
-    ../../../Source/EmberCL/OpenCLWrapper.h \
-    ../../../Source/EmberCL/RendererCL.h
+    ../../../Source/EmberAnimate/EmberAnimate.h \
+    ../../../Source/EmberCommon/EmberCommon.h \
+    ../../../Source/EmberCommon/EmberCommonPch.h \
+    ../../../Source/EmberCommon/EmberOptions.h \
+    ../../../Source/EmberCommon/JpegUtils.h \
+    ../../../Source/EmberCommon/SimpleGlob.h \
+    ../../../Source/EmberCommon/SimpleOpt.h
 

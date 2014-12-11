@@ -15,13 +15,13 @@ class StealthComboBox : public QComboBox
 	Q_OBJECT
 
 public:
-	explicit StealthComboBox(QWidget* parent = 0) : QComboBox(parent) { }
+	explicit StealthComboBox(QWidget* p = 0) : QComboBox(p) { }
 	
 	/// <summary>
 	/// Set the current index of the combo box without triggering signals.
 	/// </summary>
 	/// <param name="index">The current index to set</param>
-	void StealthComboBox::SetCurrentIndexStealth(int index)
+	void SetCurrentIndexStealth(int index)
 	{
 		blockSignals(true);
 		setCurrentIndex(index);

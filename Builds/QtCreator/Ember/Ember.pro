@@ -1,6 +1,7 @@
 TEMPLATE = lib
 CONFIG += shared
 CONFIG += warn_off
+CONFIG += precompile_header
 CONFIG -= app_bundle
 CONFIG -= qt
 VERSION = 0.1.4.7
@@ -13,6 +14,7 @@ LIBS += -L/usr/lib/x86_64-linux-gnu -lxml2
 INCLUDEPATH += /usr/include/glm
 INCLUDEPATH += /usr/include/tbb
 INCLUDEPATH += /usr/include/libxml2
+INCLUDEPATH += ../../../Source/Ember
 
 QMAKE_CXXFLAGS += -O2
 QMAKE_CXXFLAGS += -march=k8
@@ -46,6 +48,8 @@ QMAKE_CXXFLAGS += -D_CONSOLE
 QMAKE_CXXFLAGS += -DBUILDING_EMBER
 
 QMAKE_LFLAGS += -s
+
+PRECOMPILED_HEADER = ../../../Source/Ember/EmberPch.h
 
 SOURCES += \
     ../../../Source/Ember/Affine2D.cpp \

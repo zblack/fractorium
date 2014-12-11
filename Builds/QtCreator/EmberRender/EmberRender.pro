@@ -1,6 +1,7 @@
 TEMPLATE = app
 CONFIG += console
 CONFIG += warn_off
+CONFIG += precompile_header
 CONFIG -= app_bundle
 CONFIG -= qt
 VERSION = 0.1.4.7
@@ -53,9 +54,10 @@ QMAKE_CXXFLAGS += -D_M_X64
 QMAKE_CXXFLAGS += -D_USRDLL 
 QMAKE_CXXFLAGS += -DNDEBUG
 QMAKE_CXXFLAGS += -D_CONSOLE
-QMAKE_CXXFLAGS += -DBUILDING_EMBER
 
 QMAKE_LFLAGS += -s
+
+PRECOMPILED_HEADER = ../../../Source/EmberCommon/EmberCommonPch.h
 
 SOURCES += \
     ../../../Source/EmberRender/EmberRender.cpp \

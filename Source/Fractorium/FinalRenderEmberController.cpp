@@ -170,7 +170,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_Renderer->YAxisUp(m_GuiState.m_YAxisUp);
 		m_Renderer->ThreadCount(m_GuiState.m_ThreadCount);
 		m_Renderer->Transparency(m_GuiState.m_Transparency);
-		m_Renderer->m_ProgressParameter = (void*)&currentStripForProgress;
+		m_Renderer->m_ProgressParameter = reinterpret_cast<void*>(&currentStripForProgress);
 
 		if (path.endsWith(".png", Qt::CaseInsensitive) || m_Renderer->RendererType() == OPENCL_RENDERER)//This is creating the wrong thing.//TODO
 			m_Renderer->NumChannels(4);
@@ -399,7 +399,6 @@ template <typename T>
 bool FinalRenderEmberController<T>::CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared)
 {
 	bool ok = true;
-	vector<string> errorReport;
 	uint channels = m_FinalRenderDialog->Ext() == "png" ? 4 : 3;
 
 	CancelRender();
@@ -465,10 +464,10 @@ template <typename T>
 int FinalRenderEmberController<T>::ProgressFunc(Ember<T>& ember, void* foo, double fraction, int stage, double etaMs)
 {
 	static int count = 0;
-	uint strip = *((uint*)m_Renderer->m_ProgressParameter);
+	uint strip = *(reinterpret_cast<uint*>(m_Renderer->m_ProgressParameter));
 	double fracPerStrip = ceil(100.0 / m_GuiState.m_Strips);
 	double stripsfrac = ceil(fracPerStrip * strip) + ceil(fraction / m_GuiState.m_Strips);
-	int intFract = (int)stripsfrac;
+	int intFract = int(stripsfrac);
 
 	if (stage == 0)
 		QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, intFract));
@@ -531,14 +530,14 @@ void FinalRenderEmberController<T>::SyncCurrentToSizeSpinners(bool scale, bool s
 {
 	if (scale)
 	{
-		m_FinalRenderDialog->m_WidthScaleSpin->SetValueStealth((double)m_Ember->m_FinalRasW / m_Ember->m_OrigFinalRasW);//Work backward to determine the scale.
-		m_FinalRenderDialog->m_HeightScaleSpin->SetValueStealth((double)m_Ember->m_FinalRasH / m_Ember->m_OrigFinalRasH);
+		m_FinalRenderDialog->m_WidthScaleSpin->SetValueStealth(double(m_Ember->m_FinalRasW) / m_Ember->m_OrigFinalRasW);//Work backward to determine the scale.
+		m_FinalRenderDialog->m_HeightScaleSpin->SetValueStealth(double(m_Ember->m_FinalRasH) / m_Ember->m_OrigFinalRasH);
 	}
 
 	if (size)
 	{
-		m_FinalRenderDialog->m_WidthScaleSpin->setSuffix(" (" + ToString(m_Ember->m_FinalRasW) + ")");
-		m_FinalRenderDialog->m_HeightScaleSpin->setSuffix(" (" + ToString(m_Ember->m_FinalRasH) + ")");
+		m_FinalRenderDialog->m_WidthScaleSpin->setSuffix(" (" + ToString<qulonglong>(m_Ember->m_FinalRasW) + ")");
+		m_FinalRenderDialog->m_HeightScaleSpin->setSuffix(" (" + ToString<qulonglong>(m_Ember->m_FinalRasH) + ")");
 	}
 }
 
@@ -580,7 +579,7 @@ tuple<size_t, size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemor
 			[&](const string& s) { }, [&](const string& s) { }, [&](const string& s) { });
 
 		SyncGuiToEmbers();
-		m_FinalRenderDialog->m_StripsSpin->setSuffix(" (" + ToString(strips) + ")");
+		m_FinalRenderDialog->m_StripsSpin->setSuffix(" (" + ToString<qulonglong>(strips) + ")");
 		m_Renderer->SetEmber(*m_Ember);
 		m_Renderer->CreateSpatialFilter(b);
 		m_Renderer->CreateTemporalFilter(b);
@@ -640,8 +639,8 @@ void FinalRenderEmberController<T>::RenderComplete(Ember<T>& ember)
 {
 	string renderTimeString = m_RenderTimer.Format(m_RenderTimer.Toc()), totalTimeString;
 	QString status, filename = ComposePath(QString::fromStdString(ember.m_Name));
-	QString itersString = ToString(m_Stats.m_Iters);
-	QString itersPerSecString = ToString(size_t(m_Stats.m_Iters / (m_Stats.m_IterMs / 1000.0)));
+	QString itersString = ToString<qulonglong>(m_Stats.m_Iters);
+	QString itersPerSecString = ToString<qulonglong>(size_t(m_Stats.m_Iters / (m_Stats.m_IterMs / 1000.0)));
 
 	//Save whatever options were specified on the GUI to the settings.
 	m_Settings->FinalEarlyClip(m_GuiState.m_EarlyClip);
@@ -681,8 +680,8 @@ void FinalRenderEmberController<T>::RenderComplete(Ember<T>& ember)
 	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));//Just to be safe.
 	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
 	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderAccumProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, 100));
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTotalProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, int(((float)m_FinishedImageCount / (float)m_ImageCount) * 100)));
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderImageCountLabel, "setText", Qt::QueuedConnection, Q_ARG(const QString&, ToString(m_FinishedImageCount) + " / " + ToString(m_ImageCount)));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTotalProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, int((float(m_FinishedImageCount) / float(m_ImageCount)) * 100)));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderImageCountLabel,    "setText", Qt::QueuedConnection, Q_ARG(const QString&, ToString(m_FinishedImageCount) + " / " + ToString(m_ImageCount)));
 
 	status = "Pure render time: " + QString::fromStdString(renderTimeString);
 	Output(status);
@@ -733,3 +732,9 @@ void FinalRenderEmberController<T>::SyncGuiToEmber(Ember<T>& ember, size_t width
 	ember.m_Quality = m_FinalRenderDialog->m_QualitySpin->value();
 	ember.m_Supersample = m_FinalRenderDialog->m_SupersampleSpin->value();
 }
+
+template class FinalRenderEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FinalRenderEmberController<double>;
+#endif

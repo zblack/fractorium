@@ -1,154 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_layout_file>
 	<ActiveTarget name="Release x64" />
-	<File name="../../Source/Ember/SpatialFilter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../Source/Ember/Variations04.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="3789" topLine="98" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Xform.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11593" topLine="422" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/DllMain.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/RendererBase.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6894" topLine="183" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Variations01.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="24427" topLine="850" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/SheepTools.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="17291" topLine="598" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/VariationsDC.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="22857" topLine="672" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/VariationList.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14159" topLine="419" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Interpolate.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="18225" topLine="507" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Ember.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="39146" topLine="1242" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Variations03.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="121967" topLine="3845" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/EmberToXml.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="21325" topLine="635" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Renderer.cpp" open="0" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="54173" topLine="1346" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Utils.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="21157" topLine="689" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/TemporalFilter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9058" topLine="269" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Isaac.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="8233" topLine="210" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Timing.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3212" topLine="91" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/EmberDefines.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1899" topLine="57" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Renderer.h" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4461" topLine="77" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/EmberPch.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="314" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Palette.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14170" topLine="295" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/DensityFilter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="5542" topLine="173" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/XmlToEmber.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="17930" topLine="385" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Affine2D.cpp" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="10791" topLine="325" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/CarToRas.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="4534" topLine="119" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/RendererBase.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="14912" topLine="437" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/EmberPch.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="0" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Variations02.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="325" topLine="3" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Point.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="3621" topLine="148" />
-		</Cursor>
-	</File>
-	<File name="../../Source/Ember/Variations05.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="59509" topLine="1823" />
+			<Cursor1 position="90092" topLine="2971" />
 		</Cursor>
 	</File>
 	<File name="../../Source/Ember/Iterator.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -156,14 +11,99 @@
 			<Cursor1 position="2705" topLine="57" />
 		</Cursor>
 	</File>
+	<File name="../../Source/Ember/Palette.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14170" topLine="295" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Variations01.h" open="0" top="0" tabpos="12" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="24427" topLine="850" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Point.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3621" topLine="148" />
+		</Cursor>
+	</File>
 	<File name="../../Source/Ember/Variation.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="23279" topLine="1073" />
 		</Cursor>
 	</File>
-	<File name="../../Source/Ember/Affine2D.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../Source/Ember/CarToRas.h" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2877" topLine="81" />
+			<Cursor1 position="4534" topLine="119" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/VariationList.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14159" topLine="419" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Xform.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="11593" topLine="422" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Timing.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3212" topLine="91" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/DensityFilter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="5542" topLine="173" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/RendererBase.h" open="0" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="6894" topLine="183" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/VariationsDC.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="22857" topLine="672" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Utils.h" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="21157" topLine="689" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Renderer.cpp" open="0" top="0" tabpos="18" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="54173" topLine="1346" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Variations02.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="325" topLine="3" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/EmberToXml.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="21325" topLine="635" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Affine2D.cpp" open="0" top="0" tabpos="14" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9859" topLine="325" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/XmlToEmber.h" open="0" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17930" topLine="385" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Isaac.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8233" topLine="210" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Ember.h" open="0" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="39146" topLine="1242" />
 		</Cursor>
 	</File>
 	<File name="../../Source/Ember/Ember.cpp" open="0" top="0" tabpos="15" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -171,14 +111,74 @@
 			<Cursor1 position="14346" topLine="378" />
 		</Cursor>
 	</File>
-	<File name="../../Source/Ember/Variations04.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="../../Source/Ember/DllMain.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="90092" topLine="2971" />
+			<Cursor1 position="0" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/EmberDefines.h" open="0" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1899" topLine="57" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Interpolate.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="18225" topLine="507" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Affine2D.h" open="0" top="0" tabpos="13" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="2877" topLine="81" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Variations03.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="121967" topLine="3845" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/EmberPch.cpp" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="0" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="../../Source/Ember/PaletteList.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="4617" topLine="160" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/EmberPch.h" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="314" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Variations05.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="59509" topLine="1823" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/Renderer.h" open="0" top="0" tabpos="16" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="4461" topLine="77" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/TemporalFilter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="9058" topLine="269" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/SheepTools.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="17291" topLine="598" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/SpatialFilter.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="3789" topLine="98" />
+		</Cursor>
+	</File>
+	<File name="../../Source/Ember/RendererBase.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="14912" topLine="437" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>

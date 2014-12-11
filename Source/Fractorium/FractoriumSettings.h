@@ -66,7 +66,7 @@ class FractoriumSettings : public QSettings
 {
 	Q_OBJECT
 public:
-	FractoriumSettings(QObject* parent);
+	FractoriumSettings(QObject* p);
 	void EnsureDefaults();
 
 	bool EarlyClip();

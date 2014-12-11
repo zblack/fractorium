@@ -7,10 +7,11 @@
 /// to the GUI widgets that are not possible to do through the designer. So if something
 /// is present here, it's safe to assume it can't be done in the designer.
 /// </summary>
-Fractorium::Fractorium(QWidget* parent)
-	: QMainWindow(parent)
+/// <param name="p">The parent widget of this item</param>
+Fractorium::Fractorium(QWidget* p)
+	: QMainWindow(p)
 {
-	int spinHeight = 20, iconSize = 9;
+	int spinHeight = 20, iconSize_ = 9;
 	size_t i = 0;
 	Timing t;
 	ui.setupUi(this);
@@ -58,13 +59,13 @@ Fractorium::Fractorium(QWidget* parent)
 	
 	for (i = 0; i < XFORM_COLOR_COUNT; i++)
 	{
-		QPixmap pixmap(iconSize, iconSize);
+		QPixmap pixmap(iconSize_, iconSize_);
 
 		pixmap.fill(m_XformComboColors[i]);
 		m_XformComboIcons[i] = QIcon(pixmap);
 	}
 
-	QPixmap pixmap(iconSize, iconSize);
+	QPixmap pixmap(iconSize_, iconSize_);
 
 	pixmap.fill(m_FinalXformComboColor);
 	m_FinalXformComboIcon = QIcon(pixmap);
@@ -168,14 +169,14 @@ Fractorium::~Fractorium()
 /// <summary>
 /// Set the coordinate text in the status bar.
 /// </summary>
-/// <param name="x">The raster x coordinate</param>
-/// <param name="y">The raster y coordinate</param>
+/// <param name="rasX">The raster x coordinate</param>
+/// <param name="rasY">The raster y coordinate</param>
 /// <param name="worldX">The cartesian world x coordinate</param>
 /// <param name="worldY">The cartesian world y coordinate</param>
-void Fractorium::SetCoordinateStatus(int x, int y, float worldX, float worldY)
+void Fractorium::SetCoordinateStatus(int rasX, int rasY, float worldX, float worldY)
 {
 	//Use sprintf rather than allocating and concatenating 6 QStrings for efficiency since this is called on every mouse move.
-	sprintf_s(m_CoordinateString, 128, "Window: %4d, %4d World: %2.2f, %2.2f", x, y, worldX, worldY);
+	sprintf_s(m_CoordinateString, 128, "Window: %4d, %4d World: %2.2f, %2.2f", rasX, rasY, worldX, worldY);
 	m_CoordinateStatusLabel->setText(QString(m_CoordinateString));
 }
 
@@ -711,3 +712,9 @@ int Fractorium::FlipDet(Affine2D<float>& affine)
 //	if (incRow)
 //		row++;
 //}
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

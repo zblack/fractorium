@@ -456,8 +456,3 @@ private:
 	std::function<void (uint, uint)> m_PreviewRenderFunc;
 };
 
-template class FractoriumEmberController<float>;
-
-#ifdef DO_DOUBLE
-	template class FractoriumEmberController<double>;
-#endif

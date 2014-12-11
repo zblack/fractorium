@@ -92,7 +92,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 
 		m_PreviewRun = true;
 		m_PreviewRunning = true;
-		m_PreviewRenderer->ThreadCount(max(1, Timing::ProcessorCount() - 1));//Leave one processor free so the GUI can breathe.
+		m_PreviewRenderer->ThreadCount(max(1u, Timing::ProcessorCount() - 1));//Leave one processor free so the GUI can breathe.
 		QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
 
 		if (QTreeWidgetItem* top = tree->topLevelItem(0))
@@ -116,7 +116,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 						//This ensures the events are processed in order as each preview is updated, and that control does not return here
 						//until the update is complete.
 						QMetaObject::invokeMethod(m_Fractorium, "SetLibraryTreeItemData", Qt::BlockingQueuedConnection,
-							Q_ARG(EmberTreeWidgetItemBase*, (EmberTreeWidgetItemBase*)treeItem),
+							Q_ARG(EmberTreeWidgetItemBase*, dynamic_cast<EmberTreeWidgetItemBase*>(treeItem)),
 							Q_ARG(vector<byte>&, m_PreviewFinalImage),
 							Q_ARG(uint, PREVIEW_SIZE),
 							Q_ARG(uint, PREVIEW_SIZE));
@@ -261,3 +261,9 @@ void FractoriumEmberController<T>::SetEmberPrivate(const Ember<U>& ember, bool v
 	m_Fractorium->FillXforms();//Must do this first because the palette setup in FillParamTablesAndPalette() uses the xforms combo.
 	FillParamTablesAndPalette();
 }
+
+template class FractoriumEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class FractoriumEmberController<double>;
+#endif

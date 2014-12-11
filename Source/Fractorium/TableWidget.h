@@ -30,9 +30,9 @@ public:
 	/// Constructor that passes the parent to the base and installs
 	/// the event filter.
 	/// </summary>
-	/// <param name="parent">The parent widget</param>
-	explicit TableWidget(QWidget* parent = 0)
-		: QTableWidget(parent)
+	/// <param name="p">The parent widget</param>
+	explicit TableWidget(QWidget* p = 0)
+		: QTableWidget(p)
 	{
 		viewport()->installEventFilter(this);
 	}

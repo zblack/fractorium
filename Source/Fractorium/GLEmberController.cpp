@@ -72,7 +72,7 @@ T GLEmberController<T>::CalcScale()
 {
 	//Can't operate using world coords here because every time scale changes, the world bounds change.
 	//So must instead calculate distance traveled based on window coords, which do not change outside of resize events.
-	v2T windowCenter((T)m_GL->width() / T(2), (T)m_GL->height() / T(2));
+	v2T windowCenter(T(m_GL->width()) / T(2), T(m_GL->height()) / T(2));
 	v2T windowMousePosDistanceFromCenter(m_MousePos.x - windowCenter.x, m_MousePos.y - windowCenter.y);
 	v2T windowMouseDownDistanceFromCenter(m_MouseDownPos.x - windowCenter.x, m_MouseDownPos.y - windowCenter.y);
 
@@ -130,7 +130,7 @@ typename v3T GLEmberController<T>::SnapToNormalizedAngle(v3T& vec, uint division
 
 	for (uint i = 0; i < divisions; i++)
 	{
-		theta = 2.0 * M_PI * (T)i / (T)divisions;
+		theta = 2.0 * M_PI * T(i) / T(divisions);
 		c.x = cos(theta);
 		c.y = sin(theta);
 		rsq = glm::distance(vec, c);
@@ -252,3 +252,9 @@ void GLEmberController<T>::QueryMatrices(bool print)
 		}
 	}
 }
+
+template class GLEmberController<float>;
+
+#ifdef DO_DOUBLE
+	template class GLEmberController<double>;
+#endif

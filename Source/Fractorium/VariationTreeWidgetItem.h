@@ -22,9 +22,9 @@ public:
 	/// and passes it to the base.
 	/// </summary>
 	/// <param name="id">The ID of the variation this widget will represent</param>
-	/// <param name="parent">The parent widget</param>
-	VariationTreeWidgetItem(eVariationId id, QTreeWidget* parent = 0)
-		: QTreeWidgetItem(parent)
+	/// <param name="p">The parent widget</param>
+	VariationTreeWidgetItem(eVariationId id, QTreeWidget* p = 0)
+		: QTreeWidgetItem(p)
 	{
 		m_Id = id;
 	}
@@ -35,9 +35,9 @@ public:
 	/// This is used for making sub items for parametric variation parameters.
 	/// </summary>
 	/// <param name="id">The ID of the variation this widget will represent</param>
-	/// <param name="parent">The parent widget</param>
-	VariationTreeWidgetItem(eVariationId id, QTreeWidgetItem* parent = 0)
-		: QTreeWidgetItem(parent)
+	/// <param name="p">The parent widget</param>
+	VariationTreeWidgetItem(eVariationId id, QTreeWidgetItem* p = 0)
+		: QTreeWidgetItem(p)
 	{
 		m_Id = id;
 	}
@@ -61,11 +61,11 @@ private:
 
 		QWidget* itemWidget1 = treeWidget()->itemWidget(const_cast<VariationTreeWidgetItem<T>*>(this), 1);//Get the widget for the second column.
 		
-		if (spinBox1 = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget1))//Cast the widget to the VariationTreeDoubleSpinBox type.
+		if ((spinBox1 = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget1)))//Cast the widget to the VariationTreeDoubleSpinBox type.
 		{
 			QWidget* itemWidget2 = treeWidget()->itemWidget(const_cast<QTreeWidgetItem*>(&other), 1);//Get the widget for the second column of the widget item passed in.
 			
-			if (spinBox2 = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget2))//Cast the widget to the VariationTreeDoubleSpinBox type.
+			if ((spinBox2 = dynamic_cast<VariationTreeDoubleSpinBox<T>*>(itemWidget2)))//Cast the widget to the VariationTreeDoubleSpinBox type.
 			{
 				if (spinBox1->IsParam() || spinBox2->IsParam())//Do not sort params, their order will always remain the same.
 					return false;

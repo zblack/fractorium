@@ -16,7 +16,7 @@ class SpinBox : public QSpinBox
 	Q_OBJECT
 
 public:
-	explicit SpinBox(QWidget* parent = 0, int height = 16, int step = 1);
+	explicit SpinBox(QWidget* p = 0, int height = 16, int step = 1);
 	virtual ~SpinBox() { }
 	void SetValueStealth(int d);
 	void DoubleClick(bool b);
