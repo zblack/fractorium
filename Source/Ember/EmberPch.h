@@ -59,7 +59,8 @@
 #include "tbb/parallel_for.h"
 #include "tbb/task_scheduler_init.h"
 
-#define GLM_FORCE_RADIANS
+#define GLM_FORCE_RADIANS 1
+#define GLM_FORCE_INLINE 1
 
 //glm is what's used for matrix math.
 #include "glm/glm.hpp"
