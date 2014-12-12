@@ -29,6 +29,22 @@ int main(int argc, char *argv[])
 #else
 	putenv(const_cast<char*>("GPU_MAX_ALLOC_PERCENT=100"));
 #endif
+    
+    //a.setStyle("motif");
+    //a.setStyleSheet("QGroupBox { border: 1px solid gray; border-radius: 3px; margin-top: 1em; } ");  
+    
+    a.setStyleSheet("QGroupBox { border: 1px solid gray; border-radius: 3px; margin-top: 1.1em; background-color: transparent; } \n"
+    "QTabBar::tab { height: 2.8ex; } \n"
+    "QGroupBox::title "
+    "{"
+     "  background-color: transparent;"
+     "  subcontrol-origin: margin; "
+     //"  left: 3px; "
+     "  subcontrol-position: top left;"
+     "  padding: 0 3px 0 3px;"
+     //"    padding: 2px;"
+     "}" );
+    
 	Fractorium w;
 	w.show();
 	return a.exec();

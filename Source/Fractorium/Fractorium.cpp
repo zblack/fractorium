@@ -143,6 +143,8 @@ Fractorium::Fractorium(QWidget* p)
 	ui.PaletteAdjustTable->setStyleSheet("QTableWidget::item { padding: 1px; }");//Need this to avoid covering the top border pixel with the spinners.
 	ui.statusBar->setStyleSheet("QStatusBar QLabel { padding-left: 2px; padding-right: 2px; }");
 
+    //setStyleSheet("QGroupBox { border: 2px solid gray; border-radius: 3px; } ");
+    
 	m_PreviousPaletteRow = -1;//Force click handler the first time through.
 
 	//Setup pointer in the GL window to point back to here.

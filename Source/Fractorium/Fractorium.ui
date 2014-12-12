@@ -29,6 +29,9 @@
    <iconset resource="Fractorium.qrc">
     <normaloff>:/Fractorium/Icons/010425-3d-transparent-glass-icon-animals-spiderweb2.png</normaloff>:/Fractorium/Icons/010425-3d-transparent-glass-icon-animals-spiderweb2.png</iconset>
   </property>
+  <property name="autoFillBackground">
+   <bool>true</bool>
+  </property>
   <property name="styleSheet">
    <string notr="true"/>
   </property>
@@ -56,8 +59,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>930</width>
-      <height>942</height>
+      <width>897</width>
+      <height>941</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -80,6 +83,12 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="baseSize">
+      <size>
+       <width>300</width>
+       <height>300</height>
+      </size>
      </property>
      <property name="palette">
       <palette>
@@ -169,7 +178,7 @@
      <x>0</x>
      <y>0</y>
      <width>1214</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -247,12 +256,6 @@
    </property>
   </widget>
   <widget class="QDockWidget" name="DockWidget">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
    <property name="minimumSize">
     <size>
      <width>280</width>
@@ -261,7 +264,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>280</width>
+     <width>350</width>
      <height>524287</height>
     </size>
    </property>
@@ -284,6 +287,9 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="DockWidgetContents">
+    <property name="autoFillBackground">
+     <bool>true</bool>
+    </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <property name="spacing">
       <number>4</number>
@@ -369,6 +375,9 @@
          <height>16777215</height>
         </size>
        </property>
+       <property name="autoFillBackground">
+        <bool>false</bool>
+       </property>
        <property name="tabPosition">
         <enum>QTabWidget::North</enum>
        </property>
@@ -417,8 +426,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>252</width>
-              <height>852</height>
+              <width>290</width>
+              <height>845</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -521,8 +530,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>252</width>
-              <height>852</height>
+              <width>290</width>
+              <height>845</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -1892,43 +1901,6 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
-        <property name="palette">
-         <palette>
-          <active>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </active>
-          <inactive>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </inactive>
-          <disabled>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </disabled>
-         </palette>
-        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -2277,17 +2249,13 @@
              <height>0</height>
             </size>
            </property>
-           <property name="palette">
-            <palette>
-             <active/>
-             <inactive/>
-             <disabled/>
-            </palette>
-           </property>
            <property name="font">
             <font>
              <family>MS Shell Dlg 2</family>
             </font>
+           </property>
+           <property name="autoFillBackground">
+            <bool>true</bool>
            </property>
            <property name="styleSheet">
             <string notr="true">QTabWidget::pane
@@ -2316,7 +2284,7 @@ SpinBox
             <enum>QTabWidget::Triangular</enum>
            </property>
            <property name="currentIndex">
-            <number>2</number>
+            <number>1</number>
            </property>
            <widget class="QWidget" name="ColorTab">
             <property name="sizePolicy">
@@ -2815,6 +2783,9 @@ SpinBox
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
             <attribute name="title">
              <string>Affine</string>
             </attribute>
@@ -2836,6 +2807,9 @@ SpinBox
              </property>
              <item>
               <widget class="QScrollArea" name="scrollArea_3">
+               <property name="autoFillBackground">
+                <bool>true</bool>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::NoFrame</enum>
                </property>
@@ -2850,46 +2824,12 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>118</width>
-                  <height>597</height>
+                  <width>276</width>
+                  <height>728</height>
                  </rect>
                 </property>
-                <property name="palette">
-                 <palette>
-                  <active>
-                   <colorrole role="Window">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>255</red>
-                      <green>255</green>
-                      <blue>255</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </active>
-                  <inactive>
-                   <colorrole role="Window">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>255</red>
-                      <green>255</green>
-                      <blue>255</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </inactive>
-                  <disabled>
-                   <colorrole role="Window">
-                    <brush brushstyle="SolidPattern">
-                     <color alpha="255">
-                      <red>255</red>
-                      <green>255</green>
-                      <blue>255</blue>
-                     </color>
-                    </brush>
-                   </colorrole>
-                  </disabled>
-                 </palette>
+                <property name="autoFillBackground">
+                 <bool>true</bool>
                 </property>
                 <layout class="QVBoxLayout" name="verticalLayout_5">
                  <property name="spacing">
@@ -2926,6 +2866,9 @@ SpinBox
                      <width>16777215</width>
                      <height>270</height>
                     </size>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="title">
                     <string>Pre Affine Transform</string>
@@ -3373,22 +3316,14 @@ SpinBox
                         </property>
                        </widget>
                       </item>
-                      <item row="0" column="3">
-                       <widget class="QPushButton" name="PreFlipHorizontalButton">
-                        <property name="toolTip">
-                         <string>Flip xform horizontally</string>
-                        </property>
-                        <property name="text">
-                         <string/>
-                        </property>
-                        <property name="icon">
-                         <iconset resource="Fractorium.qrc">
-                          <normaloff>:/Fractorium/Icons/shape_flip_horizontal.png</normaloff>:/Fractorium/Icons/shape_flip_horizontal.png</iconset>
-                        </property>
-                       </widget>
-                      </item>
                       <item row="0" column="1">
                        <widget class="QPushButton" name="PreFlipVerticalButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
                         <property name="toolTip">
                          <string>Flip xform vertically</string>
                         </property>
@@ -3423,10 +3358,33 @@ SpinBox
                         </property>
                        </widget>
                       </item>
+                      <item row="0" column="3">
+                       <widget class="QPushButton" name="PreFlipHorizontalButton">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="toolTip">
+                         <string>Flip xform horizontally</string>
+                        </property>
+                        <property name="text">
+                         <string/>
+                        </property>
+                        <property name="icon">
+                         <iconset resource="Fractorium.qrc">
+                          <normaloff>:/Fractorium/Icons/shape_flip_horizontal.png</normaloff>:/Fractorium/Icons/shape_flip_horizontal.png</iconset>
+                        </property>
+                       </widget>
+                      </item>
                      </layout>
                     </item>
                     <item>
                      <widget class="QGroupBox" name="PreAffineShowGroupBox">
+                      <property name="autoFillBackground">
+                       <bool>true</bool>
+                      </property>
                       <property name="title">
                        <string>Show</string>
                       </property>
@@ -3497,6 +3455,9 @@ SpinBox
                      <width>16777215</width>
                      <height>270</height>
                     </size>
+                   </property>
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
                    </property>
                    <property name="title">
                     <string>Post Affine Transform</string>
@@ -4055,6 +4016,9 @@ SpinBox
                       <property name="enabled">
                        <bool>true</bool>
                       </property>
+                      <property name="autoFillBackground">
+                       <bool>true</bool>
+                      </property>
                       <property name="title">
                        <string>Show</string>
                       </property>
@@ -4102,6 +4066,9 @@ SpinBox
                  </item>
                  <item>
                   <widget class="QGroupBox" name="PivotGroupBox">
+                   <property name="autoFillBackground">
+                    <bool>true</bool>
+                   </property>
                    <property name="title">
                     <string>Pivot</string>
                    </property>
@@ -4990,64 +4957,27 @@ SpinBox
         </layout>
        </widget>
        <widget class="QWidget" name="InfoTab">
-        <property name="palette">
-         <palette>
-          <active>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </active>
-          <inactive>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </inactive>
-          <disabled>
-           <colorrole role="Window">
-            <brush brushstyle="SolidPattern">
-             <color alpha="255">
-              <red>255</red>
-              <green>255</green>
-              <blue>255</blue>
-             </color>
-            </brush>
-           </colorrole>
-          </disabled>
-         </palette>
-        </property>
         <property name="autoFillBackground">
          <bool>false</bool>
         </property>
         <attribute name="title">
          <string>Info</string>
         </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_17">
+        <layout class="QVBoxLayout" name="verticalLayout_17" stretch="0">
          <property name="spacing">
-          <number>0</number>
+          <number>6</number>
          </property>
          <property name="leftMargin">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="topMargin">
-          <number>0</number>
+          <number>5</number>
          </property>
          <property name="rightMargin">
-          <number>3</number>
+          <number>5</number>
          </property>
          <property name="bottomMargin">
-          <number>5</number>
+          <number>4</number>
          </property>
          <item>
           <widget class="QScrollArea" name="scrollArea_5">
@@ -5071,20 +5001,14 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>256</width>
-              <height>856</height>
+              <width>290</width>
+              <height>845</height>
              </rect>
-            </property>
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
             </property>
             <property name="autoFillBackground">
              <bool>true</bool>
             </property>
-            <layout class="QGridLayout" name="gridLayout_17">
+            <layout class="QGridLayout" name="gridLayout_17" rowstretch="0,0,0" rowminimumheight="0,0,0">
              <property name="leftMargin">
               <number>0</number>
              </property>
@@ -5097,17 +5021,14 @@ SpinBox
              <property name="bottomMargin">
               <number>0</number>
              </property>
-             <property name="spacing">
+             <property name="horizontalSpacing">
               <number>0</number>
+             </property>
+             <property name="verticalSpacing">
+              <number>6</number>
              </property>
              <item row="0" column="0">
               <widget class="QGroupBox" name="InfoBoundsGroupBox">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -5117,7 +5038,13 @@ SpinBox
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>250</height>
+                 <height>257</height>
+                </size>
+               </property>
+               <property name="baseSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
                 </size>
                </property>
                <property name="focusPolicy">
@@ -5137,7 +5064,7 @@ SpinBox
                  <number>6</number>
                 </property>
                 <property name="topMargin">
-                 <number>2</number>
+                 <number>4</number>
                 </property>
                 <property name="rightMargin">
                  <number>6</number>
@@ -5148,7 +5075,7 @@ SpinBox
                 <item>
                  <widget class="QFrame" name="InfoBoundsFrame">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -5253,7 +5180,7 @@ SpinBox
                 <item>
                  <widget class="TableWidget" name="InfoBoundsTable">
                   <property name="sizePolicy">
-                   <sizepolicy hsizetype="Expanding" vsizetype="Minimum">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -5424,7 +5351,7 @@ SpinBox
              <item row="2" column="0">
               <widget class="QGroupBox" name="InfoRenderingGroupBox">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -5453,6 +5380,12 @@ SpinBox
                 </property>
                 <item>
                  <widget class="QTextEdit" name="InfoRenderingTextEdit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="focusPolicy">
                    <enum>Qt::StrongFocus</enum>
                   </property>
@@ -5473,7 +5406,7 @@ SpinBox
              <item row="1" column="0">
               <widget class="QGroupBox" name="InfoFileOpeningGroupBox">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -5502,6 +5435,12 @@ SpinBox
                 </property>
                 <item>
                  <widget class="QTextEdit" name="InfoFileOpeningTextEdit">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
                   <property name="focusPolicy">
                    <enum>Qt::StrongFocus</enum>
                   </property>
@@ -5865,7 +5804,6 @@ SpinBox
   <tabstop>PreAffineTable</tabstop>
   <tabstop>PreFlipVerticalButton</tabstop>
   <tabstop>PreResetButton</tabstop>
-  <tabstop>PreFlipHorizontalButton</tabstop>
   <tabstop>PreRotate90CcButton</tabstop>
   <tabstop>PreRotateCcButton</tabstop>
   <tabstop>PreRotateCombo</tabstop>
