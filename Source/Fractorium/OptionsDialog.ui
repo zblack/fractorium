@@ -55,6 +55,9 @@
      <property name="focusPolicy">
       <enum>Qt::NoFocus</enum>
      </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
      <property name="tabShape">
       <enum>QTabWidget::Triangular</enum>
      </property>
@@ -62,6 +65,9 @@
       <number>0</number>
      </property>
      <widget class="QWidget" name="OptionsInteractiveRenderingTab">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
       <attribute name="title">
        <string>Interactive Rendering</string>
       </attribute>
@@ -297,6 +303,9 @@ in interactive mode for each mouse movement</string>
       </layout>
      </widget>
      <widget class="QWidget" name="OptionsXmlSavingTab">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
       <attribute name="title">
        <string>Xml Saving</string>
       </attribute>
@@ -480,6 +489,9 @@ in interactive mode for each mouse movement</string>
       </layout>
      </widget>
      <widget class="QWidget" name="OptionsIdentityTab">
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
       <attribute name="title">
        <string>Identity</string>
       </attribute>

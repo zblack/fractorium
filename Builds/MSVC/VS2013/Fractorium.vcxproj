@@ -731,6 +731,7 @@ xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</
     </CustomBuild>
     <ClInclude Include="..\..\..\Source\EmberCommon\EmberCommon.h" />
     <ClInclude Include="..\..\..\Source\Fractorium\FinalRenderEmberController.h" />
+    <ClInclude Include="..\..\..\Source\Fractorium\FractoriumCommon.h" />
     <ClInclude Include="..\..\..\Source\Fractorium\FractoriumEmberController.h" />
     <ClInclude Include="..\..\..\Source\Fractorium\GLEmberController.h" />
     <ClInclude Include="..\..\..\Source\Fractorium\resource.h" />

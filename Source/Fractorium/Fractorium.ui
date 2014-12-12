@@ -37,7 +37,7 @@
   </property>
   <widget class="QScrollArea" name="GLParentScrollArea">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
@@ -59,12 +59,12 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>897</width>
-      <height>941</height>
+      <width>923</width>
+      <height>942</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -79,7 +79,7 @@
       </rect>
      </property>
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -178,7 +178,7 @@
      <x>0</x>
      <y>0</y>
      <width>1214</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -256,9 +256,15 @@
    </property>
   </widget>
   <widget class="QDockWidget" name="DockWidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
-     <width>280</width>
+     <width>287</width>
      <height>561</height>
     </size>
    </property>
@@ -358,7 +364,7 @@
      <item>
       <widget class="QTabWidget" name="ParamsTabWidget">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -391,6 +397,9 @@
         <bool>true</bool>
        </property>
        <widget class="QWidget" name="LibraryTab">
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
         <attribute name="title">
          <string>Library</string>
         </attribute>
@@ -426,8 +435,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>290</width>
-              <height>845</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -495,6 +504,9 @@
           <height>0</height>
          </size>
         </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
         <attribute name="title">
          <string>Flame</string>
         </attribute>
@@ -530,8 +542,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>290</width>
-              <height>845</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -1901,6 +1913,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
         <property name="styleSheet">
          <string notr="true"/>
         </property>
@@ -2238,7 +2253,7 @@
          <item row="5" column="0" colspan="2">
           <widget class="QTabWidget" name="XformsTabWidget">
            <property name="sizePolicy">
-            <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
+            <sizepolicy hsizetype="Ignored" vsizetype="MinimumExpanding">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -2284,11 +2299,11 @@ SpinBox
             <enum>QTabWidget::Triangular</enum>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="ColorTab">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -2778,7 +2793,7 @@ SpinBox
            </widget>
            <widget class="QWidget" name="AffineTab">
             <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -2824,8 +2839,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>276</width>
-                  <height>728</height>
+                  <width>245</width>
+                  <height>747</height>
                  </rect>
                 </property>
                 <property name="autoFillBackground">
@@ -4610,6 +4625,9 @@ SpinBox
         </layout>
        </widget>
        <widget class="QWidget" name="PaletteTab">
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
         <attribute name="title">
          <string>Palette</string>
         </attribute>
@@ -4957,8 +4975,14 @@ SpinBox
         </layout>
        </widget>
        <widget class="QWidget" name="InfoTab">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="autoFillBackground">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <attribute name="title">
          <string>Info</string>
@@ -4971,7 +4995,7 @@ SpinBox
           <number>5</number>
          </property>
          <property name="topMargin">
-          <number>5</number>
+          <number>4</number>
          </property>
          <property name="rightMargin">
           <number>5</number>
@@ -4981,6 +5005,12 @@ SpinBox
          </property>
          <item>
           <widget class="QScrollArea" name="scrollArea_5">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
            <property name="autoFillBackground">
             <bool>false</bool>
            </property>
@@ -5001,9 +5031,15 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>290</width>
-              <height>845</height>
+              <width>259</width>
+              <height>853</height>
              </rect>
+            </property>
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
             <property name="autoFillBackground">
              <bool>true</bool>
@@ -5029,6 +5065,12 @@ SpinBox
              </property>
              <item row="0" column="0">
               <widget class="QGroupBox" name="InfoBoundsGroupBox">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="minimumSize">
                 <size>
                  <width>0</width>
@@ -5038,7 +5080,7 @@ SpinBox
                <property name="maximumSize">
                 <size>
                  <width>16777215</width>
-                 <height>257</height>
+                 <height>250</height>
                 </size>
                </property>
                <property name="baseSize">
@@ -5119,6 +5161,12 @@ SpinBox
                    </property>
                    <item row="0" column="0">
                     <widget class="QLabel" name="InfoBoundsLabelUL">
+                     <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Plain</enum>
+                     </property>
                      <property name="text">
                       <string>UL:</string>
                      </property>
@@ -5127,8 +5175,11 @@ SpinBox
                      </property>
                     </widget>
                    </item>
-                   <item row="2" column="2">
+                   <item row="2" column="1">
                     <widget class="QLabel" name="InfoBoundsLabelLR">
+                     <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                     </property>
                      <property name="text">
                       <string>LR:</string>
                      </property>
@@ -5137,8 +5188,11 @@ SpinBox
                      </property>
                     </widget>
                    </item>
-                   <item row="0" column="2">
+                   <item row="0" column="1">
                     <widget class="QLabel" name="InfoBoundsLabelUR">
+                     <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                     </property>
                      <property name="text">
                       <string>UR:</string>
                      </property>
@@ -5147,30 +5201,29 @@ SpinBox
                      </property>
                     </widget>
                    </item>
-                   <item row="1" column="0">
-                    <widget class="QLabel" name="InfoBoundsLabelH">
+                   <item row="1" column="0" colspan="2">
+                    <widget class="QLabel" name="InfoBoundsLabelWH">
+                     <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                     </property>
                      <property name="text">
-                      <string>H:</string>
+                      <string>W x H:</string>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
                      </property>
                     </widget>
                    </item>
                    <item row="2" column="0">
                     <widget class="QLabel" name="InfoBoundsLabelLL">
+                     <property name="frameShape">
+                      <enum>QFrame::Box</enum>
+                     </property>
                      <property name="text">
                       <string>LL:</string>
                      </property>
                      <property name="alignment">
                       <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QLabel" name="InfoBoundsLabelW">
-                     <property name="text">
-                      <string>W:</string>
-                     </property>
-                     <property name="alignment">
-                      <set>Qt::AlignHCenter|Qt::AlignTop</set>
                      </property>
                     </widget>
                    </item>
@@ -5351,7 +5404,7 @@ SpinBox
              <item row="2" column="0">
               <widget class="QGroupBox" name="InfoRenderingGroupBox">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -5406,10 +5459,16 @@ SpinBox
              <item row="1" column="0">
               <widget class="QGroupBox" name="InfoFileOpeningGroupBox">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
                </property>
                <property name="focusPolicy">
                 <enum>Qt::StrongFocus</enum>

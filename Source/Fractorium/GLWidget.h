@@ -36,12 +36,12 @@ class GLWidget : public QGLWidget, protected QOpenGLFunctions_2_0//QOpenGLFuncti
 	friend FractoriumEmberController<float>;
 	friend GLEmberControllerBase;
 	friend GLEmberController<float>;
-    
+	
 #ifdef DO_DOUBLE
 	friend GLEmberController<double>;
-    friend FractoriumEmberController<double>;
+	friend FractoriumEmberController<double>;
 #endif
-    
+	
 public:
 	GLWidget(QWidget* p);
 	~GLWidget();

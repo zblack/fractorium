@@ -717,10 +717,10 @@ void GLWidget::wheelEvent(QWheelEvent* e)
 }
 
 /// <summary>
-/// Respond to a resize event which will set the read only
-/// main window width and height spinners.
-/// The main window will take care of stopping and restarting the
-/// render timer.
+/// Respond to a resize event which will set the double click default value
+/// in the width and height spinners.
+/// Note, this does not change the size of the ember being rendered or
+/// the OpenGL texture it's being drawn on.
 /// </summary>
 /// <param name="e">The event</param>
 void GLWidget::resizeEvent(QResizeEvent* e)

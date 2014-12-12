@@ -30,7 +30,7 @@ public slots:
 	void onSpinBoxValueChanged(double d);
 
 protected:
-	bool eventFilter(QObject* o, QEvent* e);
+	virtual bool eventFilter(QObject* o, QEvent* e) override;
 	virtual void focusInEvent(QFocusEvent* e);
 	virtual void focusOutEvent(QFocusEvent* e);
 	virtual void enterEvent(QEvent* e);

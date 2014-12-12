@@ -38,7 +38,7 @@ Fractorium::Fractorium(QWidget* p)
 	m_OptionsDialog->layout()->setSizeConstraint(QLayout::SetFixedSize);
 	m_OptionsDialog->setSizeGripEnabled(false);
 	connect(m_ColorDialog, SIGNAL(colorSelected(const QColor&)), this, SLOT(OnColorSelected(const QColor&)), Qt::QueuedConnection);
-
+	
 	m_XformComboColors[i++] = QColor(0XFF, 0X00, 0X00);
 	m_XformComboColors[i++] = QColor(0XCC, 0XCC, 0X00);
 	m_XformComboColors[i++] = QColor(0X00, 0XCC, 0X00);
@@ -143,8 +143,8 @@ Fractorium::Fractorium(QWidget* p)
 	ui.PaletteAdjustTable->setStyleSheet("QTableWidget::item { padding: 1px; }");//Need this to avoid covering the top border pixel with the spinners.
 	ui.statusBar->setStyleSheet("QStatusBar QLabel { padding-left: 2px; padding-right: 2px; }");
 
-    //setStyleSheet("QGroupBox { border: 2px solid gray; border-radius: 3px; } ");
-    
+	//setStyleSheet("QGroupBox { border: 2px solid gray; border-radius: 3px; } ");
+	
 	m_PreviousPaletteRow = -1;//Force click handler the first time through.
 
 	//Setup pointer in the GL window to point back to here.
@@ -152,6 +152,7 @@ Fractorium::Fractorium(QWidget* p)
 	SetCoordinateStatus(0, 0, 0, 0);
 
 	SetTabOrders();
+	ui.GLParentScrollArea->installEventFilter(this);
 
 	//At this point, everything has been setup except the renderer. Shortly after
 	//this constructor exits, GLWidget::initializeGL() will create the initial flock and start the rendering timer
@@ -249,8 +250,28 @@ void Fractorium::dockLocationChanged(Qt::DockWidgetArea area)
 /// </summary>
 
 /// <summary>
-/// Resize event, change width and height double click values to match the window size.
+/// Event filter for taking special action on dock widget resize events,
+/// which in turn trigger GLParentScrollArea events.
 /// </summary>
+/// <param name="o">The object</param>
+/// <param name="e">The eevent</param>
+/// <returns>false</returns>
+bool Fractorium::eventFilter(QObject* o, QEvent* e)
+{
+	if (o == ui.GLParentScrollArea && e->type() == QEvent::Resize)
+	{
+		m_WidthSpin->DoubleClickNonZero(ui.GLParentScrollArea->width());
+		m_HeightSpin->DoubleClickNonZero(ui.GLParentScrollArea->height());
+	}
+
+	return QMainWindow::eventFilter(o, e);
+}
+
+/// <summary>
+/// Respond to a resize event which will set the double click default value
+/// in the width and height spinners.
+/// Note, this does not change the size of the ember being rendered or
+/// the OpenGL texture it's being drawn on.
 /// <param name="e">The event</param>
 void Fractorium::resizeEvent(QResizeEvent* e)
 {

@@ -270,6 +270,9 @@
     <ClInclude Include="..\..\..\Source\EmberCommon\EmberCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\Source\Fractorium\FractoriumCommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\..\Source\Fractorium\Fractorium.qrc">

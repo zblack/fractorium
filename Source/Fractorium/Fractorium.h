@@ -73,11 +73,11 @@ class Fractorium : public QMainWindow
 	friend FinalRenderEmberController<float>;
 	
 #ifdef DO_DOUBLE
-    friend GLEmberController<double>;
-    friend FractoriumEmberController<double>;
-    friend FinalRenderEmberController<double>;
+	friend GLEmberController<double>;
+	friend FractoriumEmberController<double>;
+	friend FinalRenderEmberController<double>;
 #endif
-    
+	
 public:
 	Fractorium(QWidget* p = 0);
 	~Fractorium();
@@ -262,6 +262,7 @@ public:
 	static int FlipDet(Affine2D<float>& affine);
 
 protected:
+	virtual bool eventFilter(QObject* o, QEvent* e) override;
 	virtual void resizeEvent(QResizeEvent* e) override;
 	virtual void closeEvent(QCloseEvent* e) override;
 	virtual void dragEnterEvent(QDragEnterEvent* e) override;
@@ -406,8 +407,7 @@ private:
 	char m_URString[32];
 	char m_LRString[32];
 	char m_LLString[32];
-	char m_WString[16];
-	char m_HString[16];
+	char m_WHString[64];
 	char m_DEString[16];
 	char m_CoordinateString[128];
 	QColor m_XformComboColors[XFORM_COLOR_COUNT], m_FinalXformComboColor;

@@ -10,19 +10,17 @@ void Fractorium::UpdateHistogramBounds()
 {
 	if (RendererBase* r = m_Controller->Renderer())
 	{
-		sprintf_s(m_ULString, 32, "UL: %3.3f, %3.3f",  r->LowerLeftX(),  r->UpperRightY());//These bounds include gutter padding.
-		sprintf_s(m_URString, 32, "UR: %3.3f, %3.3f", -r->LowerLeftX(),  r->UpperRightY());
-		sprintf_s(m_LRString, 32, "LR: %3.3f, %3.3f", -r->LowerLeftX(),  r->LowerLeftY());
-		sprintf_s(m_LLString, 32, "LL: %3.3f, %3.3f",  r->LowerLeftX(),  r->LowerLeftY());
-		sprintf_s(m_WString,  16,  "W: %4lu"		,  r->SuperRasW());
-		sprintf_s(m_HString,  16,  "H: %4lu"		,  r->SuperRasH());
+		sprintf_s(m_ULString, 32, "UL: %3.3f, %3.3f",   r->LowerLeftX(), r->UpperRightY());//These bounds include gutter padding.
+		sprintf_s(m_URString, 32, "UR: %3.3f, %3.3f",  -r->LowerLeftX(), r->UpperRightY());
+		sprintf_s(m_LRString, 32, "LR: %3.3f, %3.3f",  -r->LowerLeftX(), r->LowerLeftY());
+		sprintf_s(m_LLString, 32, "LL: %3.3f, %3.3f",   r->LowerLeftX(), r->LowerLeftY());
+		sprintf_s(m_WHString, 32, "W x H: %4lu x %4lu", r->SuperRasW(),  r->SuperRasH());
 
 		ui.InfoBoundsLabelUL->setText(QString(m_ULString));
 		ui.InfoBoundsLabelUR->setText(QString(m_URString));
 		ui.InfoBoundsLabelLR->setText(QString(m_LRString));
 		ui.InfoBoundsLabelLL->setText(QString(m_LLString));
-		ui.InfoBoundsLabelW->setText(QString(m_WString));
-		ui.InfoBoundsLabelH->setText(QString(m_HString));
+		ui.InfoBoundsLabelWH->setText(QString(m_WHString));
 
 		ui.InfoBoundsTable->item(0, 1)->setText(ToString<qulonglong>(r->GutterWidth()));
 
