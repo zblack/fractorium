@@ -97,6 +97,48 @@ void Fractorium::InitXformsAffineUI()
 	connect(ui.ShowPostAffineAllRadio,     SIGNAL(toggled(bool)), this, SLOT(OnAffineDrawAllCurrentRadioButtonToggled(bool)), Qt::QueuedConnection);
 	connect(ui.ShowPostAffineCurrentRadio, SIGNAL(toggled(bool)), this, SLOT(OnAffineDrawAllCurrentRadioButtonToggled(bool)), Qt::QueuedConnection);
 
+#ifndef WIN32
+    //For some reason linux makes these 24x24, even though the designer explicitly says 16x16.
+    //Also, in order to get 4 pixels of spacing between elements in the grid layout, 0 must be specified.
+    ui.PreFlipHorizontalButton->setIconSize(QSize(16, 16));
+    ui.PreFlipVerticalButton->setIconSize(QSize(16, 16));
+    ui.PreRotate90CButton->setIconSize(QSize(16, 16));
+    ui.PreRotate90CcButton->setIconSize(QSize(16, 16));
+    ui.PreRotateCButton->setIconSize(QSize(16, 16));
+    ui.PreRotateCcButton->setIconSize(QSize(16, 16));
+    ui.PreMoveUpButton->setIconSize(QSize(16, 16));
+    ui.PreMoveDownButton->setIconSize(QSize(16, 16));
+    ui.PreMoveLeftButton->setIconSize(QSize(16, 16));
+    ui.PreMoveRightButton->setIconSize(QSize(16, 16));
+    ui.PreScaleDownButton->setIconSize(QSize(16, 16));
+    ui.PreScaleUpButton->setIconSize(QSize(16, 16));
+    ui.PreResetButton->setIconSize(QSize(16, 16));
+    ui.PreAffineGridLayout->setHorizontalSpacing(0);
+    ui.PreAffineGridLayout->setVerticalSpacing(0);
+    
+    ui.PostFlipHorizontalButton->setIconSize(QSize(16, 16));
+    ui.PostFlipVerticalButton->setIconSize(QSize(16, 16));
+    ui.PostRotate90CButton->setIconSize(QSize(16, 16));
+    ui.PostRotate90CcButton->setIconSize(QSize(16, 16));
+    ui.PostRotateCButton->setIconSize(QSize(16, 16));
+    ui.PostRotateCcButton->setIconSize(QSize(16, 16));
+    ui.PostMoveUpButton->setIconSize(QSize(16, 16));
+    ui.PostMoveDownButton->setIconSize(QSize(16, 16));
+    ui.PostMoveLeftButton->setIconSize(QSize(16, 16));
+    ui.PostMoveRightButton->setIconSize(QSize(16, 16));
+    ui.PostScaleDownButton->setIconSize(QSize(16, 16));
+    ui.PostScaleUpButton->setIconSize(QSize(16, 16));
+    ui.PostResetButton->setIconSize(QSize(16, 16));
+    ui.PostAffineGridLayout->setHorizontalSpacing(0);
+    ui.PostAffineGridLayout->setVerticalSpacing(0);
+    
+    //Further, the size of the dock widget won't be properly adjusted until the xforms tab is shown.
+    //So show it here and it will be switched back in Fractorium's constructor.
+    ui.ParamsTabWidget->setCurrentIndex(2);
+    ui.DockWidget->update();
+#endif
+    
+    
 	ui.PostAffineGroupBox->setChecked(true);//Flip it once to force the disabling of the group box.
 	ui.PostAffineGroupBox->setChecked(false);
 }

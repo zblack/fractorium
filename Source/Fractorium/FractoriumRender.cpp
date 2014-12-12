@@ -434,7 +434,10 @@ bool FractoriumEmberController<T>::Render()
 			{
 				if (m_FinalImage.size() == m_Renderer->FinalBufferSize())//Make absolutely sure the correct amount of data is passed.
 					gl->repaint();
+                    //gl->update();
 				
+                //m_Fractorium->update();
+                //m_Fractorium->ui.GLParentScrollArea->update();
 				//Uncomment for debugging kernel build and execution errors.
 				//m_Fractorium->ui.InfoRenderingTextEdit->setText(QString::fromStdString(m_Fractorium->m_Wrapper.DumpInfo()));
 				//if (rendererCL)

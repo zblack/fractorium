@@ -30,6 +30,16 @@ void Fractorium::InitXformsUI()
 	connect(ui.XformWeightNameTable, SIGNAL(cellChanged(int, int)), this, SLOT(OnXformNameChanged(int, int)), Qt::QueuedConnection);
 
 	ui.CurrentXformCombo->setProperty("soloxform", -1);
+    
+#ifndef WIN32    
+    //For some reason linux makes these 24x24, even though the designer explicitly says 16x16.
+    ui.AddXformButton->setIconSize(QSize(16, 16));
+    ui.DuplicateXformButton->setIconSize(QSize(16, 16));
+    ui.ClearXformButton->setIconSize(QSize(16, 16));
+    ui.DeleteXformButton->setIconSize(QSize(16, 16));
+    ui.AddFinalXformButton->setIconSize(QSize(16, 16));
+    ui.CurrentXformCombo->setIconSize(QSize(16, 16));
+#endif
 }
 
 /// <summary>

@@ -42,6 +42,9 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="autoFillBackground">
+    <bool>true</bool>
+   </property>
    <property name="frameShape">
     <enum>QFrame::NoFrame</enum>
    </property>
@@ -59,8 +62,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>923</width>
-      <height>942</height>
+      <width>926</width>
+      <height>941</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -167,7 +170,7 @@
       <bool>true</bool>
      </property>
      <property name="autoFillBackground">
-      <bool>false</bool>
+      <bool>true</bool>
      </property>
     </widget>
    </widget>
@@ -178,7 +181,7 @@
      <x>0</x>
      <y>0</y>
      <width>1214</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -270,7 +273,7 @@
    </property>
    <property name="maximumSize">
     <size>
-     <width>350</width>
+     <width>330</width>
      <height>524287</height>
     </size>
    </property>
@@ -319,6 +322,18 @@
        </property>
        <item>
         <widget class="QPushButton" name="SaveCurrentAsXmlButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>Save the current flame as an xml file</string>
          </property>
@@ -333,6 +348,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="SaveEntireFileAsXmlButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>Save all flames as a single xml file</string>
          </property>
@@ -347,6 +374,18 @@
        </item>
        <item>
         <widget class="QPushButton" name="SaveCurrentToOpenedFileButton">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>24</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>24</height>
+          </size>
+         </property>
          <property name="toolTip">
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Save the currently displayed flame back to the opened file in memory.&lt;/p&gt;&lt;p&gt;This overwrites the original flame but does not store the file back to disk.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
@@ -435,8 +474,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>259</width>
-              <height>852</height>
+              <width>261</width>
+              <height>845</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -542,8 +581,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>259</width>
-              <height>852</height>
+              <width>261</width>
+              <height>845</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2114,7 +2153,13 @@
              <property name="minimumSize">
               <size>
                <width>25</width>
-               <height>0</height>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>24</height>
               </size>
              </property>
              <property name="toolTip">
@@ -2140,7 +2185,13 @@
              <property name="minimumSize">
               <size>
                <width>25</width>
-               <height>0</height>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>24</height>
               </size>
              </property>
              <property name="toolTip">
@@ -2166,7 +2217,13 @@
              <property name="minimumSize">
               <size>
                <width>25</width>
-               <height>0</height>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>24</height>
               </size>
              </property>
              <property name="toolTip">
@@ -2192,7 +2249,13 @@
              <property name="minimumSize">
               <size>
                <width>25</width>
-               <height>0</height>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>24</height>
               </size>
              </property>
              <property name="toolTip">
@@ -2218,13 +2281,13 @@
              <property name="minimumSize">
               <size>
                <width>58</width>
-               <height>0</height>
+               <height>24</height>
               </size>
              </property>
              <property name="maximumSize">
               <size>
                <width>58</width>
-               <height>16777215</height>
+               <height>24</height>
               </size>
              </property>
              <property name="baseSize">
@@ -2839,8 +2902,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>245</width>
-                  <height>747</height>
+                  <width>247</width>
+                  <height>728</height>
                  </rect>
                 </property>
                 <property name="autoFillBackground">
@@ -3039,7 +3102,7 @@ SpinBox
                      </widget>
                     </item>
                     <item>
-                     <layout class="QGridLayout" name="gridLayout_14" columnstretch="0,0,0,0,0">
+                     <layout class="QGridLayout" name="PreAffineGridLayout" columnstretch="0,0,0,0,0">
                       <property name="sizeConstraint">
                        <enum>QLayout::SetDefaultConstraint</enum>
                       </property>
@@ -3634,7 +3697,7 @@ SpinBox
                      </widget>
                     </item>
                     <item>
-                     <layout class="QGridLayout" name="gridLayout_15" columnstretch="0,0,0,0,0">
+                     <layout class="QGridLayout" name="PostAffineGridLayout" columnstretch="0,0,0,0,0">
                       <property name="sizeConstraint">
                        <enum>QLayout::SetDefaultConstraint</enum>
                       </property>
@@ -4952,6 +5015,18 @@ SpinBox
            </property>
            <item>
             <widget class="QPushButton" name="PaletteRandomSelect">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="toolTip">
               <string>Select a random palette from the list</string>
              </property>
@@ -4962,6 +5037,18 @@ SpinBox
            </item>
            <item>
             <widget class="QPushButton" name="PaletteRandomAdjust">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>24</height>
+              </size>
+             </property>
              <property name="text">
               <string>Random Adjustment</string>
              </property>
@@ -5031,8 +5118,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>259</width>
-              <height>853</height>
+              <width>98</width>
+              <height>470</height>
              </rect>
             </property>
             <property name="sizePolicy">
