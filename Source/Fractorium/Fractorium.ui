@@ -51,128 +51,36 @@
    <property name="frameShadow">
     <enum>QFrame::Raised</enum>
    </property>
+   <property name="sizeAdjustPolicy">
+    <enum>QAbstractScrollArea::AdjustToContents</enum>
+   </property>
    <property name="widgetResizable">
     <bool>true</bool>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
-   <widget class="QWidget" name="GLParentScrollAreaContents">
+   <widget class="GLWidget" name="GLDisplay">
     <property name="geometry">
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>926</width>
-      <height>941</height>
+      <width>923</width>
+      <height>942</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
     </property>
-    <widget class="GLWidget" name="GLDisplay" native="true">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>914</width>
-       <height>824</height>
-      </rect>
-     </property>
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="baseSize">
-      <size>
-       <width>300</width>
-       <height>300</height>
-      </size>
-     </property>
-     <property name="palette">
-      <palette>
-       <active>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </active>
-       <inactive>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>255</red>
-           <green>255</green>
-           <blue>255</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </inactive>
-       <disabled>
-        <colorrole role="Base">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-        <colorrole role="Window">
-         <brush brushstyle="SolidPattern">
-          <color alpha="255">
-           <red>240</red>
-           <green>240</green>
-           <blue>240</blue>
-          </color>
-         </brush>
-        </colorrole>
-       </disabled>
-      </palette>
-     </property>
-     <property name="cursor">
-      <cursorShape>ArrowCursor</cursorShape>
-     </property>
-     <property name="mouseTracking">
-      <bool>true</bool>
-     </property>
-     <property name="focusPolicy">
-      <enum>Qt::StrongFocus</enum>
-     </property>
-     <property name="acceptDrops">
-      <bool>true</bool>
-     </property>
-     <property name="autoFillBackground">
-      <bool>true</bool>
-     </property>
-    </widget>
+    <property name="minimumSize">
+     <size>
+      <width>0</width>
+      <height>0</height>
+     </size>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -181,7 +89,7 @@
      <x>0</x>
      <y>0</y>
      <width>1214</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -474,8 +382,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>261</width>
-              <height>845</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -581,8 +489,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>261</width>
-              <height>845</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2902,8 +2810,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>247</width>
-                  <height>728</height>
+                  <width>245</width>
+                  <height>747</height>
                  </rect>
                 </property>
                 <property name="autoFillBackground">
@@ -5118,8 +5026,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>470</height>
+              <width>259</width>
+              <height>853</height>
              </rect>
             </property>
             <property name="sizePolicy">

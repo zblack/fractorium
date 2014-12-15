@@ -43,7 +43,7 @@ class GLWidget : public QGLWidget, protected QOpenGLFunctions_2_0//QOpenGLFuncti
 #endif
 	
 public:
-	GLWidget(QWidget* p);
+	GLWidget(QWidget* p = nullptr);
 	~GLWidget();
 	void DrawQuad();
 	void SetMainWindow(Fractorium* f);

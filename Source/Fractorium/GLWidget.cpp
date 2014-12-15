@@ -182,6 +182,7 @@ void GLWidget::initializeGL()
 		SetDimensions(w, h);
 		m_Fractorium->m_WidthSpin->setValue(w);
 		m_Fractorium->m_HeightSpin->setValue(h);
+		//m_Fractorium->ui.GLParentScrollArea->setViewport(this);
 
 		glEnable(GL_TEXTURE_2D);
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_MaxTexSize);
@@ -739,7 +740,7 @@ void GLWidget::resizeEvent(QResizeEvent* e)
 void GLWidget::SetDimensions(int w, int h)
 {
 	setFixedSize(w, h);
-	m_Fractorium->ui.GLParentScrollAreaContents->setFixedSize(w, h);
+	//m_Fractorium->ui.GLParentScrollAreaContents->setFixedSize(w, h);
 }
 
 /// <summary>
