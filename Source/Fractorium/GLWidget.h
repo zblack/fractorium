@@ -62,7 +62,7 @@ protected:
 	virtual void mouseMoveEvent(QMouseEvent* e) override;
 	virtual void wheelEvent(QWheelEvent* e) override;
 	virtual void resizeEvent(QResizeEvent* e) override;
-
+    
 private:
 	void SetDimensions(int w, int h);
 	bool Allocate(bool force = false);

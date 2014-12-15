@@ -149,11 +149,12 @@ Fractorium::Fractorium(QWidget* p)
 
 	//Setup pointer in the GL window to point back to here.
 	ui.GLDisplay->SetMainWindow(this);
+    //ui.GLDisplay->setParent(this);
 	SetCoordinateStatus(0, 0, 0, 0);
 
 	SetTabOrders();
 	ui.GLParentScrollArea->installEventFilter(this);
-
+    
 	//At this point, everything has been setup except the renderer. Shortly after
 	//this constructor exits, GLWidget::initializeGL() will create the initial flock and start the rendering timer
 	//which executes whenever the program is idle. Upon starting the timer, the renderer
@@ -262,6 +263,7 @@ bool Fractorium::eventFilter(QObject* o, QEvent* e)
 	{
 		m_WidthSpin->DoubleClickNonZero(ui.GLParentScrollArea->width());
 		m_HeightSpin->DoubleClickNonZero(ui.GLParentScrollArea->height());
+        //qDebug() << "scroll area resized";
 	}
 
 	return QMainWindow::eventFilter(o, e);

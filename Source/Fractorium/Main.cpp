@@ -31,9 +31,6 @@ int main(int argc, char *argv[])
 #endif
 	
 #ifndef WIN32
-	//a.setStyle("motif");
-	//a.setStyleSheet("QGroupBox { border: 1px solid gray; border-radius: 3px; margin-top: 1em; } ");  
-	
 	a.setStyleSheet("QGroupBox { border: 1px solid gray; border-radius: 3px; margin-top: 1.1em; background-color: transparent; } \n"
 	"QTabBar::tab { height: 2.8ex; } \n"
 	"QGroupBox::title "

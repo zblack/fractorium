@@ -34,7 +34,9 @@ INCLUDEPATH += ../../../Source/EmberCL
 INCLUDEPATH += ../../../Source/EmberCommon
 INCLUDEPATH += ../../../Source/Fractorium
 
-QMAKE_CXXFLAGS += -O2
+QMAKE_CXXFLAGS_RELEASE += -O2
+QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
+
 QMAKE_CXXFLAGS += -march=k8
 QMAKE_CXXFLAGS += -fPIC
 QMAKE_CXXFLAGS += -fpermissive
@@ -62,10 +64,9 @@ QMAKE_CXXFLAGS += -Wno-unused-function
 QMAKE_CXXFLAGS += -Wold-style-cast
 QMAKE_CXXFLAGS += -D_M_X64
 QMAKE_CXXFLAGS += -D_USRDLL 
-QMAKE_CXXFLAGS += -DNDEBUG
 QMAKE_CXXFLAGS += -D_CONSOLE
 
-QMAKE_LFLAGS += -s
+QMAKE_LFLAGS_RELEASE += -s
 
 PRECOMPILED_HEADER = ../../../Source/Fractorium/FractoriumPch.h
 

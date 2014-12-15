@@ -266,7 +266,7 @@ bool FractoriumEmberController<T>::SyncSizes()
 {
 	bool changed = false;
 	GLWidget* gl = m_Fractorium->ui.GLDisplay;
-	RendererCL<T>* rendererCL;
+	RendererCL<T>* rendererCL = nullptr;
 
 	if (!m_GLController->SizesMatch())
 	{

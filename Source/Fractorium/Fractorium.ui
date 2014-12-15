@@ -35,6 +35,12 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
+  <property name="iconSize">
+   <size>
+    <width>16</width>
+    <height>16</height>
+   </size>
+  </property>
   <widget class="QScrollArea" name="GLParentScrollArea">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -65,12 +71,12 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>923</width>
-      <height>942</height>
+      <width>926</width>
+      <height>941</height>
      </rect>
     </property>
     <property name="sizePolicy">
-     <sizepolicy hsizetype="Ignored" vsizetype="Ignored">
+     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
       <horstretch>0</horstretch>
       <verstretch>0</verstretch>
      </sizepolicy>
@@ -89,7 +95,7 @@
      <x>0</x>
      <y>0</y>
      <width>1214</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -382,8 +388,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>259</width>
-              <height>852</height>
+              <width>261</width>
+              <height>845</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -489,8 +495,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>259</width>
-              <height>852</height>
+              <width>261</width>
+              <height>845</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2810,8 +2816,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>245</width>
-                  <height>747</height>
+                  <width>141</width>
+                  <height>610</height>
                  </rect>
                 </property>
                 <property name="autoFillBackground">
@@ -5026,8 +5032,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>259</width>
-              <height>853</height>
+              <width>98</width>
+              <height>470</height>
              </rect>
             </property>
             <property name="sizePolicy">
