@@ -13,7 +13,7 @@ TEMPLATE = app
 CONFIG += precompile_header
 VERSION = 0.1.4.7
 
-DESTDIR = ../../../Bin
+DESTDIR = $$(HOME)/Dev/fractorium/Bin
 
 LIBS += -L/usr/lib -lOpenCL
 LIBS += -L/usr/lib -lGL
@@ -21,8 +21,8 @@ LIBS += -L/usr/lib -ljpeg
 LIBS += -L/usr/lib -lpng
 LIBS += -L/usr/lib -ltbb
 LIBS += -L/usr/lib/x86_64-linux-gnu -lxml2
-LIBS += -L../../../Bin -lEmber
-LIBS += -L../../../Bin -lEmberCL
+LIBS += -L$$DESTDIR -lEmber
+LIBS += -L$$DESTDIR -lEmberCL
 
 INCLUDEPATH += /usr/include/CL
 INCLUDEPATH += /usr/include/GL

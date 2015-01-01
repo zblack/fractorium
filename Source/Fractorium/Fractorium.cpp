@@ -119,6 +119,9 @@ Fractorium::Fractorium(QWidget* p)
 	m_ProgressBar->setMaximumWidth(progressBarWidth);
 	ui.statusBar->addPermanentWidget(m_ProgressBar);
 
+	//Setup pointer in the GL window to point back to here.
+	ui.GLDisplay->SetMainWindow(this);
+
 	showMaximized();
 	
 	connect(ui.DockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(dockLocationChanged(Qt::DockWidgetArea)));
@@ -146,15 +149,11 @@ Fractorium::Fractorium(QWidget* p)
 	//setStyleSheet("QGroupBox { border: 2px solid gray; border-radius: 3px; } ");
 	
 	m_PreviousPaletteRow = -1;//Force click handler the first time through.
-
-	//Setup pointer in the GL window to point back to here.
-	ui.GLDisplay->SetMainWindow(this);
-    //ui.GLDisplay->setParent(this);
 	SetCoordinateStatus(0, 0, 0, 0);
 
 	SetTabOrders();
 	ui.GLParentScrollArea->installEventFilter(this);
-    
+	
 	//At this point, everything has been setup except the renderer. Shortly after
 	//this constructor exits, GLWidget::initializeGL() will create the initial flock and start the rendering timer
 	//which executes whenever the program is idle. Upon starting the timer, the renderer
@@ -263,7 +262,7 @@ bool Fractorium::eventFilter(QObject* o, QEvent* e)
 	{
 		m_WidthSpin->DoubleClickNonZero(ui.GLParentScrollArea->width());
 		m_HeightSpin->DoubleClickNonZero(ui.GLParentScrollArea->height());
-        //qDebug() << "scroll area resized";
+		//qDebug() << "scroll area resized";
 	}
 
 	return QMainWindow::eventFilter(o, e);

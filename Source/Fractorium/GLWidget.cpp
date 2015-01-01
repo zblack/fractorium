@@ -10,9 +10,9 @@
 /// </summary>
 /// <param name="p">The parent widget</param>
 GLWidget::GLWidget(QWidget* p)
-	: QGLWidget(QGLFormat(QGL::SampleBuffers), p)
+	: QOpenGLWidget(p)
 {
-	QGLFormat qglFormat;
+	QSurfaceFormat qsf;
 
 	m_Init = false;
 	m_Drawing = false;
@@ -20,14 +20,12 @@ GLWidget::GLWidget(QWidget* p)
 	m_TexHeight = 0;
 	m_OutputTexID = 0;
 	m_Fractorium = NULL;
-	qglFormat.setSwapInterval(1);//Vsync.
-	qglFormat.setDoubleBuffer(true); 
-	qglFormat.setVersion(2, 0);
-	//qglFormat.setVersion(3, 2);
-	qglFormat.setProfile(QGLFormat::CompatibilityProfile);
-	//qglFormat.setProfile(QGLFormat::CoreProfile);
-	
-	setFormat(qglFormat);
+
+	qsf.setSwapInterval(1);//Vsync.
+	qsf.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
+	qsf.setVersion(2, 0);
+
+	setFormat(qsf);
 }
 
 /// <summary>
@@ -120,8 +118,10 @@ void GLEmberController<T>::ClearWindow()
 	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_GL->glClearColor(ember->m_Background.r, ember->m_Background.g, ember->m_Background.b, 1.0);
 
+	//m_GL->update();
 	m_GL->makeCurrent();
-	m_GL->swapBuffers();
+	//m_GL->context()->swapBuffers(;
+	//m_GL->context()->swapBuffers(m_GL->context()->surface());
 
 	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_GL->glClearColor(ember->m_Background.r, ember->m_Background.g, ember->m_Background.b, 1.0);
@@ -144,6 +144,7 @@ void GLEmberController<T>::SetSelectedXform(Xform<T>* xform)
 		m_SelectedXform = xform;
 
 		if (m_GL->m_Init)
+			//m_GL->update();
 			m_GL->repaint();//Force immediate redraw with repaint() instead of update().
 	}
 }
@@ -176,14 +177,14 @@ void GLWidget::initializeGL()
 	{
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 
-        //int w = m_Fractorium->width() - m_Fractorium->ui.DockWidget->width();
-		//int h = m_Fractorium->ui.DockWidget->height();
+		int w = m_Fractorium->width() - m_Fractorium->ui.DockWidget->width();
+		int h = m_Fractorium->ui.DockWidget->height();
 
-		int w = m_Fractorium->ui.GLParentScrollArea->width();
-		int h = m_Fractorium->ui.GLParentScrollArea->height();
+		//int w = m_Fractorium->ui.GLParentScrollArea->width();
+		//int h = m_Fractorium->ui.GLParentScrollArea->height();
 
-        //show();
-        //m_Fractorium->ui.GLParentScrollArea->showMaximized();
+		//show();
+		//m_Fractorium->ui.GLParentScrollArea->showMaximized();
 		SetDimensions(w, h);
 		m_Fractorium->m_WidthSpin->setValue(w);
 		m_Fractorium->m_HeightSpin->setValue(h);
@@ -198,7 +199,7 @@ void GLWidget::initializeGL()
 
 		//Start with a flock of 10 random embers. Can't do this until now because the window wasn't maximized yet, so the sizes would have been off.
 		m_Fractorium->OnActionNewFlock(false);
-        //m_Fractorium->repaint();
+		//m_Fractorium->repaint();
 		m_Fractorium->m_Controller->DelayedStartRenderTimer();
 		m_Init = true;
 	}
@@ -401,7 +402,7 @@ bool GLEmberControllerBase::KeyPress_(QKeyEvent* e)
 void GLWidget::keyPressEvent(QKeyEvent* e)
 {
 	if (!GLController() || !GLController()->KeyPress_(e))
-		QGLWidget::keyPressEvent(e);
+		QOpenGLWidget::keyPressEvent(e);
 
 	update();
 }
@@ -441,7 +442,7 @@ bool GLEmberControllerBase::KeyRelease_(QKeyEvent* e)
 void GLWidget::keyReleaseEvent(QKeyEvent* e)
 {	
 	if (!GLController() || !GLController()->KeyRelease_(e))
-		QGLWidget::keyReleaseEvent(e);
+		QOpenGLWidget::keyReleaseEvent(e);
 
 	update();
 }
@@ -545,7 +546,7 @@ void GLWidget::mousePressEvent(QMouseEvent* e)
 	if (GLEmberControllerBase* controller = GLController())
 		controller->MousePress(e);
 
-	QGLWidget::mousePressEvent(e);
+	QOpenGLWidget::mousePressEvent(e);
 }
 
 /// <summary>
@@ -583,7 +584,7 @@ void GLWidget::mouseReleaseEvent(QMouseEvent* e)
 	if (GLEmberControllerBase* controller = GLController())
 		controller->MouseRelease(e);
 
-	QGLWidget::mouseReleaseEvent(e);
+	QOpenGLWidget::mouseReleaseEvent(e);
 }
 
 /// <summary>
@@ -692,7 +693,7 @@ void GLWidget::mouseMoveEvent(QMouseEvent* e)
 	if (GLEmberControllerBase* controller = GLController())
 		controller->MouseMove(e);
 	
-	QGLWidget::mouseMoveEvent(e);
+	QOpenGLWidget::mouseMoveEvent(e);
 }
 
 /// <summary>
@@ -720,7 +721,7 @@ void GLWidget::wheelEvent(QWheelEvent* e)
 	if (GLEmberControllerBase* controller = GLController())
 		controller->Wheel(e);
 	
-	//Do not call QGLWidget::wheelEvent(e) because this should only affect the scale and not the position of the scroll bars.
+	//Do not call QOpenGLWidget::wheelEvent(e) because this should only affect the scale and not the position of the scroll bars.
 }
 
 /// <summary>
@@ -730,12 +731,14 @@ void GLWidget::wheelEvent(QWheelEvent* e)
 /// the OpenGL texture it's being drawn on.
 /// </summary>
 /// <param name="e">The event</param>
-void GLWidget::resizeEvent(QResizeEvent* e)
-{
-	if (m_Fractorium)
-	{
-	}
-}
+//void GLWidget::resizeEvent(QResizeEvent* e)
+//{
+//	if (m_Fractorium)
+//	{
+//	}
+//
+//	QOpenGLWidget::resizeEvent(e);
+//}
 
 /// <summary>
 /// Set the dimensions of the drawing area.
@@ -746,7 +749,7 @@ void GLWidget::resizeEvent(QResizeEvent* e)
 void GLWidget::SetDimensions(int w, int h)
 {
 	setFixedSize(w, h);
-    //resize(w, h);
+	//resize(w, h);
 	//m_Fractorium->ui.GLParentScrollAreaContents->setFixedSize(w, h);
 }
 
@@ -803,7 +806,7 @@ bool GLWidget::Deallocate()
 
 	if (m_OutputTexID != 0)
 	{
-        glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
+		glBindTexture(GL_TEXTURE_2D, m_OutputTexID);
 		glDeleteTextures(1, &m_OutputTexID);
 		m_OutputTexID = 0;
 		deleted = true;

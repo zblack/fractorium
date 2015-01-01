@@ -6,7 +6,7 @@ CONFIG -= app_bundle
 CONFIG -= qt
 VERSION = 0.1.4.7
 
-DESTDIR = ../../../Bin
+DESTDIR = $$(HOME)/Dev/fractorium/Bin
 
 LIBS += -L/usr/lib -lOpenCL
 LIBS += -L/usr/lib -lGL
@@ -18,7 +18,6 @@ INCLUDEPATH += /usr/include/tbb
 INCLUDEPATH += /usr/include/libxml2
 INCLUDEPATH += ../../../Source/Ember
 
-QMAKE_CXXFLAGS_RELEASE += -O2
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
 QMAKE_CXXFLAGS += -march=k8

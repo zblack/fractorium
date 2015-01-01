@@ -35,7 +35,7 @@
 #include <QApplication>
 #include <QSettings>
 #include <QStandardPaths>
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <qopenglfunctions_2_0.h>
 #include <QtWidgets/QMainWindow>
 #include <QFuture>

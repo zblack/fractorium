@@ -28,7 +28,7 @@ static const float GridStep = 1.0f / 8.0f;
 /// the main window and several of its members.
 /// This class uses a controller-based design similar to the main window.
 /// </summary>
-class GLWidget : public QGLWidget, protected QOpenGLFunctions_2_0//QOpenGLFunctions_3_2_Compatibility//QOpenGLFunctions_3_2_Core//, protected QOpenGLFunctions
+class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions_2_0//QOpenGLFunctions_3_2_Compatibility//QOpenGLFunctions_3_2_Core//, protected QOpenGLFunctions
 {
 	Q_OBJECT
 
@@ -61,7 +61,7 @@ protected:
 	virtual void mouseReleaseEvent(QMouseEvent* e) override;
 	virtual void mouseMoveEvent(QMouseEvent* e) override;
 	virtual void wheelEvent(QWheelEvent* e) override;
-	virtual void resizeEvent(QResizeEvent* e) override;
+	//virtual void resizeEvent(QResizeEvent* e) override;
     
 private:
 	void SetDimensions(int w, int h);
