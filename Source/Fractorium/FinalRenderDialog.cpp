@@ -19,7 +19,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	uint i;
 	double dmax = numeric_limits<double>::max();
 	QTableWidget* table = ui.FinalRenderParamsTable;
-	QTableWidgetItem* item = NULL;
+	QTableWidgetItem* item = nullptr;
 
 	m_Fractorium = dynamic_cast<Fractorium*>(p);
 	m_Settings = settings;
@@ -649,9 +649,9 @@ bool FractoriumFinalRenderDialog::CreateControllerFromGUI(bool createRenderer)
 #ifdef DO_DOUBLE
 	size_t elementSize = Double() ? sizeof(double) : sizeof(float);
 #else
-    size_t elementSize = sizeof(float);
+	size_t elementSize = sizeof(float);
 #endif
-    
+	
 	if (!m_Controller.get() || (m_Controller->SizeOfT() != elementSize))
 	{
 #ifdef DO_DOUBLE

@@ -24,8 +24,8 @@ Fractorium::Fractorium(QWidget* p)
 	m_ColorDialog = new QColorDialog(this);
 	m_Settings = new FractoriumSettings(this);
 
-	m_FileDialog = NULL;//Use lazy instantiation upon first use.
-	m_FolderDialog = NULL;
+	m_FileDialog = nullptr;//Use lazy instantiation upon first use.
+	m_FolderDialog = nullptr;
 	m_FinalRenderDialog = new FractoriumFinalRenderDialog(m_Settings, this);
 	m_OptionsDialog = new FractoriumOptionsDialog(m_Settings, this);
 	m_AboutDialog = new FractoriumAboutDialog(this);
@@ -122,8 +122,8 @@ Fractorium::Fractorium(QWidget* p)
 	//Setup pointer in the GL window to point back to here.
 	ui.GLDisplay->SetMainWindow(this);
 
-	showMaximized();
-	
+	showMaximized();//This won't fully set things up and show them until after this constructor exits.
+
 	connect(ui.DockWidget, SIGNAL(dockLocationChanged(Qt::DockWidgetArea)), this, SLOT(dockLocationChanged(Qt::DockWidgetArea)));
 	connect(ui.DockWidget, SIGNAL(topLevelChanged(bool)),                   this, SLOT(OnDockTopLevelChanged(bool)));
 	
@@ -155,9 +155,10 @@ Fractorium::Fractorium(QWidget* p)
 	ui.GLParentScrollArea->installEventFilter(this);
 	
 	//At this point, everything has been setup except the renderer. Shortly after
-	//this constructor exits, GLWidget::initializeGL() will create the initial flock and start the rendering timer
+	//this constructor exits, GLWidget::InitGL() will create the initial flock and start the rendering timer
 	//which executes whenever the program is idle. Upon starting the timer, the renderer
 	//will be initialized.
+	QTimer::singleShot(500, [&]() { ui.GLDisplay->InitGL(); });
 }
 
 /// <summary>
@@ -181,6 +182,19 @@ void Fractorium::SetCoordinateStatus(int rasX, int rasY, float worldX, float wor
 	//Use sprintf rather than allocating and concatenating 6 QStrings for efficiency since this is called on every mouse move.
 	sprintf_s(m_CoordinateString, 128, "Window: %4d, %4d World: %2.2f, %2.2f", rasX, rasY, worldX, worldY);
 	m_CoordinateStatusLabel->setText(QString(m_CoordinateString));
+}
+
+/// <summary>
+/// Center the scroll area.
+/// Called in response to a resizing, or setting of new ember.
+/// </summary>
+void Fractorium::CenterScrollbars()
+{
+	QScrollBar* w = ui.GLParentScrollArea->horizontalScrollBar();
+	QScrollBar* h = ui.GLParentScrollArea->verticalScrollBar();
+
+	w->setValue(w->maximum() / 2);
+	h->setValue(h->maximum() / 2);
 }
 
 /// <summary>

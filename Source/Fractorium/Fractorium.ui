@@ -48,6 +48,9 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="mouseTracking">
+    <bool>true</bool>
+   </property>
    <property name="autoFillBackground">
     <bool>true</bool>
    </property>
@@ -71,8 +74,8 @@
      <rect>
       <x>0</x>
       <y>0</y>
-      <width>926</width>
-      <height>941</height>
+      <width>923</width>
+      <height>942</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -87,6 +90,12 @@
       <height>0</height>
      </size>
     </property>
+    <property name="mouseTracking">
+     <bool>true</bool>
+    </property>
+    <property name="focusPolicy">
+     <enum>Qt::WheelFocus</enum>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -95,7 +104,7 @@
      <x>0</x>
      <y>0</y>
      <width>1214</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="MenuFile">
@@ -388,8 +397,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>261</width>
-              <height>845</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_11">
@@ -495,8 +504,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>261</width>
-              <height>845</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2816,8 +2825,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>141</width>
-                  <height>610</height>
+                  <width>118</width>
+                  <height>597</height>
                  </rect>
                 </property>
                 <property name="autoFillBackground">
@@ -5032,8 +5041,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>98</width>
-              <height>470</height>
+              <width>259</width>
+              <height>853</height>
              </rect>
             </property>
             <property name="sizePolicy">

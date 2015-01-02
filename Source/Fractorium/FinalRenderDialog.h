@@ -40,7 +40,7 @@ class FractoriumFinalRenderDialog : public QDialog
 	friend Fractorium;
 	friend FinalRenderEmberControllerBase;
 	friend FinalRenderEmberController<float>;
-    
+	
 #ifdef DO_DOUBLE
 	friend FinalRenderEmberController<double>;
 #endif

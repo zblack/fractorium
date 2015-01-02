@@ -38,8 +38,8 @@ GLEmberController<T>::GLEmberController(Fractorium* fractorium, GLWidget* glWidg
 	GridStep = T(1.0 / 8.0);
 	m_FractoriumEmberController = controller;
 
-	m_HoverXform = NULL;
-	m_SelectedXform = NULL;
+	m_HoverXform = nullptr;
+	m_SelectedXform = nullptr;
 	m_CenterDownX = 0;
 	m_CenterDownY = 0;
 }
@@ -60,6 +60,17 @@ template <typename T>
 bool GLEmberController<T>::CheckForSizeMismatch(int w, int h)
 {
 	return (m_FractoriumEmberController->FinalRasW() != w || m_FractoriumEmberController->FinalRasH() != h);
+}
+
+/// <summary>
+/// Reset the drag and hover state. Called in response setting a new ember as the current one.
+/// </summary>
+template <typename T>
+void GLEmberController<T>::ResetMouseState()
+{
+	m_HoverType = HoverNone;
+	m_HoverXform = nullptr;
+	m_SelectedXform = nullptr;
 }
 
 /// <summary>

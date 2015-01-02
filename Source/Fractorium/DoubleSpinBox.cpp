@@ -7,7 +7,7 @@
 /// and change its value using the mouse wheel without explicitly having to click
 /// inside of it.
 /// </summary>
-/// <param name="p">The parent widget. Default: NULL.</param>
+/// <param name="p">The parent widget. Default: nullptr.</param>
 /// <param name="height">The height of the spin box. Default: 16.</param>
 /// <param name="step">The step used to increment/decrement the spin box when using the mouse wheel. Default: 0.05.</param>
 DoubleSpinBox::DoubleSpinBox(QWidget* p, int h, double step)

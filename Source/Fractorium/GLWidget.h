@@ -45,6 +45,7 @@ class GLWidget : public QOpenGLWidget, protected QOpenGLFunctions_2_0//QOpenGLFu
 public:
 	GLWidget(QWidget* p = nullptr);
 	~GLWidget();
+	void InitGL();
 	void DrawQuad();
 	void SetMainWindow(Fractorium* f);
 	bool Init();
@@ -62,7 +63,7 @@ protected:
 	virtual void mouseMoveEvent(QMouseEvent* e) override;
 	virtual void wheelEvent(QWheelEvent* e) override;
 	//virtual void resizeEvent(QResizeEvent* e) override;
-    
+	
 private:
 	void SetDimensions(int w, int h);
 	bool Allocate(bool force = false);

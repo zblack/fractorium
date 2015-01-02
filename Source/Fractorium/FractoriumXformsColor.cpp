@@ -141,7 +141,7 @@ void Fractorium::OnSoloXformCheckBoxStateChanged(int state)
 /// <param name="newSize">Ignored</param>
 void Fractorium::OnXformRefPaletteResized(int logicalIndex, int oldSize, int newSize)
 {
-	m_Controller->SetPaletteRefTable(NULL);
+	m_Controller->SetPaletteRefTable(nullptr);
 }
 
 /// <summary>

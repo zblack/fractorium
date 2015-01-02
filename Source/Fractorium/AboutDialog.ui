@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>488</width>
-    <height>565</height>
+    <height>567</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Fixed" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -19,19 +19,19 @@
   <property name="minimumSize">
    <size>
     <width>488</width>
-    <height>565</height>
+    <height>546</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>587</width>
-    <height>565</height>
+    <width>16777215</width>
+    <height>16777215</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>About</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_4">
    <property name="leftMargin">
     <number>6</number>
    </property>
@@ -45,7 +45,13 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="DescriptionLabel">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -70,10 +76,22 @@
    </item>
    <item>
     <widget class="QGroupBox" name="CodeCopiedGroupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="title">
       <string>Code Copied</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <layout class="QVBoxLayout" name="verticalLayout">
       <property name="topMargin">
        <number>4</number>
       </property>
@@ -81,7 +99,19 @@
        <number>6</number>
       </property>
       <item>
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="CodeCopiedLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://code.google.com/p/flam3&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;flam3&lt;/span&gt;&lt;/a&gt;: Scott Draves, Erik Reckase (GPL v2)&lt;br/&gt;&lt;a href=&quot;http://github.com/stevenrobertson/cuburn&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;cuburn&lt;/span&gt;&lt;/a&gt;: Steven Robertson, Michael Semeniuk, Matthew Znoj, Nicolas Mejia (GPL v3)&lt;br/&gt;&lt;a href=&quot;http://fractron9000.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Fractron 9000&lt;/span&gt;&lt;/a&gt;: Mike Thiesen (GPL)&lt;br/&gt;&lt;a href=&quot;http://sourceforge.net/projects/apophysis7x&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Apophysis&lt;/span&gt;&lt;/a&gt;: Mark Townsend, Ronald Hordijk, Peter Sdobnov, Piotr Borys, Georg Kiehne (GPL)&lt;br/&gt;&lt;a href=&quot;http://jwildfire.org/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;JWildfire&lt;/span&gt;&lt;/a&gt;: Andreas Maschke (LGPL)&lt;br/&gt;Numerous Apophysis plugin developers (GPL)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -101,10 +131,22 @@
    </item>
    <item>
     <widget class="QGroupBox" name="LibrariesLinkedGroupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>0</height>
+      </size>
+     </property>
      <property name="title">
       <string>Libraries Linked</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <property name="topMargin">
        <number>4</number>
       </property>
@@ -112,7 +154,13 @@
        <number>6</number>
       </property>
       <item>
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="LibrariesLinkedLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://qt-project.org&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Qt&lt;/span&gt;&lt;/a&gt;: Digia Plc (GPL v3, LGPL v2)&lt;br/&gt;&lt;a href=&quot;http://g-truc.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;glm&lt;/span&gt;&lt;/a&gt;: Christophe Riccio (MIT License)&lt;br/&gt;&lt;a href=&quot;http://threadingbuildingblocks.org&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Threading Building Blocks&lt;/span&gt;&lt;/a&gt;: Intel Corporation (GPLv2)&lt;br/&gt;&lt;a href=&quot;http://libjpeg.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;libjpeg&lt;/span&gt;&lt;/a&gt;: Independent JPEG Group (Free Software License)&lt;br/&gt;&lt;a href=&quot;http://libpng.org&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;libpng&lt;/span&gt;&lt;/a&gt;: Glenn Randers-Pehrson et al (Libpng License)&lt;br/&gt;&lt;a href=&quot;http://xmlsoft.org&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;libxml2&lt;/span&gt;&lt;/a&gt;: Daniel Veillard (MIT License)&lt;br/&gt;&lt;a href=&quot;http://zlib.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;zlib&lt;/span&gt;&lt;/a&gt;: Jean-loup Gailly, Mark Adler (Zlib License)&lt;br/&gt;&lt;a href=&quot;http://burtleburtle.net/bob/rand/isaac.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;QTIsaac&lt;/span&gt;&lt;/a&gt;: Robert J. Jenkins, Quinn Tyler Jackson (Public Domain)&lt;br/&gt;&lt;a href=&quot;http://cas.ee.ic.ac.uk/people/dt10/index.html&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;MWC64X Random Number Generator&lt;/span&gt;&lt;/a&gt;: David Thomas (Public Domain)&lt;br/&gt;&lt;a href=&quot;http://code.jellycan.com/simpleopt/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;SimpleOpt&lt;/span&gt;&lt;/a&gt;: Brodie Thiesfield (MIT License)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -132,10 +180,16 @@
    </item>
    <item>
     <widget class="QGroupBox" name="IconsUsedGroupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="title">
       <string>Icons Used</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <property name="topMargin">
        <number>4</number>
       </property>
@@ -143,7 +197,13 @@
        <number>6</number>
       </property>
       <item>
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="IconsUsedLabel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;a href=&quot;http://famfamfam.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Silk&lt;/span&gt;&lt;/a&gt;: Mark James (Creative Commons Attribution 2.5 License)&lt;br/&gt;&lt;a href=&quot;http://momentumdesignlab.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Momentum&lt;/span&gt;&lt;/a&gt;: Momentum Design Lab (Creative Commons Attribution-ShareAlike 3.5 License)&lt;br/&gt;&lt;a href=&quot;http://everaldo.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Crystal Clear&lt;/span&gt;&lt;/a&gt;: Everaldo Coelho (LGPL)&lt;br/&gt;&lt;a href=&quot;http://openiconlibrary.sourceforge.net&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Open Icon Library&lt;/span&gt;&lt;/a&gt;: Jeff Israel (GPL, LGPL, Creative Commons, Public Domain)&lt;br/&gt;&lt;a href=&quot;http://icons.mysitemyway.com/category/3d-transparent-glass-icons/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;3D Transparent Glass&lt;/span&gt;&lt;/a&gt;: iconsETC (Public Domain)&lt;br/&gt;&lt;a href=&quot;http://p.yusukekamiyamane.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Fugue&lt;/span&gt;&lt;/a&gt;: Yusuke Kamiyamane (Creative Commons Attribution 3.0 License)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -162,12 +222,9 @@
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <property name="horizontalSpacing">
-      <number>6</number>
-     </property>
+    <layout class="QGridLayout" name="gridLayout" rowminimumheight="0">
      <property name="verticalSpacing">
-      <number>0</number>
+      <number>6</number>
      </property>
      <item row="0" column="0">
       <widget class="QPushButton" name="okButton">

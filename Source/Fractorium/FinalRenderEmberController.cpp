@@ -93,7 +93,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 	: FinalRenderEmberControllerBase(finalRender)
 {
 	m_FinalPreviewRenderer = unique_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
-	m_FinalPreviewRenderer->Callback(NULL);
+	m_FinalPreviewRenderer->Callback(nullptr);
 	m_FinalPreviewRenderer->NumChannels(4);
 
 	m_FinalPreviewRenderFunc = [&]()
@@ -669,10 +669,10 @@ void FinalRenderEmberController<T>::RenderComplete(Ember<T>& ember)
 		QString newPath = xmlFileInfo.absolutePath() + '/' + xmlFileInfo.completeBaseName() + ".flame";
 		xmlDocPtr tempEdit = ember.m_Edits;
 
-		ember.m_Edits = m_XmlWriter.CreateNewEditdoc(&ember, NULL, "edit", m_Settings->Nick().toStdString(), m_Settings->Url().toStdString(), m_Settings->Id().toStdString(), "", 0, 0);
+		ember.m_Edits = m_XmlWriter.CreateNewEditdoc(&ember, nullptr, "edit", m_Settings->Nick().toStdString(), m_Settings->Url().toStdString(), m_Settings->Id().toStdString(), "", 0, 0);
 		m_XmlWriter.Save(newPath.toStdString().c_str(), ember, 0, true, false, true);//Note that the ember passed is used, rather than m_Ember because it's what was actually rendered.
 
-		if (tempEdit != NULL)
+		if (tempEdit != nullptr)
 			xmlFreeDoc(tempEdit);
 	}
 

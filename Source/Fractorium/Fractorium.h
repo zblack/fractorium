@@ -87,6 +87,7 @@ public:
 	void SetRotation(double rot, bool stealth);
 	void SetScale(double scale);
 	void SetCoordinateStatus(int rasX, int rasY, float worldX, float worldY);
+	void CenterScrollbars();
 
 	//Xforms.
 	void CurrentXform(uint i);

@@ -237,7 +237,7 @@ void FractoriumEmberController<T>::FillVariationTreeWithXform(Xform<T>* xform)
 
 			for (uint j = 0; j < item->childCount(); j++)//Iterate through all of the children, which will be the params if it was a parametric variation.
 			{
-				T* param = NULL;
+				T* param = nullptr;
 				QTreeWidgetItem* childItem = item->child(j);//Get the child.
 				QWidget* childItemWidget = tree->itemWidget(childItem, 1);//Get the widget for the child.
 

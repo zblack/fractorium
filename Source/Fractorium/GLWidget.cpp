@@ -19,7 +19,7 @@ GLWidget::GLWidget(QWidget* p)
 	m_TexWidth = 0;
 	m_TexHeight = 0;
 	m_OutputTexID = 0;
-	m_Fractorium = NULL;
+	m_Fractorium = nullptr;
 
 	qsf.setSwapInterval(1);//Vsync.
 	qsf.setSwapBehavior(QSurfaceFormat::DoubleBuffer);
@@ -33,6 +33,28 @@ GLWidget::GLWidget(QWidget* p)
 /// </summary>
 GLWidget::~GLWidget()
 {
+}
+
+/// <summary>
+/// A manual initialization that must be called immediately after the main window is shown
+/// and the virtual initializeGL() is called.
+/// </summary>
+void GLWidget::InitGL()
+{
+	if (!m_Init)
+	{
+		int w = m_Fractorium->ui.GLParentScrollArea->width();
+		int h = m_Fractorium->ui.GLParentScrollArea->height();
+
+		SetDimensions(w, h);
+		m_Fractorium->m_WidthSpin->setValue(w);
+		m_Fractorium->m_HeightSpin->setValue(h);
+
+		//Start with a flock of 10 random embers. Can't do this until now because the window wasn't maximized yet, so the sizes would have been off.
+		m_Fractorium->OnActionNewFlock(false);
+		m_Fractorium->m_Controller->DelayedStartRenderTimer();
+		m_Init = true;
+	}
 }
 
 /// <summary>
@@ -114,15 +136,8 @@ template <typename T>
 void GLEmberController<T>::ClearWindow()
 {
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
-
-	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	m_GL->glClearColor(ember->m_Background.r, ember->m_Background.g, ember->m_Background.b, 1.0);
-
-	//m_GL->update();
+	
 	m_GL->makeCurrent();
-	//m_GL->context()->swapBuffers(;
-	//m_GL->context()->swapBuffers(m_GL->context()->surface());
-
 	m_GL->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_GL->glClearColor(ember->m_Background.r, ember->m_Background.g, ember->m_Background.b, 1.0);
 }
@@ -177,31 +192,12 @@ void GLWidget::initializeGL()
 	{
 		glClearColor(0.0, 0.0, 0.0, 1.0);
 
-		int w = m_Fractorium->width() - m_Fractorium->ui.DockWidget->width();
-		int h = m_Fractorium->ui.DockWidget->height();
-
-		//int w = m_Fractorium->ui.GLParentScrollArea->width();
-		//int h = m_Fractorium->ui.GLParentScrollArea->height();
-
-		//show();
-		//m_Fractorium->ui.GLParentScrollArea->showMaximized();
-		SetDimensions(w, h);
-		m_Fractorium->m_WidthSpin->setValue(w);
-		m_Fractorium->m_HeightSpin->setValue(h);
-		//m_Fractorium->ui.GLParentScrollArea->setViewport(this);
-
 		glEnable(GL_TEXTURE_2D);
 		glGetIntegerv(GL_MAX_TEXTURE_SIZE, &m_MaxTexSize);
 		glDisable(GL_TEXTURE_2D);
 
 		m_Fractorium->m_WidthSpin->setMaximum(m_MaxTexSize);
 		m_Fractorium->m_HeightSpin->setMaximum(m_MaxTexSize);
-
-		//Start with a flock of 10 random embers. Can't do this until now because the window wasn't maximized yet, so the sizes would have been off.
-		m_Fractorium->OnActionNewFlock(false);
-		//m_Fractorium->repaint();
-		m_Fractorium->m_Controller->DelayedStartRenderTimer();
-		m_Init = true;
 	}
 }
 
@@ -512,7 +508,7 @@ void GLEmberController<T>::MousePress(QMouseEvent* e)
 			}
 			else//Nothing was selected.
 			{
-				//m_SelectedXform = NULL;
+				//m_SelectedXform = nullptr;
 				m_DragState = DragNone;
 			}
 		}
@@ -783,7 +779,7 @@ bool GLWidget::Allocate(bool force)
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_TexWidth, m_TexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, m_TexWidth, m_TexHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
 		alloc = true;
 	}
 	
@@ -1089,7 +1085,7 @@ int GLEmberController<T>::UpdateHover(v3T& glCoords)
 	m_HoverType = HoverNone;
 
 	//If there's a selected/current xform, check it first so it gets precedence over the others.
-	if (m_SelectedXform != NULL)
+	if (m_SelectedXform != nullptr)
 	{
 		//These checks prevent highlighting the pre/post selected xform circle, when one is set to show all, and the other
 		//is set to show current, and the user hovers over another xform, but doesn't select it, then moves the mouse
@@ -1452,7 +1448,7 @@ GLEmberControllerBase* GLWidget::GLController()
 	if (m_Fractorium && m_Fractorium->ControllersOk())
 		return m_Fractorium->m_Controller->GLController();
 
-	return NULL;
+	return nullptr;
 }
 
 template class GLEmberController<float>;

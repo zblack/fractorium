@@ -192,7 +192,7 @@ public:
 	virtual bool CreateRenderer(eRendererType renderType, uint platform, uint device, bool shared = true) { return false; }
 	virtual uint SizeOfT() const { return 0; }
 	virtual void ClearUndo() { }
-	virtual GLEmberControllerBase* GLController() { return NULL; }
+	virtual GLEmberControllerBase* GLController() { return nullptr; }
 	bool RenderTimerRunning();
 	void StartRenderTimer();
 	void DelayedStartRenderTimer();

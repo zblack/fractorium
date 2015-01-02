@@ -45,7 +45,7 @@ void Fractorium::InitXformsUI()
 /// <summary>
 /// Get the current xform.
 /// </summary>
-/// <returns>The current xform as specified by the current xform combo box index. NULL if out of range (should never happen).</returns>
+/// <returns>The current xform as specified by the current xform combo box index. nullptr if out of range (should never happen).</returns>
 template <typename T>
 Xform<T>* FractoriumEmberController<T>::CurrentXform()
 {

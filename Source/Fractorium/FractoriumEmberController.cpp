@@ -3,6 +3,8 @@
 #include "Fractorium.h"
 #include "GLEmberController.h"
 
+#define SAVE_EACH 1
+
 /// <summary>
 /// Constructor which initializes the non-templated members contained in this class.
 /// The renderer, other templated members and GUI setup will be done in the templated derived controller class.
@@ -22,8 +24,8 @@ FractoriumEmberControllerBase::FractoriumEmberControllerBase(Fractorium* fractor
 	m_OutputTexID = 0;
 	m_SubBatchCount = 1;//Will be ovewritten by the options on first render.
 	m_Fractorium = fractorium;
-	m_RenderTimer = NULL;
-	m_RenderRestartTimer = NULL;
+	m_RenderTimer = nullptr;
+	m_RenderRestartTimer = nullptr;
 	m_Rand = QTIsaac<ISAAC_SIZE, ISAAC_INT>(ISAAC_INT(t.Tic()), ISAAC_INT(t.Tic() * 2), ISAAC_INT(t.Tic() * 3));//Ensure a different rand seed on each instance.
 
 	m_RenderTimer = new QTimer(m_Fractorium);
@@ -46,14 +48,14 @@ FractoriumEmberControllerBase::~FractoriumEmberControllerBase()
 	{
 		m_RenderTimer->stop();
 		delete m_RenderTimer;
-		m_RenderTimer = NULL;
+		m_RenderTimer = nullptr;
 	}
 
 	if (m_RenderRestartTimer)
 	{
 		m_RenderRestartTimer->stop();
 		delete m_RenderRestartTimer;
-		m_RenderRestartTimer = NULL;
+		m_RenderRestartTimer = nullptr;
 	}
 }
 
@@ -77,7 +79,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 	BackgroundChanged(QColor(0, 0, 0));//Default to black.
 	ClearUndo();
 
-	m_PreviewRenderer->Callback(NULL);
+	m_PreviewRenderer->Callback(nullptr);
 	m_PreviewRenderer->NumChannels(4);
 	m_PreviewRenderer->EarlyClip(m_Fractorium->m_Settings->EarlyClip());
 	m_PreviewRenderer->YAxisUp(m_Fractorium->m_Settings->YAxisUp());
@@ -248,6 +250,9 @@ void FractoriumEmberController<T>::SetEmberPrivate(const Ember<U>& ember, bool v
 	if (ember.m_Name != m_Ember.m_Name)
 		m_LastSaveCurrent = "";
 	
+	size_t w = m_Ember.m_FinalRasW;//Cache values for use below.
+	size_t h = m_Ember.m_FinalRasH;
+
 	m_Ember = ember;
 
 	if (!verbatim)
@@ -258,8 +263,22 @@ void FractoriumEmberController<T>::SetEmberPrivate(const Ember<U>& ember, bool v
 		m_Ember.m_Supersample = m_Fractorium->m_SupersampleSpin->value();
 	}
 
+#ifdef SAVE_EACH
+	static EmberToXml<T> writer;
+	string filename = "last.flame";
+
+	writer.Save(filename.c_str(), m_Ember, 0, true, false, true);
+#endif
+
+	m_GLController->ResetMouseState();
 	m_Fractorium->FillXforms();//Must do this first because the palette setup in FillParamTablesAndPalette() uses the xforms combo.
 	FillParamTablesAndPalette();
+
+	//If a resize happened, this won't do anything because the new size is not reflected in the scroll area yet.
+	//However, it will have been taken care of in SyncSizes() in that case, so it's ok. 
+	//This is for when a new ember with the same size was loaded. If it was larger than the scroll area, and was scrolled, re-center it.
+	if (m_Ember.m_FinalRasW == w && m_Ember.m_FinalRasH == h)
+		m_Fractorium->CenterScrollbars();
 }
 
 template class FractoriumEmberController<float>;

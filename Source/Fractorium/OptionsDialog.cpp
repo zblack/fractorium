@@ -6,7 +6,7 @@
 /// Constructor that takes a pointer to the settings object and the parent widget.
 /// </summary>
 /// <param name="settings">A pointer to the settings object to use</param>
-/// <param name="p">The parent widget. Default: NULL.</param>
+/// <param name="p">The parent widget. Default: nullptr.</param>
 /// <param name="f">The window flags. Default: 0.</param>
 FractoriumOptionsDialog::FractoriumOptionsDialog(FractoriumSettings* settings, QWidget* p, Qt::WindowFlags f)
 	: QDialog(p, f)

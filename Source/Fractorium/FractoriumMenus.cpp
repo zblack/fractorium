@@ -273,9 +273,9 @@ void FractoriumEmberController<T>::SaveCurrentAsXml()
 
 		SaveCurrentToOpenedFile();//Save the current ember back to the opened file before writing to disk.
 		ApplyXmlSavingTemplate(ember);
-		ember.m_Edits = writer.CreateNewEditdoc(&ember, NULL, "edit", s->Nick().toStdString(), s->Url().toStdString(), s->Id().toStdString(), "", 0, 0);
+		ember.m_Edits = writer.CreateNewEditdoc(&ember, nullptr, "edit", s->Nick().toStdString(), s->Url().toStdString(), s->Id().toStdString(), "", 0, 0);
 
-		if (tempEdit != NULL)
+		if (tempEdit != nullptr)
 			xmlFreeDoc(tempEdit);
 
 		if (writer.Save(filename.toStdString().c_str(), ember, 0, true, false, true))
@@ -383,7 +383,7 @@ void Fractorium::OnActionSaveCurrentToOpenedFile(bool checked) { m_Controller->S
 /// <param name="checked">Ignore.</param>
 void Fractorium::OnActionExit(bool checked)
 {
-	closeEvent(NULL);
+	closeEvent(nullptr);
 	QApplication::exit();
 }
 

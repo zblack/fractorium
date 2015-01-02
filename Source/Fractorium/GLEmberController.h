@@ -63,6 +63,7 @@ public:
 	virtual bool SizesMatch() { return false; }
 	virtual bool CheckForSizeMismatch(int w, int h) { return true; }
 	virtual void QueryMatrices(bool print) { }
+	virtual void ResetMouseState() { }
 
 protected:
 	uint m_DragModifier;
@@ -96,6 +97,7 @@ public:
 	virtual void QueryMatrices(bool print) override;
 	virtual bool SizesMatch() override;
 	virtual bool CheckForSizeMismatch(int w, int h) override;
+	virtual void ResetMouseState() override;
 
 	T CalcScale();
 	T CalcRotation();

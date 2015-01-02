@@ -1,16 +1,25 @@
+0.4.1.7 Beta 01/02/2015
 --User changes
 	Use actual strips count when computing memory requirements in the final render dialog.
 	Output CL_DEVICE_ADDRESS_BITS when passing --openclinfo to command line programs.
 	Warn if single/total allocations are greater than the max allowed for OpenCL in the final render dialog.
-	
+	Make about box properly sized for different fonts.
+	Dock widget is slightly resizable now.
+	Center scroll area when loading a new ember.
+
 --Bug Fixes
 	Fix bad values left in an ember when a render with strips > 1 fails in the final render dialog.
 	Fix incorrect calculation in dc_cube variation when using OpenCL.
 
 --Code Changes
+	Major work to get it running on Linux.
+	Migrate from QGLWidget to QOpenGLWidget.
+	Delayed init due to QOpenGLWidget.
 	Break RendererBase::MemoryRequired() into two functions, it and HistMemRequired() and return a tuple.
 	Add GlobalMemSize() and MaxAllocSize() functions in OpenCLWrapper.
 	Change CHOOSE_XFORM_GRAIN to be 16384, so we can & with 16383 instead of using modulo when selecting an xform. This results in a 9% speed increase on the CPU.
+	Save each newly loaded ember in a file called "last.flame" in the executable folder. This will help diagnose crashes that occur when switching embers.
+	Use nullptr instead of NULL in the Fractorium project. It had previously been done in all other places.
 
 0.4.1.6 Beta 11/29/2014
 --User Changes

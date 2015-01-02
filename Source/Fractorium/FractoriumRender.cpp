@@ -117,7 +117,7 @@ void FractoriumEmberControllerBase::SaveCurrentRender(const QString& filename, b
 		uint i, j;
 		uint width = m_Renderer->FinalRasW();
 		uint height = m_Renderer->FinalRasH();
-		byte* data = NULL;
+		byte* data = nullptr;
 		vector<byte> vecRgb;
 		QFileInfo fileInfo(filename);
 		QString suffix = fileInfo.suffix();
@@ -278,6 +278,7 @@ bool FractoriumEmberController<T>::SyncSizes()
 		if (m_Renderer->RendererType() == OPENCL_RENDERER && (rendererCL = dynamic_cast<RendererCL<T>*>(m_Renderer.get())))
 			rendererCL->SetOutputTexture(gl->OutputTexID());
 
+		m_Fractorium->CenterScrollbars();
 		changed = true;
 	}
 
@@ -433,8 +434,8 @@ bool FractoriumEmberController<T>::Render()
 			if (iterBegin || ProcessState() == ACCUM_DONE)
 			{
 				if (m_FinalImage.size() == m_Renderer->FinalBufferSize())//Make absolutely sure the correct amount of data is passed.
-					gl->repaint();
-					//gl->update();
+					//gl->repaint();
+					gl->update();
 				
 				//m_Fractorium->update();
 				//m_Fractorium->ui.GLParentScrollArea->update();
@@ -673,7 +674,7 @@ bool Fractorium::CreateControllerFromOptions()
 		}
 	}
 
-	return m_Controller.get() != NULL;
+	return m_Controller.get() != nullptr;
 }
 
 /// <summary>
@@ -704,7 +705,7 @@ void Fractorium::IdleTimer() { m_Controller->Render(); }
 /// <summary>
 /// Thin wrapper to determine if the controllers have been properly initialized.
 /// </summary>
-/// <returns>True if the ember controller and GL controllers are both not NULL, else false.</returns>
+/// <returns>True if the ember controller and GL controllers are both not nullptr, else false.</returns>
 bool Fractorium::ControllersOk() { return m_Controller.get() && m_Controller->GLController(); }
 
 template class FractoriumEmberController<float>;
