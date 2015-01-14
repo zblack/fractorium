@@ -94,7 +94,7 @@ class EMBER_API RendererBase : public EmberReport
 //using EmberReport::m_ErrorReport;
 public:
 	RendererBase();
-	virtual ~RendererBase() { }
+	virtual ~RendererBase() __TBB_NOEXCEPT(false) { }
 
 	//Non-virtual processing functions.
 	void ChangeVal(std::function<void(void)> func, eProcessAction action);
