@@ -4,6 +4,10 @@
 #include "PaletteList.h"
 #include "VariationList.h"
 
+#ifdef __APPLE__
+#include <libgen.h>
+#endif
+
 /// <summary>
 /// XmlToEmber and Locale classes.
 /// </summary>

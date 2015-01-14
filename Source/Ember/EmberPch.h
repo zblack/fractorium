@@ -35,7 +35,11 @@
 #include <iostream>
 #include <iomanip>
 #include <limits>
+#ifdef __APPLE__
+#include <malloc/malloc.h>
+#else
 #include <malloc.h>
+#endif
 #include <math.h>
 #include <memory>
 #include <numeric>
@@ -55,19 +59,21 @@
 #endif
 
 //Intel's Threading Building Blocks is what's used for all threading.
-#include "tbb/task_group.h"
-#include "tbb/parallel_for.h"
-#include "tbb/task_scheduler_init.h"
+#include <tbb/task_group.h>
+#include <tbb/parallel_for.h>
+#include <tbb/task_scheduler_init.h>
 
 #define GLM_FORCE_RADIANS 1
+#ifndef __APPLE__
 #define GLM_FORCE_INLINE 1
+#endif
 
 //glm is what's used for matrix math.
-#include "glm/glm.hpp"
-#include "glm/detail/type_int.hpp"
-#include "glm/gtc/matrix_transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "glm/gtx/string_cast.hpp"
+#include <glm/glm.hpp>
+#include <glm/detail/type_int.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
 
 using namespace tbb;
 using namespace std;
