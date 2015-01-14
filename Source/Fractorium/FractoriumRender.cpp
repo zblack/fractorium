@@ -642,8 +642,13 @@ bool Fractorium::CreateControllerFromOptions()
 		if (m_Controller.get())
 		{
 			m_Controller->CopyTempPalette(tempPalette);//Convert float to double or save double verbatim;
-			m_Controller->CopyEmber(ed);
-			m_Controller->CopyEmberFile(efd);
+#ifdef DO_DOUBLE
+			m_Controller->CopyEmber(ed, [&](Ember<double>& ember) { });
+			m_Controller->CopyEmberFile(efd, [&](Ember<double>& ember) { });
+#else
+			m_Controller->CopyEmber(ed, [&](Ember<float>& ember) { });
+			m_Controller->CopyEmberFile(efd, [&](Ember<float>& ember) { });
+#endif
 			m_Controller->Shutdown();
 		}
 

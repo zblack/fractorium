@@ -105,10 +105,10 @@ public:
 
 	//Virtual functions overridden from FractoriumEmberControllerBase.
 	virtual void SetEmberFile(const EmberFile<float>& emberFile) override;
-	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) override;
+	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) override;
 #ifdef DO_DOUBLE
 	virtual void SetEmberFile(const EmberFile<double>& emberFile) override;
-	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) override;
+	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation/* = [&](Ember<double>& ember) { }*/) override;
 #endif
 	virtual void SetEmber(size_t index) override;
 	virtual bool Render() override;

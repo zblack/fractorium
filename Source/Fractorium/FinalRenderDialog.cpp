@@ -667,7 +667,11 @@ bool FractoriumFinalRenderDialog::CreateControllerFromGUI(bool createRenderer)
 		//First check if a controller has already been created, and if so, save its embers and gracefully shut it down.
 		if (m_Controller.get())
 		{
-			m_Controller->CopyEmberFile(efd);//Convert float to double or save double verbatim;
+#ifdef DO_DOUBLE
+			m_Controller->CopyEmberFile(efd, [&](Ember<double>& ember) { });//Convert float to double or save double verbatim;
+#else
+			m_Controller->CopyEmberFile(efd, [&](Ember<float>& ember) { });//Convert float to double or save double verbatim;
+#endif
 			m_Controller->Shutdown();
 		}
 

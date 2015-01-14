@@ -41,16 +41,16 @@ public:
 
 	//Embers.
 	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false) { }
-	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) { }
+	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) { }
 	virtual void SetEmberFile(const EmberFile<float>& emberFile) { }
-	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) { }
+	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) { }
 	virtual void SetTempPalette(const Palette<float>& palette) { }
 	virtual void CopyTempPalette(Palette<float>& palette) { }
 #ifdef DO_DOUBLE
 	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false) { }
-	virtual void CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) { }
+	virtual void CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation/* = [&](Ember<double>& ember) { }*/) { }
 	virtual void SetEmberFile(const EmberFile<double>& emberFile) { }
-	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) { }
+	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation/* = [&](Ember<double>& ember) { }*/) { }
 	virtual void SetTempPalette(const Palette<double>& palette) { }
 	virtual void CopyTempPalette(Palette<double>& palette) { }
 #endif
@@ -254,16 +254,16 @@ public:
 
 	//Embers.
 	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false) override;
-	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) override;
+	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) override;
 	virtual void SetEmberFile(const EmberFile<float>& emberFile) override;
-	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation = [&](Ember<float>& ember) { }) override;
+	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) override;
 	virtual void SetTempPalette(const Palette<float>& palette) override;
 	virtual void CopyTempPalette(Palette<float>& palette) override;
 #ifdef DO_DOUBLE
 	virtual void SetEmber(const Ember<double>& ember, bool verbatim = false) override;
-	virtual void CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) override;
+	virtual void CopyEmber(Ember<double>& ember, std::function<void(Ember<double>& ember)> perEmberOperation/* = [&](Ember<double>& ember) { }*/) override;
 	virtual void SetEmberFile(const EmberFile<double>& emberFile) override;
-	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation = [&](Ember<double>& ember) { }) override;
+	virtual void CopyEmberFile(EmberFile<double>& emberFile, std::function<void(Ember<double>& ember)> perEmberOperation/* = [&](Ember<double>& ember) { }*/) override;
 	virtual void SetTempPalette(const Palette<double>& palette) override;
 	virtual void CopyTempPalette(Palette<double>& palette) override;
 #endif
