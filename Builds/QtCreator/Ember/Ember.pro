@@ -1,7 +1,7 @@
 TEMPLATE = lib
 CONFIG += shared
 CONFIG += warn_off
-CONFIG += precompile_header
+!macx:CONFIG += precompile_header
 CONFIG -= app_bundle
 CONFIG -= qt
 VERSION = 0.1.4.7
@@ -15,6 +15,14 @@ INCLUDEPATH += /usr/include/glm
 INCLUDEPATH += /usr/include/tbb
 INCLUDEPATH += /usr/include/libxml2
 INCLUDEPATH += ../../../Source/Ember
+
+# homebrew installs into /usr/local
+macx:LIBS += -L/usr/local/lib
+
+macx:INCLUDEPATH += /usr/local/include
+
+macx:QMAKE_MAC_SDK = macosx10.9
+macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
 
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
@@ -47,9 +55,11 @@ QMAKE_CXXFLAGS += -D_USRDLL
 QMAKE_CXXFLAGS += -D_CONSOLE
 QMAKE_CXXFLAGS += -DBUILDING_EMBER
 
+macx:QMAKE_CXXFLAGS += -stdlib=libc++
+
 QMAKE_LFLAGS_RELEASE += -s
 
-PRECOMPILED_HEADER = ../../../Source/Ember/EmberPch.h
+!macx:PRECOMPILED_HEADER = ../../../Source/Ember/EmberPch.h
 
 SOURCES += \
     ../../../Source/Ember/Affine2D.cpp \
