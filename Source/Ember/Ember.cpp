@@ -45,6 +45,12 @@ template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_
 	template EMBER_API class Post##varName##Variation<T>;
 
 #define EXPORT_SINGLE_TYPE_EMBER(T) \
+	template<> bool PaletteList<T>::m_Init = false; \
+	template<> vector<Palette<T>> PaletteList<T>::m_Palettes = vector<Palette<T>>(); \
+	template<> bool XmlToEmber<T>::m_Init = false; \
+	template<> vector<string> XmlToEmber<T>::m_FlattenNames = vector<string>(); \
+	template<> vector<pair<string, string>> XmlToEmber<T>::m_BadParamNames = vector<pair<string, string>>(); \
+	template<> vector<pair<pair<string, string>, vector<string>>> XmlToEmber<T>::m_BadVariationNames = vector<pair<pair<string, string>, vector<string>>>(); \
 	template EMBER_API class Point<T>; \
 	template EMBER_API struct Color<T>; \
 	template EMBER_API class Palette<T>; \
@@ -385,13 +391,7 @@ template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_
 	/*template EMBER_API class RenderCallback<T>;*/ \
 	template EMBER_API class CarToRas<T>; \
 	template EMBER_API class XmlToEmber<T>; \
-	template EMBER_API class EmberToXml<T>; \
-	template<> bool PaletteList<T>::m_Init = false; \
-	template<> vector<Palette<T>> PaletteList<T>::m_Palettes = vector<Palette<T>>(); \
-	template<> bool XmlToEmber<T>::m_Init = false; \
-	template<> vector<string> XmlToEmber<T>::m_FlattenNames = vector<string>(); \
-	template<> vector<pair<string, string>> XmlToEmber<T>::m_BadParamNames = vector<pair<string, string>>(); \
-	template<> vector<pair<pair<string, string>, vector<string>>> XmlToEmber<T>::m_BadVariationNames = vector<pair<pair<string, string>, vector<string>>>();
+	template EMBER_API class EmberToXml<T>;
 
 EXPORT_SINGLE_TYPE_EMBER(float)
 
