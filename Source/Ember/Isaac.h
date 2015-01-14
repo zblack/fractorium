@@ -54,7 +54,7 @@ public:
 	/// Global ISAAC RNG to be used from anywhere. This is not thread safe, so take caution to only
 	/// use it when no other threads are.
 	/// </summary>
-	static unique_ptr<QTIsaac<ALPHA, ISAAC_INT>> GlobalRand;
+	static unique_ptr<QTIsaac<ALPHA, ISAAC_INT> > GlobalRand;
 
 	/// <summary>
 	/// The structure which holds all of the random information.
