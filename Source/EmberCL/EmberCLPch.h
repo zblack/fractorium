@@ -11,9 +11,11 @@
 #include "Timing.h"
 #include "Renderer.h"
 
-#ifdef _WIN32
+#if defined(_WIN32)
 	#include <windows.h>
 	#include <SDKDDKVer.h>
+#elif defined(__APPLE__)
+	#include <OpenGL/gl.h>
 #else
 	#include "GL/glx.h"
 #endif
