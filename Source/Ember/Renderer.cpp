@@ -1198,10 +1198,10 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 			//Use first as random point, the rest are iterated points.
 			//Note that this gets reset with a new random point for each subBatchSize iterations.
 			//This helps correct if iteration happens to be on a bad trajectory.
-			m_Samples[threadIndex][0].m_X = m_Rand[threadIndex].Frand11<T>();
-			m_Samples[threadIndex][0].m_Y = m_Rand[threadIndex].Frand11<T>();
+			m_Samples[threadIndex][0].m_X = m_Rand[threadIndex].template Frand11<T>();
+			m_Samples[threadIndex][0].m_Y = m_Rand[threadIndex].template Frand11<T>();
 			m_Samples[threadIndex][0].m_Z = 0;//m_Ember.m_CamZPos;//Apo set this to 0, then made the user use special variations to kick it. It seems easier to just set it to zpos.
-			m_Samples[threadIndex][0].m_ColorX = m_Rand[threadIndex].Frand01<T>();
+			m_Samples[threadIndex][0].m_ColorX = m_Rand[threadIndex].template Frand01<T>();
 
 			//Finally, iterate.
 			//t.Tic();
