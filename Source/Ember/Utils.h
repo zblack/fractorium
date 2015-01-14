@@ -90,7 +90,7 @@ public:
 	/// <summary>
 	/// Virtual destructor needed for virtual classes.
 	/// </summary>
-	virtual ~EmberReport() __TBB_NOEXCEPT(false) { }
+	virtual ~EmberReport() { }
 
 	/// <summary>
 	/// Write the entire error report as a single string to the console.

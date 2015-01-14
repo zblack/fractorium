@@ -8,6 +8,7 @@ namespace EmberNs
 /// The thread count is set to the number of cores detected on the system.
 /// </summary>
 RendererBase::RendererBase()
+	:m_TaskGroup(new tbb::task_group)
 {
 	m_Abort = false;
 	m_LockAccum = false;

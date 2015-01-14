@@ -18,7 +18,7 @@ namespace EmberCLns
 class EMBERCL_API RendererCLBase
 {
 public:
-	virtual ~RendererCLBase() __TBB_NOEXCEPT(false) { }
+	virtual ~RendererCLBase() { }
 	virtual bool ReadFinal(byte* pixels) = 0;
 	virtual bool ClearFinal() = 0;
 };
@@ -83,7 +83,7 @@ using EmberNs::Renderer<T, T>::XformDistributionsSize;
 
 public:
 	RendererCL(uint platform = 0, uint device = 0, bool shared = false, GLuint outputTexID = 0);
-	~RendererCL() __TBB_NOEXCEPT(false);
+	~RendererCL();
 
 	//Non-virtual member functions for OpenCL specific tasks.
 	bool Init(uint platform, uint device, bool shared, GLuint outputTexID);

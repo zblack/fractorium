@@ -94,7 +94,7 @@ class EMBER_API RendererBase : public EmberReport
 //using EmberReport::m_ErrorReport;
 public:
 	RendererBase();
-	virtual ~RendererBase() __TBB_NOEXCEPT(false) { }
+	virtual ~RendererBase() { }
 
 	//Non-virtual processing functions.
 	void ChangeVal(std::function<void(void)> func, eProcessAction action);
@@ -222,7 +222,7 @@ protected:
 	vector<size_t> m_SubBatch;
 	vector<size_t> m_BadVals;
 	vector<QTIsaac<ISAAC_SIZE, ISAAC_INT>> m_Rand;
-	tbb::task_group m_TaskGroup;
+	auto_ptr<tbb::task_group> m_TaskGroup;
 	CriticalSection m_RenderingCs, m_AccumCs, m_FinalAccumCs, m_ResizeCs;
 	Timing m_RenderTimer, m_IterTimer, m_ProgressTimer;
 };
