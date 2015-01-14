@@ -178,7 +178,7 @@ static bool ReadFile(const char* filename, string& buf, bool nullTerminate = tru
 		{
 			struct _stat statBuf;
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__APPLE__)
 			int statResult = _fstat(f->_file, &statBuf);//Get data associated with file.
 #else
 			int statResult = _fstat(f->_fileno, &statBuf);//Get data associated with file.
