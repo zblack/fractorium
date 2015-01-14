@@ -40,3 +40,4 @@ Bin/x64/Release/testallvarsout.flame
 Data/~$Bench.xlsx
 *.ps1
 Bin/x64/Release/Bench.flame
+Builds/QtCreator/build*
