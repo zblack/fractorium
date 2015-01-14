@@ -1,15 +1,21 @@
 TEMPLATE = lib
 CONFIG += shared
 CONFIG += warn_off
-CONFIG += precompile_header
+!macx:CONFIG += precompile_header
 CONFIG -= app_bundle
 CONFIG -= qt
 VERSION = 0.1.4.7
 
 DESTDIR = $$(HOME)/Dev/fractorium/Bin
 
-LIBS += -L/usr/lib -lOpenCL
-LIBS += -L/usr/lib -lGL
+!macx:LIBS += -L/usr/lib -lGL
+macx:LIBS += -framework OpenGL
+
+!macx:LIBS += -L/usr/lib -lOpenCL
+macx:LIBS += -framework OpenCL
+
+LIBS += -L/usr/lib/x86_64-linux-gnu -lxml2
+LIBS += -L$$DESTDIR -lEmber
 
 INCLUDEPATH += /usr/include/CL
 INCLUDEPATH += /usr/include/GL
@@ -17,6 +23,15 @@ INCLUDEPATH += /usr/include/glm
 INCLUDEPATH += /usr/include/tbb
 INCLUDEPATH += /usr/include/libxml2
 INCLUDEPATH += ../../../Source/Ember
+
+# homebrew installs into /usr/local
+macx:LIBS += -L/usr/local/lib
+
+macx:INCLUDEPATH += /usr/local/include
+macx:INCLUDEPATH += ../../../Deps
+
+macx:QMAKE_MAC_SDK = macosx10.9
+macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
 
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
@@ -49,9 +64,11 @@ QMAKE_CXXFLAGS += -D_USRDLL
 QMAKE_CXXFLAGS += -D_CONSOLE
 QMAKE_CXXFLAGS += -BUILDING_EMBERCL
 
+macx:QMAKE_CXXFLAGS += -stdlib=libc++
+
 QMAKE_LFLAGS_RELEASE += -s
 
-PRECOMPILED_HEADER = ../../../Source/EmberCL/EmberCLPch.h
+!macx:PRECOMPILED_HEADER = ../../../Source/EmberCL/EmberCLPch.h
 
 SOURCES += \
     ../../../Source/EmberCL/DllMain.cpp \
