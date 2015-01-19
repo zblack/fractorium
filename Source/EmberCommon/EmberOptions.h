@@ -48,6 +48,7 @@ enum eOptionIDs
 	OPT_JPEG_COMMENTS,
 	OPT_PNG_COMMENTS,
 	OPT_WRITE_GENOME,
+	OPT_THREADED_WRITE,
 	OPT_ENCLOSED,
 	OPT_NO_EDITS,
 	OPT_UNSMOOTH_EDGE,
@@ -177,10 +178,28 @@ public:
 	}
 
 	/// <summary>
+	/// Default assignment operator.
+	/// </summary>
+	/// <param name="entry">The EmberOptionEntry object to copy</param>
+	EmberOptionEntry<T>& operator = (const EmberOptionEntry<T>& entry)
+	{
+		if (this != &entry)
+		{
+			m_OptionUse = entry.m_OptionUse;
+			m_Option = entry.m_Option;
+			m_DocString = entry.m_DocString;
+			m_NameWithoutDashes = entry.m_NameWithoutDashes;
+			m_Val = entry.m_Val;
+		}
+
+		return *this;
+	}
+
+	/// <summary>
 	/// Functor accessors.
 	/// </summary>
 	inline T    operator() (void) { return m_Val; }
-	inline void operator() (T t)  { m_Val = t;    }
+	inline void operator() (T t) { m_Val = t; }
 
 private:
 	eOptionUse m_OptionUse;
@@ -202,7 +221,16 @@ private:
 
 #define PARSEBOOLOPTION(opt, member) \
 	case (opt): \
-		member(true); \
+		{ \
+			if (member.m_Option.nArgType == SO_OPT) \
+			{ \
+				member(!strcmp(args.OptionArg(), "true")); \
+			} \
+			else \
+			{ \
+				member(true); \
+			} \
+		} \
 		break
 
 //Int.
@@ -284,12 +312,13 @@ public:
 		INITBOOLOPTION(Transparency,   Eob(OPT_USE_ALL,     OPT_TRANSPARENCY,     _T("--transparency"),         false,                SO_NONE,    "\t--transparency           Include alpha channel in final output [default: false except for PNG].\n"));
 		INITBOOLOPTION(NameEnable,     Eob(OPT_USE_RENDER,  OPT_NAME_ENABLE,      _T("--name_enable"),          false,                SO_NONE,    "\t--name_enable            Use the name attribute contained in the xml as the output filename [default: false].\n"));
 		INITBOOLOPTION(IntPalette,     Eob(OPT_RENDER_ANIM, OPT_INT_PALETTE,      _T("--intpalette"),           false,                SO_NONE,    "\t--intpalette             Force palette RGB values to be integers [default: false (float)].\n"));
-		INITBOOLOPTION(HexPalette,     Eob(OPT_USE_ALL,     OPT_HEX_PALETTE,      _T("--hex_palette"),          true,                 SO_NONE,    "\t--hex_palette            Force palette RGB values to be hex [default: true].\n"));
+		INITBOOLOPTION(HexPalette,     Eob(OPT_USE_ALL,		OPT_HEX_PALETTE,	  _T("--hex_palette"),			true,				  SO_OPT,	  "\t--hex_palette            Force palette RGB values to be hex [default: true].\n"));
 		INITBOOLOPTION(InsertPalette,  Eob(OPT_RENDER_ANIM, OPT_INSERT_PALETTE,   _T("--insert_palette"),       false,                SO_NONE,    "\t--insert_palette         Insert the palette into the image for debugging purposes [default: false].\n"));
-		INITBOOLOPTION(JpegComments,   Eob(OPT_RENDER_ANIM, OPT_JPEG_COMMENTS,    _T("--enable_jpeg_comments"), true,                 SO_NONE,    "\t--enable_jpeg_comments   Enables comments in the jpeg header [default: true].\n"));
-		INITBOOLOPTION(PngComments,    Eob(OPT_RENDER_ANIM, OPT_PNG_COMMENTS,     _T("--enable_png_comments"),  true,                 SO_NONE,    "\t--enable_png_comments    Enables comments in the png header [default: true].\n"));
+		INITBOOLOPTION(JpegComments,   Eob(OPT_RENDER_ANIM, OPT_JPEG_COMMENTS,	  _T("--enable_jpeg_comments"), true,				  SO_OPT,	  "\t--enable_jpeg_comments   Enables comments in the jpeg header [default: true].\n"));
+		INITBOOLOPTION(PngComments,    Eob(OPT_RENDER_ANIM, OPT_PNG_COMMENTS,	  _T("--enable_png_comments"),  true,				  SO_OPT,	  "\t--enable_png_comments    Enables comments in the png header [default: true].\n"));
 		INITBOOLOPTION(WriteGenome,    Eob(OPT_USE_ANIMATE, OPT_WRITE_GENOME,     _T("--write_genome"),         false,                SO_NONE,    "\t--write_genome           Write out flame associated with center of motion blur window [default: false].\n"));
-		INITBOOLOPTION(Enclosed,       Eob(OPT_USE_GENOME,  OPT_ENCLOSED,         _T("--enclosed"),             true,                 SO_NONE,    "\t--enclosed               Use enclosing XML tags [default: false].\n"));
+		INITBOOLOPTION(ThreadedWrite,  Eob(OPT_RENDER_ANIM, OPT_THREADED_WRITE,	  _T("--threaded_write"),		true,				  SO_OPT,	  "\t--threaded_write         Use a separate thread to write images to disk. This doubles the memory required for the final output buffer. [default: true].\n"));
+		INITBOOLOPTION(Enclosed,	   Eob(OPT_USE_GENOME,  OPT_ENCLOSED,		  _T("--enclosed"),				true,				  SO_OPT,	  "\t--enclosed               Use enclosing XML tags [default: true].\n"));
 		INITBOOLOPTION(NoEdits,        Eob(OPT_USE_GENOME,  OPT_NO_EDITS,         _T("--noedits"),              false,                SO_NONE,    "\t--noedits                Exclude edit tags when writing Xml [default: false].\n"));
 		INITBOOLOPTION(UnsmoothEdge,   Eob(OPT_USE_GENOME,  OPT_UNSMOOTH_EDGE,    _T("--unsmoother"),           false,                SO_NONE,    "\t--unsmoother             Do not use smooth blending for sheep edges [default: false].\n"));
 		INITBOOLOPTION(LockAccum,	   Eob(OPT_USE_ALL,		OPT_LOCK_ACCUM,       _T("--lock_accum"),           false,                SO_NONE,    "\t--lock_accum             Lock threads when accumulating to the histogram using the CPU. This will drop performance to that of single threading [default: false].\n"));
@@ -422,6 +451,7 @@ public:
 					PARSEBOOLOPTION(OPT_JPEG_COMMENTS, JpegComments);
 					PARSEBOOLOPTION(OPT_PNG_COMMENTS, PngComments);
 					PARSEBOOLOPTION(OPT_WRITE_GENOME, WriteGenome);
+					PARSEBOOLOPTION(OPT_THREADED_WRITE, ThreadedWrite);
 					PARSEBOOLOPTION(OPT_ENCLOSED, Enclosed);
 					PARSEBOOLOPTION(OPT_NO_EDITS, NoEdits);
 					PARSEBOOLOPTION(OPT_UNSMOOTH_EDGE, UnsmoothEdge);
@@ -636,6 +666,7 @@ public:
 	EmberOptionEntry<bool> JpegComments;
 	EmberOptionEntry<bool> PngComments;
 	EmberOptionEntry<bool> WriteGenome;
+	EmberOptionEntry<bool> ThreadedWrite;
 	EmberOptionEntry<bool> Enclosed;
 	EmberOptionEntry<bool> NoEdits;
 	EmberOptionEntry<bool> UnsmoothEdge;

@@ -41,7 +41,7 @@ public:
 
 	//Embers.
 	virtual void SetEmber(const Ember<float>& ember, bool verbatim = false) { }
-	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) { }
+	virtual void CopyEmber(Ember<float>& ember, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) { }//Uncomment default lambdas once LLVM fixes a crash in their compiler with default lambda parameters.//TODO
 	virtual void SetEmberFile(const EmberFile<float>& emberFile) { }
 	virtual void CopyEmberFile(EmberFile<float>& emberFile, std::function<void(Ember<float>& ember)> perEmberOperation/* = [&](Ember<float>& ember) { }*/) { }
 	virtual void SetTempPalette(const Palette<float>& palette) { }
@@ -202,7 +202,7 @@ public:
 	void DeleteRenderer();
 	void SaveCurrentRender(const QString& filename, bool forcePull);
 	RendererBase* Renderer() { return m_Renderer.get(); }
-	vector<byte>* FinalImage() { return &m_FinalImage; }
+	vector<byte>* FinalImage() { return &(m_FinalImage[m_FinalImageIndex]); }
 	vector<byte>* PreviewFinalImage() { return &m_PreviewFinalImage; }
 
 protected:
@@ -215,6 +215,7 @@ protected:
 	bool m_Rendering;
 	bool m_Shared;
 	bool m_LastEditWasUndoRedo;
+	uint m_FinalImageIndex;
 	uint m_Platform;
 	uint m_Device;
 	uint m_SubBatchCount;
@@ -229,7 +230,8 @@ protected:
 	QString m_LastSaveAll;
 	QString m_LastSaveCurrent;
 	CriticalSection m_Cs;
-	vector<byte> m_FinalImage;
+	std::thread m_WriteThread;
+	vector<byte> m_FinalImage[2];
 	vector<byte> m_PreviewFinalImage;
 	vector<eProcessAction> m_ProcessActions;
 	unique_ptr<EmberNs::RendererBase> m_Renderer;

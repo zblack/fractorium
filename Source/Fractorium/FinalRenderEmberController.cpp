@@ -152,7 +152,8 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_Run = true;
 		m_TotalTimer.Tic();//Begin timing for progress of all operations.
 		m_GuiState = m_FinalRenderDialog->State();//Cache render settings from the GUI before running.
-		
+		m_FinalImageIndex = 0;
+
 		size_t i;
 		bool doAll = m_GuiState.m_DoAll && m_EmberFile.Size() > 1;
 		uint currentStripForProgress = 0;//Sort of a hack to get the strip value to the progress function.
@@ -216,6 +217,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 				//even when using double precision, which most cards at the time of this writing already exceed.
 				m_GuiState.m_Strips = 1;
 				m_Renderer->SetEmber(m_EmberFile.m_Embers);//Copy all embers to the local storage inside the renderer.
+				uint finalImageIndex = m_FinalImageIndex;
 
 				//Render each image, cancelling if m_Run ever gets set to false.
 				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
@@ -224,35 +226,44 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 					m_Renderer->Reset();//Have to manually set this since the ember is not set each time through.
 					m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 
-					StripsRender<T>(m_Renderer.get(), m_EmberFile.m_Embers[i], m_FinalImage, i, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
-					[&](size_t strip) { currentStripForProgress = strip; },//Pre strip.
-					[&](size_t strip) { m_Stats = m_Renderer->Stats(); },//Post strip.
-					[&](size_t strip)//Error.
+					//Can't use strips render here. Run() must be called directly for animation.
+					if (m_Renderer->Run(m_FinalImage[finalImageIndex], i) != RENDER_OK)
 					{
 						Output("Renderering failed.\n");
 						m_Fractorium->ErrorReportToQTextEdit(m_Renderer->ErrorReport(), m_FinalRenderDialog->ui.FinalRenderTextOutput, false);//Internally calls invoke.
-					},
-					[&](Ember<T>& finalEmber) { RenderComplete(finalEmber); });//Final strip.
+					}
+					else
+					{
+						if (m_WriteThread.joinable())
+							m_WriteThread.join();
+
+						SetProgressComplete(100);
+						m_Stats = m_Renderer->Stats();
+						m_FinalImageIndex = finalImageIndex;//Will be used inside of RenderComplete(). Set here when no threads are running.
+						//RenderComplete(m_EmberFile.m_Embers[i]);//Non-threaded version for testing.
+						m_WriteThread = std::thread([&] { RenderComplete(m_EmberFile.m_Embers[i]); });
+					}
+
+					finalImageIndex ^= 1;//Toggle the index.
 				}
+
+				if (m_WriteThread.joinable())
+					m_WriteThread.join();
 			}
 			else//Render all images, but not as an animation sequence (without temporal samples motion blur).
 			{
-				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
-				{
-					m_EmberFile.m_Embers[i].m_TemporalSamples = 1;//No temporal sampling.
-				}
-
 				//Render each image, cancelling if m_Run ever gets set to false.
 				for (i = 0; i < m_EmberFile.Size() && m_Run; i++)
 				{
 					Output("Image " + ToString(m_FinishedImageCount) + ":\n" + ComposePath(QString::fromStdString(m_EmberFile.m_Embers[i].m_Name)));
+					m_EmberFile.m_Embers[i].m_TemporalSamples = 1;//No temporal sampling.
 					m_Renderer->SetEmber(m_EmberFile.m_Embers[i]);
-					m_Renderer->PrepFinalAccumVector(m_FinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
+					m_Renderer->PrepFinalAccumVector(m_FinalImage[m_FinalImageIndex]);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 					m_Stats.Clear();
-					Memset(m_FinalImage);
+					Memset(m_FinalImage[m_FinalImageIndex]);
 					m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 
-					StripsRender<T>(m_Renderer.get(), m_EmberFile.m_Embers[i], m_FinalImage, 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
+					StripsRender<T>(m_Renderer.get(), m_EmberFile.m_Embers[i], m_FinalImage[m_FinalImageIndex], 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
 					[&](size_t strip) { currentStripForProgress = strip; },//Pre strip.
 					[&](size_t strip) { m_Stats += m_Renderer->Stats(); },//Post strip.
 					[&](size_t strip)//Error.
@@ -270,13 +281,13 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			ResetProgress();
 			m_Ember->m_TemporalSamples = 1;
 			m_Renderer->SetEmber(*m_Ember);
-			m_Renderer->PrepFinalAccumVector(m_FinalImage);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
+			m_Renderer->PrepFinalAccumVector(m_FinalImage[m_FinalImageIndex]);//Must manually call this first because it could be erroneously made smaller due to strips if called inside Renderer::Run().
 			m_Stats.Clear();
-			Memset(m_FinalImage);
+			Memset(m_FinalImage[m_FinalImageIndex]);
 			Output(ComposePath(QString::fromStdString(m_Ember->m_Name)));
 			m_RenderTimer.Tic();//Toc() is called in RenderComplete().
 			
-			StripsRender<T>(m_Renderer.get(), *m_Ember, m_FinalImage, 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
+			StripsRender<T>(m_Renderer.get(), *m_Ember, m_FinalImage[m_FinalImageIndex], 0, m_GuiState.m_Strips, m_GuiState.m_YAxisUp,
 			[&](size_t strip) { currentStripForProgress = strip; },//Pre strip.
 			[&](size_t strip) { m_Stats += m_Renderer->Stats(); },//Post strip.
 			[&](size_t strip)//Error.
@@ -287,6 +298,7 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 			[&](Ember<T>& finalEmber) { RenderComplete(finalEmber); });//Final strip.
 		}
 
+		m_FinalImageIndex = 0;
 		QString totalTimeString = "All renders completed in: " + QString::fromStdString(m_TotalTimer.Format(m_TotalTimer.Toc())) + ".";
 		Output(totalTimeString);
 
@@ -589,7 +601,7 @@ tuple<size_t, size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemor
 		CancelPreviewRender();
 		m_FinalPreviewRenderFunc();
 
-		p = m_Renderer->MemoryRequired(strips, true);
+		p = m_Renderer->MemoryRequired(strips, true, m_FinalRenderDialog->DoSequence());
 		iterCount = m_Renderer->TotalIterCount(strips);
 	}
 
@@ -677,11 +689,15 @@ void FinalRenderEmberController<T>::RenderComplete(Ember<T>& ember)
 	}
 
 	m_FinishedImageCount++;
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));//Just to be safe.
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, 100));
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderAccumProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, 100));
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTotalProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, int((float(m_FinishedImageCount) / float(m_ImageCount)) * 100)));
-	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderImageCountLabel,    "setText", Qt::QueuedConnection, Q_ARG(const QString&, ToString(m_FinishedImageCount) + " / " + ToString(m_ImageCount)));
+
+	//In a thread if animating, so don't set to complete because it'll be out of sync with the rest of the progress bars.
+	if (!m_GuiState.m_DoSequence)
+	{
+		SetProgressComplete(100);//Just to be safe.
+	}
+
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderTotalProgress,	  "setValue", Qt::QueuedConnection, Q_ARG(int, int((float(m_FinishedImageCount) / float(m_ImageCount)) * 100)));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderImageCountLabel, "setText",  Qt::QueuedConnection, Q_ARG(const QString&, ToString(m_FinishedImageCount) + " / " + ToString(m_ImageCount)));
 
 	status = "Pure render time: " + QString::fromStdString(renderTimeString);
 	Output(status);
@@ -731,6 +747,19 @@ void FinalRenderEmberController<T>::SyncGuiToEmber(Ember<T>& ember, size_t width
 	ember.SetSizeAndAdjustScale(w, h, false, m_FinalRenderDialog->Scale());
 	ember.m_Quality = m_FinalRenderDialog->m_QualitySpin->value();
 	ember.m_Supersample = m_FinalRenderDialog->m_SupersampleSpin->value();
+}
+
+/// <summary>
+/// Set the iteration, density filter, and final accumulation progress bars to the same value.
+/// Usually 0 or 100.
+/// </summary>
+/// <param name="val">The value to set them to</param>
+template <typename T>
+void FinalRenderEmberController<T>::SetProgressComplete(int val)
+{
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderIterationProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, val));//Just to be safe.
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderFilteringProgress, "setValue", Qt::QueuedConnection, Q_ARG(int, val));
+	QMetaObject::invokeMethod(m_FinalRenderDialog->ui.FinalRenderAccumProgress,		"setValue", Qt::QueuedConnection, Q_ARG(int, val));
 }
 
 template class FinalRenderEmberController<float>;

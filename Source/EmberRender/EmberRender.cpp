@@ -36,7 +36,7 @@ bool EmberRender(EmberOptions& opt)
 	ostringstream os;
 	pair<size_t, size_t> p;
 	vector<Ember<T>> embers;
-	vector<byte> finalImage, vecRgb;
+	vector<byte> finalImage;
 	EmberStats stats;
 	EmberReport emberReport;
 	EmberImageComments comments;
@@ -202,7 +202,7 @@ bool EmberRender(EmberOptions& opt)
 		}
 		else
 		{
-			p = renderer->MemoryRequired(1, true);
+			p = renderer->MemoryRequired(1, true, false);//No threaded write for render, only for animate.
 			strips = CalcStrips(double(p.second), double(renderer->MemoryAvailable()), opt.UseMem());
 
 			if (strips > 1)
@@ -280,16 +280,9 @@ bool EmberRender(EmberOptions& opt)
 			VerbosePrint("Writing " + filename);
 
 			if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
-			{
-				RgbaToRgb(finalImage, vecRgb, finalEmber.m_FinalRasW, finalEmber.m_FinalRasH);
+				RgbaToRgb(finalImage, finalImage, renderer->FinalRasW(), renderer->FinalRasH());
 
-				finalImagep = vecRgb.data();
-			}
-			else
-			{
-				finalImagep = finalImage.data();
-			}
-
+			finalImagep = finalImage.data();
 			writeSuccess = false;
 
 			if (opt.Format() == "png")

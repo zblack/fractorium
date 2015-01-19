@@ -42,7 +42,7 @@
 
 namespace EmberNs
 {
-#define EMBER_VERSION "0.4.1.7"
+#define EMBER_VERSION "0.4.1.8"
 #define EPS6 T(1e-6)
 #define EPS std::numeric_limits<T>::epsilon()//Apoplugin.h uses -20, but it's more mathematically correct to do it this way.
 #define ISAAC_SIZE 4

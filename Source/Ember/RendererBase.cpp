@@ -136,15 +136,21 @@ size_t RendererBase::HistMemoryRequired(size_t strips)
 /// Return a pair whose first member contains the amount of memory needed for the histogram,
 /// and whose second member contains the total the amount of memory needed to render the current ember.
 /// Optionally include the memory needed for the final output image in pair.second.
+/// Note that the memory required for the final output image will be doubled if threaded writes
+/// are used because a copy of the final output is passed to a thread.
 /// </summary>
+/// <param name="strips">The number of strips being used</param>
 /// <param name="includeFinal">If true include the memory needed for the final output image, else don't.</param>
+/// <param name="threadedWrite">Whether the caller will be writing the output in a thread, which doubles the memory required for the final output buffer.</param>
 /// <returns>The histogram memory required in first, and the total memory required in second</returns>
-pair<size_t, size_t> RendererBase::MemoryRequired(size_t strips, bool includeFinal)
+pair<size_t, size_t> RendererBase::MemoryRequired(size_t strips, bool includeFinal, bool threadedWrite)
 {
 	pair<size_t, size_t> p;
+	size_t outSize = includeFinal ? FinalBufferSize() : 0;
 
+	outSize *= (threadedWrite ? 2 : 1);
 	p.first = HistMemoryRequired(strips);
-	p.second = (p.first * 2) + (includeFinal ? FinalBufferSize() : 0);//Multiply hist by 2 to account for the density filtering buffer which is the same size as the histogram.
+	p.second = (p.first * 2) + outSize;//Multiply hist by 2 to account for the density filtering buffer which is the same size as the histogram.
 
 	return p;
 }

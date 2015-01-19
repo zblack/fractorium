@@ -131,6 +131,7 @@ protected:
 	void CancelPreviewRender();
 	void RenderComplete(Ember<T>& ember);
 	void SyncGuiToEmber(Ember<T>& ember, size_t widthOverride = 0, size_t heightOverride = 0);
+	void SetProgressComplete(int val);
 
 	Ember<T>* m_Ember;
 	Ember<T> m_PreviewEmber;

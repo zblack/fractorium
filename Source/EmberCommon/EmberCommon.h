@@ -124,6 +124,7 @@ static bool InitPaletteList(const string& filename)
 
 /// <summary>
 /// Convert an RGBA buffer to an RGB buffer.
+/// The two buffers can point to the same memory location if needed.
 /// </summary>
 /// <param name="rgba">The RGBA buffer</param>
 /// <param name="rgb">The RGB buffer</param>
@@ -131,7 +132,8 @@ static bool InitPaletteList(const string& filename)
 /// <param name="height">The height of the image in pixels</param>
 static void RgbaToRgb(vector<byte>& rgba, vector<byte>& rgb, size_t width, size_t height)
 {
-	rgb.resize(width * height * 3);
+	if (rgba.data() != rgb.data())//Only resize the destination buffer if they are different.
+		rgb.resize(width * height * 3);
 
 	for (uint i = 0, j = 0; i < (width * height * 4); i += 4, j += 3)
 	{

@@ -1,3 +1,20 @@
+0.4.1.8 Beta
+--User changes
+	Thread image writing in EmberAnimate and when doing animation sequence in final render dialog.
+	Add total time output for verbose mode in EmberAnimate to match EmberRender.
+
+--Bug Fixes
+	Fix incorrect iters ran/requested percentage in EmberAnimate to match EmberRender.
+	Fix motion blur being disabled when doing animations in final render dialog.
+	Allow for boolean command line options which default to true to be set to false.
+
+--Code Changes
+	Minor changes to enable a Mac build.
+	Double the memory required for the final output buffer in RendererBase::MemoryRequired() when threading image writing.
+	Reuse same buffer for RgbaToRgb() in EmberRender and EmberAnimate.
+	Only resize in RgbaToRgb() if the two vectors are not the same.
+	Add a final output buffer ping-ponging mechanism to facilitate threaded writes in controllers.
+
 0.4.1.7 Beta 01/02/2015
 --User changes
 	Use actual strips count when computing memory requirements in the final render dialog.

@@ -124,9 +124,9 @@ void FractoriumEmberControllerBase::SaveCurrentRender(const QString& filename, b
 		FractoriumSettings* settings = m_Fractorium->m_Settings;
 		RendererCLBase* rendererCL = dynamic_cast<RendererCLBase*>(m_Renderer.get());
 
-		if (forcePull && rendererCL && m_Renderer->PrepFinalAccumVector(m_FinalImage))
+		if (forcePull && rendererCL && m_Renderer->PrepFinalAccumVector(m_FinalImage[m_FinalImageIndex]))
 		{
-			if (!rendererCL->ReadFinal(m_FinalImage.data()))
+			if (!rendererCL->ReadFinal(m_FinalImage[m_FinalImageIndex].data()))
 			{
 				m_Fractorium->ShowCritical("GPU Read Error", "Could not read image from the GPU, aborting image save.", true);
 				return;
@@ -134,17 +134,17 @@ void FractoriumEmberControllerBase::SaveCurrentRender(const QString& filename, b
 		}
 
 		//Ensure dimensions are valid.
-		if (m_FinalImage.size() < (width * height * m_Renderer->NumChannels() * m_Renderer->BytesPerChannel()))
+		if (m_FinalImage[m_FinalImageIndex].size() < (width * height * m_Renderer->NumChannels() * m_Renderer->BytesPerChannel()))
 		{
 			m_Fractorium->ShowCritical("Save Failed", "Dimensions didn't match, not saving.", true);
 			return;
 		}
 
-		data = m_FinalImage.data();//Png and channels == 4.
+		data = m_FinalImage[m_FinalImageIndex].data();//Png and channels == 4.
 		
 		if ((suffix == "jpg" || suffix == "bmp") && m_Renderer->NumChannels() == 4)
 		{
-			RgbaToRgb(m_FinalImage, vecRgb, width, height);
+			RgbaToRgb(m_FinalImage[m_FinalImageIndex], vecRgb, width, height);
 			
 			data = vecRgb.data();
 		}
@@ -358,7 +358,7 @@ bool FractoriumEmberController<T>::Render()
 	if (ProcessState() != ACCUM_DONE)
 	{
 		//if (m_Renderer->Run(m_FinalImage, 0) == RENDER_OK)//Full, non-incremental render for debugging.
-		if (m_Renderer->Run(m_FinalImage, 0, m_SubBatchCount, iterBegin) == RENDER_OK)//Force output on iterBegin.
+		if (m_Renderer->Run(m_FinalImage[m_FinalImageIndex], 0, m_SubBatchCount, iterBegin) == RENDER_OK)//Force output on iterBegin.
 		{
 			//The amount to increment sub batch while rendering proceeds is purely empirical.
 			//Change later if better values can be derived/observed.
@@ -433,7 +433,7 @@ bool FractoriumEmberController<T>::Render()
 			//Update it on finish because the rendering process is completely done.
 			if (iterBegin || ProcessState() == ACCUM_DONE)
 			{
-				if (m_FinalImage.size() == m_Renderer->FinalBufferSize())//Make absolutely sure the correct amount of data is passed.
+				if (m_FinalImage[m_FinalImageIndex].size() == m_Renderer->FinalBufferSize())//Make absolutely sure the correct amount of data is passed.
 					//gl->repaint();
 					gl->update();
 				
@@ -460,7 +460,7 @@ bool FractoriumEmberController<T>::Render()
 				m_Rendering = false;
 				StopRenderTimer(true);
 				m_Fractorium->m_RenderStatusLabel->setText("Rendering failed 3 or more times, stopping all rendering, see info tab. Try changing renderer types.");
-				Memset(m_FinalImage);
+				Memset(m_FinalImage[m_FinalImageIndex]);
 		
 				if (rendererCL)
 					rendererCL->ClearFinal();
@@ -642,6 +642,11 @@ bool Fractorium::CreateControllerFromOptions()
 		if (m_Controller.get())
 		{
 			m_Controller->CopyTempPalette(tempPalette);//Convert float to double or save double verbatim;
+
+			//Replace below with this once LLVM fixes a crash in their compiler with default lambda parameters.//TODO
+			//m_Controller->CopyEmber(ed);
+			//m_Controller->CopyEmberFile(efd);
+
 #ifdef DO_DOUBLE
 			m_Controller->CopyEmber(ed, [&](Ember<double>& ember) { });
 			m_Controller->CopyEmberFile(efd, [&](Ember<double>& ember) { });

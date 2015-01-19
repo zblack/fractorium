@@ -28,15 +28,13 @@ bool EmberAnimate(EmberOptions& opt)
 	//Regular variables.
 	Timing t;
 	bool unsorted = false;
-	bool writeSuccess = false;
 	bool startXml = false;
 	bool finishXml = false;
 	bool appendXml = false;
-	byte* finalImagep;
+	uint finalImageIndex = 0;
 	uint i, channels, ftime;
 	string s, flameName, filename, inputPath = GetPath(opt.Input());
 	ostringstream os;
-	vector<byte> finalImage, vecRgb;
 	vector<Ember<T>> embers;
 	EmberStats stats;
 	EmberReport emberReport;
@@ -44,6 +42,8 @@ bool EmberAnimate(EmberOptions& opt)
 	Ember<T> centerEmber;
 	XmlToEmber<T> parser;
 	EmberToXml<T> emberToXml;
+	vector<byte> finalImages[2];
+	std::thread writeThread;
 	unique_ptr<RenderProgress<T>> progress(new RenderProgress<T>());
 	unique_ptr<Renderer<T, bucketT>> renderer(CreateRenderer<T, bucketT>(opt.EmberCL() ? OPENCL_RENDERER : CPU_RENDERER, opt.Platform(), opt.Device(), false, 0, emberReport));
 	vector<string> errorReport = emberReport.ErrorReport();
@@ -259,6 +259,27 @@ bool EmberAnimate(EmberOptions& opt)
 	renderer->BytesPerChannel(opt.BitsPerChannel() / 8);
 	renderer->Callback(opt.DoProgress() ? progress.get() : nullptr);
 
+	std::function<void(uint)> saveFunc = [&](uint threadVecIndex)
+	{
+		bool writeSuccess = false;
+		byte* finalImagep = finalImages[threadVecIndex].data();
+
+		if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
+			RgbaToRgb(finalImages[threadVecIndex], finalImages[threadVecIndex], renderer->FinalRasW(), renderer->FinalRasH());
+
+		if (opt.Format() == "png")
+			writeSuccess = WritePng(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH(), opt.BitsPerChannel() / 8, opt.PngComments(), comments, opt.Id(), opt.Url(), opt.Nick());
+		else if (opt.Format() == "jpg")
+			writeSuccess = WriteJpeg(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH(), opt.JpegQuality(), opt.JpegComments(), comments, opt.Id(), opt.Url(), opt.Nick());
+		else if (opt.Format() == "ppm")
+			writeSuccess = WritePpm(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH());
+		else if (opt.Format() == "bmp")
+			writeSuccess = WriteBmp(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH());
+
+		if (!writeSuccess)
+			cout << "Error writing " << filename << endl;/**/
+	};
+
 	//Begin run.
 	for (ftime = opt.FirstFrame(); ftime <= opt.LastFrame(); ftime += opt.Dtime())
 	{
@@ -269,7 +290,7 @@ bool EmberAnimate(EmberOptions& opt)
 
 		renderer->Reset();
 
-		if ((renderer->Run(finalImage, localTime) != RENDER_OK) || renderer->Aborted() || finalImage.empty())
+		if ((renderer->Run(finalImages[finalImageIndex], localTime) != RENDER_OK) || renderer->Aborted() || finalImages[finalImageIndex].empty())
 		{
 			cout << "Error: image rendering failed, skipping to next image." << endl;
 			renderer->DumpErrorReport();//Something went wrong, print errors.
@@ -298,12 +319,11 @@ bool EmberAnimate(EmberOptions& opt)
 			emberToXml.Save(flameName, centerEmber, opt.PrintEditDepth(), true, opt.IntPalette(), opt.HexPalette(), true, startXml, finishXml);
 		}
 
-		writeSuccess = false;
 		stats = renderer->Stats();
 		comments = renderer->ImageComments(stats, opt.PrintEditDepth(), opt.IntPalette(), opt.HexPalette());
 		os.str("");
 		size_t iterCount = renderer->TotalIterCount(1);
-		os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << double(stats.m_Iters) / double(iterCount * 100) << "%)";
+		os << comments.m_NumIters << " / " << iterCount << " (" << std::fixed << std::setprecision(2) << ((double(stats.m_Iters) / double(iterCount)) * 100) << "%)";
 
 		VerbosePrint("\nIters ran/requested: " + os.str());
 		VerbosePrint("Bad values: " << stats.m_Badvals);
@@ -312,33 +332,30 @@ bool EmberAnimate(EmberOptions& opt)
 		VerbosePrint("Iters/sec: " << size_t(stats.m_Iters / (stats.m_IterMs / 1000.0)) << endl);
 		VerbosePrint("Writing " + filename);
 
-		if ((opt.Format() == "jpg" || opt.Format() == "bmp") && renderer->NumChannels() == 4)
-		{
-			RgbaToRgb(finalImage, vecRgb, renderer->FinalRasW(), renderer->FinalRasH());
+		//Run image writing in a thread. Although doing it this way duplicates the final output memory, it saves a lot of time
+		//when running with OpenCL. Call join() to ensure the previous thread call has completed.
+		if (writeThread.joinable())
+			writeThread.join();
 
-			finalImagep = vecRgb.data();
-		}
+		uint threadVecIndex = finalImageIndex;//Cache before launching thread.
+
+		if (opt.ThreadedWrite())
+			writeThread = std::thread(saveFunc, threadVecIndex);
 		else
-		{
-			finalImagep = finalImage.data();
-		}
-
-		if (opt.Format() == "png")
-			writeSuccess = WritePng(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH(), opt.BitsPerChannel() / 8, opt.PngComments(), comments, opt.Id(), opt.Url(), opt.Nick());
-		else if (opt.Format() == "jpg")
-			writeSuccess = WriteJpeg(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH(), opt.JpegQuality(), opt.JpegComments(), comments, opt.Id(), opt.Url(), opt.Nick());
-		else if (opt.Format() == "ppm")
-			writeSuccess = WritePpm(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH());
-		else if (opt.Format() == "bmp")
-			writeSuccess = WriteBmp(filename.c_str(), finalImagep, renderer->FinalRasW(), renderer->FinalRasH());
-
-		if (!writeSuccess)
-			cout << "Error writing " << filename << endl;
+			saveFunc(threadVecIndex);
 
 		centerEmber.Clear();
+		finalImageIndex ^= 1;//Toggle the index.
 	}
 
+	if (writeThread.joinable())
+		writeThread.join();
+
 	VerbosePrint("Done.\n");
+
+	if (opt.Verbose())
+		t.Toc("\nTotal time: ", true);
+
 	return true;
 }
 

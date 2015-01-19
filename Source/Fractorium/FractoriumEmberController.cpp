@@ -23,6 +23,7 @@ FractoriumEmberControllerBase::FractoriumEmberControllerBase(Fractorium* fractor
 	m_RenderType = CPU_RENDERER;
 	m_OutputTexID = 0;
 	m_SubBatchCount = 1;//Will be ovewritten by the options on first render.
+	m_FinalImageIndex = 0;
 	m_Fractorium = fractorium;
 	m_RenderTimer = nullptr;
 	m_RenderRestartTimer = nullptr;
