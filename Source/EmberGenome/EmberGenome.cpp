@@ -273,14 +273,17 @@ bool EmberGenome(EmberOptions& opt)
 	else
 		return false;
 
-	if (doCross1 && ParseEmberFile(parser, opt.Cross1(), embers2))
+	if (doCross1)
 	{
-		if (opt.SubBatchSize() != DEFAULT_SBS)
-			for (i = 0; i < embers2.size(); i++)
-				embers2[i].m_SubBatchSize = opt.SubBatchSize();
+		if (ParseEmberFile(parser, opt.Cross1(), embers2))
+		{
+			if (opt.SubBatchSize() != DEFAULT_SBS)
+				for (i = 0; i < embers2.size(); i++)
+					embers2[i].m_SubBatchSize = opt.SubBatchSize();
+		}
+		else
+			return false;
 	}
-	else
-		return false;
 
 	if (opt.CloneAll() != "")
 	{
