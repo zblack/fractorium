@@ -1091,7 +1091,7 @@ public:
 
 			m_Xforms[i].m_Weight = 1;
 			m_Xforms[i].m_ColorSpeed = 0;
-			m_Xforms[i].m_Animate = 0.0;
+			m_Xforms[i].m_Animate = 0;
 			m_Xforms[i].m_ColorX = 1;
 			m_Xforms[i].m_ColorY = 1;//Added in case 2D palette support is ever added.
 			m_Xforms[i].m_Affine.A(-1);
@@ -1114,9 +1114,9 @@ public:
 			Xform<T> xform;
 			AddXform(xform);
 
-			m_Xforms[i].m_Weight = 1.0;
-			m_Xforms[i].m_ColorSpeed = 0.0;
-			m_Xforms[i].m_Animate = 0.0;
+			m_Xforms[i].m_Weight = 1;
+			m_Xforms[i].m_ColorSpeed = 0;
+			m_Xforms[i].m_Animate = 0;
 			m_Xforms[i].m_ColorX = m_Xforms[i].m_ColorY = (sym < 3) ? 0 : (T(k - 1) / T(sym - 2));//Added Y.
 			m_Xforms[i].m_Affine.A(Round6(cos(k * a)));
 			m_Xforms[i].m_Affine.D(Round6(sin(k * a)));

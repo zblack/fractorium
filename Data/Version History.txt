@@ -4,6 +4,7 @@
 	Add total time output for verbose mode in EmberAnimate to match EmberRender.
 
 --Bug Fixes
+	Fix incorrect parsing of legacy "symmetry" xform Xml element.
 	Fix incorrect iters ran/requested percentage in EmberAnimate to match EmberRender.
 	Fix motion blur being disabled when doing animations in final render dialog.
 	Allow for boolean command line options which default to true to be set to false.

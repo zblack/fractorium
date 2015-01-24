@@ -85,7 +85,7 @@ bool EmberGenome(EmberOptions& opt)
 	os2.imbue(std::locale(""));
 
 	if (!errorReport.empty())
-		emberReport.DumpErrorReport();
+		cerr << emberReport.ErrorReportString();
 
 	if (!renderer.get())
 	{
@@ -225,7 +225,7 @@ bool EmberGenome(EmberOptions& opt)
 		return false;
 	}
 
-	if ((!doCross0) ^ (!doCross1))
+	if (doCross0 != doCross1)//Must both be either true or false.
 	{
 		cerr << "Must specify both crossover arguments. Returning without executing." << endl;
 		return false;
@@ -518,7 +518,7 @@ bool EmberGenome(EmberOptions& opt)
 	}
 
 	if (opt.Enclosed())
-		out << "<pick version=\"EMBER-" << EmberVersion() << "\">" << endl;
+		cout << "<pick version=\"EMBER-" << EmberVersion() << "\">" << endl;
 
 	for (rep = 0; rep < opt.Repeat(); rep++)
 	{

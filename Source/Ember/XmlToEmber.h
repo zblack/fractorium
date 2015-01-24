@@ -1067,7 +1067,6 @@ private:
 			//First parse out simple float reads.
 			if (ParseAndAssignFloat(curAtt->name, attStr, "weight", xform.m_Weight, success)) { }
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "color_speed", xform.m_ColorSpeed, success)) { }
-			else if (ParseAndAssignFloat(curAtt->name, attStr, "symmetry", xform.m_ColorSpeed, success)) { xform.m_ColorSpeed = (1 - xform.m_ColorSpeed) / 2; }//Legacy support.
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "animate", xform.m_Animate, success)) { }
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "opacity", xform.m_Opacity, success)) { }
 			else if (ParseAndAssignFloat(curAtt->name, attStr, "var_color", xform.m_DirectColor, success)) { }
@@ -1081,7 +1080,7 @@ private:
 				xform.m_Name = string(attStr);
 				std::replace(xform.m_Name.begin(), xform.m_Name.end(), ' ', '_');
 			}
-			else if (!Compare(curAtt->name, "symmetry"))
+			else if (!Compare(curAtt->name, "symmetry"))//Legacy support.
 			{
 				//Deprecated, set both color_speed and animate to this value.
 				//Huh? Either set it or not?
