@@ -66,7 +66,7 @@ QMAKE_CXXFLAGS += -BUILDING_EMBERCL
 
 macx:QMAKE_CXXFLAGS += -stdlib=libc++
 
-QMAKE_LFLAGS_RELEASE += -s
+!macx:QMAKE_LFLAGS_RELEASE += -s
 
 !macx:PRECOMPILED_HEADER = ../../../Source/EmberCL/EmberCLPch.h
 

@@ -79,7 +79,7 @@ QMAKE_CXXFLAGS += -D_M_X64
 QMAKE_CXXFLAGS += -D_USRDLL 
 QMAKE_CXXFLAGS += -D_CONSOLE
 
-QMAKE_LFLAGS_RELEASE += -s
+!macx:QMAKE_LFLAGS_RELEASE += -s
 
 !macx:PRECOMPILED_HEADER = ../../../Source/Fractorium/FractoriumPch.h
 

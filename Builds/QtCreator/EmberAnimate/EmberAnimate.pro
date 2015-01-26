@@ -72,7 +72,7 @@ QMAKE_CXXFLAGS += -D_CONSOLE
 
 macx:QMAKE_CXXFLAGS += -stdlib=libc++
 
-QMAKE_LFLAGS_RELEASE += -s
+!macx:QMAKE_LFLAGS_RELEASE += -s
 
 !macx:PRECOMPILED_HEADER = ../../../Source/EmberCommon/EmberCommonPch.h
 
