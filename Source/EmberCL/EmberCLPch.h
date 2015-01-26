@@ -21,6 +21,12 @@
 #endif
 
 #include <utility>
+
+#ifdef NVIDIA
+#undef CL_VERSION_1_2
+#define CL_VERSION_1_1
+#endif
+
 #include <CL/cl.hpp>
 
 #include <algorithm>

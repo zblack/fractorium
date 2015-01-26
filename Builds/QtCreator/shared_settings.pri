@@ -23,6 +23,17 @@ macx {
   QMAKE_LFLAGS_RELEASE += -s
 }
 
+nvidia {
+  QMAKE_CXXFLAGS += -DNVIDIA
+}
+
+native {
+  QMAKE_CXXFLAGS += -march=native
+} else {
+  QMAKE_CXXFLAGS += -march=k8
+}
+
+
 DESTDIR = $$(HOME)/Dev/fractorium/Bin
 
 LIBS += -L/usr/lib -ljpeg
