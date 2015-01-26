@@ -39,5 +39,10 @@ Builds/MSVC/VS2010/Obj/Ember/x64/Debug/Ember_manifest.rc
 Bin/x64/Release/testallvarsout.flame
 Data/~$Bench.xlsx
 *.ps1
+*.o
+ui_*.h
+qrc_*.cpp
 Bin/x64/Release/Bench.flame
 Builds/QtCreator/build*
+Makefile
+.qmake.stash
