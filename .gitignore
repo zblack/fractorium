@@ -46,3 +46,4 @@ Bin/x64/Release/Bench.flame
 Builds/QtCreator/build*
 Makefile
 .qmake.stash
+*.gch
