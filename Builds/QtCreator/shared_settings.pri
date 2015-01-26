@@ -1,15 +1,29 @@
 CONFIG += warn_off
 VERSION = 0.1.4.7
 
-!macx:CONFIG += precompile_header
+macx {
+  LIBS += -framework OpenGL
+  LIBS += -framework OpenCL
+
+  # homebrew installs into /usr/local
+  LIBS += -L/usr/local/lib
+
+  INCLUDEPATH += /usr/local/include
+  INCLUDEPATH += ../../../Deps
+
+  QMAKE_MAC_SDK = macosx10.9
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
+
+  QMAKE_CXXFLAGS += -stdlib=libc++
+} else {
+  CONFIG += precompile_header
+  LIBS += -L/usr/lib -lGL
+  LIBS += -L/usr/lib -lOpenCL
+
+  QMAKE_LFLAGS_RELEASE += -s
+}
 
 DESTDIR = $$(HOME)/Dev/fractorium/Bin
-
-!macx:LIBS += -L/usr/lib -lGL
-macx:LIBS += -framework OpenGL
-
-!macx:LIBS += -L/usr/lib -lOpenCL
-macx:LIBS += -framework OpenCL
 
 LIBS += -L/usr/lib -ljpeg
 LIBS += -L/usr/lib -lpng
@@ -27,19 +41,9 @@ INCLUDEPATH += ../../../Source/Ember
 INCLUDEPATH += ../../../Source/EmberCL
 INCLUDEPATH += ../../../Source/EmberCommon
 
-# homebrew installs into /usr/local
-macx:LIBS += -L/usr/local/lib
-
-macx:INCLUDEPATH += /usr/local/include
-macx:INCLUDEPATH += ../../../Deps
-
-macx:QMAKE_MAC_SDK = macosx10.9
-macx:QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.9
-
-QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 QMAKE_CXXFLAGS_RELEASE += -O2
+QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
 
-QMAKE_CXXFLAGS += -march=k8
 QMAKE_CXXFLAGS += -fPIC
 QMAKE_CXXFLAGS += -fpermissive
 QMAKE_CXXFLAGS += -fomit-frame-pointer
@@ -66,8 +70,4 @@ QMAKE_CXXFLAGS += -Wold-style-cast
 QMAKE_CXXFLAGS += -D_M_X64
 QMAKE_CXXFLAGS += -D_CONSOLE
 QMAKE_CXXFLAGS += -D_USRDLL
-
-macx:QMAKE_CXXFLAGS += -stdlib=libc++
-
-!macx:QMAKE_LFLAGS_RELEASE += -s
 
