@@ -44,6 +44,10 @@ public:
 		Init();
 	}
 
+	/// <summary>
+	/// Copy constructor to copy an Ember object of the same type.
+	/// </summary>
+	/// <param name="ember">The Ember object to copy</param>
 	Ember(const Ember<T>& ember)
 		: m_Edits(nullptr)
 	{
@@ -69,8 +73,12 @@ public:
 		ClearEdit();
 	}
 
-	//For some reason the compiler requires Xform to define two assignment operators,
-	//however it gets confused when Ember has two.
+	/// <summary>
+	/// Assignment operator to copy an Ember object of the same type.
+	/// For some reason the compiler requires Xform to define two assignment operators,
+	/// however it gets confused when Ember has two.
+	/// </summary>
+	/// <param name="ember">The Ember object to copy</param>
 	Ember<T>& operator = (const Ember<T>& ember)
 	{
 		if (this != &ember)

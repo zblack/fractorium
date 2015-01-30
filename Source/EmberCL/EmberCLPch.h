@@ -23,8 +23,15 @@
 #include <utility>
 
 #ifdef NVIDIA
-#undef CL_VERSION_1_2
-#define CL_VERSION_1_1
+	#ifdef CL_VERSION_1_2
+		#undef CL_VERSION_1_2
+	#endif
+
+	#if !defined(WIN32) && !defined(_WIN32)
+		#ifndef CL_VERSION_1_1
+			#define CL_VERSION_1_1
+		#endif
+	#endif
 #endif
 
 #include <CL/cl.hpp>

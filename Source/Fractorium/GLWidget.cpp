@@ -251,7 +251,6 @@ void GLWidget::paintGL()
 		glDisable(GL_LINE_SMOOTH);
 		glDisable(GL_POINT_SMOOTH);
 
-		glFinish();
 		m_Drawing = false;
 	}
 }
