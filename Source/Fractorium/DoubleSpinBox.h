@@ -22,7 +22,9 @@ public:
 	void DoubleClick(bool b);
 	void DoubleClickZero(double val);
 	void DoubleClickNonZero(double val);
+	double Step();
 	void Step(double step);
+	double SmallStep();
 	void SmallStep(double step);
 	QLineEdit* lineEdit();
 

@@ -97,48 +97,64 @@ void Fractorium::InitXformsAffineUI()
 	connect(ui.ShowPostAffineAllRadio,     SIGNAL(toggled(bool)), this, SLOT(OnAffineDrawAllCurrentRadioButtonToggled(bool)), Qt::QueuedConnection);
 	connect(ui.ShowPostAffineCurrentRadio, SIGNAL(toggled(bool)), this, SLOT(OnAffineDrawAllCurrentRadioButtonToggled(bool)), Qt::QueuedConnection);
 
+	connect(ui.PolarAffineCheckBox, SIGNAL(stateChanged(int)), this, SLOT(OnPolarAffineCheckBoxStateChanged(int)), Qt::QueuedConnection);
+
 #ifndef WIN32
-    //For some reason linux makes these 24x24, even though the designer explicitly says 16x16.
-    //Also, in order to get 4 pixels of spacing between elements in the grid layout, 0 must be specified.
-    ui.PreFlipHorizontalButton->setIconSize(QSize(16, 16));
-    ui.PreFlipVerticalButton->setIconSize(QSize(16, 16));
-    ui.PreRotate90CButton->setIconSize(QSize(16, 16));
-    ui.PreRotate90CcButton->setIconSize(QSize(16, 16));
-    ui.PreRotateCButton->setIconSize(QSize(16, 16));
-    ui.PreRotateCcButton->setIconSize(QSize(16, 16));
-    ui.PreMoveUpButton->setIconSize(QSize(16, 16));
-    ui.PreMoveDownButton->setIconSize(QSize(16, 16));
-    ui.PreMoveLeftButton->setIconSize(QSize(16, 16));
-    ui.PreMoveRightButton->setIconSize(QSize(16, 16));
-    ui.PreScaleDownButton->setIconSize(QSize(16, 16));
-    ui.PreScaleUpButton->setIconSize(QSize(16, 16));
-    ui.PreResetButton->setIconSize(QSize(16, 16));
-    ui.PreAffineGridLayout->setHorizontalSpacing(0);
-    ui.PreAffineGridLayout->setVerticalSpacing(0);
-    
-    ui.PostFlipHorizontalButton->setIconSize(QSize(16, 16));
-    ui.PostFlipVerticalButton->setIconSize(QSize(16, 16));
-    ui.PostRotate90CButton->setIconSize(QSize(16, 16));
-    ui.PostRotate90CcButton->setIconSize(QSize(16, 16));
-    ui.PostRotateCButton->setIconSize(QSize(16, 16));
-    ui.PostRotateCcButton->setIconSize(QSize(16, 16));
-    ui.PostMoveUpButton->setIconSize(QSize(16, 16));
-    ui.PostMoveDownButton->setIconSize(QSize(16, 16));
-    ui.PostMoveLeftButton->setIconSize(QSize(16, 16));
-    ui.PostMoveRightButton->setIconSize(QSize(16, 16));
-    ui.PostScaleDownButton->setIconSize(QSize(16, 16));
-    ui.PostScaleUpButton->setIconSize(QSize(16, 16));
-    ui.PostResetButton->setIconSize(QSize(16, 16));
-    ui.PostAffineGridLayout->setHorizontalSpacing(0);
-    ui.PostAffineGridLayout->setVerticalSpacing(0);
-    
-    //Further, the size of the dock widget won't be properly adjusted until the xforms tab is shown.
-    //So show it here and it will be switched back in Fractorium's constructor.
-    ui.ParamsTabWidget->setCurrentIndex(2);
-    ui.DockWidget->update();
+	//For some reason linux makes these 24x24, even though the designer explicitly says 16x16.
+	//Also, in order to get 4 pixels of spacing between elements in the grid layout, 0 must be specified.
+	ui.PreFlipHorizontalButton->setIconSize(QSize(16, 16));
+	ui.PreFlipVerticalButton->setIconSize(QSize(16, 16));
+	ui.PreRotate90CButton->setIconSize(QSize(16, 16));
+	ui.PreRotate90CcButton->setIconSize(QSize(16, 16));
+	ui.PreRotateCButton->setIconSize(QSize(16, 16));
+	ui.PreRotateCcButton->setIconSize(QSize(16, 16));
+	ui.PreMoveUpButton->setIconSize(QSize(16, 16));
+	ui.PreMoveDownButton->setIconSize(QSize(16, 16));
+	ui.PreMoveLeftButton->setIconSize(QSize(16, 16));
+	ui.PreMoveRightButton->setIconSize(QSize(16, 16));
+	ui.PreScaleDownButton->setIconSize(QSize(16, 16));
+	ui.PreScaleUpButton->setIconSize(QSize(16, 16));
+	ui.PreResetButton->setIconSize(QSize(16, 16));
+	ui.PreAffineGridLayout->setHorizontalSpacing(0);
+	ui.PreAffineGridLayout->setVerticalSpacing(0);
+	
+	ui.PostFlipHorizontalButton->setIconSize(QSize(16, 16));
+	ui.PostFlipVerticalButton->setIconSize(QSize(16, 16));
+	ui.PostRotate90CButton->setIconSize(QSize(16, 16));
+	ui.PostRotate90CcButton->setIconSize(QSize(16, 16));
+	ui.PostRotateCButton->setIconSize(QSize(16, 16));
+	ui.PostRotateCcButton->setIconSize(QSize(16, 16));
+	ui.PostMoveUpButton->setIconSize(QSize(16, 16));
+	ui.PostMoveDownButton->setIconSize(QSize(16, 16));
+	ui.PostMoveLeftButton->setIconSize(QSize(16, 16));
+	ui.PostMoveRightButton->setIconSize(QSize(16, 16));
+	ui.PostScaleDownButton->setIconSize(QSize(16, 16));
+	ui.PostScaleUpButton->setIconSize(QSize(16, 16));
+	ui.PostResetButton->setIconSize(QSize(16, 16));
+	ui.PostAffineGridLayout->setHorizontalSpacing(0);
+	ui.PostAffineGridLayout->setVerticalSpacing(0);
+	
+	//Further, the size of the dock widget won't be properly adjusted until the xforms tab is shown.
+	//So show it here and it will be switched back in Fractorium's constructor.
+	ui.ParamsTabWidget->setCurrentIndex(2);
+	ui.DockWidget->update();
 #endif
-    
-    
+	
+	//Placing pointers to the spin boxes in arrays makes them easier to access in various places.
+	m_PreSpins[0] = m_PreX1Spin;//A
+	m_PreSpins[1] = m_PreY1Spin;//B
+	m_PreSpins[2] = m_PreO1Spin;//C
+	m_PreSpins[3] = m_PreX2Spin;//D
+	m_PreSpins[4] = m_PreY2Spin;//E
+	m_PreSpins[5] = m_PreO2Spin;//F
+
+	m_PostSpins[0] = m_PostX1Spin;
+	m_PostSpins[1] = m_PostY1Spin;
+	m_PostSpins[2] = m_PostO1Spin;
+	m_PostSpins[3] = m_PostX2Spin;
+	m_PostSpins[4] = m_PostY2Spin;
+	m_PostSpins[5] = m_PostO2Spin;
+
 	ui.PostAffineGroupBox->setChecked(true);//Flip it once to force the disabling of the group box.
 	ui.PostAffineGroupBox->setChecked(false);
 }
@@ -155,32 +171,52 @@ void FractoriumEmberController<T>::AffineSetHelper(double d, int index, bool pre
 {
 	UpdateCurrentXform([&] (Xform<T>* xform)
 	{
-		QObject* objSender = m_Fractorium->sender();
-		DoubleSpinBox* spinBox = dynamic_cast<DoubleSpinBox*>(objSender);
+		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
+		DoubleSpinBox** spinners = pre ? m_Fractorium->m_PreSpins : m_Fractorium->m_PostSpins;
 
-		if (spinBox)
+		if (m_Fractorium->ui.PolarAffineCheckBox->isChecked())
 		{
-			Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
-
 			switch (index)
 			{
 				case 0:
-					affine->A(spinBox->value());
+				case 3:
+					affine->A(cos(spinners[0]->value() * DEG_2_RAD) * spinners[3]->value());
+					affine->D(sin(spinners[0]->value() * DEG_2_RAD) * spinners[3]->value());
 					break;
 				case 1:
-					affine->B(spinBox->value());
+				case 4:
+					affine->B(cos(spinners[1]->value() * DEG_2_RAD) * spinners[4]->value());
+					affine->E(sin(spinners[1]->value() * DEG_2_RAD) * spinners[4]->value());
 					break;
 				case 2:
-					affine->C(spinBox->value());
+				case 5:
+				default:
+					affine->C(cos(spinners[2]->value() * DEG_2_RAD) * spinners[5]->value());
+					affine->F(sin(spinners[2]->value() * DEG_2_RAD) * spinners[5]->value());
+					break;
+			}
+		}
+		else
+		{
+			switch (index)
+			{
+				case 0:
+					affine->A(d);
+					break;
+				case 1:
+					affine->B(d);
+					break;
+				case 2:
+					affine->C(d);
 					break;
 				case 3:
-					affine->D(spinBox->value());
+					affine->D(d);
 					break;
 				case 4:
-					affine->E(spinBox->value());
+					affine->E(d);
 					break;
 				case 5:
-					affine->F(spinBox->value());
+					affine->F(d);
 					break;
 			}
 		}
@@ -466,6 +502,16 @@ void FractoriumEmberController<T>::ResetCurrentXformAffine(bool pre)
 void Fractorium::OnResetAffineButtonClicked(bool checked) { m_Controller->ResetCurrentXformAffine(sender() == ui.PreResetButton); }
 
 /// <summary>
+/// Fill the GUI with the pre and post affine xform values.
+/// </summary>
+template <typename T>
+void FractoriumEmberController<T>::FillBothAffines()
+{
+	FillAffineWithXform(CurrentXform(), true);
+	FillAffineWithXform(CurrentXform(), false);
+}
+
+/// <summary>
 /// Fill the GUI with the pre/post affine xform values.
 /// </summary>
 /// <param name="xform">The xform to fill with</param>
@@ -473,23 +519,26 @@ void Fractorium::OnResetAffineButtonClicked(bool checked) { m_Controller->ResetC
 template <typename T>
 void FractoriumEmberController<T>::FillAffineWithXform(Xform<T>* xform, bool pre)
 {
-	if (pre)
+	DoubleSpinBox** spinners = pre ? m_Fractorium->m_PreSpins : m_Fractorium->m_PostSpins;
+	const Affine2D<T>& affine = pre ? xform->m_Affine : xform->m_Post;
+
+	if (m_Fractorium->ui.PolarAffineCheckBox->isChecked())
 	{
-		m_Fractorium->m_PreX1Spin->SetValueStealth(xform->m_Affine.A());
-		m_Fractorium->m_PreY1Spin->SetValueStealth(xform->m_Affine.B());
-		m_Fractorium->m_PreO1Spin->SetValueStealth(xform->m_Affine.C());
-		m_Fractorium->m_PreX2Spin->SetValueStealth(xform->m_Affine.D());
-		m_Fractorium->m_PreY2Spin->SetValueStealth(xform->m_Affine.E());
-		m_Fractorium->m_PreO2Spin->SetValueStealth(xform->m_Affine.F());
+		spinners[0]->SetValueStealth(RAD_2_DEG * atan2(affine.D(), affine.A()));
+		spinners[1]->SetValueStealth(RAD_2_DEG * atan2(affine.E(), affine.B()));
+		spinners[2]->SetValueStealth(RAD_2_DEG * atan2(affine.F(), affine.C()));
+		spinners[3]->SetValueStealth(Hypot(affine.D(), affine.A()));
+		spinners[4]->SetValueStealth(Hypot(affine.E(), affine.B()));
+		spinners[5]->SetValueStealth(Hypot(affine.F(), affine.C()));
 	}
 	else
 	{
-		m_Fractorium->m_PostX1Spin->SetValueStealth(xform->m_Post.A());
-		m_Fractorium->m_PostY1Spin->SetValueStealth(xform->m_Post.B());
-		m_Fractorium->m_PostO1Spin->SetValueStealth(xform->m_Post.C());
-		m_Fractorium->m_PostX2Spin->SetValueStealth(xform->m_Post.D());
-		m_Fractorium->m_PostY2Spin->SetValueStealth(xform->m_Post.E());
-		m_Fractorium->m_PostO2Spin->SetValueStealth(xform->m_Post.F());
+		spinners[0]->SetValueStealth(affine.A());
+		spinners[1]->SetValueStealth(affine.B());
+		spinners[2]->SetValueStealth(affine.C());
+		spinners[3]->SetValueStealth(affine.D());
+		spinners[4]->SetValueStealth(affine.E());
+		spinners[5]->SetValueStealth(affine.F());
 	}
 }
 
@@ -514,6 +563,31 @@ void Fractorium::OnAffineDrawAllCurrentRadioButtonToggled(bool checked)
 {
 	OnCurrentXformComboChanged(ui.CurrentXformCombo->currentIndex());
 	ui.GLDisplay->update();
+}
+
+/// <summary>
+/// Set whether to display affine values in polar vs. rectangular coordinates.
+/// Updates the current affine display.
+/// </summary>
+/// <param name="state">The state of the checkbox</param>
+void Fractorium::OnPolarAffineCheckBoxStateChanged(int state)
+{
+	double mult = state ? 100 : 0.01;
+	double step = m_PreX1Spin->Step() * mult;
+	double small = m_PreX1Spin->SmallStep() * mult;
+	double click = state ? 90 : 1;
+
+	for (int i = 0; i < 3; i++)
+	{
+		m_PreSpins[i]->Step(step);
+		m_PreSpins[i]->SmallStep(small);
+		m_PostSpins[i]->Step(step);
+		m_PostSpins[i]->SmallStep(small);
+		m_PreSpins[i]->DoubleClickZero(click);
+		m_PostSpins[i]->DoubleClickZero(click);
+	}
+
+	m_Controller->FillBothAffines();
 }
 
 /// <summary>

@@ -211,6 +211,7 @@ public slots:
 
 	void OnAffineGroupBoxToggled(bool on);
 	void OnAffineDrawAllCurrentRadioButtonToggled(bool checked);
+	void OnPolarAffineCheckBoxStateChanged(int state);
 
 	//Xforms Color.
 	void OnXformColorIndexChanged(double d);
@@ -384,6 +385,9 @@ private:
 	DoubleSpinBox* m_PostY2Spin;
 	DoubleSpinBox* m_PostO1Spin;
 	DoubleSpinBox* m_PostO2Spin;
+	
+	DoubleSpinBox* m_PreSpins[6];
+	DoubleSpinBox* m_PostSpins[6];
 
 	//Palette.
 	SpinBox* m_PaletteHueSpin;

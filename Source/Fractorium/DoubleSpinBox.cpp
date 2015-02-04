@@ -72,12 +72,28 @@ void DoubleSpinBox::DoubleClickNonZero(double val)
 }
 
 /// <summary>
+/// Get the default step used when the user scrolls.
+/// </summary>
+double DoubleSpinBox::Step()
+{
+	return m_Step;
+}
+
+/// <summary>
 /// Set the default step to be used when the user scrolls.
 /// </summary>
 /// <param name="step">The step to use for scrolling</param>
 void DoubleSpinBox::Step(double step)
 {
 	m_Step = step;
+}
+
+/// <summary>
+/// Get the small step to be used when the user holds down shift while scrolling.
+/// </summary>
+double DoubleSpinBox::SmallStep()
+{
+	return m_SmallStep;
 }
 
 /// <summary>

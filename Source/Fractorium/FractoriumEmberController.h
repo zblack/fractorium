@@ -148,6 +148,7 @@ public:
 	virtual void MoveCurrentXform(double x, double y, bool pre) { }
 	virtual void ScaleCurrentXform(double scale, bool pre) { }
 	virtual void ResetCurrentXformAffine(bool pre) { }
+	virtual void FillBothAffines() { }
 
 	//Xforms Color.
 	virtual void XformColorIndexChanged(double d, bool updateRender) { }
@@ -368,6 +369,7 @@ public:
 	virtual void MoveCurrentXform(double x, double y, bool pre) override;
 	virtual void ScaleCurrentXform(double scale, bool pre) override;
 	virtual void ResetCurrentXformAffine(bool pre) override;
+	virtual void FillBothAffines() override;
 	void FillAffineWithXform(Xform<T>* xform, bool pre);
 
 	//Xforms Color.
