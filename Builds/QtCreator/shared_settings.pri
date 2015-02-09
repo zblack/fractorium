@@ -54,10 +54,10 @@ INCLUDEPATH += ../../../Source/EmberCommon
 
 QMAKE_CXXFLAGS_RELEASE += -O2
 QMAKE_CXXFLAGS_RELEASE += -DNDEBUG
+QMAKE_CXXFLAGS_RELEASE += -fomit-frame-pointer
 
 QMAKE_CXXFLAGS += -fPIC
 QMAKE_CXXFLAGS += -fpermissive
-QMAKE_CXXFLAGS += -fomit-frame-pointer
 QMAKE_CXXFLAGS += -pedantic
 QMAKE_CXXFLAGS += -std=c++11
 QMAKE_CXXFLAGS += -Wnon-virtual-dtor
