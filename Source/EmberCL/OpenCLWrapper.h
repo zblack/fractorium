@@ -192,6 +192,7 @@ public:
 	uint LocalMemSize() const;
 	size_t GlobalMemSize() const;
 	size_t MaxAllocSize() const;
+  std::vector<std::string> ProgramBuildErrors() const;
 
 	static void MakeEvenGridDims(uint blockW, uint blockH, uint& gridW, uint& gridH);
 
@@ -217,5 +218,6 @@ private:
 	std::vector<NamedBuffer> m_Buffers;
 	std::vector<NamedImage2D> m_Images;
 	std::vector<NamedImage2DGL> m_GLImages;
+  std::vector<std::string> m_programBuildErrors;
 };
 }

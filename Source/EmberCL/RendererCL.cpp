@@ -1276,7 +1276,11 @@ int RendererCL<T>::MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale)
 		if (b)
 			kernelIndex = m_Wrapper.FindKernelIndex(finalAccumEntryPoint);//Try to find it again, it will be present if successfully built.
 		else
+    {
+      std::vector<std::string> errors = m_Wrapper.ProgramBuildErrors();
+      m_ErrorReport.insert(m_ErrorReport.end(), errors.begin(), errors.end());
 			m_ErrorReport.push_back(loc);
+    }
 	}
 
 	return kernelIndex;
