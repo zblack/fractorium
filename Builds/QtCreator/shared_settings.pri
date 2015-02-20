@@ -35,6 +35,7 @@ native {
 
 
 DESTDIR = $$(HOME)/Dev/fractorium/Bin
+debug:DESTDIR = $$(HOME)/Dev/fractorium/Dbg
 
 LIBS += -L/usr/lib -ljpeg
 LIBS += -L/usr/lib -lpng
