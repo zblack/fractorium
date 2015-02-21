@@ -377,7 +377,7 @@ string FinalAccumOpenCLKernelCreator<T>::CreateGammaCorrectionFunctionString(boo
 
 	os <<
 	"\n"
-	"			correctedChannels[rgbi] = (" << dataType << ")clamp(a, 0.0f, 255.0f);\n"
+	"			correctedChannels[rgbi] = (" << dataType << ")clamp(a, T(0.0), T(255.0));\n"
 	"		}\n"
 	"\n";
 

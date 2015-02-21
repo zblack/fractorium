@@ -1221,10 +1221,13 @@ bool OpenCLWrapper::CreateSPK(const string& name, const string& program, const s
 {
 	if (m_Init)
 	{
+		std::string precisionDef(doublePrecision ? "#define T(v) (double)(v)\n" : "#define T(v) (float)(v)\n");
+		std::string p(precisionDef + program);
+
 		cl_int err;
 
 		spk.m_Name = name;
-		spk.m_Source = cl::Program::Sources(1, std::make_pair(program.c_str(), program.length() + 1));
+		spk.m_Source = cl::Program::Sources(1, std::make_pair(p.c_str(), p.length() + 1));
 		spk.m_Program = cl::Program(m_Context, spk.m_Source);
 
 		if (doublePrecision)
