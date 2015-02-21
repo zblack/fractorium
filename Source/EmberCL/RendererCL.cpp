@@ -742,8 +742,13 @@ bool RendererCL<T>::BuildIterProgramForEmber(bool doAccum)
 		m_LastBuiltEmber = m_Ember;
 	}
 	else
-	{
-		m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + m_IterKernel + "\n");
+  {
+    //m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + m_IterKernel + "\n");
+
+    std::vector<std::string> errors = m_Wrapper.ProgramBuildErrors();
+    m_ErrorReport.insert(m_ErrorReport.end(), errors.begin(), errors.end());
+    m_ErrorReport.push_back(loc);
+
 		return false;
 	}
 
