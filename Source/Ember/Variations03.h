@@ -130,7 +130,7 @@ public:
 		string power       = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t r2 = pow(precalcSumSquares, " << power << " * 0.5) * xform->m_VariationWeights[" << varIndex << "];\n"
+		   << "\t\treal_t r2 = pow(precalcSumSquares, " << power << " * T(0.5)) * xform->m_VariationWeights[" << varIndex << "];\n"
 		   << "\t\treal_t ran = (precalcAtanyx / Zeps(" << denominator << ") + (" << root << " * M_2PI * floor(MwcNext01(mwc) * " << denominator << ") / Zeps(" << denominator << "))) * " << numerator << ";\n"
 		   << "\n"
 		   << "\t\tvOut.x = r2 * cos(ran);\n"
@@ -202,7 +202,7 @@ public:
 		string b = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t u = sqrt(ClampGte(Zeps(" << a << ") * SQR(vIn.x) + Zeps(" << b << ") * SQR(vIn.y), 0.0));\n"
+		   << "\t\treal_t u = sqrt(ClampGte(Zeps(" << a << ") * SQR(vIn.x) + Zeps(" << b << ") * SQR(vIn.y), T(0.0)));\n"
 		   << "\n"
 		   << "\t\tvOut.x = cos(u) * tan(vIn.x) * xform->m_VariationWeights[" << varIndex << "];\n"
 		   << "\t\tvOut.y = sin(u) * tan(vIn.y) * xform->m_VariationWeights[" << varIndex << "];\n"
@@ -528,7 +528,7 @@ public:
 		return
 			"void GlynnSim1Circle(__constant real_t* radius1, __constant real_t* thickness, __constant real_t* x1, __constant real_t* y1, uint2* mwc, real_t* x, real_t* y)\n"
 			"{\n"
-			"	real_t r = *radius1 * (*thickness + (1.0 - *thickness) * MwcNext01(mwc));\n"
+			"	real_t r = *radius1 * (*thickness + (T(1.0) - *thickness) * MwcNext01(mwc));\n"
 			"	real_t phi = M_2PI * MwcNext01(mwc);\n"
 			"	real_t sinPhi = sin(phi);\n"
 			"	real_t cosPhi = cos(phi);\n"
@@ -557,11 +557,11 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Radius,    prefix + "GlynnSim1_radius", 1));
-		m_Params.push_back(ParamWithName<T>(&m_Radius1,   prefix + "GlynnSim1_radius1", T(0.1)));
+		m_Params.push_back(ParamWithName<T>(&m_Radius1,   prefix + "GlynnSim1_radius1", T(T(0.1))));
 		m_Params.push_back(ParamWithName<T>(&m_Phi1,      prefix + "GlynnSim1_phi1"));
-		m_Params.push_back(ParamWithName<T>(&m_Thickness, prefix + "GlynnSim1_thickness", T(0.1), REAL, 0, 1));
-		m_Params.push_back(ParamWithName<T>(&m_Contrast,  prefix + "GlynnSim1_contrast", T(1.5)));
-		m_Params.push_back(ParamWithName<T>(&m_Pow,       prefix + "GlynnSim1_pow", T(0.5), REAL, 0, 1));
+		m_Params.push_back(ParamWithName<T>(&m_Thickness, prefix + "GlynnSim1_thickness", T(T(0.1)), REAL, 0, 1));
+		m_Params.push_back(ParamWithName<T>(&m_Contrast,  prefix + "GlynnSim1_contrast", T(T(1.5))));
+		m_Params.push_back(ParamWithName<T>(&m_Pow,       prefix + "GlynnSim1_pow", T(T(0.5)), REAL, 0, 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_X1,  prefix + "GlynnSim1_x1"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Y1,  prefix + "GlynnSim1_y1"));
 	}
@@ -711,9 +711,9 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Radius,    prefix + "GlynnSim2_radius", 1));
-		m_Params.push_back(ParamWithName<T>(&m_Thickness, prefix + "GlynnSim2_thickness", T(0.1), REAL, 0, 1));
-		m_Params.push_back(ParamWithName<T>(&m_Contrast,  prefix + "GlynnSim2_contrast", T(0.5), REAL, 0, 1));
-		m_Params.push_back(ParamWithName<T>(&m_Pow,       prefix + "GlynnSim2_pow", T(1.5)));
+		m_Params.push_back(ParamWithName<T>(&m_Thickness, prefix + "GlynnSim2_thickness", T(T(0.1)), REAL, 0, 1));
+		m_Params.push_back(ParamWithName<T>(&m_Contrast,  prefix + "GlynnSim2_contrast", T(T(0.5)), REAL, 0, 1));
+		m_Params.push_back(ParamWithName<T>(&m_Pow,       prefix + "GlynnSim2_pow", T(T(1.5))));
 		m_Params.push_back(ParamWithName<T>(&m_Phi1,      prefix + "GlynnSim2_Phi1"));
 		m_Params.push_back(ParamWithName<T>(&m_Phi2,      prefix + "GlynnSim2_Phi2", 360));
 		m_Params.push_back(ParamWithName<T>(true, &m_Phi10, prefix + "GlynnSim2_Phi10"));//Precalc.
@@ -870,10 +870,10 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Radius,     prefix + "GlynnSim3_radius", 1));
-		m_Params.push_back(ParamWithName<T>(&m_Thickness,  prefix + "GlynnSim3_thickness", T(0.1)));
-		m_Params.push_back(ParamWithName<T>(&m_Thickness2, prefix + "GlynnSim3_thickness2", T(0.1)));
-		m_Params.push_back(ParamWithName<T>(&m_Contrast,   prefix + "GlynnSim3_contrast", T(0.5), REAL, 0, 1));
-		m_Params.push_back(ParamWithName<T>(&m_Pow,        prefix + "GlynnSim3_pow", T(1.5)));
+		m_Params.push_back(ParamWithName<T>(&m_Thickness,  prefix + "GlynnSim3_thickness", T(T(0.1))));
+		m_Params.push_back(ParamWithName<T>(&m_Thickness2, prefix + "GlynnSim3_thickness2", T(T(0.1))));
+		m_Params.push_back(ParamWithName<T>(&m_Contrast,   prefix + "GlynnSim3_contrast", T(T(0.5)), REAL, 0, 1));
+		m_Params.push_back(ParamWithName<T>(&m_Pow,        prefix + "GlynnSim3_pow", T(T(1.5))));
 		m_Params.push_back(ParamWithName<T>(true, &m_Radius1, prefix + "GlynnSim3_radius1"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Radius2, prefix + "GlynnSim3_radius2"));
 		m_Params.push_back(ParamWithName<T>(true, &m_Gamma,   prefix + "GlynnSim3_Gamma"));
@@ -995,7 +995,7 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Power, prefix + "starblur_power", 5, INTEGER_NONZERO));
-		m_Params.push_back(ParamWithName<T>(&m_Range, prefix + "starblur_range", T(0.4016228317)));
+		m_Params.push_back(ParamWithName<T>(&m_Range, prefix + "starblur_range", T(T(0.4016228317))));
 		m_Params.push_back(ParamWithName<T>(true, &m_Length, prefix + "starblur_length"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Alpha,  prefix + "starblur_alpha"));
 	}
@@ -1243,7 +1243,7 @@ public:
 		   << "\t\t	}\n"
 		   << "\t\t	else\n"
 		   << "\t\t	{\n"
-		   << "\t\t		real_t rdc = xr + (MwcNext01(mwc) * 0.5 * " << scatterDist << ");\n"
+		   << "\t\t		real_t rdc = xr + (MwcNext01(mwc) * T(0.5) * " << scatterDist << ");\n"
 		   << "\n"
 		   << "\t\t		vOut.x = xform->m_VariationWeights[" << varIndex << "] * rdc * cos(precalcAtanyx);\n"
 		   << "\t\t		vOut.y = xform->m_VariationWeights[" << varIndex << "] * rdc * sin(precalcAtanyx);\n"
@@ -1351,7 +1351,7 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_N,     prefix + "shredrad_n", 4, REAL_NONZERO));
-		m_Params.push_back(ParamWithName<T>(&m_Width, prefix + "shredrad_width", T(0.5), REAL, -1, 1));
+		m_Params.push_back(ParamWithName<T>(&m_Width, prefix + "shredrad_width", T(T(0.5)), REAL, -1, 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_Alpha, prefix + "shredrad_alpha"));//Precalc.
 	}
 
@@ -1459,7 +1459,7 @@ protected:
 		m_Params.push_back(ParamWithName<T>(&m_N,            prefix + "blob2_n", 5, INTEGER));
 		m_Params.push_back(ParamWithName<T>(&m_Radius,       prefix + "blob2_radius"));
 		m_Params.push_back(ParamWithName<T>(&m_Prescale,     prefix + "blob2_prescale", 1));
-		m_Params.push_back(ParamWithName<T>(&m_Postscale,    prefix + "blob2_postscale", T(0.5)));
+		m_Params.push_back(ParamWithName<T>(&m_Postscale,    prefix + "blob2_postscale", T(T(0.5))));
 		m_Params.push_back(ParamWithName<T>(&m_Symmetry,     prefix + "blob2_symmetry", 0, REAL, -1, 1));
 		m_Params.push_back(ParamWithName<T>(&m_Compensation, prefix + "blob2_compensation", 0, REAL, 0, 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_DeltaHelp, prefix + "blob2_deltahelp"));//Precalc.
@@ -2185,8 +2185,8 @@ public:
 		   << "\t\treal_t c1 = Zeps(SQR(vIn.x));\n"
 		   << "\t\treal_t c2 = Zeps(SQR(vIn.y));\n"
 		   << "\n"
-		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * ((1.0 / d) * cos(c1) * sin(c2));\n"
-		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * ((1.0 / d) * sin(c1) * sin(c2));\n"
+		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * ((T(1.0) / d) * cos(c1) * sin(c2));\n"
+		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * ((T(1.0) / d) * sin(c1) * sin(c2));\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\t}\n";
 
@@ -2370,9 +2370,9 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_X,    prefix + "sschecks_x", T(0.5)));
-		m_Params.push_back(ParamWithName<T>(&m_Y,    prefix + "sschecks_y", T(0.5)));
-		m_Params.push_back(ParamWithName<T>(&m_Size, prefix + "sschecks_size", T(0.5)));
+		m_Params.push_back(ParamWithName<T>(&m_X,    prefix + "sschecks_x", T(T(0.5))));
+		m_Params.push_back(ParamWithName<T>(&m_Y,    prefix + "sschecks_y", T(T(0.5))));
+		m_Params.push_back(ParamWithName<T>(&m_Size, prefix + "sschecks_size", T(T(0.5))));
 		m_Params.push_back(ParamWithName<T>(&m_Rand, prefix + "sschecks_rnd"));
 		m_Params.push_back(ParamWithName<T>(true, &m_InvSize, prefix + "sschecks_inv_size"));//Precalc.
 	}
@@ -2454,7 +2454,7 @@ protected:
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Power,    prefix + "phoenix_julia_power", 2));
 		m_Params.push_back(ParamWithName<T>(&m_Dist,     prefix + "phoenix_julia_dist", 1));
-		m_Params.push_back(ParamWithName<T>(&m_XDistort, prefix + "phoenix_julia_x_distort", T(-0.5)));//Original omitted phoenix_ prefix.
+		m_Params.push_back(ParamWithName<T>(&m_XDistort, prefix + "phoenix_julia_x_distort", T(-T(0.5))));//Original omitted phoenix_ prefix.
 		m_Params.push_back(ParamWithName<T>(&m_YDistort, prefix + "phoenix_julia_y_distort"));
 		m_Params.push_back(ParamWithName<T>(true, &m_Cn,      prefix + "phoenix_julia_cn"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_InvN,    prefix + "phoenix_julia_invn"));
@@ -2617,7 +2617,7 @@ public:
 		ss << "\t{\n"
 		   << "\t\tint n;\n"
 		   << "\n"
-		   << "\t\treal_t z = 4.0 * " << dist << " / " << power << ";\n"
+		   << "\t\treal_t z = T(4.0) * " << dist << " / " << power << ";\n"
 		   << "\t\treal_t r = pow(precalcSqrtSumSquares, z);\n"
 		   << "\t\treal_t alpha = precalcAtanyx * " << power << ";\n"
 		   << "\t\treal_t x = r * cos(alpha);\n"
@@ -2631,7 +2631,7 @@ public:
 		   << "\t\tx = (reU * reV + imU * imV) / radV;\n"
 		   << "\t\ty = (imU * reV - reU * imV) / radV;\n"
 		   << "\n"
-		   << "\t\tz = 1.0 / z;\n"
+		   << "\t\tz = T(1.0) / z;\n"
 		   << "\t\tr = pow(sqrt(SQR(x) + SQR(y)), z);\n"
 		   << "\t\tn = (int)floor(" << power << " * MwcNext01(mwc));\n"
 		   << "\t\talpha = (atan2(y, x) + n * M_2PI) / floor(" << power << ");\n"
@@ -2899,7 +2899,7 @@ public:
 
 		ss << "\t{\n"
 		   << "\t\treal_t t = (" << max << " - " << min << ") * MwcNext01(mwc) + " << min << ";\n"
-		   << "\t\treal_t y = MwcNext01(mwc) - 0.5;\n"
+		   << "\t\treal_t y = MwcNext01(mwc) - T(0.5);\n"
 		   << "\t\treal_t x1 = sin(" << a << " * t + " << d << ");\n"
 		   << "\t\treal_t y1 = sin(" << b << " * t);\n"
 		   << "\n"
@@ -3048,7 +3048,7 @@ public:
 		   << "\t\treal_t a = precalcAtanyx;\n"
 		   << "\t\treal_t t = log(precalcSqrtSumSquares);\n"
 		   << "\n"
-		   << "\t\tif (t < 0.0)\n"
+		   << "\t\tif (t < T(0.0))\n"
 		   << "\t\t	t -= " << sizeDiv2 << ";\n"
 		   << "\n"
 		   << "\t\tt = fmod(fabs(t), " << size << ");\n"
@@ -3161,7 +3161,7 @@ protected:
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_R,   prefix + "taurus_r",   3));
 		m_Params.push_back(ParamWithName<T>(&m_N,   prefix + "taurus_n",   5));
-		m_Params.push_back(ParamWithName<T>(&m_Inv, prefix + "taurus_inv", T(1.5)));
+		m_Params.push_back(ParamWithName<T>(&m_Inv, prefix + "taurus_inv", T(T(1.5))));
 		m_Params.push_back(ParamWithName<T>(&m_Sor, prefix + "taurus_sor", 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_InvTimesR, prefix + "taurus_inv_times_r"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_1MinusInv, prefix + "taurus_1_minus_inv"));
@@ -3338,11 +3338,11 @@ public:
 		string dist   = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t tau = 0.5 * (log(Sqr(vIn.x + 1.0) + SQR(vIn.y)) - log(Sqr(vIn.x - 1.0) + SQR(vIn.y)));\n"
-		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + 1.0) - atan2(vIn.y, 1.0 - vIn.x);\n"
+		   << "\t\treal_t tau = T(0.5) * (log(Sqr(vIn.x + T(1.0)) + SQR(vIn.y)) - log(Sqr(vIn.x - T(1.0)) + SQR(vIn.y)));\n"
+		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + T(1.0)) - atan2(vIn.y, T(1.0) - vIn.x);\n"
 		   << "\n"
 		   << "\t\tif (tau < " << radius << " && -tau < " << radius << ")\n"
-		   << "\t\t	tau = fmod(tau + " << radius << " + " << dist << " * " << radius << ", 2.0 * " << radius << ") - " << radius << ";\n"
+		   << "\t\t	tau = fmod(tau + " << radius << " + " << dist << " * " << radius << ", T(2.0) * " << radius << ") - " << radius << ";\n"
 		   << "\n"
 		   << "\t\treal_t temp = cosh(tau) - cos(sigma);\n"
 		   << "\n"
@@ -3407,8 +3407,8 @@ public:
 		string out = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t tau = 0.5 * (log(Sqr(vIn.x + 1.0) + SQR(vIn.y)) - log(Sqr(vIn.x - 1.0) + SQR(vIn.y)));\n"
-		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + 1.0) - atan2(vIn.y, 1.0 - vIn.x);\n"
+		   << "\t\treal_t tau = T(0.5) * (log(Sqr(vIn.x + T(1.0)) + SQR(vIn.y)) - log(Sqr(vIn.x - T(1.0)) + SQR(vIn.y)));\n"
+		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + T(1.0)) - atan2(vIn.y, T(1.0) - vIn.x);\n"
 		   << "\n"
 		   << "\t\tsigma = sigma + tau * " << out << " + " << in << " / tau;\n"
 		   << "\n"
@@ -3482,8 +3482,8 @@ public:
 		string split  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t tau = 0.5 * (log(Sqr(vIn.x + 1.0) + SQR(vIn.y)) - log(Sqr(vIn.x - 1.0) + SQR(vIn.y))) / " << power << " + " << move << ";\n"
-		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + 1.0) - atan2(vIn.y, 1.0 - vIn.x) + " << rotate << ";\n"
+		   << "\t\treal_t tau = T(0.5) * (log(Sqr(vIn.x + T(1.0)) + SQR(vIn.y)) - log(Sqr(vIn.x - T(1.0)) + SQR(vIn.y))) / " << power << " + " << move << ";\n"
+		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + T(1.0)) - atan2(vIn.y, T(1.0) - vIn.x) + " << rotate << ";\n"
 		   << "\n"
 		   << "\t\tsigma = sigma / " << power << " + M_2PI / " << power << " * floor(MwcNext01(mwc) * " << power << ");\n"
 		   << "\n"
@@ -3567,8 +3567,8 @@ public:
 		string piCn = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t tau = 0.5 * (log(Sqr(vIn.x + 1.0) + SQR(vIn.y)) - log(Sqr(vIn.x - 1.0) + SQR(vIn.y)));\n"
-		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + 1.0) - atan2(vIn.y, 1.0 - vIn.x);\n"
+		   << "\t\treal_t tau = T(0.5) * (log(Sqr(vIn.x + T(1.0)) + SQR(vIn.y)) - log(Sqr(vIn.x - T(1.0)) + SQR(vIn.y)));\n"
+		   << "\t\treal_t sigma = M_PI - atan2(vIn.y, vIn.x + T(1.0)) - atan2(vIn.y, T(1.0) - vIn.x);\n"
 		   << "\t\tint alt = (int)(sigma * " << cnPi << ");\n"
 		   << "\n"
 		   << "\t\tif (alt % 2 == 0)\n"
@@ -3897,13 +3897,13 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\t\tint alt;\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y > 0)\n"
 		   << "\t\t{\n"
@@ -4037,13 +4037,13 @@ public:
 		   << "\n"
 		   << "\t\treal_t tmp = r2 + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
 		   << "\t\treal_t mu = acosh(xmax);\n"
-		   << "\t\treal_t nu = acos(Clamp(x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
@@ -4135,13 +4135,13 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
 		   << "\t\treal_t mu = acosh(xmax);\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
@@ -4235,13 +4235,13 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
 		   << "\t\treal_t mu = acosh(xmax);\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
@@ -4332,13 +4332,13 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
 		   << "\t\treal_t mu = acosh(xmax);\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
@@ -4418,12 +4418,12 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
@@ -4505,13 +4505,13 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * 0.5;\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
 		   << "\t\treal_t mu = acosh(xmax);\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -1.0, 1.0));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
