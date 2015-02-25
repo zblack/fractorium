@@ -1246,10 +1246,10 @@ bool OpenCLWrapper::CreateSPK(const string& name, const string& program, const s
 
 			if (CheckCL(err, "cl::Kernel()"))
 				return true;//Everything is ok.
-    } else {
-      for (std::vector<cl::Device>::iterator i = m_DeviceVec.begin(); i != m_DeviceVec.end(); ++ i )
-        m_programBuildErrors.push_back(spk.m_Program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(*i));
-    }
+		} else {
+			for (std::vector<cl::Device>::iterator i = m_DeviceVec.begin(); i != m_DeviceVec.end(); ++ i )
+				m_programBuildErrors.push_back(spk.m_Program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(*i));
+		}
 	}
 
 	return false;
