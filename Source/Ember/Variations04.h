@@ -51,13 +51,13 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t tmp2 = 2 * vIn.x;\n"
-		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * T(0.5);\n"
+		   << "\t\treal_t xmax = (SafeSqrt(tmp + tmp2) + SafeSqrt(tmp - tmp2)) * (real_t)(0.5);\n"
 		   << "\n"
 		   << "\t\tif (xmax < 1)\n"
 		   << "\t\t	xmax = 1;\n"
 		   << "\n"
 		   << "\t\treal_t mu = acosh(xmax);\n"
-		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -T(1.0), T(1.0)));\n"
+		   << "\t\treal_t nu = acos(Clamp(vIn.x / xmax, -(real_t)(1.0), (real_t)(1.0)));\n"
 		   << "\n"
 		   << "\t\tif (vIn.y < 0)\n"
 		   << "\t\t	nu *= -1;\n"
@@ -616,8 +616,8 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t d = Zeps(precalcSumSquares);\n"
 		   << "\n"
-		   << "\t\tvOut.x = (xform->m_VariationWeights[" << varIndex << "] / d) * (tanh(d) * (T(2.0) * vIn.x));\n"
-		   << "\t\tvOut.y = (xform->m_VariationWeights[" << varIndex << "] / d) * (cos(d)  * (T(2.0) * vIn.y));\n"
+		   << "\t\tvOut.x = (xform->m_VariationWeights[" << varIndex << "] / d) * (tanh(d) * ((real_t)(2.0) * vIn.x));\n"
+		   << "\t\tvOut.y = (xform->m_VariationWeights[" << varIndex << "] / d) * (cos(d)  * ((real_t)(2.0) * vIn.y));\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\t}\n";
 
@@ -653,8 +653,8 @@ public:
 		ss << "\t{\n"
 		   << "\t\treal_t d = Zeps(precalcSumSquares);\n"
 		   << "\n"
-		   << "\t\tvOut.x = (xform->m_VariationWeights[" << varIndex << "] / T(2.0)) * (tanh(d) * (T(2.0) * vIn.x));\n"
-		   << "\t\tvOut.y = (xform->m_VariationWeights[" << varIndex << "] / T(2.0)) * (cos(d)  * (T(2.0) * vIn.y));\n"
+		   << "\t\tvOut.x = (xform->m_VariationWeights[" << varIndex << "] / (real_t)(2.0)) * (tanh(d) * ((real_t)(2.0) * vIn.x));\n"
+		   << "\t\tvOut.y = (xform->m_VariationWeights[" << varIndex << "] / (real_t)(2.0)) * (cos(d)  * ((real_t)(2.0) * vIn.y));\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\t}\n";
 
@@ -1179,8 +1179,8 @@ public:
 		   << "\t\tr = r < 0 ? 0 : r;\n"
 		   << "\t\tr *= " << s2 << ";\n"
 		   << "\n"
-		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x + (MwcNext01(mwc) - T(0.5)) * r);\n"
-		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (vIn.y + (MwcNext01(mwc) - T(0.5)) * r);\n"
+		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x + (MwcNext01(mwc) - (real_t)(0.5)) * r);\n"
+		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (vIn.y + (MwcNext01(mwc) - (real_t)(0.5)) * r);\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
 		   << "\t}\n";
 
@@ -1425,7 +1425,7 @@ public:
 
 		ss << "\t{\n"
 		   << "\t\tint i, j, l, k, m, m1, n, n1;\n"
-		   << "\t\treal_t r, rMin, offsetX, offsetY, x0 = T(0.0), y0 = T(0.0), x, y;\n"
+		   << "\t\treal_t r, rMin, offsetX, offsetY, x0 = (real_t)(0.0), y0 = (real_t)(0.0), x, y;\n"
 		   << "\n"
 		   << "\t\trMin = 20;\n"
 		   << "\t\tm = (int)floor(vIn.x / " << step << ");\n"
@@ -1487,8 +1487,8 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_K,     prefix + "Voron_K", T(T(0.99))));
-		m_Params.push_back(ParamWithName<T>(&m_Step,  prefix + "Voron_Step", T(T(0.25)), REAL_NONZERO));
+		m_Params.push_back(ParamWithName<T>(&m_K,     prefix + "Voron_K", T(0.99)));
+		m_Params.push_back(ParamWithName<T>(&m_Step,  prefix + "Voron_Step", T(0.25), REAL_NONZERO));
 		m_Params.push_back(ParamWithName<T>(&m_Num,   prefix + "Voron_Num", 1, INTEGER, 1, 25));
 		m_Params.push_back(ParamWithName<T>(&m_XSeed, prefix + "Voron_XSeed", 3, INTEGER));
 		m_Params.push_back(ParamWithName<T>(&m_YSeed, prefix + "Voron_YSeed", 7, INTEGER));
@@ -1621,8 +1621,8 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Slices,     prefix + "waffle_slices", 6, INTEGER_NONZERO));
-		m_Params.push_back(ParamWithName<T>(&m_XThickness, prefix + "waffle_xthickness", T(T(0.5))));
-		m_Params.push_back(ParamWithName<T>(&m_YThickness, prefix + "waffle_ythickness", T(T(0.5))));
+		m_Params.push_back(ParamWithName<T>(&m_XThickness, prefix + "waffle_xthickness", T(0.5)));
+		m_Params.push_back(ParamWithName<T>(&m_YThickness, prefix + "waffle_ythickness", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_Rotation,   prefix + "waffle_rotation"));
 		m_Params.push_back(ParamWithName<T>(true, &m_SinR, prefix + "waffle_sinr"));
 		m_Params.push_back(ParamWithName<T>(true, &m_CosR, prefix + "waffle_cosr"));
@@ -1661,9 +1661,9 @@ public:
 		intmax_t varIndex = IndexInXform();
 
 		ss << "\t{\n"
-		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - T(0.5));\n"
-		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - T(0.5));\n"
-		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - T(0.5));\n"
+		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - (real_t)(0.5));\n"
+		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - (real_t)(0.5));\n"
+		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * (MwcNext01(mwc) - (real_t)(0.5));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -1825,8 +1825,8 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_Rho,       prefix + "SuperShape3D_rho", T(T(9.9))));
-		m_Params.push_back(ParamWithName<T>(&m_Phi,       prefix + "SuperShape3D_phi", T(T(2.5))));
+		m_Params.push_back(ParamWithName<T>(&m_Rho,       prefix + "SuperShape3D_rho", T(9.9)));
+		m_Params.push_back(ParamWithName<T>(&m_Phi,       prefix + "SuperShape3D_phi", T(2.5)));
 		m_Params.push_back(ParamWithName<T>(&m_M1,        prefix + "SuperShape3D_m1", 6));
 		m_Params.push_back(ParamWithName<T>(&m_M2,        prefix + "SuperShape3D_m2", 3));
 		m_Params.push_back(ParamWithName<T>(&m_A1,        prefix + "SuperShape3D_a1", 1));
@@ -2043,7 +2043,7 @@ public:
 			<< "\n"
 			<< "\t\tconst real_t rad = sqrt(SQR(xi) + SQR(yi));\n"
 			<< "\t\tconst real_t ang = atan2(yi, xi);\n"
-			<< "\t\tconst real_t rdc = " << radius << " + (MwcNext01(mwc) * T(0.5) * " << ca << "); \n"
+			<< "\t\tconst real_t rdc = " << radius << " + (MwcNext01(mwc) * (real_t)(0.5) * " << ca << "); \n"
 			<< "\t\tconst real_t s = sin(ang);\n"
 			<< "\t\tconst real_t c = cos(ang);\n"
 			<< "\n"
@@ -2574,7 +2574,7 @@ public:
 
 		ss << "\t{\n"
 		   << "\t\tconst real_t zr = Hypot(vIn.z, precalcSqrtSumSquares);\n"
-		   << "\t\tconst real_t phi = acos(Clamp(vIn.z / zr, -T(1.0), T(1.0)));\n"
+		   << "\t\tconst real_t phi = acos(Clamp(vIn.z / zr, -(real_t)(1.0), (real_t)(1.0)));\n"
 		   << "\t\tconst real_t ps = sin(phi);\n"
 		   << "\t\tconst real_t pc = cos(phi);\n"
 		   << "\n"
@@ -2739,7 +2739,7 @@ public:
 		   << "\t\tconst real_t y = Powq4c(vIn.y, " << power << ");\n"
 		   << "\t\tconst real_t z = Powq4c(vIn.z, " << power << ");\n"
 		   << "\t\tconst real_t d = SQR(x) - SQR(y);\n"
-		   << "\t\tconst real_t re = Spread(" << c1 << " * x + " << c2 << " * d, " << sx << ") + T(1.0);\n"
+		   << "\t\tconst real_t re = Spread(" << c1 << " * x + " << c2 << " * d, " << sx << ") + (real_t)(1.0);\n"
 		   << "\t\tconst real_t im = Spread(" << c1 << " * y + " << c2x2 << " * x * y, " << sy << ");\n"
 		   << "\t\treal_t c = Zeps(Powq4c(SQR(re) + SQR(im), " << powerInv << "));\n"
 		   << "\n"
@@ -2748,7 +2748,7 @@ public:
 		   << "\t\tvOut.x = (x * re + y * im) * r;\n"
 		   << "\t\tvOut.y = (y * re - x * im) * r;\n"
 		   << "\t\tvOut.z = (z * xform->m_VariationWeights[" << varIndex << "]) / c;\n"
-		   << "\t\toutPoint->m_ColorX = Clamp(outPoint->m_ColorX + " << dcAdjust << " * c, T(0.0), T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = Clamp(outPoint->m_ColorX + " << dcAdjust << " * c, (real_t)(0.0), (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -2865,7 +2865,7 @@ public:
 		   << "\t\treal_t st = sin(temp);\n"
 		   << "\t\treal_t ct = cos(temp);\n"
 		   << "\n"
-		   << "\t\ttemp = fma(" << ap << ", sin(fma(" << bp << ", r, " << cp << ")), acos(Clamp(vIn.z / r, -T(1.0), T(1.0))));\n"
+		   << "\t\ttemp = fma(" << ap << ", sin(fma(" << bp << ", r, " << cp << ")), acos(Clamp(vIn.z / r, -(real_t)(1.0), (real_t)(1.0))));\n"
 		   << "\n"
 		   << "\t\treal_t sp = sin(temp);\n"
 		   << "\t\treal_t cp = cos(temp);\n"
@@ -4056,8 +4056,8 @@ public:
 		string b = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t xx = (MwcNext01(mwc) - T(0.5)) * 2;\n"
-		   << "\t\treal_t yy = (MwcNext01(mwc) - T(0.5)) * 2;\n"
+		   << "\t\treal_t xx = (MwcNext01(mwc) - (real_t)(0.5)) * 2;\n"
+		   << "\t\treal_t yy = (MwcNext01(mwc) - (real_t)(0.5)) * 2;\n"
 		   << "\t\treal_t k = SignNz(yy);\n"
 		   << "\t\treal_t yymax = ((" << a << " * pow(fabs(xx), " << p << ") + k * " << b << " * sqrt(fabs(1 - SQR(xx)))) - " << a << ");\n"
 		   << "\n"
@@ -4088,9 +4088,9 @@ protected:
 		string prefix = Prefix();
 
 		m_Params.clear();
-		m_Params.push_back(ParamWithName<T>(&m_P, prefix + "blur_heart_p", T(T(0.5))));
+		m_Params.push_back(ParamWithName<T>(&m_P, prefix + "blur_heart_p", T(0.5)));
 		m_Params.push_back(ParamWithName<T>(&m_A, prefix + "blur_heart_a", T(-T(0.6))));
-		m_Params.push_back(ParamWithName<T>(&m_B, prefix + "blur_heart_b", T(T(0.7))));
+		m_Params.push_back(ParamWithName<T>(&m_B, prefix + "blur_heart_b", T(0.7)));
 	}
 
 private:
@@ -4350,7 +4350,7 @@ public:
 		   << "\t\t	}\n"
 		   << "\t\t}\n"
 		   << "\n"
-		   << "\t\tr = fabs(r0 - T(0.5)) * " << oneOverRmax << ";\n"
+		   << "\t\tr = fabs(r0 - (real_t)(0.5)) * " << oneOverRmax << ";\n"
 		   << "\n"
 		   << "\t\tif (r < 1)\n"
 		   << "\t\t{\n"
@@ -4359,11 +4359,11 @@ public:
 		   << "\t\t}\n"
 		   << "\t\telse\n"
 		   << "\t\t{\n"
-		   << "\t\t	vOut.x = T(0.0);\n"
-		   << "\t\t	vOut.y = T(0.0);\n"
+		   << "\t\t	vOut.x = (real_t)(0.0);\n"
+		   << "\t\t	vOut.y = (real_t)(0.0);\n"
 		   << "\t\t}\n"
 		   << "\n"
-		   << "\t\tr = fabs(r1 - T(0.5)) * " << oneOverRmax << ";\n"
+		   << "\t\tr = fabs(r1 - (real_t)(0.5)) * " << oneOverRmax << ";\n"
 		   << "\n"
 		   << "\t\tif (r < 1)\n"
 		   << "\t\t{\n"
@@ -4393,10 +4393,10 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Extended, prefix + "Truchet_extended",  0, INTEGER, 0, 1));
-		m_Params.push_back(ParamWithName<T>(&m_Exponent, prefix + "Truchet_exponent",  2, REAL_CYCLIC, T(T(0.001)), 2));
-		m_Params.push_back(ParamWithName<T>(&m_ArcWidth, prefix + "Truchet_arc_width", T(T(0.5)), REAL_CYCLIC, T(T(0.001)), 1));
+		m_Params.push_back(ParamWithName<T>(&m_Exponent, prefix + "Truchet_exponent",  2, REAL_CYCLIC, T(0.001), 2));
+		m_Params.push_back(ParamWithName<T>(&m_ArcWidth, prefix + "Truchet_arc_width", T(0.5), REAL_CYCLIC, T(0.001), 1));
 		m_Params.push_back(ParamWithName<T>(&m_Rotation, prefix + "Truchet_rotation"));
-		m_Params.push_back(ParamWithName<T>(&m_Size,     prefix + "Truchet_size", 1, REAL_CYCLIC, T(T(0.001)), 10));
+		m_Params.push_back(ParamWithName<T>(&m_Size,     prefix + "Truchet_size", 1, REAL_CYCLIC, T(0.001), 10));
 		m_Params.push_back(ParamWithName<T>(&m_Seed,     prefix + "Truchet_seed", 50));
 		m_Params.push_back(ParamWithName<T>(true, &m_OneOverEx,   prefix + "Truchet_one_over_ex"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_AbsSeed,     prefix + "Truchet_abs_seed"));
@@ -4909,7 +4909,7 @@ public:
 
 		ss << "\t{\n"
 		   << "\t\treal_t arg = precalcAtanyx + fmod((real_t)MwcNext(mwc), (real_t)(1 / " << reInv << ")) * M_2PI;\n"
-		   << "\t\treal_t lnmod = " << dist << " * T(0.5) * log(precalcSumSquares);\n"
+		   << "\t\treal_t lnmod = " << dist << " * (real_t)(0.5) * log(precalcSumSquares);\n"
 		   << "\t\treal_t temp = arg * " << reInv << " + lnmod * " << im100 << ";\n"
 		   << "\t\treal_t mod2 = exp(lnmod * " << reInv << " - arg * " << im100 << ");\n"
 		   << "\n"
@@ -5024,7 +5024,7 @@ public:
 		string blobDiff  = "parVars[" + ToUpper(m_Params[i++].Name()) + index;
 
 		ss << "\t{\n"
-		   << "\t\treal_t r = precalcSqrtSumSquares * (" << blobLow << " + " << blobDiff << " * (T(0.5) + T(0.5) * sin(" << blobWaves << " * precalcAtanxy)));\n"
+		   << "\t\treal_t r = precalcSqrtSumSquares * (" << blobLow << " + " << blobDiff << " * ((real_t)(0.5) + (real_t)(0.5) * sin(" << blobWaves << " * precalcAtanxy)));\n"
 		   << "\n"
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (precalcSina * r);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (precalcCosa * r);\n"
@@ -5119,8 +5119,8 @@ public:
 		   << "\t\treal_t tmp = precalcSumSquares + 1;\n"
 		   << "\t\treal_t x2 = 2 * vIn.x;\n"
 		   << "\t\treal_t y2 = 2 * vIn.y;\n"
-		   << "\t\treal_t xmax = T(0.5) * (sqrt(tmp + x2) + sqrt(tmp - x2));\n"
-		   << "\t\treal_t ymax = T(0.5) * (sqrt(tmp + y2) + sqrt(tmp - y2));\n"
+		   << "\t\treal_t xmax = (real_t)(0.5) * (sqrt(tmp + x2) + sqrt(tmp - x2));\n"
+		   << "\t\treal_t ymax = (real_t)(0.5) * (sqrt(tmp + y2) + sqrt(tmp - y2));\n"
 		   << "\t\treal_t a = vIn.x / Zeps(xmax);\n"
 		   << "\t\treal_t b = SafeSqrt(1 - SQR(a));\n"
 		   << "\n"

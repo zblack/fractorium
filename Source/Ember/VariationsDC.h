@@ -59,7 +59,7 @@ public:
 		   << "\t\treal_t tempX = vOut.x + outPoint->m_X;\n"
 		   << "\t\treal_t tempY = vOut.y + outPoint->m_Y;\n"
 		   << "\n"
-		   << "\t\toutPoint->m_ColorX = fmod(fabs(" << bdcs << " * (Sqr(tempX + " << centerX << ") + Sqr(tempY + " << centerY << "))), T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = fmod(fabs(" << bdcs << " * (Sqr(tempX + " << centerX << ") + Sqr(tempY + " << centerY << "))), (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -138,7 +138,7 @@ public:
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (xform->m_A * x + xform->m_B * y + xform->m_E);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (xform->m_C * x + xform->m_D * y + xform->m_F);\n"
 		   << "\t\tvOut.z = " << ((m_VarType == VARTYPE_REG) ? "0" : "vIn.z") << ";\n"
-		   << "\t\toutPoint->m_ColorX = fmod(fabs(outPoint->m_ColorX * T(0.5) * (1 + h) + x0_xor_y0 * (1 - h) * T(0.5)), T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = fmod(fabs(outPoint->m_ColorX * (real_t)(0.5) * (1 + h) + x0_xor_y0 * (1 - h) * (real_t)(0.5)), (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -416,7 +416,7 @@ public:
 		   << "\t\treal_t tempX = vOut.x + outPoint->m_X;\n"
 		   << "\t\treal_t tempY = vOut.y + outPoint->m_Y;\n"
 		   << "\n"
-		   << "\t\toutPoint->m_ColorX = fmod(fabs(T(0.5) * (" << ldcs << " * ((" << cosa << " * tempX + " << sina << " * tempY + " << offset << ")) + T(1.0))), T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = fmod(fabs((real_t)(0.5) * (" << ldcs << " * ((" << cosa << " * tempX + " << sina << " * tempY + " << offset << ")) + (real_t)(1.0))), (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -437,9 +437,9 @@ protected:
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Offset, prefix + "dc_cylinder_offset"));//Params.
 		m_Params.push_back(ParamWithName<T>(&m_Angle,  prefix + "dc_cylinder_angle"));//Original used a prefix of dc_cyl_, which is incompatible with Ember's design.
-		m_Params.push_back(ParamWithName<T>(&m_Scale,  prefix + "dc_cylinder_scale", T(T(0.5))));
-		m_Params.push_back(ParamWithName<T>(&m_X,      prefix + "dc_cylinder_x", T(T(0.125))));//Original used a prefix of cyl_, which is incompatible with Ember's design.
-		m_Params.push_back(ParamWithName<T>(&m_Y,      prefix + "dc_cylinder_y", T(T(0.125))));
+		m_Params.push_back(ParamWithName<T>(&m_Scale,  prefix + "dc_cylinder_scale", T(0.5)));
+		m_Params.push_back(ParamWithName<T>(&m_X,      prefix + "dc_cylinder_x", T(0.125)));//Original used a prefix of cyl_, which is incompatible with Ember's design.
+		m_Params.push_back(ParamWithName<T>(&m_Y,      prefix + "dc_cylinder_y", T(0.125)));
 		m_Params.push_back(ParamWithName<T>(&m_Blur,   prefix + "dc_cylinder_blur", 1));
 		m_Params.push_back(ParamWithName<T>(true, &m_Sina, prefix + "dc_cylinder_sina"));//Precalc.
 		m_Params.push_back(ParamWithName<T>(true, &m_Cosa, prefix + "dc_cylinder_cosa"));
@@ -566,13 +566,13 @@ public:
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x + 1);\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
-		   << "\t\t			c += T(0.25);\n"
+		   << "\t\t			c += (real_t)(0.25);\n"
 		   << "\t\t		}\n"
 		   << "\t\t		else\n"
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * (vIn.y + 1);\n"
-		   << "\t\t			c += T(0.75);\n"
+		   << "\t\t			c += (real_t)(0.75);\n"
 		   << "\t\t		}\n"
 		   << "\t\t	}\n"
 		   << "\t\t	else\n"
@@ -581,13 +581,13 @@ public:
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x + 1);\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
-		   << "\t\t			c += T(0.25);\n"
+		   << "\t\t			c += (real_t)(0.25);\n"
 		   << "\t\t		}\n"
 		   << "\t\t		else\n"
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * (vIn.y - 1);\n"
-		   << "\t\t			c += T(0.75);\n"
+		   << "\t\t			c += (real_t)(0.75);\n"
 		   << "\t\t		}\n"
 		   << "\t\t	}\n"
 		   << "\t\t}\n"
@@ -599,13 +599,13 @@ public:
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x - 1);\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
-		   << "\t\t			c += T(0.25);\n"
+		   << "\t\t			c += (real_t)(0.25);\n"
 		   << "\t\t		}\n"
 		   << "\t\t		else\n"
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * (vIn.y + 1);\n"
-		   << "\t\t			c += T(0.75);\n"
+		   << "\t\t			c += (real_t)(0.75);\n"
 		   << "\t\t		}\n"
 		   << "\t\t	}\n"
 		   << "\t\t	else\n"
@@ -614,19 +614,19 @@ public:
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * (vIn.x - 1);\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * vIn.y;\n"
-		   << "\t\t			c += T(0.25);\n"
+		   << "\t\t			c += (real_t)(0.25);\n"
 		   << "\t\t		}\n"
 		   << "\t\t		else\n"
 		   << "\t\t		{\n"
 		   << "\t\t			vOut.x = xform->m_VariationWeights[" << varIndex << "] * vIn.x;\n"
 		   << "\t\t			vOut.y = xform->m_VariationWeights[" << varIndex << "] * (vIn.y - 1);\n"
-		   << "\t\t			c += T(0.75);\n"
+		   << "\t\t			c += (real_t)(0.75);\n"
 		   << "\t\t		}\n"
 		   << "\t\t	}\n"
 		   << "\t\t}\n"
 		   << "\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
-		   << "\t\toutPoint->m_ColorX = fmod(c, T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = fmod(c, (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -683,7 +683,7 @@ public:
 		   << "\t\treal_t tempX = vOut.x + outPoint->m_X;\n"
 		   << "\t\treal_t tempY = vOut.y + outPoint->m_Y;\n"
 		   << "\n"
-		   << "\t\toutPoint->m_ColorX = fmod(fabs(T(0.5) * (" << ldcs << " * ((" << cosa << " * tempX + " << sina << " * tempY + " << offset << ")) + T(1.0))), T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = fmod(fabs((real_t)(0.5) * (" << ldcs << " * ((" << cosa << " * tempX + " << sina << " * tempY + " << offset << ")) + (real_t)(1.0))), (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
@@ -907,7 +907,7 @@ public:
 		   << "\t\tvOut.x = xform->m_VariationWeights[" << varIndex << "] * (ox + u * xx + v * yx);\n"
 		   << "\t\tvOut.y = xform->m_VariationWeights[" << varIndex << "] * (oy + u * xy + v * yy);\n"
 		   << "\t\tvOut.z = xform->m_VariationWeights[" << varIndex << "] * vIn.z;\n"
-		   << "\t\toutPoint->m_ColorX = fmod(fabs(u + v), T(1.0));\n"
+		   << "\t\toutPoint->m_ColorX = fmod(fabs(u + v), (real_t)(1.0));\n"
 		   << "\t}\n";
 
 		return ss.str();
