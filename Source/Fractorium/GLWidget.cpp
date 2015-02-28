@@ -452,7 +452,7 @@ void GLWidget::keyReleaseEvent(QKeyEvent* e)
 template <typename T>
 void GLEmberController<T>::MousePress(QMouseEvent* e)
 {
-	v3T mouseFlipped(e->x(), m_Viewport[3] - e->y(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
+	v3T mouseFlipped(e->x() * m_GL->devicePixelRatio(), m_Viewport[3] - e->y() * m_GL->devicePixelRatio(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
 	RendererBase* renderer = m_FractoriumEmberController->Renderer();
 
@@ -460,7 +460,7 @@ void GLEmberController<T>::MousePress(QMouseEvent* e)
 	if (!renderer)
 		return;
 
-	m_MouseDownPos = glm::ivec2(e->x(), e->y());//Capture the raster coordinates of where the mouse was clicked.
+	m_MouseDownPos = glm::ivec2(e->x() * m_GL->devicePixelRatio(), e->y() * m_GL->devicePixelRatio());//Capture the raster coordinates of where the mouse was clicked.
 	m_MouseWorldPos = WindowToWorld(mouseFlipped, false);//Capture the world cartesian coordinates of where the mouse is.
 	m_BoundsDown.w = renderer->LowerLeftX(false);//Need to capture these because they'll be changing if scaling.
 	m_BoundsDown.x = renderer->LowerLeftY(false);
@@ -552,7 +552,7 @@ void GLWidget::mousePressEvent(QMouseEvent* e)
 template <typename T>
 void GLEmberController<T>::MouseRelease(QMouseEvent* e)
 {
-	v3T mouseFlipped(e->x(), m_Viewport[3] - e->y(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
+	v3T mouseFlipped(e->x() * m_GL->devicePixelRatio(), m_Viewport[3] - e->y() * m_GL->devicePixelRatio(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
 
 	m_MouseWorldPos = WindowToWorld(mouseFlipped, false);
 	
@@ -591,8 +591,8 @@ template <typename T>
 void GLEmberController<T>::MouseMove(QMouseEvent* e)
 {
 	bool draw = true;
-	glm::ivec2 mouse(e->x(), e->y());
-	v3T mouseFlipped(e->x(), m_Viewport[3] - e->y(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
+	glm::ivec2 mouse(e->x() * m_GL->devicePixelRatio(), e->y() * m_GL->devicePixelRatio());
+	v3T mouseFlipped(e->x() * m_GL->devicePixelRatio(), m_Viewport[3] - e->y() * m_GL->devicePixelRatio(), 0);//Must flip y because in OpenGL, 0,0 is bottom left, but in windows, it's top left.
 	Ember<T>* ember = m_FractoriumEmberController->CurrentEmber();
 	
 	//First check to see if the mouse actually moved.
@@ -605,7 +605,7 @@ void GLEmberController<T>::MouseMove(QMouseEvent* e)
 
 	//Update status bar on main window, regardless of whether anything is being dragged.
 	if (m_Fractorium->m_Controller->RenderTimerRunning())
-		m_Fractorium->SetCoordinateStatus(e->x(), e->y(), m_MouseWorldPos.x, m_MouseWorldPos.y);
+		m_Fractorium->SetCoordinateStatus(e->x() * m_GL->devicePixelRatio(), e->y() * m_GL->devicePixelRatio(), m_MouseWorldPos.x, m_MouseWorldPos.y);
 
 	if (m_SelectedXform && m_DragState == DragDragging)//Dragging and affine.
 	{
