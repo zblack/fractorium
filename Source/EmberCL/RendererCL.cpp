@@ -759,7 +759,12 @@ bool RendererCL<T>::BuildIterProgramForEmber(bool doAccum)
 	}
 	else
 	{
-		m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + m_IterKernel + "\n");
+		//m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + m_IterKernel + "\n");
+
+		std::vector<std::string> errors = m_Wrapper.ProgramBuildErrors();
+		m_ErrorReport.insert(m_ErrorReport.end(), errors.begin(), errors.end());
+		m_ErrorReport.push_back(loc);
+
 		return false;
 	}
 
@@ -1297,7 +1302,11 @@ int RendererCL<T>::MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale)
 		if (b)
 			kernelIndex = m_Wrapper.FindKernelIndex(finalAccumEntryPoint);//Try to find it again, it will be present if successfully built.
 		else
+		{
+			std::vector<std::string> errors = m_Wrapper.ProgramBuildErrors();
+			m_ErrorReport.insert(m_ErrorReport.end(), errors.begin(), errors.end());
 			m_ErrorReport.push_back(loc);
+		}
 	}
 
 	return kernelIndex;
