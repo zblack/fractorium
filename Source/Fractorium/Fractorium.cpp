@@ -93,7 +93,7 @@ Fractorium::Fractorium(QWidget* p)
 	if (m_Wrapper.CheckOpenCL() && m_Settings->OpenCL() && m_QualitySpin->value() < 30)
 		m_QualitySpin->setValue(30);
 
-	int statusBarHeight = 20;
+	int statusBarHeight = 20 * devicePixelRatio();
 	ui.statusBar->setMinimumHeight(statusBarHeight);
 	ui.statusBar->setMaximumHeight(statusBarHeight);
 
