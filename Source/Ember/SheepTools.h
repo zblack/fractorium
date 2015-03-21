@@ -1288,6 +1288,7 @@ public:
 		m_Renderer->CreateSpatialFilter(newAlloc);
 		m_Renderer->CreateDEFilter(newAlloc);
 		m_Renderer->ComputeBounds();
+		m_Renderer->ComputeQuality();
 		m_Renderer->ComputeCamera();
 
 		if (ember.XaosPresent())

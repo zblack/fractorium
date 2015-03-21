@@ -203,7 +203,7 @@ void GLEmberController<double>::QueryVMP()
 /// by an m4<float>.
 /// </summary>
 template <>
-void GLEmberController<float>::MultMatrix(glm::detail::tmat4x4<float, glm::defaultp>& mat)
+void GLEmberController<float>::MultMatrix(tmat4x4<float, glm::defaultp>& mat)
 {
 	m_GL->glMultMatrixf(glm::value_ptr(mat));
 }
@@ -214,7 +214,7 @@ void GLEmberController<float>::MultMatrix(glm::detail::tmat4x4<float, glm::defau
 /// by an m4<double>.
 /// </summary>
 template <>
-void GLEmberController<double>::MultMatrix(glm::detail::tmat4x4<double, glm::defaultp>& mat)
+void GLEmberController<double>::MultMatrix(tmat4x4<double, glm::defaultp>& mat)
 {
 	m_GL->glMultMatrixd(glm::value_ptr(mat));
 }

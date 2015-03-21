@@ -25,8 +25,15 @@ void Fractorium::InitXformsColorUI()
 	m_XformColorSpeedSpin->setDecimals(3);
 	m_XformOpacitySpin->setDecimals(3);
 	m_XformDirectColorSpin->setDecimals(3);
-	connect(ui.XformColorScroll,  SIGNAL(valueChanged(int)), this, SLOT(OnXformScrollColorIndexChanged(int)),  Qt::QueuedConnection);
-	connect(ui.SoloXformCheckBox, SIGNAL(stateChanged(int)), this, SLOT(OnSoloXformCheckBoxStateChanged(int)), Qt::QueuedConnection);
+	connect(ui.XformColorScroll,  SIGNAL(valueChanged(int)),							this, SLOT(OnXformScrollColorIndexChanged(int)),			Qt::QueuedConnection);
+	connect(ui.SoloXformCheckBox, SIGNAL(stateChanged(int)),							this, SLOT(OnSoloXformCheckBoxStateChanged(int)),			Qt::QueuedConnection);
+	
+	connect(ui.ResetCurvesButton, SIGNAL(clicked(bool)),								this, SLOT(OnResetCurvesButtonClicked(bool)),				Qt::QueuedConnection);
+	connect(ui.CurvesView,		  SIGNAL(PointChangedSignal(int, int, const QPointF&)), this, SLOT(OnCurvesPointChanged(int, int, const QPointF&)), Qt::QueuedConnection);
+	connect(ui.CurvesAllRadio,    SIGNAL(toggled(bool)),								this, SLOT(OnCurvesAllRadioButtonToggled(bool)),			Qt::QueuedConnection);
+	connect(ui.CurvesRedRadio,    SIGNAL(toggled(bool)),								this, SLOT(OnCurvesRedRadioButtonToggled(bool)),			Qt::QueuedConnection);
+	connect(ui.CurvesGreenRadio,  SIGNAL(toggled(bool)),								this, SLOT(OnCurvesGreenRadioButtonToggled(bool)),		    Qt::QueuedConnection);
+	connect(ui.CurvesBlueRadio,   SIGNAL(toggled(bool)),								this, SLOT(OnCurvesBlueRadioButtonToggled(bool)),		    Qt::QueuedConnection);
 }
 
 /// <summary>
@@ -145,6 +152,55 @@ void Fractorium::OnXformRefPaletteResized(int logicalIndex, int oldSize, int new
 }
 
 /// <summary>
+/// Reset the color curve values in the current ember to their default state and also update the curves control.
+/// Called when ResetCurvesButton is clicked.
+/// Resets the rendering process at either ACCUM_ONLY by default, or FILTER_AND_ACCUM when using early clip.
+/// </summary>
+template <typename T>
+void FractoriumEmberController<T>::ClearColorCurves()
+{
+	Update([&]
+	{
+		m_Ember.m_Curves.Init();
+	}, true, m_Renderer->EarlyClip() ? FILTER_AND_ACCUM : ACCUM_ONLY);
+
+	FillCurvesControl();
+}
+
+void Fractorium::OnResetCurvesButtonClicked(bool checked) { m_Controller->ClearColorCurves(); }
+
+/// <summary>
+/// Set the coordinate of the curve point.
+/// Called when the position of any of the points in the curves editor is is changed.
+/// Resets the rendering process at either ACCUM_ONLY by default, or FILTER_AND_ACCUM when using early clip.
+/// </summary>
+/// <param name="curveIndex">The curve index, 0-1/</param>
+/// <param name="pointIndex">The point index within the selected curve, 1-2.</param>
+/// <param name="point">The new coordinate of the point in terms of the curves control rect.</param>
+template <typename T>
+void FractoriumEmberController<T>::ColorCurveChanged(int curveIndex, int pointIndex, const QPointF& point)
+{
+	Update([&]
+	{
+		m_Ember.m_Curves.m_Points[curveIndex][pointIndex].x = point.x();
+		m_Ember.m_Curves.m_Points[curveIndex][pointIndex].y = point.y();
+	}, true, m_Renderer->EarlyClip() ? FILTER_AND_ACCUM : ACCUM_ONLY);
+}
+
+void Fractorium::OnCurvesPointChanged(int curveIndex, int pointIndex, const QPointF& point) { m_Controller->ColorCurveChanged(curveIndex, pointIndex, point); }
+
+/// <summary>
+/// Set the top most points in the curves control, which makes it easier to
+/// select a point by putting it on top of all the others.
+/// Called when the any of the curve color radio buttons are toggled.
+/// </summary>
+/// <param name="curveIndex">The curve index, 0-1/</param>
+void Fractorium::OnCurvesAllRadioButtonToggled(bool checked)   { if (checked) ui.CurvesView->SetTop(CurveIndex::ALL);   }
+void Fractorium::OnCurvesRedRadioButtonToggled(bool checked)   { if (checked) ui.CurvesView->SetTop(CurveIndex::RED);   }
+void Fractorium::OnCurvesGreenRadioButtonToggled(bool checked) { if (checked) ui.CurvesView->SetTop(CurveIndex::GREEN); }
+void Fractorium::OnCurvesBlueRadioButtonToggled(bool checked)  { if (checked) ui.CurvesView->SetTop(CurveIndex::BLUE);  }
+
+/// <summary>
 /// Set the current xform color index spinner to the current xform's color index.
 /// Set the color cell in the palette ref table.
 /// </summary>
@@ -169,6 +225,28 @@ void FractoriumEmberController<T>::SetCurrentXformColorIndex(double d)
 }
 
 /// <summary>
+/// Set the points in the curves control to the values of the curve points in the current ember.
+/// </summary>
+template <typename T>
+void FractoriumEmberController<T>::FillCurvesControl()
+{
+	m_Fractorium->ui.CurvesView->blockSignals(true);
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 1; j < 3; j++)//Only do middle points.
+		{
+			QPointF point(m_Ember.m_Curves.m_Points[i][j].x, m_Ember.m_Curves.m_Points[i][j].y);
+
+			m_Fractorium->ui.CurvesView->Set(i, j, point);
+		}
+	}
+
+	m_Fractorium->ui.CurvesView->blockSignals(false);
+	m_Fractorium->ui.CurvesView->update();
+}
+
+/// <summary>
 /// Set the color index, speed and opacity spinners with the values of the current xform.
 /// Set the cells of the palette ref table as well.
 /// </summary>
@@ -180,6 +258,7 @@ void FractoriumEmberController<T>::FillColorWithXform(Xform<T>* xform)
 	m_Fractorium->m_XformColorSpeedSpin->SetValueStealth(xform->m_ColorSpeed);
 	m_Fractorium->m_XformOpacitySpin->SetValueStealth(xform->m_Opacity);
 	m_Fractorium->m_XformDirectColorSpin->SetValueStealth(xform->m_DirectColor);
+	FillCurvesControl();
 	m_Fractorium->OnXformColorIndexChanged(xform->m_ColorX, false);//Had to call stealth before to avoid doing an update, now manually update related controls, still without doing an update.
 }
 

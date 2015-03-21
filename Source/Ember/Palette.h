@@ -533,7 +533,7 @@ public:
 		}
 
 		//Identify the most saturated channel.
-		maxc = max(max(cBuf[0], cBuf[1]), cBuf[2]);
+		maxc = std::max(std::max(cBuf[0], cBuf[1]), cBuf[2]);
 		maxa = ls * maxc;
 
 		//If a channel is saturated and highlight power is non-negative

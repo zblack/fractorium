@@ -40,6 +40,7 @@ private:
 	bool OpenCL();
 	bool Double();
 	bool ShowAllXforms();
+	bool AutoUnique();
 	uint PlatformIndex();
 	uint DeviceIndex();
 	uint ThreadCount();

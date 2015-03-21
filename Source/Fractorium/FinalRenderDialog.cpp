@@ -139,7 +139,7 @@ FractoriumFinalRenderDialog::FractoriumFinalRenderDialog(FractoriumSettings* set
 	QSize s = size();
 	int desktopHeight = qApp->desktop()->availableGeometry().height();
 
-	s.setHeight(min(s.height(), int(double(desktopHeight * 0.90))));
+	s.setHeight(std::min(s.height(), int(double(desktopHeight * 0.90))));
 	setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, s, qApp->desktop()->availableGeometry()));
 
 	QWidget* w = SetTabOrder(this, ui.FinalRenderEarlyClipCheckBox, ui.FinalRenderYAxisUpCheckBox);

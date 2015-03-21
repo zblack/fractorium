@@ -10,6 +10,7 @@
 #include "FinalRenderDialog.h"
 #include "OptionsDialog.h"
 #include "AboutDialog.h"
+#include "CurvesGraphicsView.h"
 
 /// <summary>
 /// Fractorium class.
@@ -140,6 +141,11 @@ public slots:
 	void OnSaveEntireFileAsXmlButtonClicked(bool checked);
 	void OnSaveCurrentToOpenedFileButtonClicked(bool checked);
 
+	//Library.
+	void OnEmberTreeItemChanged(QTreeWidgetItem* item, int col);
+	void OnEmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col);
+	void OnDelete(const pair<size_t, QTreeWidgetItem*>& p);
+
 	//Params.
 	void OnBrightnessChanged(double d);//Color.
 	void OnGammaChanged(double d);
@@ -222,7 +228,13 @@ public slots:
 	void OnXformDirectColorChanged(double d);
 	void OnSoloXformCheckBoxStateChanged(int state);
 	void OnXformRefPaletteResized(int logicalIndex, int oldSize, int newSize);
-	
+	void OnResetCurvesButtonClicked(bool checked);
+	void OnCurvesPointChanged(int curveIndex, int pointIndex, const QPointF& point);
+	void OnCurvesAllRadioButtonToggled(bool checked);
+	void OnCurvesRedRadioButtonToggled(bool checked);
+	void OnCurvesGreenRadioButtonToggled(bool checked);
+	void OnCurvesBlueRadioButtonToggled(bool checked);
+
 	//Xforms Variations.
 	void OnVariationSpinBoxValueChanged(double d);
 	void OnTreeHeaderSectionClicked(int);
@@ -241,10 +253,6 @@ public slots:
 	void OnPaletteCellDoubleClicked(int row, int col);
 	void OnPaletteRandomSelectButtonClicked(bool checked);
 	void OnPaletteRandomAdjustButtonClicked(bool checked);
-
-	//Library.
-	void OnEmberTreeItemChanged(QTreeWidgetItem* item, int col);
-	void OnEmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col);
 
 	//Rendering/progress.
 	void StartRenderTimer();
@@ -287,6 +295,9 @@ private:
 	//Embers.
 	bool HaveFinal();
 
+	//Library.
+	pair<size_t, QTreeWidgetItem*> GetCurrentEmberIndex();
+
 	//Params.
 
 	//Xforms.
@@ -304,8 +315,6 @@ private:
 	//Palette.
 	void ResetPaletteControls();
 
-	//Library.
-	
 	//Info.
 	void UpdateHistogramBounds();
 	void ErrorReportToQTextEdit(const vector<string>& errors, QTextEdit* textEdit, bool clear = true);

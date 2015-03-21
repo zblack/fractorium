@@ -1,4 +1,4 @@
-0.4.1.8 Beta
+0.4.1.9 Beta
 --User changes
 	Thread image writing in EmberAnimate and when doing animation sequence in final render dialog.
 	Add total time output for verbose mode in EmberAnimate to match EmberRender.

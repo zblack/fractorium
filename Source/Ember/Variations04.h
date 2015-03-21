@@ -4530,7 +4530,7 @@ public:
 		m_Ay = ((fabs(m_AreaY) < 0.1) ? T(0.1) : fabs(m_AreaY)) * agdoa;
 		m_Cx = m_CenterX * agdoc;
 		m_Cy = m_CenterY * agdoc;
-		m_B = m_Gamma * agdoa / (max(m_Ax, m_Ay));
+		m_B = m_Gamma * agdoa / (std::max(m_Ax, m_Ay));
 	}
 
 protected:

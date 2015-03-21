@@ -4610,7 +4610,7 @@ public:
 		T y = (helper.In.y * m_S) + m_CenterY;
 
 		//Calculate distance from center but constrain it to EPS.
-		T d = max(EPS, sqrt(SQR(x) * SQR(y)));
+		T d = std::max(EPS, sqrt(SQR(x) * SQR(y)));
 
 		//Normalize x and y.
 		T nx = x / d;

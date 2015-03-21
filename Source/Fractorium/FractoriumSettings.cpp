@@ -39,7 +39,7 @@ void FractoriumSettings::EnsureDefaults()
 		XmlSupersample(2);
 
 	if (ThreadCount() == 0 || ThreadCount() > Timing::ProcessorCount())
-		ThreadCount(max(1u, Timing::ProcessorCount() - 1));//Default to one less to keep the UI responsive for first time users.
+		ThreadCount(std::max(1u, Timing::ProcessorCount() - 1));//Default to one less to keep the UI responsive for first time users.
 
 	if (FinalThreadCount() == 0 || FinalThreadCount() > Timing::ProcessorCount())
 		FinalThreadCount(Timing::ProcessorCount());
@@ -172,8 +172,8 @@ void FractoriumSettings::FinalKeepAspect(bool b)			  { setValue(FINALKEEPASPECT,
 uint FractoriumSettings::FinalScale()				  { return value(FINALSCALE).toUInt();			 }
 void FractoriumSettings::FinalScale(uint i)			  { setValue(FINALSCALE, i);					 }
 
-QString FractoriumSettings::FinalExt()						  { return value(FINALEXT).toString();			 }
-void FractoriumSettings::FinalExt(const QString& s)				  { setValue(FINALEXT, s);						 }
+QString FractoriumSettings::FinalExt()				  { return value(FINALEXT).toString();			 }
+void FractoriumSettings::FinalExt(const QString& s)	  { setValue(FINALEXT, s);						 }
 															  
 uint FractoriumSettings::FinalPlatformIndex()         { return value(FINALPLATFORMINDEX).toUInt();   }
 void FractoriumSettings::FinalPlatformIndex(uint i)   { setValue(FINALPLATFORMINDEX, i);             }
@@ -239,3 +239,6 @@ void FractoriumSettings::OpenImageExt(const QString& s)		  { setValue(OPENIMAGEE
 															  											     
 QString FractoriumSettings::SaveImageExt()					  { return value(SAVEIMAGEEXT).toString();	     }
 void FractoriumSettings::SaveImageExt(const QString& s)		  { setValue(SAVEIMAGEEXT, s);				     }
+
+bool FractoriumSettings::SaveAutoUnique()					  { return value(AUTOUNIQUE).toBool();			 }
+void FractoriumSettings::SaveAutoUnique(bool b)				  { setValue(AUTOUNIQUE, b);					 }

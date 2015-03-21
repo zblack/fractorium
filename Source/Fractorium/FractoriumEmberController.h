@@ -55,7 +55,7 @@ public:
 	virtual void CopyTempPalette(Palette<double>& palette) { }
 #endif
 	virtual void SetEmber(size_t index) { }
-	virtual void Clear() { }
+	//virtual void Clear() { }
 	virtual void AddXform() { }
 	virtual void DuplicateXform() { }
 	virtual void ClearCurrentXform() { }
@@ -97,6 +97,17 @@ public:
 	virtual void ClearFlame() { }
 
 	//Toolbar.
+
+	//Library.
+	virtual void SyncNames() { }
+	virtual void SyncPointers() { }
+	virtual void FillLibraryTree(int selectIndex = -1) { }
+	virtual void UpdateLibraryTree() { }
+	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) { }
+	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) { }
+	virtual void RenderPreviews(uint start = UINT_MAX, uint end = UINT_MAX) { }
+	virtual void StopPreviewRender() { }
+	virtual void Delete(const pair<size_t, QTreeWidgetItem*>& p) { }
 
 	//Params.
 	virtual void SetCenter(double x, double y) { }
@@ -156,6 +167,8 @@ public:
 	virtual void XformColorSpeedChanged(double d) { }
 	virtual void XformOpacityChanged(double d) { }
 	virtual void XformDirectColorChanged(double d) { }
+	virtual void ClearColorCurves() { }
+	virtual void ColorCurveChanged(int curveIndex, int pointInxed, const QPointF& point) { }//need to put this in a different section because it's not xform specific.//TODO
 	void SetPaletteRefTable(QPixmap* pixmap);
 
 	//Xforms Variations.
@@ -177,15 +190,6 @@ public:
 	virtual QRgb GetQRgbFromPaletteIndex(uint i) { return QRgb(); }
 	virtual void PaletteCellClicked(int row, int col) { }
 
-	//Library.
-	virtual void SyncNames() { }
-	virtual void FillLibraryTree(int selectIndex = -1) { }
-	virtual void UpdateLibraryTree() { }
-	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) { }
-	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) { }
-	virtual void RenderPreviews(uint start = UINT_MAX, uint end = UINT_MAX) { }
-	virtual void StopPreviewRender() { }
-
 	//Info.
 
 	//Rendering/progress.
@@ -198,6 +202,7 @@ public:
 	void StartRenderTimer();
 	void DelayedStartRenderTimer();
 	void StopRenderTimer(bool wait);
+	void ClearFinalImages();
 	void Shutdown();
 	void UpdateRender(eProcessAction action = FULL_RENDER);
 	void DeleteRenderer();
@@ -271,7 +276,7 @@ public:
 	virtual void CopyTempPalette(Palette<double>& palette) override;
 #endif
 	virtual void SetEmber(size_t index) override;
-	virtual void Clear() override { }
+	//virtual void Clear() override { }
 	virtual void AddXform() override;
 	virtual void DuplicateXform() override;
 	virtual void ClearCurrentXform() override;
@@ -316,6 +321,17 @@ public:
 	virtual void ClearFlame() override;
 
 	//Toolbar.
+
+	//Library.
+	virtual void SyncNames() override;
+	virtual void SyncPointers() override;
+	virtual void FillLibraryTree(int selectIndex = -1) override;
+	virtual void UpdateLibraryTree() override;
+	virtual void Delete(const pair<size_t, QTreeWidgetItem*>& p) override;
+	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) override;
+	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) override;
+	virtual void RenderPreviews(uint start = UINT_MAX, uint end = UINT_MAX) override;
+	virtual void StopPreviewRender() override;
 
 	//Params.
 	virtual void SetCenter(double x, double y) override;
@@ -378,6 +394,8 @@ public:
 	virtual void XformColorSpeedChanged(double d) override;
 	virtual void XformOpacityChanged(double d) override;
 	virtual void XformDirectColorChanged(double d) override;
+	virtual void ClearColorCurves() override;
+	virtual void ColorCurveChanged(int curveIndex, int pointInxed, const QPointF& point) override;
 	void FillColorWithXform(Xform<T>* xform);
 
 	//Xforms Variations.
@@ -399,15 +417,6 @@ public:
 	virtual void PaletteAdjust() override;
 	virtual QRgb GetQRgbFromPaletteIndex(uint i) override { return QRgb(); }
 	virtual void PaletteCellClicked(int row, int col) override;
-
-	//Library.
-	virtual void SyncNames() override;
-	virtual void FillLibraryTree(int selectIndex = -1) override;
-	virtual void UpdateLibraryTree() override;
-	virtual void EmberTreeItemChanged(QTreeWidgetItem* item, int col) override;
-	virtual void EmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) override;
-	virtual void RenderPreviews(uint start = UINT_MAX, uint end = UINT_MAX) override;
-	virtual void StopPreviewRender() override;
 
 	//Info.
 
@@ -433,6 +442,7 @@ private:
 
 	//Xforms Color.
 	void SetCurrentXformColorIndex(double d);
+	void FillCurvesControl();
 
 	//Palette.
 	void UpdateAdjustedPaletteGUI(Palette<T>& palette);

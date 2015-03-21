@@ -52,6 +52,7 @@
 #define SAVEXMLEXT			 "file/savexmlext"
 #define OPENIMAGEEXT		 "file/openimageext"
 #define SAVEIMAGEEXT		 "file/saveimageext"
+#define AUTOUNIQUE			 "file/autounique"
 
 #define IDENTITYID			 "identity/id"
 #define IDENTITYURL			 "identity/url"
@@ -188,6 +189,9 @@ public:
 
 	QString SaveImageExt();
 	void SaveImageExt(const QString& s);
+
+	bool SaveAutoUnique();
+	void SaveAutoUnique(bool b);
 
 	QString Id();
 	void Id(const QString& s);

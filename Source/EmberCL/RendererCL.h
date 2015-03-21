@@ -121,6 +121,8 @@ public:
 	bool WriteRandomPoints();
 #endif
 	string IterKernel();
+	string DEKernel();
+	string FinalAccumKernel();
 
 	//Virtual functions overridden from RendererCLBase.
 	virtual bool ReadFinal(byte* pixels);
@@ -193,6 +195,7 @@ private:
 	string m_CarToRasBufferName;
 	string m_DEFilterParamsBufferName;
 	string m_SpatialFilterParamsBufferName;
+	string m_CurvesCsaName;
 	string m_DECoefsBufferName;
 	string m_DEWidthsBufferName;
 	string m_DECoefIndicesBufferName;

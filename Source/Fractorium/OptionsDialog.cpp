@@ -88,6 +88,7 @@ FractoriumOptionsDialog::FractoriumOptionsDialog(FractoriumSettings* settings, Q
 	m_XmlTemporalSamplesSpin->setValue(m_Settings->XmlTemporalSamples());
 	m_XmlQualitySpin->setValue(m_Settings->XmlQuality());
 	m_XmlSupersampleSpin->setValue(m_Settings->XmlSupersample());
+	ui.AutoUniqueCheckBox->setChecked(m_Settings->SaveAutoUnique());
 
 	OnOpenCLCheckBoxStateChanged(ui.OpenCLCheckBox->isChecked());
 }
@@ -102,6 +103,7 @@ bool FractoriumOptionsDialog::Transparency() { return ui.TransparencyCheckBox->i
 bool FractoriumOptionsDialog::OpenCL() { return ui.OpenCLCheckBox->isChecked(); }
 bool FractoriumOptionsDialog::Double() { return ui.DoublePrecisionCheckBox->isChecked(); }
 bool FractoriumOptionsDialog::ShowAllXforms() { return ui.ShowAllXformsCheckBox->isChecked(); }
+bool FractoriumOptionsDialog::AutoUnique() { return ui.AutoUniqueCheckBox->isChecked(); }
 uint FractoriumOptionsDialog::PlatformIndex() { return ui.PlatformCombo->currentIndex(); }
 uint FractoriumOptionsDialog::DeviceIndex() { return ui.DeviceCombo->currentIndex(); }
 uint FractoriumOptionsDialog::ThreadCount() { return ui.ThreadCountSpin->value(); }
@@ -162,6 +164,7 @@ void FractoriumOptionsDialog::accept()
 	m_Settings->XmlTemporalSamples(m_XmlTemporalSamplesSpin->value());
 	m_Settings->XmlQuality(m_XmlQualitySpin->value());
 	m_Settings->XmlSupersample(m_XmlSupersampleSpin->value());
+	m_Settings->SaveAutoUnique(AutoUnique());
 
 	//Identity.
 	m_Settings->Id(m_IdEdit->text());
@@ -196,7 +199,8 @@ void FractoriumOptionsDialog::reject()
 	m_XmlTemporalSamplesSpin->setValue(m_Settings->XmlTemporalSamples());
 	m_XmlQualitySpin->setValue(m_Settings->XmlQuality());
 	m_XmlSupersampleSpin->setValue(m_Settings->XmlSupersample());
-	
+	ui.AutoUniqueCheckBox->setChecked(m_Settings->SaveAutoUnique());
+
 	//Identity.
 	m_IdEdit->setText(m_Settings->Id());
 	m_UrlEdit->setText(m_Settings->Url());

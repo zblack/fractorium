@@ -67,9 +67,20 @@ void FractoriumEmberControllerBase::StopRenderTimer(bool wait)
 void FractoriumEmberControllerBase::Shutdown()
 {
 	StopRenderTimer(true);
+	ClearFinalImages();
 
 	while(m_Fractorium->ui.GLDisplay->Drawing())
 		QApplication::processEvents();
+}
+
+/// <summary>
+/// Clear the output image buffers.
+/// </summary>
+void FractoriumEmberControllerBase::ClearFinalImages()
+{
+	Memset(m_FinalImage[0]);
+	Memset(m_FinalImage[1]);
+	//Unsure if we should also call RendererCL::ClearFinal() as well. At the moment it seems unnecessary.
 }
 
 /// <summary>
@@ -442,7 +453,11 @@ bool FractoriumEmberController<T>::Render()
 				//Uncomment for debugging kernel build and execution errors.
 				//m_Fractorium->ui.InfoRenderingTextEdit->setText(QString::fromStdString(m_Fractorium->m_Wrapper.DumpInfo()));
 				//if (rendererCL)
-				//	m_Fractorium->ui.InfoRenderingTextEdit->setText(QString::fromStdString(rendererCL->IterKernel()));
+				//{
+				//	string s = "OpenCL Kernels: \r\n" + rendererCL->IterKernel() + "\r\n" + rendererCL->DEKernel() + "\r\n" + rendererCL->FinalAccumKernel();
+				//
+				//	QMetaObject::invokeMethod(m_Fractorium->ui.InfoRenderingTextEdit, "setText", Qt::QueuedConnection, Q_ARG(const QString&, QString::fromStdString(s)));
+				//}
 			}
 		}
 		else//Something went very wrong, show error report.
@@ -460,12 +475,16 @@ bool FractoriumEmberController<T>::Render()
 				m_Rendering = false;
 				StopRenderTimer(true);
 				m_Fractorium->m_RenderStatusLabel->setText("Rendering failed 3 or more times, stopping all rendering, see info tab. Try changing renderer types.");
-				Memset(m_FinalImage[m_FinalImageIndex]);
-		
-				if (rendererCL)
-					rendererCL->ClearFinal();
-
+				ClearFinalImages();
 				m_GLController->ClearWindow();
+
+				if (rendererCL)
+				{
+					//string s = "OpenCL Kernels: \r\n" + rendererCL->IterKernel() + "\r\n" + rendererCL->DEKernel() + "\r\n" + rendererCL->FinalAccumKernel();
+
+					rendererCL->ClearFinal();
+					//QMetaObject::invokeMethod(m_Fractorium->ui.InfoRenderingTextEdit, "setText", Qt::QueuedConnection, Q_ARG(const QString&, QString::fromStdString(s)));
+				}
 			}
 		}
 	}

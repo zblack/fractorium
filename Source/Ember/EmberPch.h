@@ -78,5 +78,7 @@
 using namespace tbb;
 using namespace std;
 using namespace std::chrono;
+using namespace glm;
+using namespace glm::detail;
 using glm::uint;
 using glm::uint16;

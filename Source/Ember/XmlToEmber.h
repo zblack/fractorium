@@ -550,8 +550,8 @@ private:
 		char* attStr;
 		const char* loc = __FUNCTION__;
 		int soloXform = -1;
-		uint i, count, index = 0;
-		double vals[10];
+		uint i, j, count, index = 0;
+		double vals[16];
 		xmlAttrPtr att, curAtt;
 		xmlNodePtr editNode, childNode, motionNode;
 
@@ -703,6 +703,20 @@ private:
 			{
 				Atof(attStr, currentEmber.m_Hue);
 				currentEmber.m_Hue = fmod(currentEmber.m_Hue, T(0.5));//Orig did fmod 1, but want it in the range -0.5 - 0.5.
+			}
+			else if (!Compare(curAtt->name, "curves"))
+			{
+				stringstream ss(attStr);
+
+				for (i = 0; i < 4; i++)
+				{
+					for (j = 0; j < 4; j++)
+					{
+						ss >> currentEmber.m_Curves.m_Points[i][j].x;
+						ss >> currentEmber.m_Curves.m_Points[i][j].y;
+						ss >> currentEmber.m_Curves.m_Weights[i][j];
+					}
+				}
 			}
 
 			xmlFree(attStr);

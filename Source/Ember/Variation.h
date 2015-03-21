@@ -1506,7 +1506,7 @@ public:
 		{
 			case REAL :
 			{
-				*m_Param = max(min(val, m_Max), m_Min);
+				*m_Param = std::max(std::min(val, m_Max), m_Min);
 				break;
 			}
 
@@ -1524,7 +1524,7 @@ public:
 
 			case REAL_NONZERO :
 			{
-				T vd = max(min(val, m_Max), m_Min);
+				T vd = std::max(std::min(val, m_Max), m_Min);
 
 				if (IsNearZero(vd))
 					*m_Param = EPS * SignNz(vd);
@@ -1536,14 +1536,14 @@ public:
 
 			case INTEGER :
 			{
-				*m_Param = T(int(max(min<T>(T(Floor<T>(val + T(0.5))), m_Max), m_Min)));
+				*m_Param = T(int(std::max(std::min<T>(T(Floor<T>(val + T(0.5))), m_Max), m_Min)));
 				break;
 			}
 
 			case INTEGER_NONZERO :
 			default:
 			{
-				int vi = int(max(min<T>(T(Floor<T>(val + T(0.5))), m_Max), m_Min));
+				int vi = int(std::max(std::min<T>(T(Floor<T>(val + T(0.5))), m_Max), m_Min));
 
 				if (vi == 0)
 					vi = int(SignNz<T>(val));

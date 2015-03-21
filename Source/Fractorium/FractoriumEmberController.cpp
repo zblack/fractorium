@@ -95,7 +95,7 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 
 		m_PreviewRun = true;
 		m_PreviewRunning = true;
-		m_PreviewRenderer->ThreadCount(max(1u, Timing::ProcessorCount() - 1));//Leave one processor free so the GUI can breathe.
+		m_PreviewRenderer->ThreadCount(std::max(1u, Timing::ProcessorCount() - 1));//Leave one processor free so the GUI can breathe.
 		QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
 
 		if (QTreeWidgetItem* top = tree->topLevelItem(0))
@@ -208,7 +208,7 @@ void FractoriumEmberController<T>::SetEmber(size_t index)
 /// Wrapper to call a function, then optionally add the requested action to the rendering queue.
 /// </summary>
 /// <param name="func">The function to call</param>
-/// <param name="updateRender">True to update renderer, else false. Default: false.</param>
+/// <param name="updateRender">True to update renderer, else false. Default: true.</param>
 /// <param name="action">The action to add to the rendering queue. Default: FULL_RENDER.</param>
 template <typename T>
 void FractoriumEmberController<T>::Update(std::function<void (void)> func, bool updateRender, eProcessAction action)

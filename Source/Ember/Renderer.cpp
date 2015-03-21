@@ -29,41 +29,6 @@ Renderer<T, bucketT>::~Renderer()
 /// </summary>
 
 /// <summary>
-/// Compute the camera.
-/// This sets up the bounds of the cartesian plane that the raster bounds correspond to.
-/// This must be called after ComputeBounds() which sets up the raster bounds.
-/// </summary>
-template <typename T, typename bucketT>
-void Renderer<T, bucketT>::ComputeCamera()
-{
-	m_Scale = pow(T(2.0), Zoom());
-	m_ScaledQuality = Quality() * m_Scale * m_Scale;
-
-	m_PixelsPerUnitX = PixelsPerUnit() * m_Scale;
-	m_PixelsPerUnitY = m_PixelsPerUnitX;
-	m_PixelsPerUnitX /= PixelAspectRatio();
-
-	T shift = 0;
-	T t0 = T(m_GutterWidth) / (Supersample() * m_PixelsPerUnitX);
-	T t1 = T(m_GutterWidth) / (Supersample() * m_PixelsPerUnitY);
-
-	//These go from ll to ur, moving from negative to positive.
-	m_LowerLeftX = CenterX() - FinalRasW() / m_PixelsPerUnitX / T(2.0);
-	m_LowerLeftY = CenterY() - FinalRasH() / m_PixelsPerUnitY / T(2.0);
-	m_UpperRightX = m_LowerLeftX + FinalRasW() / m_PixelsPerUnitX;
-	m_UpperRightY = m_LowerLeftY + FinalRasH() / m_PixelsPerUnitY;
-
-	T carLlX = m_LowerLeftX - t0;
-	T carLlY = m_LowerLeftY - t1 + shift;
-	T carUrX = m_UpperRightX + t0;
-	T carUrY = m_UpperRightY + t1 + shift;
-
-	m_RotMat.MakeID();
-	m_RotMat.Rotate(-Rotate());
-	m_CarToRas.Init(carLlX, carLlY, carUrX, carUrY, m_SuperRasW, m_SuperRasH, PixelAspectRatio());
-}
-
-/// <summary>
 /// Add an ember to the end of the embers vector and reset the rendering process.
 /// Reset the rendering process.
 /// </summary>
@@ -124,7 +89,7 @@ void Renderer<T, bucketT>::ComputeBounds()
 	//If the radius of the density estimation filter is greater than the
 	//gutter width, have to pad with more.  Otherwise, use the same value.
 	for (size_t i = 0; i < m_Embers.size(); i++)
-		maxDEFilterWidth = max(size_t(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
+		maxDEFilterWidth = std::max<size_t>(size_t(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
 
 	//Need an extra ss = (int)floor(m_Supersample / 2.0) of pixels so that a local iteration count for DE can be determined.//SMOULDER
 	if (maxDEFilterWidth > 0)
@@ -138,6 +103,50 @@ void Renderer<T, bucketT>::ComputeBounds()
 	m_SuperRasW = (Supersample() * FinalRasW()) + (2 * m_GutterWidth);
 	m_SuperRasH = (Supersample() * FinalRasH()) + (2 * m_GutterWidth);
 	m_SuperSize = m_SuperRasW * m_SuperRasH;
+}
+
+/// <summary>
+/// Compute the scale based on the zoom, then the quality based on the computed scale.
+/// This sets up the bounds of the cartesian plane that the raster bounds correspond to.
+/// This must be called before ComputeCamera() which will use scale.
+/// </summary>
+template <typename T, typename bucketT>
+void Renderer<T, bucketT>::ComputeQuality()
+{
+	m_Scale = pow(T(2.0), Zoom());
+	m_ScaledQuality = Quality() * m_Scale * m_Scale;
+}
+
+/// <summary>
+/// Compute the camera.
+/// This sets up the bounds of the cartesian plane that the raster bounds correspond to.
+/// This must be called after ComputeBounds() which sets up the raster bounds.
+/// </summary>
+template <typename T, typename bucketT>
+void Renderer<T, bucketT>::ComputeCamera()
+{
+	m_PixelsPerUnitX = PixelsPerUnit() * m_Scale;
+	m_PixelsPerUnitY = m_PixelsPerUnitX;
+	m_PixelsPerUnitX /= PixelAspectRatio();
+
+	T shift = 0;
+	T t0 = T(m_GutterWidth) / (Supersample() * m_PixelsPerUnitX);
+	T t1 = T(m_GutterWidth) / (Supersample() * m_PixelsPerUnitY);
+
+	//These go from ll to ur, moving from negative to positive.
+	m_LowerLeftX = CenterX() - FinalRasW() / m_PixelsPerUnitX / T(2.0);
+	m_LowerLeftY = CenterY() - FinalRasH() / m_PixelsPerUnitY / T(2.0);
+	m_UpperRightX = m_LowerLeftX + FinalRasW() / m_PixelsPerUnitX;
+	m_UpperRightY = m_LowerLeftY + FinalRasH() / m_PixelsPerUnitY;
+
+	T carLlX = m_LowerLeftX - t0;
+	T carLlY = m_LowerLeftY - t1 + shift;
+	T carUrX = m_UpperRightX + t0;
+	T carUrY = m_UpperRightY + t1 + shift;
+
+	m_RotMat.MakeID();
+	m_RotMat.Rotate(-Rotate());
+	m_CarToRas.Init(carLlX, carLlY, carUrX, carUrY, m_SuperRasW, m_SuperRasH, PixelAspectRatio());
 }
 
 /// <summary>
@@ -327,7 +336,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 	bool accumOnly = m_ProcessAction == ACCUM_ONLY;
 	bool resume = m_ProcessState != NONE;
 	bool newFilterAlloc;
-	size_t temporalSample = 0;
+	size_t i, temporalSample = 0;
 	T deTime;
 	eRenderStatus success = RENDER_OK;
 	//double iterationTime = 0;
@@ -353,6 +362,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 		m_Gamma = 0;
 		m_Vibrancy = 0;//Accumulate these after each temporal sample.
 		m_VibGamCount = 0;
+		m_CurvesSet = false;
 		m_Background.Clear();
 	}
 	//User requested an increase in quality after finishing.
@@ -365,6 +375,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 		m_Vibrancy = 0;
 		m_VibGamCount = 0;
 		m_Background.Clear();
+		ComputeQuality();//Must recompute quality when doing a quality increase.
 	}
 
 	//Make sure values are within valid range.
@@ -427,8 +438,9 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 		Interpolater<T>::Interpolate(m_Embers, deTime, 0, m_Ember);
 	//it.Toc("Interp 2");
 
-	ClampGte<T>(m_Ember.m_MinRadDE, 0);
-	ClampGte<T>(m_Ember.m_MaxRadDE, 0);
+	ClampGteRef<T>(m_Ember.m_MinRadDE, 0);
+	ClampGteRef<T>(m_Ember.m_MaxRadDE, 0);
+	ClampGteRef<T>(m_Ember.m_MaxRadDE, m_Ember.m_MinRadDE);
 
 	if (!CreateDEFilter(newFilterAlloc))
 	{
@@ -446,7 +458,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 
 		//Interpolate again.
 		//it.Tic();
-		if (m_Embers.size() > 1)
+		if (TemporalSamples() > 1 && m_Embers.size() > 1)
 			Interpolater<T>::Interpolate(m_Embers, temporalTime, 0, m_Ember);//This will perform all necessary precalcs via the ember/xform/variation assignment operators.
 
 		//it.Toc("Interp 3");
@@ -458,13 +470,16 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 			goto Finish;
 		}
 
-		ComputeCamera();
-
-		//For each temporal sample, the palette m_Dmap needs to be re-created with color scalar. 1 if no temporal samples.
-		MakeDmap(colorScalar);
+		//Don't need to do this every time through for a single image.
+		if (TemporalSamples() > 1 || !resume)
+		{
+			ComputeQuality();
+			ComputeCamera();
+			MakeDmap(colorScalar);//For each temporal sample, the palette m_Dmap needs to be re-created with color scalar. 1 if no temporal samples.
+		}
 
 		//The actual number of times to iterate. Each thread will get (totalIters / ThreadCount) iters to do.
-		//This is based on zoom and scale calculated in ComputeCamera().
+		//This is based on zoom and scale calculated in ComputeQuality().
 		//Note that the iter count is based on the final image dimensions, and not the super sampled dimensions.
 		size_t itersPerTemporalSample = ItersPerTemporalSample();//The total number of iterations for this temporal sample without overrides.
 		size_t sampleItersToDo;//The number of iterations to actually do in this sample, considering overrides.
@@ -474,7 +489,7 @@ eRenderStatus Renderer<T, bucketT>::Run(vector<byte>& finalImage, double time, s
 		else
 			sampleItersToDo = itersPerTemporalSample;//Run as many iters as specified to complete this temporal sample.
 
-		sampleItersToDo = min(sampleItersToDo, itersPerTemporalSample - m_LastIter);
+		sampleItersToDo = std::min<size_t>(sampleItersToDo, itersPerTemporalSample - m_LastIter);
 		EmberStats stats = Iterate(sampleItersToDo, temporalSample);//The heavy work is done here.
 
 		//If no iters were executed, something went catastrophically wrong.
@@ -601,6 +616,13 @@ AccumOnly:
 
 		//Make sure a filter has been created.
 		CreateSpatialFilter(newFilterAlloc);
+
+		m_CurvesSet = m_Ember.m_Curves.CurvesSet();
+
+		//Color curves must be re-calculated as well.
+		if (m_CurvesSet)
+			for (i = 0; i < COLORMAP_LENGTH; i++)
+				m_Csa[i] = m_Ember.m_Curves.BezierFunc(i / T(COLORMAP_LENGTH_MINUS_1)) * T(COLORMAP_LENGTH_MINUS_1);
 
 		if (AccumulatorToFinalImage(finalImage, finalOffset) == RENDER_OK)
 		{
@@ -839,17 +861,17 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 	parallel_for(size_t(0), threads, [&] (size_t threadIndex)
 	{
 		size_t pixelNumber = 0;
-		int localStartRow = int(min(startRow + (threadIndex * chunkSize), endRow - 1));
-		int localEndRow = int(min(localStartRow + chunkSize, endRow));
+		int localStartRow = int(std::min<size_t>(startRow + (threadIndex * chunkSize), endRow - 1));
+		int localEndRow = int(std::min<size_t>(localStartRow + chunkSize, endRow));
 		size_t pixelsThisThread = size_t(localEndRow - localStartRow) * m_SuperRasW;
 		double lastPercent = 0;
-		glm::detail::tvec4<bucketT, glm::defaultp> logScaleBucket;
+		tvec4<bucketT, glm::defaultp> logScaleBucket;
 
 		for (intmax_t j = localStartRow; (j < localEndRow) && !m_Abort; j++)
 		{
 			size_t bucketRowStart = j * m_SuperRasW;//Pull out of inner loop for optimization.
-			const glm::detail::tvec4<bucketT, glm::defaultp>* bucket;
-			const glm::detail::tvec4<bucketT, glm::defaultp>* buckets = m_HistBuckets.data();
+			const tvec4<bucketT, glm::defaultp>* bucket;
+			const tvec4<bucketT, glm::defaultp>* buckets = m_HistBuckets.data();
 			const T* filterCoefs = m_DensityFilter->Coefs();
 			const T* filterWidths = m_DensityFilter->Widths();
 
@@ -875,10 +897,10 @@ eRenderStatus Renderer<T, bucketT>::GaussianDensityFilter()
 					//The original contained a glaring flaw as it would run past the boundaries of the buffers
 					//when calculating the density for a box centered on the last row or column.
 					//Clamp here to not run over the edge.
-					intmax_t densityBoxLeftX = (i - min(i, ss));
-					intmax_t densityBoxRightX = (i + min(ss, intmax_t(m_SuperRasW) - i - 1));
-					intmax_t densityBoxTopY = (j - min(j, ss));
-					intmax_t densityBoxBottomY = (j + min(ss, intmax_t(m_SuperRasH) - j - 1));
+					intmax_t densityBoxLeftX = (i - std::min(i, ss));
+					intmax_t densityBoxRightX = (i + std::min(ss, intmax_t(m_SuperRasW) - i - 1));
+					intmax_t densityBoxTopY = (j - std::min(j, ss));
+					intmax_t densityBoxBottomY = (j + std::min(ss, intmax_t(m_SuperRasH) - j - 1));
 
 					//Count density in ssxss area.
 					//Original went one col at a time, which is cache inefficient. Go one row at at time here for a slight speedup.
@@ -1048,7 +1070,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t
 		Color<bucketT> newBucket;
 		size_t pixelsRowStart = (m_YAxisUp ? ((FinalRasH() - j) - 1) : j) * FinalRowSize();//Pull out of inner loop for optimization.
 		size_t y = m_DensityFilterOffset + (j * Supersample());//Start at the beginning row of each super sample block.
-		uint16* p16;
+		glm::uint16* p16;
 
 		for (size_t i = 0; i < FinalRasW(); i++, pixelsRowStart += PixelSize())
 		{
@@ -1074,13 +1096,20 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t
 
 			if (BytesPerChannel() == 2)
 			{
-				p16 = reinterpret_cast<uint16*>(pixels + pixelsRowStart);
+				p16 = reinterpret_cast<glm::uint16*>(pixels + pixelsRowStart);
 
 				if (EarlyClip())
 				{
-					p16[0] = uint16(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
-					p16[1] = uint16(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
-					p16[2] = uint16(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
+					if (m_CurvesSet)
+					{
+						CurveAdjust(newBucket.r, 1);
+						CurveAdjust(newBucket.g, 2);
+						CurveAdjust(newBucket.b, 3);
+					}
+
+					p16[0] = glm::uint16(Clamp<bucketT>(newBucket.r, 0, 255) * bucketT(256));
+					p16[1] = glm::uint16(Clamp<bucketT>(newBucket.g, 0, 255) * bucketT(256));
+					p16[2] = glm::uint16(Clamp<bucketT>(newBucket.b, 0, 255) * bucketT(256));
 
 					if (NumChannels() > 3)
 					{
@@ -1092,13 +1121,20 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t
 				}
 				else
 				{
-					GammaCorrection(*(reinterpret_cast<glm::detail::tvec4<bucketT, glm::defaultp>*>(&newBucket)), background, g, linRange, vibrancy, NumChannels() > 3, true, p16);
+					GammaCorrection(*(reinterpret_cast<tvec4<bucketT, glm::defaultp>*>(&newBucket)), background, g, linRange, vibrancy, NumChannels() > 3, true, p16);
 				}
 			}
 			else
 			{
 				if (EarlyClip())
 				{
+					if (m_CurvesSet)
+					{
+						CurveAdjust(newBucket.r, 1);
+						CurveAdjust(newBucket.g, 2);
+						CurveAdjust(newBucket.b, 3);
+					}
+
 					pixels[pixelsRowStart]     = byte(Clamp<bucketT>(newBucket.r, 0, 255));
 					pixels[pixelsRowStart + 1] = byte(Clamp<bucketT>(newBucket.g, 0, 255));
 					pixels[pixelsRowStart + 2] = byte(Clamp<bucketT>(newBucket.b, 0, 255));
@@ -1113,7 +1149,7 @@ eRenderStatus Renderer<T, bucketT>::AccumulatorToFinalImage(byte* pixels, size_t
 				}
 				else
 				{
-					GammaCorrection(*(reinterpret_cast<glm::detail::tvec4<bucketT, glm::defaultp>*>(&newBucket)), background, g, linRange, vibrancy, NumChannels() > 3, true, pixels + pixelsRowStart);
+					GammaCorrection(*(reinterpret_cast<tvec4<bucketT, glm::defaultp>*>(&newBucket)), background, g, linRange, vibrancy, NumChannels() > 3, true, pixels + pixelsRowStart);
 				}
 			}
 		}
@@ -1183,7 +1219,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 		IterParams<T> params;
 
 		m_BadVals[threadIndex] = 0;
-		params.m_Count = min(totalItersPerThread, SubBatchSize());
+		params.m_Count = std::min(totalItersPerThread, SubBatchSize());
 		params.m_Skip = FuseCount();
 		//params.m_OneColDiv2 = m_CarToRas.OneCol() / 2;
 		//params.m_OneRowDiv2 = m_CarToRas.OneRow() / 2;
@@ -1193,7 +1229,7 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 		{
 			//Must recalculate the number of iters to run on each sub batch because the last batch will most likely have less than SubBatchSize iters.
 			//For example, if 51,000 are requested, and the sbs is 10,000, it should run 5 sub batches of 10,000 iters, and one final sub batch of 1,000 iters.
-			params.m_Count = min(params.m_Count, totalItersPerThread - m_SubBatch[threadIndex]);
+			params.m_Count = std::min(params.m_Count, totalItersPerThread - m_SubBatch[threadIndex]);
 
 			//Use first as random point, the rest are iterated points.
 			//Note that this gets reset with a new random point for each subBatchSize iterations.
@@ -1290,16 +1326,16 @@ void Renderer<T, bucketT>::PixelAspectRatio(T pixelAspectRatio)
 /// Non-virtual renderer properties, getters only.
 /// </summary>
 
-template <typename T, typename bucketT> T											Renderer<T, bucketT>::Scale()			   const { return m_Scale; }
-template <typename T, typename bucketT> T											Renderer<T, bucketT>::PixelsPerUnitX()	   const { return m_PixelsPerUnitX; }
-template <typename T, typename bucketT> T											Renderer<T, bucketT>::PixelsPerUnitY()	   const { return m_PixelsPerUnitY; }
-template <typename T, typename bucketT> T											Renderer<T, bucketT>::K1()				   const { return m_K1; }
-template <typename T, typename bucketT> T											Renderer<T, bucketT>::K2()				   const { return m_K2; }
-template <typename T, typename bucketT> const CarToRas<T>*							Renderer<T, bucketT>::CoordMap()		   const { return &m_CarToRas; }
-template <typename T, typename bucketT> glm::detail::tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::HistBuckets()				 { return m_HistBuckets.data(); }
-template <typename T, typename bucketT> glm::detail::tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::AccumulatorBuckets()		 { return m_AccumulatorBuckets.data(); }
-template <typename T, typename bucketT> SpatialFilter<T>*							Renderer<T, bucketT>::GetSpatialFilter()		 { return m_SpatialFilter.get(); }
-template <typename T, typename bucketT> TemporalFilter<T>*							Renderer<T, bucketT>::GetTemporalFilter()		 { return m_TemporalFilter.get(); }
+template <typename T, typename bucketT> T							   Renderer<T, bucketT>::Scale()			   const { return m_Scale; }
+template <typename T, typename bucketT> T							   Renderer<T, bucketT>::PixelsPerUnitX()	   const { return m_PixelsPerUnitX; }
+template <typename T, typename bucketT> T							   Renderer<T, bucketT>::PixelsPerUnitY()	   const { return m_PixelsPerUnitY; }
+template <typename T, typename bucketT> T							   Renderer<T, bucketT>::K1()				   const { return m_K1; }
+template <typename T, typename bucketT> T							   Renderer<T, bucketT>::K2()				   const { return m_K2; }
+template <typename T, typename bucketT> const CarToRas<T>*			   Renderer<T, bucketT>::CoordMap()			   const { return &m_CarToRas; }
+template <typename T, typename bucketT> tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::HistBuckets()				 { return m_HistBuckets.data(); }
+template <typename T, typename bucketT> tvec4<bucketT, glm::defaultp>* Renderer<T, bucketT>::AccumulatorBuckets()		 { return m_AccumulatorBuckets.data(); }
+template <typename T, typename bucketT> SpatialFilter<T>*			   Renderer<T, bucketT>::GetSpatialFilter()			 { return m_SpatialFilter.get(); }
+template <typename T, typename bucketT> TemporalFilter<T>*			   Renderer<T, bucketT>::GetTemporalFilter()		 { return m_TemporalFilter.get(); }
 
 /// <summary>
 /// Virtual renderer properties overridden from RendererBase, getters only.
@@ -1405,7 +1441,7 @@ void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Poin
 {
 	size_t histIndex, intColorIndex, histSize = m_HistBuckets.size();
 	bucketT colorIndex, colorIndexFrac;
-	const glm::detail::tvec4<bucketT, glm::defaultp>* dmap = &(palette->m_Entries[0]);
+	const tvec4<bucketT, glm::defaultp>* dmap = &(palette->m_Entries[0]);
 	//T oneColDiv2 = m_CarToRas.OneCol() / 2;
 	//T oneRowDiv2 = m_CarToRas.OneRow() / 2;
 
@@ -1512,7 +1548,7 @@ void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Poin
 /// <param name="j">The row of the bucket</param>
 /// <param name="jj">The offset to add to the row</param>
 template <typename T, typename bucketT>
-void Renderer<T, bucketT>::AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj)
+void Renderer<T, bucketT>::AddToAccum(const tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj)
 {
 	if (j + jj >= 0 && j + jj < intmax_t(m_SuperRasH) && i + ii >= 0 && i + ii < intmax_t(m_SuperRasW))
 		m_AccumulatorBuckets[(i + ii) + ((j + jj) * m_SuperRasW)] += bucket;
@@ -1536,7 +1572,7 @@ void Renderer<T, bucketT>::AddToAccum(const glm::detail::tvec4<bucketT, glm::def
 /// <param name="correctedChannels">The storage space for the corrected values to be written to</param>
 template <typename T, typename bucketT>
 template <typename accumT>
-void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defaultp>& bucket, Color<T>& background, T g, T linRange, T vibrancy, bool doAlpha, bool scale, accumT* correctedChannels)
+void Renderer<T, bucketT>::GammaCorrection(tvec4<bucketT, glm::defaultp>& bucket, Color<T>& background, T g, T linRange, T vibrancy, bool doAlpha, bool scale, accumT* correctedChannels)
 {
 	T alpha, ls, a;
 	bucketT newRgb[3];//Would normally use a Color<bucketT>, but don't want to call a needless constructor every time this function is called, which is once per pixel.
@@ -1573,9 +1609,16 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 		}
 
 		if (!scale)
+		{
 			correctedChannels[rgbi] = accumT(Clamp<T>(a, 0, 255));//Early clip, just assign directly.
+		}
 		else
+		{
+			if (m_CurvesSet)
+				CurveAdjust(a, rgbi + 1);
+
 			correctedChannels[rgbi] = accumT(Clamp<T>(a, 0, 255) * scaleVal);//Final accum, multiply by 1 for 8 bpc, or 256 for 16 bpc.
+		}
 	}
 
 	if (doAlpha)
@@ -1587,6 +1630,15 @@ void Renderer<T, bucketT>::GammaCorrection(glm::detail::tvec4<bucketT, glm::defa
 		else
 			correctedChannels[3] = numeric_limits<accumT>::max();//Final accum, 4 channels, but not using transparency. 255 for 8 bpc, 65535 for 16 bpc.
 	}
+}
+
+template <typename T, typename bucketT>
+void Renderer<T, bucketT>::CurveAdjust(T& a, const glm::length_t& index)
+{
+	size_t tempIndex = size_t(Clamp<T>(a, 0, COLORMAP_LENGTH_MINUS_1));
+	size_t tempIndex2 = size_t(Clamp<T>(m_Csa[tempIndex].x, 0, COLORMAP_LENGTH_MINUS_1));
+
+	a = std::round(m_Csa[tempIndex2][index]);
 }
 
 //This class had to be implemented in a cpp file because the compiler was breaking.

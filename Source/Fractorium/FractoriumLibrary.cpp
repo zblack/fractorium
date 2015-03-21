@@ -8,6 +8,35 @@ void Fractorium::InitLibraryUI()
 {
 	connect(ui.LibraryTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)),		  this, SLOT(OnEmberTreeItemChanged(QTreeWidgetItem*, int)),	   Qt::QueuedConnection);
 	connect(ui.LibraryTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(OnEmberTreeItemDoubleClicked(QTreeWidgetItem*, int)), Qt::QueuedConnection);
+	connect(ui.LibraryTree, SIGNAL(itemActivated(QTreeWidgetItem*, int)),	  this, SLOT(OnEmberTreeItemDoubleClicked(QTreeWidgetItem*, int)), Qt::QueuedConnection);
+	ui.LibraryTree->installEventFilter(this);//Needed for keypress events other than enter.
+}
+
+
+/// <summary>
+/// Get the index of the currently selected ember in the library tree.
+/// </summary>
+/// <returns>A pair containing the index of the item clicked and a pointer to the item</param>
+pair<size_t, QTreeWidgetItem*> Fractorium::GetCurrentEmberIndex()
+{
+	size_t index = 0;
+	QTreeWidgetItem* item = nullptr;
+	QTreeWidget* tree = ui.LibraryTree;
+
+	if (QTreeWidgetItem* top = tree->topLevelItem(0))
+	{
+		for (int i = 0; i < top->childCount(); i++)//Iterate through all of the children, which will represent the open embers.
+		{
+			item = top->child(index);
+
+			if (item && !item->isSelected())
+				index++;
+			else
+				break;
+		}
+	}
+
+	return pair<size_t, QTreeWidgetItem*>(index, item);
 }
 
 /// <summary>
@@ -30,16 +59,40 @@ void FractoriumEmberController<T>::SyncNames()
 {
 	EmberTreeWidgetItem<T>* item;
 	QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
-	QTreeWidgetItem* top = tree->topLevelItem(0);
 	
 	tree->blockSignals(true);
 
-	if (top)
+	if (QTreeWidgetItem* top = tree->topLevelItem(0))
 	{
 		for (int i = 0; i < top->childCount(); i++)//Iterate through all of the children, which will represent the open embers.
 		{
 			if ((item = dynamic_cast<EmberTreeWidgetItem<T>*>(top->child(i))) && i < m_EmberFile.Size())//Cast the child widget to the EmberTreeWidgetItem type.
 				item->setText(0, QString::fromStdString(m_EmberFile.m_Embers[i].m_Name));
+		}
+	}
+
+	tree->blockSignals(false);
+}
+
+/// <summary>
+/// Set all libary tree entries to point to the underlying ember they represent.
+/// </summary>
+template <typename T>
+void FractoriumEmberController<T>::SyncPointers()
+{
+	EmberTreeWidgetItem<T>* item;
+	QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
+
+	tree->blockSignals(true);
+
+	if (QTreeWidgetItem* top = tree->topLevelItem(0))
+	{
+		size_t childCount = top->childCount();
+
+		for (int i = 0; i < childCount; i++)//Iterate through all of the children, which will represent the open embers.
+		{
+			if ((item = dynamic_cast<EmberTreeWidgetItem<T>*>(top->child(i))) && i < m_EmberFile.Size())//Cast the child widget to the EmberTreeWidgetItem type.
+				item->SetEmberPointer(&m_EmberFile.m_Embers[i]);
 		}
 	}
 
@@ -135,12 +188,7 @@ void FractoriumEmberController<T>::UpdateLibraryTree()
 
 		//When adding elements to the vector, they may have been reshuffled which will have invalidated
 		//the pointers contained in the EmberTreeWidgetItems. So reassign all pointers here.
-		for (i = 0; i < m_EmberFile.Size(); i++)
-		{
-			if (EmberTreeWidgetItem<T>* emberItem = dynamic_cast<EmberTreeWidgetItem<T>*>(top->child(i)))
-				emberItem->SetEmberPointer(&m_EmberFile.m_Embers[i]);
-		}
-
+		SyncPointers();
 		tree->blockSignals(false);
 		RenderPreviews(childCount, m_EmberFile.Size());
 	}
@@ -220,6 +268,47 @@ void FractoriumEmberController<T>::EmberTreeItemDoubleClicked(QTreeWidgetItem* i
 }
 
 void Fractorium::OnEmberTreeItemDoubleClicked(QTreeWidgetItem* item, int col) { m_Controller->EmberTreeItemDoubleClicked(item, col); }
+
+/// <summary>
+/// Delete the currently selected item in the tree.
+/// Note this is not necessarilly the current ember, it's just the item
+/// in the tree that is selected.
+/// </summary>
+/// <param name="p">A pair containing the index of the item clicked and a pointer to the item</param>
+template <typename T>
+void FractoriumEmberController<T>::Delete(const pair<size_t, QTreeWidgetItem*>& p)
+{
+	QTreeWidget* tree = m_Fractorium->ui.LibraryTree;
+
+	tree->blockSignals(true);
+
+	if (m_EmberFile.Delete(p.first))
+	{
+		delete p.second;
+		SyncPointers();
+	}
+
+	tree->blockSignals(false);
+
+	//If there is now only one item left and it wasn't selected, select it.
+	if (QTreeWidgetItem* top = tree->topLevelItem(0))
+	{
+		if (top->childCount() == 1)
+			if (auto item = dynamic_cast<EmberTreeWidgetItem<T>*>(top->child(0)))
+				if (item->GetEmber()->m_Name != m_Ember.m_Name)
+					EmberTreeItemDoubleClicked(top->child(0), 0);
+	}
+}
+
+/// <summary>
+/// Called when the user presses and releases the delete key while the library tree has the focus,
+/// and an item is selected.
+/// </summary>
+/// <param name="p">A pair containing the index of the item clicked and a pointer to the item</param>
+void Fractorium::OnDelete(const pair<size_t, QTreeWidgetItem*>& p)
+{
+	m_Controller->Delete(p);
+}
 
 /// <summary>
 /// Stop the preview renderer if it's already running.

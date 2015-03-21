@@ -855,7 +855,7 @@ void GLWidget::DrawGrid()
 	RendererBase* renderer = m_Fractorium->m_Controller->Renderer();
 	float unitX = fabs(renderer->UpperRightX(false) - renderer->LowerLeftX(false)) / 2.0f;
 	float unitY = fabs(renderer->UpperRightY(false) - renderer->LowerLeftY(false)) / 2.0f;
-	float rad = max(unitX, unitY);
+	float rad = std::max(unitX, unitY);
 	float xLow =  floor(-unitX);
 	float xHigh = ceil(unitX);
 	float yLow =  floor(-unitY);

@@ -301,7 +301,6 @@ xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\..\Source\Fractorium\Icons\Fractorium.ico" />
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\libjpeg\jpeg.vcxproj">

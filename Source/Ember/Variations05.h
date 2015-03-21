@@ -2119,8 +2119,8 @@ public:
 		const T ay = rand.Frand<T>(T(-0.5), T(0.5));
 		const T az = rand.Frand<T>(T(-0.5), T(0.5));
 		const T r = sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
-		const T rc = ((m_Invert != 0 ? max<T>(1 - r, 0) : max<T>(r, 0)) - m_MinDist) * m_InternalScatter;//Original called a macro named min, which internally performed max.
-		const T rs = max<T>(rc, 0);
+		const T rc = ((m_Invert != 0 ? std::max<T>(1 - r, 0) : std::max<T>(r, 0)) - m_MinDist) * m_InternalScatter;//Original called a macro named min, which internally performed max.
+		const T rs = std::max<T>(rc, 0);
 
 		T sigma, phi, rad, sigmas, sigmac, phis, phic;
 		T scale, denom;
@@ -2279,8 +2279,8 @@ public:
 	{
 		const v4T random(rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)));
 		const T distA = sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
-		const T distB = m_Invert != 0 ? max<T>(1 - distA, 0) : max<T>(distA, 0);//Original called a macro named min, which internally performed max.
-		const T dist = max<T>((distB - m_MinDist) * m_RMax, 0);
+		const T distB = m_Invert != 0 ? std::max<T>(1 - distA, 0) : std::max<T>(distA, 0);//Original called a macro named min, which internally performed max.
+		const T dist = std::max<T>((distB - m_MinDist) * m_RMax, 0);
 
 		switch (int(m_Type))
 		{
@@ -2484,11 +2484,11 @@ public:
 				break;
 			case 1://Square.
 			default:
-				radius = max(fabs(helper.In.x - m_CenterX), max(fabs(helper.In.y - m_CenterY), (fabs(helper.In.z - m_CenterZ))));//Original called a macro named min, which internally performed max.
+				radius = std::max(fabs(helper.In.x - m_CenterX), std::max(fabs(helper.In.y - m_CenterY), (fabs(helper.In.z - m_CenterZ))));//Original called a macro named min, which internally performed max.
 				break;
 		}
 
-		const T dist = max<T>(((m_InvertDistance != 0 ? max<T>(1 - radius, 0) : max<T>(radius, 0)) - m_MinDistance) * m_RMax, 0);
+		const T dist = std::max<T>(((m_InvertDistance != 0 ? std::max<T>(1 - radius, 0) : std::max<T>(radius, 0)) - m_MinDistance) * m_RMax, 0);
 
 		switch (int(m_BlurType))
 		{

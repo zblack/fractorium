@@ -264,8 +264,9 @@ void Fractorium::dockLocationChanged(Qt::DockWidgetArea area)
 /// </summary>
 
 /// <summary>
-/// Event filter for taking special action on dock widget resize events,
-/// which in turn trigger GLParentScrollArea events.
+/// Event filter for taking special action on:
+/// Dock widget resize events, which in turn trigger GLParentScrollArea events.
+/// Library tree key events, specifically delete.
 /// </summary>
 /// <param name="o">The object</param>
 /// <param name="e">The eevent</param>
@@ -277,6 +278,19 @@ bool Fractorium::eventFilter(QObject* o, QEvent* e)
 		m_WidthSpin->DoubleClickNonZero(ui.GLParentScrollArea->width());
 		m_HeightSpin->DoubleClickNonZero(ui.GLParentScrollArea->height());
 		//qDebug() << "scroll area resized";
+	}
+	else if (o == ui.LibraryTree)
+	{
+		if (QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e))
+		{
+			if (ke->key() == Qt::Key_Delete && e->type() == QEvent::KeyRelease)
+			{
+				auto p = GetCurrentEmberIndex();
+
+				if (ui.LibraryTree->topLevelItem(0)->childCount() > 1 && p.second)
+					OnDelete(p);
+			}
+		}
 	}
 
 	return QMainWindow::eventFilter(o, e);

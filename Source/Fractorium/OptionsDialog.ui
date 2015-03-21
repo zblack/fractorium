@@ -486,6 +486,13 @@ in interactive mode for each mouse movement</string>
          </item>
         </widget>
        </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="AutoUniqueCheckBox">
+         <property name="text">
+          <string>Auto Unique Filenames</string>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="OptionsIdentityTab">

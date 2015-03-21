@@ -26,9 +26,11 @@
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QPainterPath>
 #include <QPushButton>
 #include <QComboBox>
 #include <QColorDialog>
+#include <QGraphicsView>
 #include <QTreeWidget>
 #include <QWheelEvent>
 #include <QItemDelegate>

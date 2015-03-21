@@ -274,9 +274,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\..\tbb\build\vs2010\tbb.vcxproj">
       <Project>{f62787dd-1327-448b-9818-030062bcfaa5}</Project>
     </ProjectReference>

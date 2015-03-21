@@ -267,11 +267,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="..\..\..\Source\Ember\Affine2D.h" />
     <ClInclude Include="..\..\..\Source\Ember\CarToRas.h" />
+    <ClInclude Include="..\..\..\Source\Ember\Curves.h" />
     <ClInclude Include="..\..\..\Source\Ember\EmberDefines.h" />
     <ClInclude Include="..\..\..\Source\Ember\EmberPch.h" />
     <ClInclude Include="..\..\..\Source\Ember\Ember.h" />

@@ -85,6 +85,23 @@ public:
 	}
 
 	/// <summary>
+	/// Delete the ember at the given index.
+	/// Will not delete anything if the size is already 1.
+	/// </summary>
+	/// <param name="index">The index of the ember to delete</param>
+	/// <returns>True if successfully deleted, else false.</returns>
+	bool Delete(size_t index)
+	{
+		if (Size() > 1 && index < Size())
+		{
+			m_Embers.erase(m_Embers.begin() + index);
+			return true;
+		}
+		else
+			return false;
+	}
+
+	/// <summary>
 	/// Ensure all ember names are unique.
 	/// </summary>
 	void MakeNamesUnique()
@@ -116,6 +133,7 @@ public:
 	/// <summary>
 	/// Ensures a given input filename is unique by appending a count to the end.
 	/// </summary>
+	/// <param name="filename">The filename to ensure is unique</param>
 	/// <returns>The passed in name if it was unique, else a uniquely made name.</returns>
 	static QString UniqueFilename(const QString& filename)
 	{

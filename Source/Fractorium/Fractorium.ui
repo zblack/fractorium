@@ -353,7 +353,7 @@
         <enum>QTabWidget::Triangular</enum>
        </property>
        <property name="currentIndex">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="usesScrollButtons">
         <bool>true</bool>
@@ -420,7 +420,7 @@
              <item row="1" column="0">
               <widget class="QTreeWidget" name="LibraryTree">
                <property name="focusPolicy">
-                <enum>Qt::StrongFocus</enum>
+                <enum>Qt::WheelFocus</enum>
                </property>
                <property name="contextMenuPolicy">
                 <enum>Qt::CustomContextMenu</enum>
@@ -504,8 +504,8 @@
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>73</width>
-              <height>837</height>
+              <width>259</width>
+              <height>852</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout">
@@ -2285,7 +2285,7 @@ SpinBox
             <enum>QTabWidget::Triangular</enum>
            </property>
            <property name="currentIndex">
-            <number>1</number>
+            <number>2</number>
            </property>
            <widget class="QWidget" name="ColorTab">
             <property name="sizePolicy">
@@ -2775,6 +2775,134 @@ SpinBox
                </property>
               </widget>
              </item>
+             <item row="5" column="0" colspan="2">
+              <widget class="CurvesGraphicsView" name="CurvesView">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>245</width>
+                 <height>245</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>245</width>
+                 <height>245</height>
+                </size>
+               </property>
+               <property name="mouseTracking">
+                <bool>true</bool>
+               </property>
+               <property name="autoFillBackground">
+                <bool>false</bool>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::NoFrame</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Plain</enum>
+               </property>
+               <property name="verticalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="horizontalScrollBarPolicy">
+                <enum>Qt::ScrollBarAlwaysOff</enum>
+               </property>
+               <property name="backgroundBrush">
+                <brush brushstyle="SolidPattern">
+                 <color alpha="255">
+                  <red>219</red>
+                  <green>219</green>
+                  <blue>219</blue>
+                 </color>
+                </brush>
+               </property>
+               <property name="sceneRect">
+                <rectf>
+                 <x>0.000000000000000</x>
+                 <y>0.000000000000000</y>
+                 <width>245.000000000000000</width>
+                 <height>245.000000000000000</height>
+                </rectf>
+               </property>
+               <property name="resizeAnchor">
+                <enum>QGraphicsView::NoAnchor</enum>
+               </property>
+               <property name="viewportUpdateMode">
+                <enum>QGraphicsView::FullViewportUpdate</enum>
+               </property>
+              </widget>
+             </item>
+             <item row="6" column="0" colspan="2">
+              <widget class="QGroupBox" name="groupBox">
+               <property name="title">
+                <string>Curve</string>
+               </property>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <property name="leftMargin">
+                 <number>6</number>
+                </property>
+                <property name="topMargin">
+                 <number>2</number>
+                </property>
+                <property name="rightMargin">
+                 <number>6</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>6</number>
+                </property>
+                <item>
+                 <widget class="QRadioButton" name="CurvesAllRadio">
+                  <property name="text">
+                   <string>All</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="CurvesRedRadio">
+                  <property name="text">
+                   <string>Red</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="CurvesGreenRadio">
+                  <property name="text">
+                   <string>Green</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="CurvesBlueRadio">
+                  <property name="text">
+                   <string>Blue</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QPushButton" name="ResetCurvesButton">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>Reset Curves</string>
+               </property>
+              </widget>
+             </item>
             </layout>
            </widget>
            <widget class="QWidget" name="AffineTab">
@@ -2825,8 +2953,8 @@ SpinBox
                  <rect>
                   <x>0</x>
                   <y>0</y>
-                  <width>245</width>
-                  <height>747</height>
+                  <width>118</width>
+                  <height>618</height>
                  </rect>
                 </property>
                 <property name="autoFillBackground">
@@ -5048,8 +5176,8 @@ SpinBox
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>73</width>
-              <height>454</height>
+              <width>259</width>
+              <height>853</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -5854,6 +5982,11 @@ SpinBox
    <extends>QWidget</extends>
    <header>GLWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>CurvesGraphicsView</class>
+   <extends>QGraphicsView</extends>
+   <header>curvesgraphicsview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -42,7 +42,7 @@
 
 namespace EmberNs
 {
-#define EMBER_VERSION "0.4.1.8"
+#define EMBER_VERSION "0.4.1.9"
 #define EPS6 T(1e-6)
 #define EPS std::numeric_limits<T>::epsilon()//Apoplugin.h uses -20, but it's more mathematically correct to do it this way.
 #define ISAAC_SIZE 4
@@ -83,13 +83,23 @@ typedef std::chrono::high_resolution_clock Clock;
 #define DO_DOUBLE 1//Comment this out for shorter build times during development. Always uncomment for release.
 //#define ISAAC_FLAM3_DEBUG 1//This is almost never needed, but is very useful when troubleshooting difficult bugs. Enable it to do a side by side comparison with flam3.
 
-#define v2T  glm::detail::tvec2<T, glm::defaultp>
-#define v3T  glm::detail::tvec3<T, glm::defaultp>
-#define v4T  glm::detail::tvec4<T, glm::defaultp>
-#define m2T  glm::detail::tmat2x2<T, glm::defaultp>
-#define m3T  glm::detail::tmat3x3<T, glm::defaultp>
-#define m4T  glm::detail::tmat4x4<T, glm::defaultp>
-#define m23T glm::detail::tmat2x3<T, glm::defaultp>
+#if GLM_VERSION >= 96
+	#define v2T  glm::tvec2<T, glm::defaultp>
+	#define v3T  glm::tvec3<T, glm::defaultp>
+	#define v4T  glm::tvec4<T, glm::defaultp>
+	#define m2T  glm::tmat2x2<T, glm::defaultp>
+	#define m3T  glm::tmat3x3<T, glm::defaultp>
+	#define m4T  glm::tmat4x4<T, glm::defaultp>
+	#define m23T glm::tmat2x3<T, glm::defaultp>
+#else
+	#define v2T  glm::detail::tvec2<T, glm::defaultp>
+	#define v3T  glm::detail::tvec3<T, glm::defaultp>
+	#define v4T  glm::detail::tvec4<T, glm::defaultp>
+	#define m2T  glm::detail::tmat2x2<T, glm::defaultp>
+	#define m3T  glm::detail::tmat3x3<T, glm::defaultp>
+	#define m4T  glm::detail::tmat4x4<T, glm::defaultp>
+	#define m23T glm::detail::tmat2x3<T, glm::defaultp>
+#endif
 
 enum eInterp : uint { EMBER_INTERP_LINEAR = 0, EMBER_INTERP_SMOOTH = 1 };
 enum eAffineInterp : uint { INTERP_LINEAR = 0, INTERP_LOG = 1, INTERP_COMPAT = 2, INTERP_OLDER = 3 };

@@ -56,13 +56,14 @@ public:
 
 	//Virtual processing functions overriden from RendererBase.
 	virtual void ComputeBounds() override;
+	virtual void ComputeQuality() override;
 	virtual void ComputeCamera() override;
 	virtual void SetEmber(Ember<T>& ember, eProcessAction action = FULL_RENDER) override;
 	virtual void SetEmber(vector<Ember<T>>& embers) override;
 	virtual bool CreateDEFilter(bool& newAlloc) override;
 	virtual bool CreateSpatialFilter(bool& newAlloc) override;
 	virtual bool CreateTemporalFilter(bool& newAlloc) override;
-	virtual size_t HistBucketSize() const override { return sizeof(glm::detail::tvec4<bucketT, glm::defaultp>); }
+	virtual size_t HistBucketSize() const override { return sizeof(tvec4<bucketT, glm::defaultp>); }
 	virtual eRenderStatus Run(vector<byte>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) override;
 	virtual EmberImageComments ImageComments(EmberStats& stats, size_t printEditDepth = 0, bool intPalette = false, bool hexPalette = true) override;
 
@@ -83,16 +84,16 @@ public:
 	void PixelAspectRatio(T pixelAspectRatio);
 
 	//Non-virtual renderer properties, getters only.
-	inline T                            Scale()                         const;
-	inline T                            PixelsPerUnitX()                const;
-	inline T                            PixelsPerUnitY()                const;
-	inline T                            K1()                            const;
-	inline T                            K2()                            const;
-	inline const CarToRas<T>*           CoordMap()                      const;
-	inline glm::detail::tvec4<bucketT, glm::defaultp>* HistBuckets();
-	inline glm::detail::tvec4<bucketT, glm::defaultp>* AccumulatorBuckets();
-	inline SpatialFilter<T>*            GetSpatialFilter();
-	inline TemporalFilter<T>*           GetTemporalFilter();
+	inline T                              Scale()               const;
+	inline T                              PixelsPerUnitX()      const;
+	inline T                              PixelsPerUnitY()      const;
+	inline T                              K1()                  const;
+	inline T                              K2()                  const;
+	inline const CarToRas<T>*             CoordMap()            const;
+	inline tvec4<bucketT, glm::defaultp>* HistBuckets();
+	inline tvec4<bucketT, glm::defaultp>* AccumulatorBuckets();
+	inline SpatialFilter<T>*              GetSpatialFilter();
+	inline TemporalFilter<T>*             GetTemporalFilter();
 
 	//Virtual renderer properties overridden from RendererBase, getters only.
 	virtual double ScaledQuality()				   const override;
@@ -150,8 +151,9 @@ protected:
 	private:
 	//Miscellaneous non-virtual functions used only in this class.
 	void Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Point<T>* samples, size_t sampleCount, const Palette<bucketT>* palette);
-	/*inline*/ void AddToAccum(const glm::detail::tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj);
-	template <typename accumT> void GammaCorrection(glm::detail::tvec4<bucketT, glm::defaultp>& bucket, Color<T>& background, T g, T linRange, T vibrancy, bool doAlpha, bool scale, accumT* correctedChannels);
+	/*inline*/ void AddToAccum(const tvec4<bucketT, glm::defaultp>& bucket, intmax_t i, intmax_t ii, intmax_t j, intmax_t jj);
+	template <typename accumT> void GammaCorrection(tvec4<bucketT, glm::defaultp>& bucket, Color<T>& background, T g, T linRange, T vibrancy, bool doAlpha, bool scale, accumT* correctedChannels);
+	void CurveAdjust(T& a, const glm::length_t& index);
 
 protected:
 	T m_Scale;
@@ -177,9 +179,9 @@ protected:
 	Iterator<T>* m_Iterator;
 	unique_ptr<StandardIterator<T>> m_StandardIterator;
 	unique_ptr<XaosIterator<T>> m_XaosIterator;
-	Palette<bucketT> m_Dmap;
-	vector<glm::detail::tvec4<bucketT, glm::defaultp>> m_HistBuckets;
-	vector<glm::detail::tvec4<bucketT, glm::defaultp>> m_AccumulatorBuckets;
+	Palette<bucketT> m_Dmap, m_Csa;
+	vector<tvec4<bucketT, glm::defaultp>> m_HistBuckets;
+	vector<tvec4<bucketT, glm::defaultp>> m_AccumulatorBuckets;
 	unique_ptr<SpatialFilter<T>> m_SpatialFilter;
 	unique_ptr<TemporalFilter<T>> m_TemporalFilter;
 	unique_ptr<DensityFilter<T>> m_DensityFilter;

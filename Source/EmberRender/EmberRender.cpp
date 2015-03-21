@@ -158,7 +158,7 @@ bool EmberRender(EmberOptions& opt)
 	{
 		if (opt.Verbose() && embers.size() > 1)
 			cout << "\nFlame = " << i + 1 << "/" << embers.size() << endl;
-		else
+		else if (embers.size() > 1)
 			VerbosePrint(endl);
 
 		if (opt.Supersample() > 0)

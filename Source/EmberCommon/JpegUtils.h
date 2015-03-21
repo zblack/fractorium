@@ -146,7 +146,7 @@ static bool WritePng(const char* filename, byte* image, size_t width, size_t hei
 		png_infop    info_ptr;
 		png_text     text[PNG_COMMENT_MAX];
 		size_t i;
-		uint16 testbe = 1;
+		glm::uint16 testbe = 1;
 		vector<byte*> rows(height);
 
 		text[0].compression = PNG_TEXT_COMPRESSION_NONE;

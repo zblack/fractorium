@@ -117,6 +117,7 @@ public:
 	virtual bool CreateSpatialFilter(bool& newAlloc) = 0;
 	virtual bool CreateTemporalFilter(bool& newAlloc) = 0;
 	virtual void ComputeBounds() = 0;
+	virtual void ComputeQuality() = 0;
 	virtual void ComputeCamera() = 0;
 	virtual eRenderStatus Run(vector<byte>& finalImage, double time = 0, size_t subBatchCountOverride = 0, bool forceOutput = false, size_t finalOffset = 0) = 0;
 	virtual EmberImageComments ImageComments(EmberStats& stats, size_t printEditDepth = 0, bool intPalette = false, bool hexPalette = true) = 0;
@@ -201,6 +202,7 @@ protected:
 	bool m_InFinalAccum;
 	bool m_InsertPalette;
 	bool m_ReclaimOnResize;
+	bool m_CurvesSet;
 	volatile bool m_Abort;
 	size_t m_SuperRasW;
 	size_t m_SuperRasH;

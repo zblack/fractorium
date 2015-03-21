@@ -3773,8 +3773,8 @@ public:
 	{
 		m_XAmpV = m_Weight * m_XAmp;
 		m_YAmpV = m_Weight * m_YAmp;
-		m_XLengthV = 1 / max(SQR(m_XLength), T(1e-20));
-		m_YLengthV = 1 / max(SQR(m_YLength), T(1e-20));
+		m_XLengthV = 1 / std::max(SQR(m_XLength), T(1e-20));
+		m_YLengthV = 1 / std::max(SQR(m_YLength), T(1e-20));
 	}
 
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override

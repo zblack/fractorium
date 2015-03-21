@@ -115,8 +115,8 @@ FinalRenderEmberController<T>::FinalRenderEmberController(FractoriumFinalRenderD
 		m_PreviewEmber = *m_Ember;
 		m_PreviewEmber.m_Quality = 100;
 		m_PreviewEmber.m_TemporalSamples = 1;
-		m_PreviewEmber.m_FinalRasW = max<size_t>(1, min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasW)));//Ensure neither is zero.
-		m_PreviewEmber.m_FinalRasH = max<size_t>(1, min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasH)));
+		m_PreviewEmber.m_FinalRasW = std::max<size_t>(1, std::min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasW)));//Ensure neither is zero.
+		m_PreviewEmber.m_FinalRasH = std::max<size_t>(1, std::min<size_t>(maxDim, size_t(scalePercentage * m_Ember->m_FinalRasH)));
 		m_PreviewEmber.m_PixelsPerUnit = scalePercentage * m_Ember->m_PixelsPerUnit;
 		
 		m_FinalPreviewRenderer->EarlyClip(m_FinalRenderDialog->EarlyClip());
@@ -597,6 +597,7 @@ tuple<size_t, size_t, size_t> FinalRenderEmberController<T>::SyncAndComputeMemor
 		m_Renderer->CreateTemporalFilter(b);
 		m_Renderer->NumChannels(channels);
 		m_Renderer->ComputeBounds();
+		m_Renderer->ComputeQuality();
 		m_Renderer->ComputeCamera();
 		CancelPreviewRender();
 		m_FinalPreviewRenderFunc();
@@ -741,8 +742,8 @@ void FinalRenderEmberController<T>::SyncGuiToEmber(Ember<T>& ember, size_t width
 		h = ember.m_OrigFinalRasH * hScale;
 	}
 
-	w = max<size_t>(w, 10);
-	h = max<size_t>(h, 10);
+	w = std::max<size_t>(w, 10);
+	h = std::max<size_t>(h, 10);
 
 	ember.SetSizeAndAdjustScale(w, h, false, m_FinalRenderDialog->Scale());
 	ember.m_Quality = m_FinalRenderDialog->m_QualitySpin->value();

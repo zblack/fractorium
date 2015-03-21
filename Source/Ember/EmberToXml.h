@@ -145,7 +145,7 @@ public:
 			os << " zoom=\"" << ember.m_Zoom << "\"";
 
 		os << " rotate=\"" << ember.m_Rotate << "\"";
-		os << " supersample=\"" << max<size_t>(1, ember.m_Supersample) << "\"";
+		os << " supersample=\"" << std::max<size_t>(1, ember.m_Supersample) << "\"";
 		os << " filter=\"" << ember.m_SpatialFilterRadius << "\"";
 
 		os << " filter_shape=\"" << ToLower(SpatialFilterCreator<T>::ToString(ember.m_SpatialFilterType)) << "\"";
@@ -207,7 +207,19 @@ public:
 			os << "\"";
 
 		os << " new_linear=\"1\"";
-		os << ">\n";
+		os << " curves=\"";
+
+		for (glm::length_t ci = 0; ci < 4; ci++)
+		{
+			for (glm::length_t cj = 0; cj < 4; cj++)
+			{
+				os << ember.m_Curves.m_Points[ci][cj].x << " ";
+				os << ember.m_Curves.m_Points[ci][cj].y << " ";
+				os << ember.m_Curves.m_Weights[ci][cj] << " ";
+			}
+		}
+
+		os << "\">\n";
 
 		//This is a grey area, what to do about symmetry to avoid duplicating the symmetry xforms when reading back?//TODO//BUG.
 		//if (ember.m_Symmetry)

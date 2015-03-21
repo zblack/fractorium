@@ -16,6 +16,7 @@ RendererBase::RendererBase()
 	m_YAxisUp = false;
 	m_InsertPalette = false;
 	m_ReclaimOnResize = false;
+	m_CurvesSet = false;
 	m_NumChannels = 3;
 	m_BytesPerChannel = 1;
 	m_SuperSize = 0;
@@ -469,7 +470,7 @@ void RendererBase::ThreadCount(size_t threads, const char* seedString)
 		if (seedString)
 		{
 			memset(seeds, 0, isaacSize * sizeof(ISAAC_INT));
-			memcpy(reinterpret_cast<char*>(seeds), seedString, min(strlen(seedString), isaacSize * sizeof(ISAAC_INT)));
+			memcpy(reinterpret_cast<char*>(seeds), seedString, std::min(strlen(seedString), isaacSize * sizeof(ISAAC_INT)));
 		}
 
 		//This is critical for multithreading, otherwise the threads all happen

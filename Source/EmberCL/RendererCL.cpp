@@ -33,6 +33,7 @@ RendererCL<T>::RendererCL(uint platform, uint device, bool shared, GLuint output
 	m_DEWidthsBufferName            = "DEWidths";
 	m_DECoefIndicesBufferName		= "DECoefIndices";
 	m_SpatialFilterCoefsBufferName  = "SpatialFilterCoefs";
+	m_CurvesCsaName					= "CurvesCsa";
 	m_HistBufferName                = "Hist";
 	m_AccumBufferName               = "Accum";
 	m_FinalImageName                = "Final";
@@ -281,6 +282,21 @@ bool RendererCL<T>::WriteRandomPoints()
 /// <returns>The string representation of the kernel for the last built iter program.</returns>
 template <typename T>
 string RendererCL<T>::IterKernel() { return m_IterKernel; }
+
+
+/// <summary>
+/// Get the kernel string for the last built density filtering program.
+/// </summary>
+/// <returns>The string representation of the kernel for the last built density filtering program.</returns>
+template <typename T>
+string RendererCL<T>::DEKernel() { return m_DEOpenCLKernelCreator.GaussianDEKernel(Supersample(), m_DensityFilterCL.m_FilterWidth); }
+
+/// <summary>
+/// Get the kernel string for the last built final accumulation program.
+/// </summary>
+/// <returns>The string representation of the kernel for the last built final accumulation program.</returns>
+template <typename T>
+string RendererCL<T>::FinalAccumKernel() { return m_FinalAccumOpenCLKernelCreator.FinalAccumKernel(EarlyClip(), Renderer<T, T>::NumChannels(), Transparency()); }
 
 /// <summary>
 /// Virtual functions overridden from RendererCLBase.
@@ -551,17 +567,17 @@ bool RendererCL<T>::Alloc()
 	size_t accumLength = SuperSize() * sizeof(v4T);
 	const char* loc = __FUNCTION__;
 
-	if (b && !(b = m_Wrapper.AddBuffer(m_EmberBufferName,               sizeof(m_EmberCL))))         { m_ErrorReport.push_back(loc); }
-	if (b && !(b = m_Wrapper.AddBuffer(m_XformsBufferName,				SizeOf(m_XformsCL))))		 { m_ErrorReport.push_back(loc); }
-	if (b && !(b = m_Wrapper.AddBuffer(m_ParVarsBufferName,             128 * sizeof(T))))           { m_ErrorReport.push_back(loc); }
-	if (b && !(b = m_Wrapper.AddBuffer(m_DistBufferName,                CHOOSE_XFORM_GRAIN)))        { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
-	if (b && !(b = m_Wrapper.AddBuffer(m_CarToRasBufferName,            sizeof(m_CarToRasCL))))      { m_ErrorReport.push_back(loc); }
-	if (b && !(b = m_Wrapper.AddBuffer(m_DEFilterParamsBufferName,      sizeof(m_DensityFilterCL)))) { m_ErrorReport.push_back(loc); }
-	if (b && !(b = m_Wrapper.AddBuffer(m_SpatialFilterParamsBufferName, sizeof(m_SpatialFilterCL)))) { m_ErrorReport.push_back(loc); }
-
-	if (b && !(b = m_Wrapper.AddBuffer(m_HistBufferName,   histLength)))								  { m_ErrorReport.push_back(loc); }//Histogram. Will memset to zero later.
-	if (b && !(b = m_Wrapper.AddBuffer(m_AccumBufferName,  accumLength)))								  { m_ErrorReport.push_back(loc); }//Accum buffer.
-	if (b && !(b = m_Wrapper.AddBuffer(m_PointsBufferName, IterGridKernelCount() * sizeof(PointCL<T>))))  { m_ErrorReport.push_back(loc); }//Points between iter calls.
+	if (b && !(b = m_Wrapper.AddBuffer(m_EmberBufferName,               sizeof(m_EmberCL))))						   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_XformsBufferName,				SizeOf(m_XformsCL))))						   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_ParVarsBufferName,             128 * sizeof(T))))							   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_DistBufferName,                CHOOSE_XFORM_GRAIN)))						   { m_ErrorReport.push_back(loc); }//Will be resized for xaos.
+	if (b && !(b = m_Wrapper.AddBuffer(m_CarToRasBufferName,            sizeof(m_CarToRasCL))))						   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_DEFilterParamsBufferName,      sizeof(m_DensityFilterCL))))				   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_SpatialFilterParamsBufferName, sizeof(m_SpatialFilterCL))))				   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_CurvesCsaName,					SizeOf(m_Csa.m_Entries))))					   { m_ErrorReport.push_back(loc); }
+	if (b && !(b = m_Wrapper.AddBuffer(m_HistBufferName,				histLength)))								   { m_ErrorReport.push_back(loc); }//Histogram. Will memset to zero later.
+	if (b && !(b = m_Wrapper.AddBuffer(m_AccumBufferName,				accumLength)))								   { m_ErrorReport.push_back(loc); }//Accum buffer.
+	if (b && !(b = m_Wrapper.AddBuffer(m_PointsBufferName,				IterGridKernelCount() * sizeof(PointCL<T>))))  { m_ErrorReport.push_back(loc); }//Points between iter calls.
 
 	LeaveResize();
 
@@ -809,8 +825,8 @@ bool RendererCL<T>::RunIter(size_t iterCount, size_t temporalSample, size_t& ite
 			//fuse = ((m_Calls % 4) == 0 ? 100u : 0u);
 #endif
 			itersRemaining = iterCount - itersRan;
-			uint gridW = uint(min(ceil(double(itersRemaining) / double(iterCountPerBlock)), double(IterGridBlockWidth())));
-			uint gridH = uint(min(ceil(double(itersRemaining) / double(gridW * iterCountPerBlock)), double(IterGridBlockHeight())));
+			uint gridW = uint(std::min(ceil(double(itersRemaining) / double(iterCountPerBlock)), double(IterGridBlockWidth())));
+			uint gridH = uint(std::min(ceil(double(itersRemaining) / double(gridW * iterCountPerBlock)), double(IterGridBlockHeight())));
 			uint iterCountThisLaunch = iterCountPerBlock * gridW * gridH;
 
 			//Similar to what's done in the base class.
@@ -1071,6 +1087,7 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 	uint gridH;
 	uint blockW;
 	uint blockH;
+	uint curvesSet = m_CurvesSet ? 1 : 0;
 	const char* loc = __FUNCTION__;
 
 	if (!m_Abort && accumKernelIndex != -1)
@@ -1079,6 +1096,7 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 		m_SpatialFilterCL = ConvertSpatialFilter();
 
 		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_SpatialFilterParamsBufferName, reinterpret_cast<void*>(&m_SpatialFilterCL), sizeof(m_SpatialFilterCL)))) { m_ErrorReport.push_back(loc); }
+		if (b && !(b = m_Wrapper.AddAndWriteBuffer(m_CurvesCsaName, m_Csa.m_Entries.data(), SizeOf(m_Csa.m_Entries)))) { m_ErrorReport.push_back(loc); }
 
 		//Since early clip requires gamma correcting the entire accumulator first,
 		//it can't be done inside of the normal final accumulation kernel, so
@@ -1119,6 +1137,9 @@ eRenderStatus RendererCL<T>::RunFinalAccum()
 		if (b && !(b = m_Wrapper.SetImageArg (accumKernelIndex, argIndex++, m_Wrapper.Shared(), m_FinalImageName))) { m_ErrorReport.push_back(loc); }//Final image.
 		if (b && !(b = m_Wrapper.SetBufferArg(accumKernelIndex, argIndex++, m_SpatialFilterParamsBufferName)))      { m_ErrorReport.push_back(loc); }//SpatialFilterCL.
 		if (b && !(b = m_Wrapper.SetBufferArg(accumKernelIndex, argIndex++, m_SpatialFilterCoefsBufferName)))       { m_ErrorReport.push_back(loc); }//Filter coefs.
+		if (b && !(b = m_Wrapper.SetBufferArg(accumKernelIndex, argIndex++, m_CurvesCsaName)))						{ m_ErrorReport.push_back(loc); }//Curve points.
+		
+		if (b && !(b = m_Wrapper.SetArg		 (accumKernelIndex, argIndex++, curvesSet)))                            { m_ErrorReport.push_back(loc); }//Do curves.
 		if (b && !(b = m_Wrapper.SetArg		 (accumKernelIndex, argIndex++, alphaBase)))                            { m_ErrorReport.push_back(loc); }//Alpha base.
 		if (b && !(b = m_Wrapper.SetArg		 (accumKernelIndex, argIndex++, alphaScale)))                           { m_ErrorReport.push_back(loc); }//Alpha scale.
 

@@ -1,6 +1,7 @@
 #include "EmberPch.h"
 #include "EmberDefines.h"
 #include "Isaac.h"
+#include "Curves.h"
 #include "Ember.h"
 #include "Utils.h"
 #include "Iterator.h"
@@ -390,6 +391,7 @@ template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_
 	template EMBER_API class Ember<T>; \
 	/*template EMBER_API class RenderCallback<T>;*/ \
 	template EMBER_API class CarToRas<T>; \
+	template EMBER_API class Curves<T>; \
 	template EMBER_API class XmlToEmber<T>; \
 	template EMBER_API class EmberToXml<T>;
 

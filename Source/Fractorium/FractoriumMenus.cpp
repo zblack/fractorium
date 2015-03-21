@@ -252,7 +252,11 @@ void FractoriumEmberController<T>::SaveCurrentAsXml()
 	QString filename;
 	FractoriumSettings* s = m_Fractorium->m_Settings;
 
-	if (QFile::exists(m_LastSaveCurrent))
+	if (s->SaveAutoUnique() && m_LastSaveCurrent != "")
+	{
+		filename = EmberFile<T>::UniqueFilename(m_LastSaveCurrent);
+	}
+	else if (QFile::exists(m_LastSaveCurrent))
 	{
 		filename = m_LastSaveCurrent;
 	}
@@ -281,7 +285,9 @@ void FractoriumEmberController<T>::SaveCurrentAsXml()
 		if (writer.Save(filename.toStdString().c_str(), ember, 0, true, false, true))
 		{
 			s->SaveFolder(fileInfo.canonicalPath());
-			m_LastSaveCurrent = filename;
+
+			if (!s->SaveAutoUnique() || m_LastSaveCurrent == "")//Only save filename on first time through when doing auto unique names.
+				m_LastSaveCurrent = filename;
 		}
 		else
 			m_Fractorium->ShowCritical("Save Failed", "Could not save file, try saving to a different folder.");
@@ -301,7 +307,9 @@ void FractoriumEmberController<T>::SaveEntireFileAsXml()
 	QString filename;
 	FractoriumSettings* s = m_Fractorium->m_Settings;
 
-	if (QFile::exists(m_LastSaveAll))
+	if (s->SaveAutoUnique() && m_LastSaveAll != "")
+		filename = EmberFile<T>::UniqueFilename(m_LastSaveAll);
+	else if (QFile::exists(m_LastSaveAll))
 		filename = m_LastSaveAll;
 	else
 		filename = m_Fractorium->SetupSaveXmlDialog(m_EmberFile.m_Filename);
@@ -320,7 +328,9 @@ void FractoriumEmberController<T>::SaveEntireFileAsXml()
 
 		if (writer.Save(filename.toStdString().c_str(), emberFile.m_Embers, 0, true, false, true))
 		{
-			m_LastSaveAll = filename;
+			if (!s->SaveAutoUnique() || m_LastSaveAll == "")//Only save filename on first time through when doing auto unique names.
+				m_LastSaveAll = filename;
+
 			s->SaveFolder(fileInfo.canonicalPath());
 		}
 		else
@@ -398,7 +408,7 @@ void FractoriumEmberController<T>::Undo()
 		int index = m_Ember.GetTotalXformIndex(CurrentXform());
 
 		m_LastEditWasUndoRedo = true;
-		m_UndoIndex = max(0u, m_UndoIndex - 1u);
+		m_UndoIndex = std::max(0u, m_UndoIndex - 1u);
 		SetEmber(m_UndoList[m_UndoIndex], true);
 		m_EditState = UNDO_REDO;
 		
@@ -423,7 +433,7 @@ void FractoriumEmberController<T>::Redo()
 		int index = m_Ember.GetTotalXformIndex(CurrentXform());
 
 		m_LastEditWasUndoRedo = true;
-		m_UndoIndex = min<uint>(m_UndoIndex + 1, m_UndoList.size() - 1);
+		m_UndoIndex = std::min<uint>(m_UndoIndex + 1, m_UndoList.size() - 1);
 		SetEmber(m_UndoList[m_UndoIndex], true);
 		m_EditState = UNDO_REDO;
 		

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Curves.h"
 #include "Xform.h"
 #include "PaletteList.h"
 #include "SpatialFilter.h"
@@ -150,6 +151,7 @@ public:
 		m_Index		  = ember.m_Index;
 		m_ScaleType	  = ember.ScaleType();
 		m_Palette	  = ember.m_Palette;
+		m_Curves	  = ember.m_Curves;
 
 		m_Xforms.clear();
 
@@ -242,6 +244,9 @@ public:
 		//Palette.
 		m_PaletteMode = PALETTE_STEP;
 		m_PaletteInterp = INTERP_HSV;
+
+		//Curves.
+		m_Curves.Init();
 
 		m_Name = "No name";
 		m_ParentFilename = "No parent";
@@ -795,6 +800,7 @@ public:
 		InterpT<&Ember<T>::m_MinRadDE>(embers, coefs, size);
 		InterpT<&Ember<T>::m_CurveDE>(embers, coefs, size);
 		InterpT<&Ember<T>::m_SpatialFilterRadius>(embers, coefs, size);
+		InterpX<Curves<T>, &Ember<T>::m_Curves>(embers, coefs, size);
 
 		//An extra step needed here due to the OOD that was not needed in the original.
 		//A small price to pay for the conveniences it affords us elsewhere.
@@ -1362,6 +1368,7 @@ public:
 
 		m_Xforms.clear();
 		m_FinalXform.Clear();
+		m_Curves.Init();
 		ClearEdit();
 	}
 
@@ -1651,6 +1658,9 @@ public:
 	//Xml field: "color" or "colors" or "palette" .
 	Palette<T> m_Palette;
 
+	//Curves used to adjust the color during final accumulation.
+	Curves<T> m_Curves;
+
 	//Strings.
 
 	//The name of this ember.
@@ -1673,6 +1683,15 @@ private:
 	/// The type of scaling used when resizing.
 	/// </summary>
 	eScaleType m_ScaleType;
+
+	//The vector containing all of the xforms.
+	//Xml field: "xform".
+	vector<Xform<T>> m_Xforms;
+
+	//Optional final xform. Default is empty.
+	//Discussed in section 3.2 of the paper, page 6.
+	//Xml field: "finalxform".
+	Xform<T> m_FinalXform;
 
 	/// <summary>
 	/// Interpolation function that takes the address of a member variable of type T as a template parameter.
@@ -1739,15 +1758,6 @@ private:
 		for (size_t k = 0; k < size; k++)
 			xform->*m += coefs[k] * embers[k].GetTotalXform(i)->*m;
 	}
-
-	//The vector containing all of the xforms.
-	//Xml field: "xform".
-	vector<Xform<T>> m_Xforms;
-
-	//Optional final xform. Default is empty.
-	//Discussed in section 3.2 of the paper, page 6.
-	//Xml field: "finalxform".
-	Xform<T> m_FinalXform;
 };
 
 /// <summary>

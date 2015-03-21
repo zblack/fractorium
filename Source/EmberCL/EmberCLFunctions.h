@@ -140,6 +140,21 @@ static const char* CalcAlphaFunctionString =
 	"}\n"
 	"\n";
 
+
+/// <summary>
+/// OpenCL equivalent of Renderer::CurveAdjust().
+/// Only use float here instead of real_t because the output will be passed to write_imagef()
+/// during final accumulation, which only takes floats.
+/// </summary>
+static const char* CurveAdjustFunctionString =
+"static inline void CurveAdjust(__constant real4reals* csa, float* a, uint index)\n"
+"{\n"
+"	uint tempIndex = (uint)Clamp(*a, 0.0, (float)COLORMAP_LENGTH_MINUS_1);\n"
+"	uint tempIndex2 = (uint)Clamp(csa[tempIndex].m_Real4.x, 0.0, (real_t)COLORMAP_LENGTH_MINUS_1);\n"
+"\n"
+"	*a = (float)round(csa[tempIndex2].m_Reals[index]);\n"
+"}\n";
+
 /// <summary>
 /// Use MWC 64 from David Thomas at the Imperial College of London for
 /// random numbers in OpenCL, instead of ISAAC which was used

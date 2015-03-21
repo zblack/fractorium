@@ -77,7 +77,7 @@ void SpinBox::DoubleClickNonZero(int val)
 /// <param name="step">The small step to use for scrolling while the shift key is down</param>
 void SpinBox::SmallStep(int step)
 {
-	m_SmallStep = min(1, step);
+	m_SmallStep = std::min(1, step);
 }
 
 /// <summary>

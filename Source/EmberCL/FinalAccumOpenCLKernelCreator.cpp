@@ -197,6 +197,7 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 		RgbToHsvFunctionString <<
 		HsvToRgbFunctionString <<
 		CalcAlphaFunctionString <<
+		CurveAdjustFunctionString <<
 		SpatialFilterCLStructString;
 
 	if (earlyClip)
@@ -231,6 +232,8 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 		"	__write_only image2d_t pixels,\n"
 		"	__constant SpatialFilterCL* spatialFilter,\n"
 		"	__constant real_t* filterCoefs,\n"
+		"	__constant real4reals* csa,\n"
+		"	const uint doCurves,\n"
 		"	const real_t alphaBase,\n"
 		"	const real_t alphaScale\n"
 		"\t)\n"
@@ -245,14 +248,11 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 		"	finalCoord.x = GLOBAL_ID_X;\n"
 		"	finalCoord.y = (int)((spatialFilter->m_YAxisUp == 1) ? ((spatialFilter->m_FinalRasH - GLOBAL_ID_Y) - 1) : GLOBAL_ID_Y);\n"
 		"	float4floats finalColor;\n"
-		"	real_t alpha, ls;\n"
 		"	int ii, jj;\n"
 		"	uint filterKRowIndex;\n"
 		"	const __global real4reals* accumBucket;\n"
 		"	real4reals newBucket;\n"
 		"	newBucket.m_Real4 = 0;\n"
-		"	real4reals newRgb;\n"
-		"	newRgb.m_Real4 = 0;\n"
 		"\n"
 		"	for (jj = 0; jj < spatialFilter->m_FilterWidth; jj++)\n"
 		"	{\n"
@@ -269,7 +269,7 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 		"\n";
 
 	//Not supporting 2 bytes per channel on the GPU. If the user wants it, run on the CPU.
-	if (earlyClip)//If early clip, simply assign values directly to the temp uint4 since they've been gamma corrected already, then write it straight to the output image below.
+	if (earlyClip)//If early clip, simply assign values directly to the temp float4 since they've been gamma corrected already, then write it straight to the output image below.
 	{
 		os <<
 		"	finalColor.m_Float4.x = (float)newBucket.m_Real4.x;\n"//CPU side clamps, skip here because write_imagef() does the clamping for us.
@@ -307,6 +307,14 @@ string FinalAccumOpenCLKernelCreator<T>::CreateFinalAccumKernelString(bool early
 	}
 
 	os <<
+		"\n"
+		"	if (doCurves)\n"
+		"	{\n"
+		"		CurveAdjust(csa, &(finalColor.m_Floats[0]), 1);\n"
+		"		CurveAdjust(csa, &(finalColor.m_Floats[1]), 2);\n"
+		"		CurveAdjust(csa, &(finalColor.m_Floats[2]), 3);\n"
+		"	}\n"
+		"\n"
 		"	finalColor.m_Float4 /= 255.0f;\n"
 		"	write_imagef(pixels, finalCoord, finalColor.m_Float4);\n"//Use write_imagef instead of write_imageui because only the former works when sharing with an OpenGL texture.
 		"	barrier(CLK_GLOBAL_MEM_FENCE);\n"//Required, or else page tearing will occur during interactive rendering.

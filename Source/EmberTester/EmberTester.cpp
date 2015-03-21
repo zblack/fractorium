@@ -1529,6 +1529,7 @@ void TestCpuGpuResults()
 			renderer.CreateSpatialFilter(newAlloc);
 			renderer.CreateDEFilter(newAlloc);
 			renderer.ComputeBounds();
+			renderer.ComputeQuality();
 			renderer.ComputeCamera();
 			renderer.AssignIterator();
 
@@ -1614,6 +1615,7 @@ void TestGpuVectorRead()
 	renderer.CreateSpatialFilter(newAlloc);
 	renderer.CreateDEFilter(newAlloc);
 	renderer.ComputeBounds();
+	renderer.ComputeQuality();
 	renderer.ComputeCamera();
 	renderer.AssignIterator();
 
@@ -1746,11 +1748,84 @@ double RandD(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 	return ((((rand.Rand()^(rand.Rand()<<15))&0xfffffff)*3.72529e-09)-0.5);
 }
 
+#define BEZ_POINT_LENGTH 4
+
+void BezierSolve(double t, glm::vec2* src, double* w, glm::vec2& solution)
+{
+	double s, s2, s3, t2, t3, nom_x, nom_y, denom;
+	
+	s = 1 - t;
+	s2 = s * s;
+	s3 = s * s * s;
+	t2 = t * t;
+	t3 = t * t * t;
+
+	nom_x = w[0] * s3 * src[0].x + w[1] * s2 * 3 * t * src[1].x + w[2] * s * 3 * t2 * src[2].x + w[3] * t3 * src[3].x;
+
+	nom_y = w[0] * s3 * src[0].y + w[1] * s2 * 3 * t * src[1].y + w[2] * s * 3 * t2 * src[2].y + w[3] * t3 * src[3].y;
+
+	denom = w[0] * s3 + w[1] * s2 * 3 * t + w[2] * s * 3 * t2 + w[3] * t3;
+
+	
+	if (isnan(nom_x) || isnan(nom_y) || isnan(denom) || denom == 0)
+		return;
+
+	solution.x = nom_x / denom;
+	solution.y = nom_y / denom;
+}
+
+void BezierSetRect(glm::vec2* points, bool flip, glm::vec4& rect)
+{
+	double f;
+
+	for (int i = 0; i < BEZ_POINT_LENGTH; i++)
+	{
+		if (flip)
+			f = 1 - points[i].y;
+		else
+			f = points[i].y;
+
+		points[i].x = points[i].x * (rect.z - rect.x) + rect.x;
+		points[i].y = f * (rect.w - rect.y) + rect.y;
+	}
+}
+
+void BezierUnsetRect(glm::vec2* points, bool flip, glm::vec4& rect)
+{
+	if ((rect.z - rect.x) == 0 || (rect.w - rect.y) == 0)
+		return;
+
+	for (int i = 0; i < BEZ_POINT_LENGTH; i++)
+	{
+		points[i].x = (points[i].x - rect.x) / (rect.z - rect.x);
+		points[i].y = (points[i].y - rect.y) / (rect.w - rect.y);
+
+		if (flip)
+			points[i].y = 1 - points[i].y;
+	}
+}
+
+struct BezierPoints
+{
+	glm::vec2 points[4];
+};
+
+struct BezierWeights
+{
+	double points[4];
+};
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//int i;
 	Timing t(4);
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
+	glm::vec2 solution, src[4];
+	double bezT = 1, w[4];
+	BezierPoints curvePoints[4];
+	BezierWeights curveWeights[4];
+
+	BezierSolve(bezT, src, w, solution);
 
 	//cout << pow(-1, 5.1) << endl;
 
@@ -1818,7 +1893,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::complex<double> cd, cd2;
 
 	//cd2 = sin(cd);
-
+	/*
 	t.Tic();
 	VariationList<float> vlf;
 	t.Toc("Creating VariationList<float>");
@@ -1905,7 +1980,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	t.Tic();
 	TestOperations<float>();
 	t.Toc("TestOperations()");
-
+	*/
 	//t.Tic();
 	//TestVarsSimilar<float>();
 	//t.Toc("TestVarsSimilar()");
