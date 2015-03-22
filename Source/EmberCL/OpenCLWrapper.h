@@ -218,6 +218,5 @@ private:
 	std::vector<NamedBuffer> m_Buffers;
 	std::vector<NamedImage2D> m_Images;
 	std::vector<NamedImage2DGL> m_GLImages;
-	std::vector<std::string> m_programBuildErrors;
 };
 }

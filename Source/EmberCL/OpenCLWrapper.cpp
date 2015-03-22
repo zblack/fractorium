@@ -1130,7 +1130,6 @@ uint OpenCLWrapper::DeviceIndex() const { return m_DeviceIndex; }
 size_t OpenCLWrapper::GlobalMemSize() const { return GetInfo<cl_ulong>(PlatformIndex(), DeviceIndex(), CL_DEVICE_GLOBAL_MEM_SIZE); }
 uint OpenCLWrapper::LocalMemSize() const { return m_LocalMemSize; }
 size_t OpenCLWrapper::MaxAllocSize() const { return GetInfo<cl_ulong>(PlatformIndex(), DeviceIndex(), CL_DEVICE_MAX_MEM_ALLOC_SIZE); }
-std::vector<std::string> OpenCLWrapper::ProgramBuildErrors() const { return m_programBuildErrors; }
 
 /// <summary>
 /// Makes the even grid dims.
@@ -1243,9 +1242,11 @@ bool OpenCLWrapper::CreateSPK(const string& name, const string& program, const s
 
 			if (CheckCL(err, "cl::Kernel()"))
 				return true;//Everything is ok.
-		} else {
-			for (std::vector<cl::Device>::iterator i = m_DeviceVec.begin(); i != m_DeviceVec.end(); ++ i )
-				m_programBuildErrors.push_back(spk.m_Program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(*i));
+		}
+		else
+		{
+			for (auto& i : m_DeviceVec)
+				m_ErrorReport.push_back(spk.m_Program.getBuildInfo<CL_PROGRAM_BUILD_LOG>(i));
 		}
 	}
 

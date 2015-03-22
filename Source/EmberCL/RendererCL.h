@@ -155,7 +155,9 @@ protected:
 	virtual eRenderStatus AccumulatorToFinalImage(byte* pixels, size_t finalOffset) override;
 	virtual EmberStats Iterate(size_t iterCount, size_t temporalSample) override;
 
+#ifndef TEST_CL
 private:
+#endif
 	//Private functions for making and running OpenCL programs.
 	bool BuildIterProgramForEmber(bool doAccum = true);
 	bool RunIter(size_t iterCount, size_t temporalSample, size_t& itersRan);

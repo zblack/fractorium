@@ -528,7 +528,7 @@ public:
 		return
 			"void GlynnSim1Circle(__constant real_t* radius1, __constant real_t* thickness, __constant real_t* x1, __constant real_t* y1, uint2* mwc, real_t* x, real_t* y)\n"
 			"{\n"
-			"	real_t r = *radius1 * (*thickness + (T(1.0) - *thickness) * MwcNext01(mwc));\n"
+			"	real_t r = *radius1 * (*thickness + ((real_t)(1.0) - *thickness) * MwcNext01(mwc));\n"
 			"	real_t phi = M_2PI * MwcNext01(mwc);\n"
 			"	real_t sinPhi = sin(phi);\n"
 			"	real_t cosPhi = cos(phi);\n"

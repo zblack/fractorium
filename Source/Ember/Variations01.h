@@ -2096,8 +2096,8 @@ protected:
 
 		m_Params.clear();
 		m_Params.push_back(ParamWithName<T>(&m_Slices,    prefix + "pie_slices", 6, INTEGER_NONZERO, 1));
-    m_Params.push_back(ParamWithName<T>(&m_Rotation,  prefix + "pie_rotation", T(0.5), REAL_CYCLIC, 0, M_2PI));
-    m_Params.push_back(ParamWithName<T>(&m_Thickness, prefix + "pie_thickness", T(0.5), REAL, 0, 1));
+	m_Params.push_back(ParamWithName<T>(&m_Rotation,  prefix + "pie_rotation", T(0.5), REAL_CYCLIC, 0, M_2PI));
+	m_Params.push_back(ParamWithName<T>(&m_Thickness, prefix + "pie_thickness", T(0.5), REAL, 0, 1));
 	}
 
 private:

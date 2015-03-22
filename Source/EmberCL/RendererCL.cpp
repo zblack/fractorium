@@ -501,8 +501,8 @@ string RendererCL<T>::ErrorReportString()
 template <typename T>
 vector<string> RendererCL<T>::ErrorReport()
 {
-	vector<string> ours = EmberReport::ErrorReport();
-	vector<string> wrappers = m_Wrapper.ErrorReport();
+	auto ours = EmberReport::ErrorReport();
+	auto wrappers = m_Wrapper.ErrorReport();
 
 	ours.insert(ours.end(), wrappers.begin(), wrappers.end());
 	return ours;
@@ -759,12 +759,7 @@ bool RendererCL<T>::BuildIterProgramForEmber(bool doAccum)
 	}
 	else
 	{
-		//m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + m_IterKernel + "\n");
-
-		std::vector<std::string> errors = m_Wrapper.ProgramBuildErrors();
-		m_ErrorReport.insert(m_ErrorReport.end(), errors.begin(), errors.end());
-		m_ErrorReport.push_back(loc);
-
+		m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + m_IterKernel + "\n");
 		return false;
 	}
 
@@ -1272,7 +1267,6 @@ int RendererCL<T>::MakeAndGetDensityFilterProgram(size_t ss, uint filterWidth)
 		else
 		{
 			m_ErrorReport.push_back(string(loc) + "():\nBuilding the following program failed: \n" + kernel + "\n");
-			//cout << m_ErrorReport.back();
 		}
 	}
 
@@ -1302,11 +1296,7 @@ int RendererCL<T>::MakeAndGetFinalAccumProgram(T& alphaBase, T& alphaScale)
 		if (b)
 			kernelIndex = m_Wrapper.FindKernelIndex(finalAccumEntryPoint);//Try to find it again, it will be present if successfully built.
 		else
-		{
-			std::vector<std::string> errors = m_Wrapper.ProgramBuildErrors();
-			m_ErrorReport.insert(m_ErrorReport.end(), errors.begin(), errors.end());
 			m_ErrorReport.push_back(loc);
-		}
 	}
 
 	return kernelIndex;

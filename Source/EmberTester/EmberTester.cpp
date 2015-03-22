@@ -13,7 +13,6 @@
 /// </summary>
 
 using namespace EmberNs;
-//#define TEST_CL 1
 
 template <typename T>
 void SaveFinalImage(Renderer<T, T>& renderer, vector<byte>& pixels, char* suffix)
@@ -94,33 +93,32 @@ string GetEmberCLKernelString(Ember<float>& ember, bool iter, bool log, bool de,
 	return os.str();
 }
 
-void MakeTestAllVarsRegPrePostComboFile(const string& filename)
+template <typename T>
+void MakeTestAllVarsRegPrePost(vector<Ember<T>>& embers)
 {
-	EmberToXml<float> writer;
-	vector<Ember<float>> embers;
-	VariationList<float> varList;
 	uint index = 0;
-	PaletteList<float> paletteList;
 	ostringstream ss;
+	VariationList<T> varList;
+	PaletteList<T> paletteList;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
 
 	paletteList.Init("flam3-palettes.xml");
 
 	Timing t;
 
-	Ember<float> emberNoVars;
-	
+	Ember<T> emberNoVars;
+
 	emberNoVars.m_FinalRasW = 640;
 	emberNoVars.m_FinalRasH = 480;
 	emberNoVars.m_Quality = 100;
 
-	Xform<float> xform1(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-	Xform<float> xform2(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-	Xform<float> xform3(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-	Xform<float> xform4(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-	Xform<float> xform5(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-	Xform<float> xform6(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-	Xform<float> xform7(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
+	Xform<T> xform1(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+	Xform<T> xform2(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+	Xform<T> xform3(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+	Xform<T> xform4(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+	Xform<T> xform5(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+	Xform<T> xform6(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+	Xform<T> xform7(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
 
 	emberNoVars.AddXform(xform1);
 	emberNoVars.AddXform(xform2);
@@ -138,22 +136,22 @@ void MakeTestAllVarsRegPrePostComboFile(const string& filename)
 
 	while (index < varList.RegSize())
 	{
-		Ember<float> ember1;
-		unique_ptr<Variation<float>> regVar(varList.GetVariationCopy(index, VARTYPE_REG));
-		unique_ptr<Variation<float>> preVar(varList.GetVariationCopy("pre_" + regVar->Name()));
-		unique_ptr<Variation<float>> postVar(varList.GetVariationCopy("post_" + regVar->Name()));
+		Ember<T> ember1;
+		unique_ptr<Variation<T>> regVar(varList.GetVariationCopy(index, VARTYPE_REG));
+		unique_ptr<Variation<T>> preVar(varList.GetVariationCopy("pre_" + regVar->Name()));
+		unique_ptr<Variation<T>> postVar(varList.GetVariationCopy("post_" + regVar->Name()));
 
 		ember1.m_FinalRasW = 640;
 		ember1.m_FinalRasH = 480;
 		ember1.m_Quality = 100;
 
-		Xform<float> xform1(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-		Xform<float> xform2(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-		Xform<float> xform3(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-		Xform<float> xform4(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-		Xform<float> xform5(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-		Xform<float> xform6(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
-		Xform<float> xform7(0.25f, rand.Frand01<float>(), rand.Frand11<float>(), 1, rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>(), rand.Frand11<float>());
+		Xform<T> xform1(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		Xform<T> xform2(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		Xform<T> xform3(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		Xform<T> xform4(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		Xform<T> xform5(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		Xform<T> xform6(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
+		Xform<T> xform7(0.25f, rand.Frand01<T>(), rand.Frand11<T>(), 1, rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>(), rand.Frand11<T>());
 
 		if (preVar.get() && postVar.get())
 		{
@@ -204,7 +202,14 @@ void MakeTestAllVarsRegPrePostComboFile(const string& filename)
 	}
 
 	t.Toc("Creating embers for all possible variations");
+}
 
+void MakeTestAllVarsRegPrePostComboFile(const string& filename)
+{
+	EmberToXml<float> writer;
+	vector<Ember<float>> embers;
+
+	MakeTestAllVarsRegPrePost(embers);
 	writer.Save(filename, embers, 0, true, false, true);
 }
 
@@ -320,7 +325,7 @@ bool SearchVar(Variation<T>* var, vector<string>& stringVec, bool matchAll)
 {
 	bool ret = false;
 	size_t i;
-	string cl = var->OpenCLString();
+	auto cl = var->OpenCLFuncsString() + "\n" + var->OpenCLString();
 
 	if (matchAll)
 	{
@@ -1315,6 +1320,33 @@ void TestVarTime()
 	//ForEach(times, [&](pair<string, double>& p) { cout << p.first << "\t" << p.second << "" << endl; });
 }
 
+void TestCasting()
+{
+	vector<string> stringVec;
+	vector<Variation<float>*> varVec;
+
+	stringVec.push_back("T(");
+	stringVec.push_back(".0f");
+	stringVec.push_back(".1f");
+	stringVec.push_back(".2f");
+	stringVec.push_back(".3f");
+	stringVec.push_back(".4f");
+	stringVec.push_back(".5f");
+	stringVec.push_back(".6f");
+	stringVec.push_back(".7f");
+	stringVec.push_back(".8f");
+	stringVec.push_back(".9f");
+
+	varVec = FindVarsWith<float>(stringVec);
+
+	for (auto& it : varVec)
+	{
+		cout << "Variation " << it->Name() << " contained an improper float cast." << endl;
+	}
+
+	ClearVec<Variation<float>>(varVec);
+}
+
 template <typename T>
 void TestOperations()
 {
@@ -1472,6 +1504,37 @@ void TestVarsSimilar()
 }
 
 #ifdef TEST_CL
+
+template <typename T>
+void TestAllVarsCLBuild(bool printSuccess = true)
+{
+	vector<Ember<T>> embers;
+	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
+	RendererCL<T> renderer;
+	const char* loc = __FUNCTION__;
+
+	if (!renderer.Init(1, 0, false, 0))
+	{
+		cout << loc << "Creating RendererCL failed, tests will not be run." << endl;
+		return;
+	}
+
+	MakeTestAllVarsRegPrePost(embers);
+
+	for (auto& it : embers)
+	{
+		renderer.SetEmber(it);
+
+		if (renderer.BuildIterProgramForEmber())
+		{
+			if (printSuccess)
+				cout << loc << ": Build succeeded for ember " << it.m_Name << endl;
+		}
+		else
+			cout << loc << ": OpenCL program build failed:\n" << renderer.ErrorReport() << endl;
+	}
+}
+
 template <typename T>
 void TestCpuGpuResults()
 {
@@ -1747,85 +1810,85 @@ double RandD(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand)
 {
 	return ((((rand.Rand()^(rand.Rand()<<15))&0xfffffff)*3.72529e-09)-0.5);
 }
-
-#define BEZ_POINT_LENGTH 4
-
-void BezierSolve(double t, glm::vec2* src, double* w, glm::vec2& solution)
-{
-	double s, s2, s3, t2, t3, nom_x, nom_y, denom;
-	
-	s = 1 - t;
-	s2 = s * s;
-	s3 = s * s * s;
-	t2 = t * t;
-	t3 = t * t * t;
-
-	nom_x = w[0] * s3 * src[0].x + w[1] * s2 * 3 * t * src[1].x + w[2] * s * 3 * t2 * src[2].x + w[3] * t3 * src[3].x;
-
-	nom_y = w[0] * s3 * src[0].y + w[1] * s2 * 3 * t * src[1].y + w[2] * s * 3 * t2 * src[2].y + w[3] * t3 * src[3].y;
-
-	denom = w[0] * s3 + w[1] * s2 * 3 * t + w[2] * s * 3 * t2 + w[3] * t3;
-
-	
-	if (isnan(nom_x) || isnan(nom_y) || isnan(denom) || denom == 0)
-		return;
-
-	solution.x = nom_x / denom;
-	solution.y = nom_y / denom;
-}
-
-void BezierSetRect(glm::vec2* points, bool flip, glm::vec4& rect)
-{
-	double f;
-
-	for (int i = 0; i < BEZ_POINT_LENGTH; i++)
-	{
-		if (flip)
-			f = 1 - points[i].y;
-		else
-			f = points[i].y;
-
-		points[i].x = points[i].x * (rect.z - rect.x) + rect.x;
-		points[i].y = f * (rect.w - rect.y) + rect.y;
-	}
-}
-
-void BezierUnsetRect(glm::vec2* points, bool flip, glm::vec4& rect)
-{
-	if ((rect.z - rect.x) == 0 || (rect.w - rect.y) == 0)
-		return;
-
-	for (int i = 0; i < BEZ_POINT_LENGTH; i++)
-	{
-		points[i].x = (points[i].x - rect.x) / (rect.z - rect.x);
-		points[i].y = (points[i].y - rect.y) / (rect.w - rect.y);
-
-		if (flip)
-			points[i].y = 1 - points[i].y;
-	}
-}
-
-struct BezierPoints
-{
-	glm::vec2 points[4];
-};
-
-struct BezierWeights
-{
-	double points[4];
-};
+//
+//#define BEZ_POINT_LENGTH 4
+//
+//void BezierSolve(double t, glm::vec2* src, double* w, glm::vec2& solution)
+//{
+//	double s, s2, s3, t2, t3, nom_x, nom_y, denom;
+//	
+//	s = 1 - t;
+//	s2 = s * s;
+//	s3 = s * s * s;
+//	t2 = t * t;
+//	t3 = t * t * t;
+//
+//	nom_x = w[0] * s3 * src[0].x + w[1] * s2 * 3 * t * src[1].x + w[2] * s * 3 * t2 * src[2].x + w[3] * t3 * src[3].x;
+//
+//	nom_y = w[0] * s3 * src[0].y + w[1] * s2 * 3 * t * src[1].y + w[2] * s * 3 * t2 * src[2].y + w[3] * t3 * src[3].y;
+//
+//	denom = w[0] * s3 + w[1] * s2 * 3 * t + w[2] * s * 3 * t2 + w[3] * t3;
+//
+//	
+//	if (isnan(nom_x) || isnan(nom_y) || isnan(denom) || denom == 0)
+//		return;
+//
+//	solution.x = nom_x / denom;
+//	solution.y = nom_y / denom;
+//}
+//
+//void BezierSetRect(glm::vec2* points, bool flip, glm::vec4& rect)
+//{
+//	double f;
+//
+//	for (int i = 0; i < BEZ_POINT_LENGTH; i++)
+//	{
+//		if (flip)
+//			f = 1 - points[i].y;
+//		else
+//			f = points[i].y;
+//
+//		points[i].x = points[i].x * (rect.z - rect.x) + rect.x;
+//		points[i].y = f * (rect.w - rect.y) + rect.y;
+//	}
+//}
+//
+//void BezierUnsetRect(glm::vec2* points, bool flip, glm::vec4& rect)
+//{
+//	if ((rect.z - rect.x) == 0 || (rect.w - rect.y) == 0)
+//		return;
+//
+//	for (int i = 0; i < BEZ_POINT_LENGTH; i++)
+//	{
+//		points[i].x = (points[i].x - rect.x) / (rect.z - rect.x);
+//		points[i].y = (points[i].y - rect.y) / (rect.w - rect.y);
+//
+//		if (flip)
+//			points[i].y = 1 - points[i].y;
+//	}
+//}
+//
+//struct BezierPoints
+//{
+//	glm::vec2 points[4];
+//};
+//
+//struct BezierWeights
+//{
+//	double points[4];
+//};
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//int i;
 	Timing t(4);
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
-	glm::vec2 solution, src[4];
-	double bezT = 1, w[4];
-	BezierPoints curvePoints[4];
-	BezierWeights curveWeights[4];
-
-	BezierSolve(bezT, src, w, solution);
+	//glm::vec2 solution, src[4];
+	//double bezT = 1, w[4];
+	//BezierPoints curvePoints[4];
+	//BezierWeights curveWeights[4];
+	//
+	//BezierSolve(bezT, src, w, solution);
 
 	//cout << pow(-1, 5.1) << endl;
 
@@ -1894,6 +1957,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//cd2 = sin(cd);
 	/*
+	t.Tic();
+	TestCasting();
+	t.Toc("TestCasting()");
+	
 	t.Tic();
 	VariationList<float> vlf;
 	t.Toc("Creating VariationList<float>");
@@ -1990,10 +2057,18 @@ int _tmain(int argc, _TCHAR* argv[])
 	//TestCpuGpuResults<float>();
 	//t.Toc("TestCpuGpuResults<float>()");
 	
+	t.Tic();
+	TestAllVarsCLBuild<float>();
+	t.Toc("TestAllVarsCLBuild<float>()");
+
 #ifdef DO_DOUBLE
 	//t.Tic();
 	//TestCpuGpuResults<double>();
 	//t.Toc("TestCpuGpuResults<double>()");
+
+	t.Tic();
+	TestAllVarsCLBuild<double>();
+	t.Toc("TestAllVarsCLBuild<double>()");
 #endif
 #endif
 
