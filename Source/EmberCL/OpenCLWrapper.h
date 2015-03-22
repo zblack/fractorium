@@ -192,7 +192,6 @@ public:
 	uint LocalMemSize() const;
 	size_t GlobalMemSize() const;
 	size_t MaxAllocSize() const;
-	std::vector<std::string> ProgramBuildErrors() const;
 
 	static void MakeEvenGridDims(uint blockW, uint blockH, uint& gridW, uint& gridH);
 
