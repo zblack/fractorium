@@ -300,7 +300,7 @@ bool EmberAnimate(EmberOptions& opt)
 		if (opt.Out().empty())
 		{
 			ostringstream fnstream;
-			fnstream << inputPath << opt.Prefix() << setfill('0') << setw(5) << ftime << opt.Suffix() << "." << opt.Format();
+			fnstream << inputPath << opt.Prefix() << setfill('0') << setw(opt.FilenamePadding()) << ftime << opt.Suffix() << "." << opt.Format();
 			filename = fnstream.str();
 		}
 
