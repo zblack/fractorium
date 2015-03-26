@@ -299,9 +299,9 @@ bool EmberAnimate(EmberOptions& opt)
 
 		if (opt.Out().empty())
 		{
-			os.str("");
-			os << inputPath << opt.Prefix() << setfill('0') << setw(5) << ftime << opt.Suffix() << "." << opt.Format();
-			filename = os.str();
+			ostringstream fnstream;
+			fnstream << inputPath << opt.Prefix() << setfill('0') << setw(5) << ftime << opt.Suffix() << "." << opt.Format();
+			filename = fnstream.str();
 		}
 
 		if (opt.WriteGenome())
