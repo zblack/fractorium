@@ -74,6 +74,7 @@ public:
 	void MakeID();
 	bool IsID() const;
 	bool IsZero() const;
+	bool IsEmpty() const;
 	void Rotate(T angle);
 	void Translate(const v2T& v);
 	void RotateScaleXTo(const v2T& v);

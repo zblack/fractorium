@@ -158,6 +158,21 @@ bool Affine2D<T>::IsZero() const
 }
 
 /// <summary>
+/// Determine whether this affine transform was deliberately set to all empty values.
+/// </summary>
+/// <returns>True if all 6 elements equal zero, else false.</returns>
+template <typename T>
+bool Affine2D<T>::IsEmpty() const
+{
+	return (IsClose<T>(A(), EMPTYFIELD)) &&
+		   (IsClose<T>(B(), EMPTYFIELD)) &&
+		   (IsClose<T>(C(), EMPTYFIELD)) &&
+		   (IsClose<T>(D(), EMPTYFIELD)) &&
+		   (IsClose<T>(E(), EMPTYFIELD)) &&
+		   (IsClose<T>(F(), EMPTYFIELD));
+}
+
+/// <summary>
 /// Rotate this affine transform around its origin by the specified angle in degrees.
 /// </summary>
 /// <param name="angle">The angle to rotate by</param>

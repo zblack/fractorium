@@ -74,6 +74,7 @@ namespace EmberNs
 #define TMAX std::numeric_limits<T>::max()
 #define FLOAT_MAX_TAN 8388607.0f
 #define FLOAT_MIN_TAN -FLOAT_MAX_TAN
+#define EMPTYFIELD -9999
 typedef std::chrono::high_resolution_clock Clock;
 
 #ifndef byte

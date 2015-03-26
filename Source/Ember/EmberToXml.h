@@ -493,14 +493,14 @@ private:
 				os << "   <xform weight=\"" << xform.m_Weight << "\" ";
 		}
 
+		if (!doMotion || xform.m_ColorX != EMPTYFIELD) os << "color=\"" << xform.m_ColorX << "\" ";
+		//if (!doMotion || xform.m_ColorY != EMPTYFIELD) os << "color=\"" << xform.m_ColorX << " " << xform.m_ColorY << "\" ";
+		if (!doMotion || xform.m_DirectColor != EMPTYFIELD) os << "var_color=\"" << xform.m_DirectColor << "\" ";
+		if (!doMotion || xform.m_ColorSpeed != EMPTYFIELD) os << "color_speed=\"" << xform.m_ColorSpeed << "\" ";
+		//os << "symmetry=\"" << fabs(xform.m_ColorSpeed - 1) * 2 << "\" ";//Legacy support.
+
 		if (!doMotion)
 		{
-			os << "color=\"" << xform.m_ColorX << "\" ";
-			//os << "color=\"" << xform.m_ColorX << " " << xform.m_ColorY << "\" ";
-			os << "var_color=\"" << xform.m_DirectColor << "\" ";
-			os << "color_speed=\"" << xform.m_ColorSpeed << "\" ";
-			//os << "symmetry=\"" << fabs(xform.m_ColorSpeed - 1) * 2 << "\" ";//Legacy support.
-
 			string s = xform.m_Name;
 
 			std::replace(s.begin(), s.end(), ' ', '_');
@@ -536,20 +536,20 @@ private:
 			}
 		}
 
-		if (!doMotion || (doMotion && !xform.m_Affine.IsZero()))
+		if (!doMotion || (doMotion && !xform.m_Affine.IsZero() && !xform.m_Affine.IsEmpty()))
 		{
 			os << "coefs=\"" << xform.m_Affine.A() << " " << xform.m_Affine.D() << " " << xform.m_Affine.B() << " "
 				 << xform.m_Affine.E() << " " << xform.m_Affine.C() << " " << xform.m_Affine.F() << "\"";
 		}
 
-		if ((!doMotion && !xform.m_Post.IsID()) || (doMotion && !xform.m_Post.IsZero()))
+		if ((!doMotion && !xform.m_Post.IsID()) || (doMotion && !xform.m_Post.IsZero() && !xform.m_Post.IsEmpty()))
 		{
 			os << " post=\"" << xform.m_Post.A() << " " << xform.m_Post.D() << " " << xform.m_Post.B() << " "
 				<< xform.m_Post.E() << " " << xform.m_Post.C() << " " << xform.m_Post.F() << "\"";
 		}
 
 		//Original only printed xaos values that were not 1. Here, print them all out if any are present.
-		if (!isFinal && !doMotion && xform.XaosPresent())
+		if (!isFinal && !doMotion && xform.XaosPresent())//Applying motion to xaos not supported.
 		{
 			os << " chaos=\"";
 
@@ -559,8 +559,7 @@ private:
 			os << "\"";
 		}
 
-		if (!doMotion)
-			os << " opacity=\"" << xform.m_Opacity << "\"";
+		if (!doMotion || xform.m_Opacity != EMPTYFIELD) os << " opacity=\"" << xform.m_Opacity << "\"";
 
 		if (!doMotion && !xform.m_Motion.empty())
 		{

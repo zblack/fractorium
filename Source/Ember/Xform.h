@@ -32,12 +32,13 @@ class EMBER_API Xform
 {
 public:
 	/// <summary>
-	/// Default constructor which calls Init() to set default values.
-	/// Pre and post affine are defaulted to the identity matrix.
+	/// Default constructor which calls Init() to set default or out of bounds values.
+	/// When useDefaults is true, Pre and post affine are defaulted to the identity matrix.
 	/// </summary>
-	Xform()
+	/// <param name="useDefaults">Use reasonable default if true, else use out of bounds values.</param>
+	Xform(bool useDefaults = true)
 	{
-		Init();
+		Init(useDefaults);
 	}
 
 	/// <summary>
@@ -196,36 +197,73 @@ public:
 
 	/// <summary>
 	/// Init default values.
+	/// Non default values are used to signify an uninitialized state. This is useful for 
+	/// doing motion interpolation where we don't want to apply motion to all fields. By setting
+	/// unreasonable values before parsing, then only assigning the ones the motion tags specified, 
+	/// it is clear which fields are intended to have motion applied to them.
 	/// </summary>
-	void Init()
+	/// <param name="useDefaults">Use reasonable default if true, else use out of bounds values.</param>
+	void Init(bool useDefaults = true)
 	{
 		static size_t count = 0;
 
-		m_Weight = 0;
-		m_ColorSpeed = T(0.5);
-		m_Animate = 1;
-		m_ColorX = T(count & 1);
-		m_ColorY = 0;
-		m_DirectColor = 1;
-		m_Opacity = 1;
+		if (useDefaults)
+		{
+			m_Weight = 0;
+			m_ColorSpeed = T(0.5);
+			m_Animate = 1;
+			m_ColorX = T(count & 1);
+			m_ColorY = 0;
+			m_DirectColor = 1;
+			m_Opacity = 1;
 
-		m_Affine.A(1);
-		m_Affine.B(0);
-		m_Affine.C(0);
-		m_Affine.D(0);
-		m_Affine.E(1);
-		m_Affine.F(0);
+			m_Affine.A(1);
+			m_Affine.B(0);
+			m_Affine.C(0);
+			m_Affine.D(0);
+			m_Affine.E(1);
+			m_Affine.F(0);
 
-		m_Post.A(1);
-		m_Post.B(0);
-		m_Post.C(0);
-		m_Post.D(0);
-		m_Post.E(1);
-		m_Post.F(0);
+			m_Post.A(1);
+			m_Post.B(0);
+			m_Post.C(0);
+			m_Post.D(0);
+			m_Post.E(1);
+			m_Post.F(0);
 
-		m_Wind[0] = 0;
-		m_Wind[1] = 0;
-		m_MotionFreq = 0;
+			m_Wind[0] = 0;
+			m_Wind[1] = 0;
+			m_MotionFreq = 0;
+		}
+		else
+		{
+			m_Weight = EMPTYFIELD;
+			m_ColorSpeed = EMPTYFIELD;
+			m_Animate = EMPTYFIELD;
+			m_ColorX = EMPTYFIELD;
+			m_ColorY = EMPTYFIELD;
+			m_DirectColor = EMPTYFIELD;
+			m_Opacity = EMPTYFIELD;
+
+			m_Affine.A(EMPTYFIELD);
+			m_Affine.B(EMPTYFIELD);
+			m_Affine.C(EMPTYFIELD);
+			m_Affine.D(EMPTYFIELD);
+			m_Affine.E(EMPTYFIELD);
+			m_Affine.F(EMPTYFIELD);
+
+			m_Post.A(EMPTYFIELD);
+			m_Post.B(EMPTYFIELD);
+			m_Post.C(EMPTYFIELD);
+			m_Post.D(EMPTYFIELD);
+			m_Post.E(EMPTYFIELD);
+			m_Post.F(EMPTYFIELD);
+
+			m_Wind[0] = EMPTYFIELD;
+			m_Wind[1] = EMPTYFIELD;
+			m_MotionFreq = EMPTYFIELD;
+		}
+
 		m_MotionFunc = MOTION_SIN;
 		m_Motion.clear();
 
@@ -674,7 +712,12 @@ public:
 	}
 
 //Why are we not using template with member var addr as arg here?//TODO
-#define APPMOT(x)  do { x += mot[i].x * Interpolater<T>::MotionFuncs(func, freq * blend); } while (0)
+#define APPMOT(x) \
+	do \
+	{ \
+		if (currentMot.x != EMPTYFIELD) \
+			x += currentMot.x * Interpolater<T>::MotionFuncs(func, freq * blend); \
+	} while (0)
 
 	/// <summary>
 	/// Apply the motion functions from the passed in xform to this xform.
@@ -683,15 +726,13 @@ public:
 	/// <param name="blend">The time blending value 0-1</param>
 	void ApplyMotion(Xform<T>& xform, T blend)
 	{
-		Xform<T>* mot = xform.m_Motion.data();
-
 		//Loop over the motion elements and add their contribution to the original vals.
 		for (size_t i = 0; i < xform.m_Motion.size(); i++)
 		{
 			//Original only pulls these from the first motion xform which is a bug. Want to pull it from each one.
-			Xform<T>* currentMot = &xform.m_Motion[i];
-			intmax_t freq = currentMot->m_MotionFreq;
-			eMotion func = currentMot->m_MotionFunc;
+			Xform<T>& currentMot = xform.m_Motion[i];
+			intmax_t freq = currentMot.m_MotionFreq;
+			eMotion func = currentMot.m_MotionFunc;
 
 			//Clamp these to the appropriate range after all are applied.
 			APPMOT(m_Weight);
@@ -702,9 +743,9 @@ public:
 			APPMOT(m_ColorSpeed);
 			APPMOT(m_Animate);
 
-			for (size_t j = 0; j < currentMot->TotalVariationCount(); j++)//For each variation in the motion xform.
+			for (size_t j = 0; j < currentMot.TotalVariationCount(); j++)//For each variation in the motion xform.
 			{
-				Variation<T>* motVar = currentMot->GetVariation(j);//Get the variation, which may or may not be present in this xform.
+				Variation<T>* motVar = currentMot.GetVariation(j);//Get the variation, which may or may not be present in this xform.
 				ParametricVariation<T>* motParVar = dynamic_cast<ParametricVariation<T>*>(motVar);
 
 				Variation<T>* var = GetVariationById(motVar->VariationId());//See if the variation in the motion xform was present in the xform.
@@ -752,7 +793,7 @@ public:
 		//ClampRef<T>(m_ColorY, 0, 1);
 		ClampRef<T>(m_DirectColor, 0, 1);
 		ClampRef<T>(m_Opacity, 0, 1);//Original didn't clamp these, but do it here for correctness.
-		ClampRef<T>(m_ColorSpeed, 0, 1);
+		ClampRef<T>(m_ColorSpeed, -1, 1);
 		ClampGte0Ref<T>(m_Weight);
 	}
 

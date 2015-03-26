@@ -1956,12 +1956,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::complex<double> cd, cd2;
 
 	//cd2 = sin(cd);
-	/*
+	
 	t.Tic();
 	TestCasting();
 	t.Toc("TestCasting()");
 	
-	t.Tic();
+	/*t.Tic();
 	VariationList<float> vlf;
 	t.Toc("Creating VariationList<float>");
 

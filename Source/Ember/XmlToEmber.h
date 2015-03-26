@@ -1018,7 +1018,7 @@ private:
 					{
 						if (!Compare(motionNode->name, "motion"))
 						{
-							Xform<T> xform;
+							Xform<T> xform(false);//Will only have valid values in fields parsed for motion, all others will be EMPTYFIELD.
 
 							if (!ParseXform(motionNode, xform, true))
 								m_ErrorReport.push_back(string(loc) + " : Error parsing motion xform");
