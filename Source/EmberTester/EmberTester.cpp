@@ -1883,6 +1883,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	//int i;
 	Timing t(4);
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
+	double d = 1;
+
+	for (int i = 0; i < 10; i++)
+	{
+		cout << "log10(" << d << ") = " << std::max<uint>(1u, uint(log10(d)) + 1u) << endl;
+		d *= 10;
+	}
+
+	return 0;
 	//glm::vec2 solution, src[4];
 	//double bezT = 1, w[4];
 	//BezierPoints curvePoints[4];
@@ -1957,11 +1966,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//cd2 = sin(cd);
 	
-	t.Tic();
+	/*t.Tic();
 	TestCasting();
 	t.Toc("TestCasting()");
 	
-	/*t.Tic();
+	t.Tic();
 	VariationList<float> vlf;
 	t.Toc("Creating VariationList<float>");
 

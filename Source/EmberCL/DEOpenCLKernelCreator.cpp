@@ -291,7 +291,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 
 		if (doScf)
 			os <<
-			"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), 2.0);\n";
+			"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), (real_t)2.0);\n";
 	}
 
 	os <<
@@ -518,7 +518,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 
 		if (doScf)
 		os <<
-		"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), 2.0);\n";
+		"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), (real_t)2.0);\n";
 	}
 
 	//Compute the size of the temporary box which is the block width + 2 * filter width x block height + 2 * filter width.
@@ -646,12 +646,13 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 		"\n";
 
 		if (doScf)
-			os << "	filterSelect *= scfact;\n";
+		os <<
+		"			filterSelect *= scfact;\n";
 	}
 	else
 	{
-		os
-			<< "	filterSelect = bucket.w;\n";
+		os <<
+		"			filterSelect = bucket.w;\n";
 	}
 
 	os <<
@@ -775,7 +776,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"	int densityBoxBottomY;\n";
 
 	if (doScf)
-	os << "	real_t scfact = pow((real_t)densityFilter->m_Supersample / ((real_t)densityFilter->m_Supersample + 1.0), 2.0);\n";
+	os << "	real_t scfact = pow((real_t)densityFilter->m_Supersample / ((real_t)densityFilter->m_Supersample + 1.0), (real_t)2.0);\n";
 	}
 
 	os <<

@@ -395,7 +395,6 @@ public:
 		vector<T> c(2);
 		Ember<T> localEmbers[4];
 		bool smoothFlag = false;
-		c.resize(2);
 
 		if (embers[0].m_Time >= time)
 		{

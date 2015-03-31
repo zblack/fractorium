@@ -73,7 +73,6 @@ enum eOptionIDs
 	OPT_TIME,
 	OPT_DTIME,
 	OPT_NFRAMES,
-	OPT_FNPADDING,
 	OPT_SYMMETRY,
 	OPT_SHEEP_GEN,
 	OPT_SHEEP_ID,
@@ -350,7 +349,6 @@ public:
 		INITUINTOPTION(Frame,          Eou(OPT_ANIM_GENOME, OPT_FRAME,            _T("--frame"),                0,                    SO_REQ_SEP, "\t--frame=<val>            Synonym for \"time\".\n"));
 		INITUINTOPTION(Dtime,          Eou(OPT_USE_ANIMATE, OPT_DTIME,            _T("--dtime"),                1,                    SO_REQ_SEP, "\t--dtime=<val>            Time between frames [default: 1].\n"));
 		INITUINTOPTION(Frames,         Eou(OPT_USE_GENOME,  OPT_NFRAMES,          _T("--nframes"),              20,                   SO_REQ_SEP, "\t--nframes=<val>          Number of frames for each stage of the animation [default: 20].\n"));
-		INITUINTOPTION(FilenamePadding,Eou(OPT_USE_ANIMATE, OPT_FNPADDING,        _T("--filename_padding"),     5,                    SO_REQ_SEP, "\t--filename_padding=<val> Number of zeros to pad frame numbers with in output filename [default: 5].\n"));
 		INITUINTOPTION(Loops,          Eou(OPT_USE_GENOME,  OPT_LOOPS,            _T("--loops"),                1,                    SO_REQ_SEP, "\t--loops=<val>            Number of times to rotate each control point in sequence [default: 1].\n"));
 		INITUINTOPTION(Repeat,         Eou(OPT_USE_GENOME,  OPT_REPEAT,           _T("--repeat"),               1,                    SO_REQ_SEP, "\t--repeat=<val>           Number of new flames to create. Ignored if sequence, inter or rotate were specified [default: 1].\n"));
 		INITUINTOPTION(Tries,          Eou(OPT_USE_GENOME,  OPT_TRIES,            _T("--tries"),                10,                   SO_REQ_SEP, "\t--tries=<val>            Number times to try creating a flame that meets the specified constraints. Ignored if sequence, inter or rotate were specified [default: 10].\n"));
@@ -480,7 +478,6 @@ public:
 					PARSEUINTOPTION(OPT_TIME, Time);
 					PARSEUINTOPTION(OPT_DTIME, Dtime);
 					PARSEUINTOPTION(OPT_NFRAMES, Frames);
-					PARSEUINTOPTION(OPT_FNPADDING, FilenamePadding);
 					PARSEUINTOPTION(OPT_LOOPS, Loops);
 					PARSEUINTOPTION(OPT_REPEAT, Repeat);
 					PARSEUINTOPTION(OPT_TRIES, Tries);
@@ -696,7 +693,6 @@ public:
 	EmberOptionEntry<uint> Time;
 	EmberOptionEntry<uint> Dtime;
 	EmberOptionEntry<uint> Frames;
-	EmberOptionEntry<uint> FilenamePadding;
 	EmberOptionEntry<uint> Loops;
 	EmberOptionEntry<uint> Repeat;
 	EmberOptionEntry<uint> Tries;

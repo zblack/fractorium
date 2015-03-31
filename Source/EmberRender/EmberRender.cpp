@@ -28,6 +28,7 @@ bool EmberRender(EmberOptions& opt)
 	Timing t;
 	bool writeSuccess = false;
 	byte* finalImagep;
+	uint padding;
 	size_t i, channels;
 	size_t strips;
 	size_t iterCount;
@@ -144,6 +145,7 @@ bool EmberRender(EmberOptions& opt)
 
 	//Final setup steps before running.
 	os.imbue(std::locale(""));
+	padding = uint(log10((double)embers.size())) + 1;
 	renderer->EarlyClip(opt.EarlyClip());
 	renderer->YAxisUp(opt.YAxisUp());
 	renderer->LockAccum(opt.LockAccum());
@@ -259,10 +261,10 @@ bool EmberRender(EmberOptions& opt)
 			}
 			else
 			{
-				ostringstream ssLocal;
+				ostringstream fnstream;
 
-				ssLocal << inputPath << opt.Prefix() << setfill('0') << setw(5) << i << opt.Suffix() << "." << opt.Format();
-				filename = ssLocal.str();
+				fnstream << inputPath << opt.Prefix() << setfill('0') << setw(padding) << i << opt.Suffix() << "." << opt.Format();
+				filename = fnstream.str();
 			}
 
 			//TotalIterCount() is actually using ScaledQuality() which does not get reset upon ember assignment,

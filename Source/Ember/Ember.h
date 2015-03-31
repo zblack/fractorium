@@ -981,7 +981,8 @@ public:
 		{
 			for (size_t i = 0; i < XformCount(); i++)
 			{
-				m_Xforms[i].SetXaos(i, 0);//First make each xform xaos array be maxXformCount elements long and set them to zero.
+				for (size_t k = 0; k < XformCount(); k++)//First make each xform xaos array be maxXformCount elements long and set them to zero.
+					m_Xforms[i].SetXaos(k, 0);
 
 				//Now fill them with interpolated values.
 				for (size_t j = 0; j < size; j++)//For each ember in the list.

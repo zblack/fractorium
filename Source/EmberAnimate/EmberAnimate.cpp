@@ -32,7 +32,7 @@ bool EmberAnimate(EmberOptions& opt)
 	bool finishXml = false;
 	bool appendXml = false;
 	uint finalImageIndex = 0;
-	uint i, channels, ftime;
+	uint i, channels, ftime, padding;
 	string s, flameName, filename, inputPath = GetPath(opt.Input());
 	ostringstream os;
 	vector<Ember<T>> embers;
@@ -248,6 +248,7 @@ bool EmberAnimate(EmberOptions& opt)
 
 	//Final setup steps before running.
 	os.imbue(std::locale(""));
+	padding = uint(log10((double)embers.size())) + 1;
 	renderer->SetEmber(embers);
 	renderer->EarlyClip(opt.EarlyClip());
 	renderer->YAxisUp(opt.YAxisUp());
@@ -300,7 +301,8 @@ bool EmberAnimate(EmberOptions& opt)
 		if (opt.Out().empty())
 		{
 			ostringstream fnstream;
-			fnstream << inputPath << opt.Prefix() << setfill('0') << setw(opt.FilenamePadding()) << ftime << opt.Suffix() << "." << opt.Format();
+
+			fnstream << inputPath << opt.Prefix() << setfill('0') << setw(padding) << ftime << opt.Suffix() << "." << opt.Format();
 			filename = fnstream.str();
 		}
 
