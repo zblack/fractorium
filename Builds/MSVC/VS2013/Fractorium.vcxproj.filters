@@ -100,9 +100,6 @@
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsVariations.cpp">
       <Filter>MainWindows</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsXaos.cpp">
-      <Filter>MainWindows</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumPalette.cpp">
       <Filter>MainWindows</Filter>
     </ClCompile>
@@ -243,6 +240,9 @@
     </ClCompile>
     <ClCompile Include="GeneratedFiles\ReleaseNvidia\moc_CurvesGraphicsView.cpp">
       <Filter>Generated Files\ReleaseNvidia</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXaos.cpp">
+      <Filter>MainWindows</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
