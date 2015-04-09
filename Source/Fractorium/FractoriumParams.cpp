@@ -568,6 +568,9 @@ void FractoriumEmberController<T>::FillParamTablesAndPalette()
 		m_TempPalette = m_Ember.m_Palette;
 		UpdateAdjustedPaletteGUI(m_Ember.m_Palette);//Will clear name string since embedded palettes have no name. This will trigger a full render.
 	}
+
+	//Xaos.
+	FillXaos();
 }
 
 /// <summary>

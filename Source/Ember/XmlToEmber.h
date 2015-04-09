@@ -344,7 +344,7 @@ public:
 		string buf;
 
 		//Ensure palette list is setup first.
-		if (!m_PaletteList.Init())
+		if (!m_PaletteList.Size())
 		{
 			m_ErrorReport.push_back(string(loc) + " : Palette list must be initialized before parsing embers.");
 			return false;
@@ -515,7 +515,7 @@ private:
 
 				if (currentEmber.PaletteIndex() != -1)
 				{
-					if (!m_PaletteList.GetHueAdjustedPalette(currentEmber.PaletteIndex(), currentEmber.m_Hue, currentEmber.m_Palette))
+					if (!m_PaletteList.GetHueAdjustedPalette(PaletteList<T>::m_DefaultFilename, currentEmber.PaletteIndex(), currentEmber.m_Hue, currentEmber.m_Palette))
 					{
 						m_ErrorReport.push_back(string(loc) + " : Error assigning palette with index " + Itos(currentEmber.PaletteIndex()));
 					}
@@ -834,8 +834,6 @@ private:
 				//Make sure BOTH are not specified, otherwise either are ok.
 				int numColors = 0;
 				int numBytes = 0;
-				bool oldFormat = false;
-				bool newFormat = false;
 				int index0, index1;
 				T hue0, hue1;
 				T blend = 0.5;
@@ -855,40 +853,12 @@ private:
 				{
 					attStr = reinterpret_cast<char*>(xmlGetProp(childNode, curAtt->name));
 
-					if (!Compare(curAtt->name, "index0"))
+					if (!Compare(curAtt->name, "count"))
 					{
-						oldFormat = true;
-						Atoi(attStr, index0);
-					}
-					else if (!Compare(curAtt->name, "index1"))
-					{
-						oldFormat = true;
-						Atoi(attStr, index1);
-					}
-					else if (!Compare(curAtt->name, "hue0"))
-					{
-						oldFormat = true;
-						Atof(attStr, hue0);
-					}
-					else if (!Compare(curAtt->name, "hue1"))
-					{
-						oldFormat = true;
-						Atof(attStr, hue1);
-					}
-					else if (!Compare(curAtt->name, "blend"))
-					{
-						oldFormat = true;
-						Atof(attStr, blend);
-					}
-					else if (!Compare(curAtt->name, "count"))
-					{
-						newFormat = true;
 						Atoi(attStr, numColors);
 					}
 					else if (!Compare(curAtt->name, "format"))
 					{
-						newFormat = true;
-
 						if (!_stricmp(attStr, "RGB"))
 							numBytes = 3;
 						else if (!_stricmp(attStr, "RGBA"))
@@ -907,29 +877,16 @@ private:
 					xmlFree(attStr);
 				}
 
-				//Old or new format?
-				if (newFormat && oldFormat)
+				//Removing support for whatever "old format" was in flam3.
+				//Read formatted string from contents of tag.
+				char* palStr = CX(xmlNodeGetContent(childNode));
+
+				if (!ParseHexColors(palStr, currentEmber, numColors, numBytes))
 				{
-					oldFormat = false;
-					m_ErrorReport.push_back(string(loc) + " : Mixing of old and new palette tag syntax not allowed, defaulting to new");
+					m_ErrorReport.push_back(string(loc) + " : Problem reading hexadecimal color data in palette");
 				}
 
-				if (oldFormat)
-				{
-					InterpolateCmap(currentEmber.m_Palette, blend, index0, hue0, index1, hue1);
-				}
-				else
-				{
-					//Read formatted string from contents of tag.
-					char* palStr = CX(xmlNodeGetContent(childNode));
-
-					if (!ParseHexColors(palStr, currentEmber, numColors, numBytes))
-					{
-						m_ErrorReport.push_back(string(loc) + " : Problem reading hexadecimal color data in palette");
-					}
-
-					xmlFree(palStr);
-				}
+				xmlFree(palStr);
 			}
 			else if (!Compare(childNode->name, "symmetry"))
 			{
@@ -1434,51 +1391,6 @@ private:
 		}
 
 		return ok;
-	}
-
-	/// <summary>
-	/// Interpolate the palette.
-	/// Used with older formats, deprecated.
-	/// </summary>
-	/// <param name="palette">The palette to interpolate</param>
-	/// <param name="blend">The blend</param>
-	/// <param name="index0">The first index</param>
-	/// <param name="hue0">The first hue</param>
-	/// <param name="index1">The second index</param>
-	/// <param name="hue1">The second hue/param>
-	void InterpolateCmap(Palette<T>& palette, T blend, int index0, T hue0, int index1, T hue1)
-	{
-		int i, j;
-		const char* loc = __FUNCTION__;
-		Palette<T> adjustedPal0, adjustedPal1;
-
-		if (m_PaletteList.GetHueAdjustedPalette(index0, hue0, adjustedPal0) &&
-			m_PaletteList.GetHueAdjustedPalette(index1, hue1, adjustedPal1))
-		{
-			v4T* hueAdjusted0 = adjustedPal0.m_Entries.data();
-			v4T* hueAdjusted1 = adjustedPal1.m_Entries.data();
-
-			for (i = 0; i < 256; i++)
-			{
-				T t[4], s[4];
-
-				Palette<T>::RgbToHsv(glm::value_ptr(hueAdjusted0[i]), s);
-				Palette<T>::RgbToHsv(glm::value_ptr(hueAdjusted1[i]), t);
-
-				s[3] = hueAdjusted0[i][3];
-				t[3] = hueAdjusted1[i][3];
-
-				for (j = 0; j < 4; j++)
-					t[j] = ((1 - blend) * s[j]) + (blend * t[j]);
-
-				Palette<T>::HsvToRgb(t, glm::value_ptr(palette.m_Entries[i]));
-				palette.m_Entries[i][3] = t[3];
-			}
-		}
-		else
-		{
-			m_ErrorReport.push_back(string(loc) + " : Unable to retrieve palettes");
-		}
 	}
 
 	/// <summary>

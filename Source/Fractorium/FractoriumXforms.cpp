@@ -267,11 +267,11 @@ void FractoriumEmberController<T>::XformNameChanged(int row, int col)
 
 		xform->m_Name = m_Fractorium->ui.XformWeightNameTable->item(row, col)->text().toStdString();
 
-		if (index != -1)
-		{
-			if (QTableWidgetItem* xformNameItem = m_Fractorium->ui.XaosTable->item(index, 0))
-				xformNameItem->setText(MakeXaosNameString(index));
-		}
+		//if (index != -1)
+		//{
+		//	if (QTableWidgetItem* xformNameItem = m_Fractorium->ui.XaosTable->item(index, 0))
+		//		xformNameItem->setText(MakeXaosNameString(index));
+		//}
 	}, false);
 }
 
@@ -298,7 +298,6 @@ void FractoriumEmberController<T>::FillWithXform(Xform<T>* xform)
 	FillColorWithXform(xform);
 	FillAffineWithXform(xform, true);
 	FillAffineWithXform(xform, false);
-	FillXaosWithCurrentXform();
 }
 
 /// <summary>

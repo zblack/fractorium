@@ -243,11 +243,11 @@ public slots:
 
 	//Xforms Xaos.
 	void OnXaosChanged(double d);
-	void OnXaosFromToToggled(bool checked);
 	void OnClearXaosButtonClicked(bool checked);
 	void OnRandomXaosButtonClicked(bool checked);
 
 	//Palette.
+	void OnPaletteFilenameComboChanged(const QString& text);
 	void OnPaletteAdjust(int d);
 	void OnPaletteCellClicked(int row, int col);
 	void OnPaletteCellDoubleClicked(int row, int col);

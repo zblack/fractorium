@@ -98,7 +98,7 @@ void FractoriumEmberController<T>::NewEmptyFlameInCurrentFile()
 	xform.m_Weight = T(0.25);
 	xform.m_ColorX = m_Rand.Frand01<T>();
 	ember.AddXform(xform);
-	ember.m_Palette = *m_PaletteList.GetPalette(-1);
+	ember.m_Palette = *m_PaletteList.GetRandomPalette();
 	ember.m_Name = EmberFile<T>::DefaultEmberName(m_EmberFile.Size() + 1).toStdString();
 	ember.m_Index = m_EmberFile.Size();
 	m_EmberFile.m_Embers.push_back(ember);//Will invalidate the pointers contained in the EmberTreeWidgetItems, UpdateLibraryTree() will resync.

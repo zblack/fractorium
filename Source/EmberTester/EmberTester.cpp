@@ -102,7 +102,7 @@ void MakeTestAllVarsRegPrePost(vector<Ember<T>>& embers)
 	PaletteList<T> paletteList;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
 
-	paletteList.Init("flam3-palettes.xml");
+	paletteList.Add("flam3-palettes.xml");
 
 	Timing t;
 
@@ -131,7 +131,7 @@ void MakeTestAllVarsRegPrePost(vector<Ember<T>>& embers)
 	ss << "NoVars";
 	emberNoVars.m_Name = ss.str();
 	ss.str("");
-	emberNoVars.m_Palette = *paletteList.GetPalette(0);
+	emberNoVars.m_Palette = *paletteList.GetPalette(paletteList.m_DefaultFilename, 0);
 	embers.push_back(emberNoVars);
 
 	while (index < varList.RegSize())
@@ -196,7 +196,7 @@ void MakeTestAllVarsRegPrePost(vector<Ember<T>>& embers)
 		ss << index << "_" << regVar->Name();
 		ember1.m_Name = ss.str();
 		ss.str("");
-		ember1.m_Palette = *paletteList.GetPalette(index % paletteList.Size());
+		ember1.m_Palette = *paletteList.GetRandomPalette();
 		index++;
 		embers.push_back(ember1);
 	}
@@ -1142,7 +1142,7 @@ void TestXformsInOutPoints()
 	PaletteList<float> paletteList;
 	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
 
-	paletteList.Init("flam3-palettes.xml");
+	paletteList.Add("flam3-palettes.xml");
 
 	while (index < varList.RegSize())
 	{
@@ -1882,8 +1882,15 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	//int i;
 	Timing t(4);
-	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand;
-	double d = 1;
+	QTIsaac<ISAAC_SIZE, ISAAC_INT> rand(1, 2, 3);
+	mt19937 meow(1729);
+
+	PaletteList<float> palf;
+	Palette<float>* pal = palf.GetRandomPalette();
+
+	cout << pal->Size() << endl;
+
+	/*double d = 1;
 
 	for (int i = 0; i < 10; i++)
 	{
@@ -1891,7 +1898,32 @@ int _tmain(int argc, _TCHAR* argv[])
 		d *= 10;
 	}
 
-	return 0;
+	return 0;*/
+	/*
+	uint i, iters = (uint)10e7;
+	size_t total = 0;
+
+	t.Tic();
+	for (i = 0; i < iters; i++)
+	{
+		total += rand.RandByte();
+		total += rand.Rand();
+	}
+	t.Toc("Isaac sum");
+
+	cout << "Isaac total = " << total << " for " << i << " iters." << endl;
+
+	total = 0;
+
+	t.Tic();
+	for (i = 0; i < iters; i++)
+	{
+		total += meow();
+	}
+	t.Toc("Mt sum");
+
+	cout << "Mt total = " << total << " for " << i << " iters." << endl;
+	*/
 	//glm::vec2 solution, src[4];
 	//double bezT = 1, w[4];
 	//BezierPoints curvePoints[4];

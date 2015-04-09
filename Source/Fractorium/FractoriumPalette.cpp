@@ -12,6 +12,8 @@ void Fractorium::InitPaletteUI()
 	QTableWidget* paletteTable = ui.PaletteListTable;
 	QTableWidget* palettePreviewTable = ui.PalettePreviewTable;
 
+	connect(ui.PaletteFilenameCombo, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(OnPaletteFilenameComboChanged(const QString&)), Qt::QueuedConnection);
+
 	connect(paletteTable, SIGNAL(cellClicked(int, int)),	   this, SLOT(OnPaletteCellClicked(int, int)),		 Qt::QueuedConnection);
 	connect(paletteTable, SIGNAL(cellDoubleClicked(int, int)), this, SLOT(OnPaletteCellDoubleClicked(int, int)), Qt::QueuedConnection);
 	
@@ -30,52 +32,83 @@ void Fractorium::InitPaletteUI()
 
 	connect(ui.PaletteRandomSelect, SIGNAL(clicked(bool)), this, SLOT(OnPaletteRandomSelectButtonClicked(bool)), Qt::QueuedConnection);
 	connect(ui.PaletteRandomAdjust, SIGNAL(clicked(bool)), this, SLOT(OnPaletteRandomAdjustButtonClicked(bool)), Qt::QueuedConnection);
+
+	//Preview table.
+	palettePreviewTable->setRowCount(1);
+	palettePreviewTable->setColumnWidth(1, 260);//256 plus small margin on each side.
+	QTableWidgetItem* previewNameCol = new QTableWidgetItem("");
+	palettePreviewTable->setItem(0, 0, previewNameCol);
+	QTableWidgetItem* previewPaletteItem = new QTableWidgetItem();
+	palettePreviewTable->setItem(0, 1, previewPaletteItem);
+
+	paletteTable->setColumnWidth(1, 260);//256 plus small margin on each side.
+	paletteTable->horizontalHeader()->setSectionsClickable(false);
+}
+
+/// <summary>
+/// Read all palette Xml files in the specified folder and populate the palette list with the contents.
+/// This will clear any previous contents.
+/// Called upon initialization, or controller type change.
+/// </summary>
+/// <param name="s">The full path to the palette files folder</param>
+/// <returns>The number of palettes successfully added</returns>
+template <typename T>
+int FractoriumEmberController<T>::InitPaletteList(const string& s)
+{
+	QDirIterator it(s.c_str(), QStringList() << "*.xml", QDir::Files, QDirIterator::FollowSymlinks);
+
+	m_PaletteList.Clear();
+	m_Fractorium->ui.PaletteFilenameCombo->clear();
+	m_Fractorium->ui.PaletteFilenameCombo->setProperty("path", QString::fromStdString(s));
+
+	while (it.hasNext())
+	{
+		auto path = it.next().toStdString();
+		auto qfilename = it.fileName();
+	
+		if (m_PaletteList.Add(path))
+			m_Fractorium->ui.PaletteFilenameCombo->addItem(qfilename);
+	}
+
+	return m_PaletteList.Size();
 }
 
 /// <summary>
 /// Read a palette Xml file and populate the palette table with the contents.
 /// This will clear any previous contents.
-/// Called upon initialization, or controller type change.
+/// Called upon initialization, palette combo index change, and controller type change.
 /// </summary>
-/// <param name="s">The full path to the palette file</param>
+/// <param name="s">The name to the palette file without the path</param>
 /// <returns>True if successful, else false.</returns>
 template <typename T>
-bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
+bool FractoriumEmberController<T>::FillPaletteTable(const string& s)
 {
 	QTableWidget* paletteTable = m_Fractorium->ui.PaletteListTable;
 	QTableWidget* palettePreviewTable = m_Fractorium->ui.PalettePreviewTable;
 
-	paletteTable->clear();
-
-	if (m_PaletteList.Init(s))//Default to this, but add an option later.//TODO
+	m_CurrentPaletteFilePath = m_Fractorium->ui.PaletteFilenameCombo->property("path").toString().toStdString() + s;
+	size_t paletteSize = m_PaletteList.Size(m_CurrentPaletteFilePath);
+	
+	if (paletteSize)
 	{
-		//Preview table.
-		palettePreviewTable->setRowCount(1);
-		palettePreviewTable->setColumnWidth(1, 260);//256 plus small margin on each side.
-		QTableWidgetItem* previewNameCol = new QTableWidgetItem("");
-		palettePreviewTable->setItem(0, 0, previewNameCol);
-		QTableWidgetItem* previewPaletteItem = new QTableWidgetItem();
-		palettePreviewTable->setItem(0, 1, previewPaletteItem);
-
-		//Palette list table.
-		paletteTable->setRowCount(m_PaletteList.Size());
-		paletteTable->setColumnWidth(1, 260);//256 plus small margin on each side.
-		paletteTable->horizontalHeader()->setSectionsClickable(false);
-
+		paletteTable->clear();
+		paletteTable->blockSignals(true);
+		paletteTable->setRowCount(paletteSize);
+		
 		//Headers get removed when clearing, so must re-create here.
 		QTableWidgetItem* nameHeader = new QTableWidgetItem("Name");
 		QTableWidgetItem* paletteHeader = new QTableWidgetItem("Palette");
 
-		nameHeader->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
-		paletteHeader->setTextAlignment(Qt::AlignLeft|Qt::AlignVCenter);
+		nameHeader->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+		paletteHeader->setTextAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 
 		paletteTable->setHorizontalHeaderItem(0, nameHeader);
 		paletteTable->setHorizontalHeaderItem(1, paletteHeader);
 
 		//Palette list table.
-		for (size_t i = 0; i < m_PaletteList.Size(); i++)
+		for (size_t i = 0; i < paletteSize; i++)
 		{
-			Palette<T>* p = m_PaletteList.GetPalette(i);
+			Palette<T>* p = m_PaletteList.GetPalette(m_CurrentPaletteFilePath, i);
 			vector<byte> v = p->MakeRgbPaletteBlock(PALETTE_CELL_HEIGHT);
 			QTableWidgetItem* nameCol = new QTableWidgetItem(p->m_Name.c_str());
 
@@ -89,6 +122,8 @@ bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
 			paletteTable->setItem(i, 1, paletteItem);
 		}
 
+		paletteTable->blockSignals(false);
+		m_Fractorium->OnPaletteRandomSelectButtonClicked(true);
 		return true;
 	}
 	else
@@ -101,6 +136,8 @@ bool FractoriumEmberController<T>::InitPaletteTable(const string& s)
 
 	return false;
 }
+
+void Fractorium::OnPaletteFilenameComboChanged(const QString& text) { m_Controller->FillPaletteTable(text.toStdString()); }
 
 /// <summary>
 /// Apply adjustments to the current ember's palette.
@@ -188,7 +225,7 @@ void Fractorium::OnPaletteAdjust(int d) { m_Controller->PaletteAdjust(); }
 template <typename T>
 void FractoriumEmberController<T>::PaletteCellClicked(int row, int col)
 {
-	Palette<T>* palette = m_PaletteList.GetPalette(row);
+	Palette<T>* palette = m_PaletteList.GetPalette(m_CurrentPaletteFilePath, row);
 	QTableWidgetItem* nameItem = m_Fractorium->ui.PaletteListTable->item(row, 0);
 
 	if (palette)
@@ -225,11 +262,11 @@ void Fractorium::OnPaletteCellDoubleClicked(int row, int col)
 
 /// <summary>
 /// Set the selected palette to a randomly selected one,
-/// applying any adjustments previously specified.
+/// applying any adjustments previously specified if the checked parameter is true.
 /// Called when the Random Palette button is clicked.
 /// Resets the rendering process.
 /// </summary>
-/// <param name="row">The current row selected</param>
+/// <param name="checked">True to clear the current adjustments, else leave current adjustments.</param>
 void Fractorium::OnPaletteRandomSelectButtonClicked(bool checked)
 {
 	uint i = 0;
@@ -237,7 +274,10 @@ void Fractorium::OnPaletteRandomSelectButtonClicked(bool checked)
 
 	while ((i = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand(rowCount)) == uint(m_PreviousPaletteRow));
 
-	OnPaletteCellClicked(i, 1);
+	if (checked)
+		OnPaletteCellDoubleClicked(i, 1);//Will clear the adjustments.
+	else
+		OnPaletteCellClicked(i, 1);
 }
 
 /// <summary>

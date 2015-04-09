@@ -45,6 +45,13 @@ static inline size_t SizeOf(vector<T>& vec)
 }
 
 /// <summary>
+/// Thin wrapper around getting the current time in milliseconds.
+/// </summary>
+static inline size_t NowMs()
+{
+	return duration_cast<milliseconds>(Clock::now().time_since_epoch()).count();
+}
+/// <summary>
 /// After a run completes, information about what was run can be saved as strings to the comments
 /// section of a jpg or png file. This class is just a container for those values.
 /// </summary>

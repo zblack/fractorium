@@ -40,6 +40,7 @@
 #else
 #include <malloc.h>
 #endif
+#include <map>
 #include <math.h>
 #include <memory>
 #include <numeric>

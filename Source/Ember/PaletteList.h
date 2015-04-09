@@ -18,11 +18,14 @@ template <typename T>
 class EMBER_API PaletteList : public EmberReport
 {
 public:
+	static const char* m_DefaultFilename;
+
 	/// <summary>
-	/// Empty constructor which does nothing.
+	/// Empty constructor which initializes the palette map with the default palette file.
 	/// </summary>
 	PaletteList()
 	{
+		Add(string(m_DefaultFilename));
 	}
 
 	/// <summary>
@@ -31,17 +34,16 @@ public:
 	/// </summary>
 	/// <param name="filename">The full path to the file to read</param>
 	/// <param name="force">If true, override the initialization state and force a read, else observe the initialization state.</param>
-	/// <returns>The initialization state</returns>
-	bool Init(const string& filename, bool force = false)
+	/// <returns>Whether anything was read</returns>
+	bool Add(const string& filename, bool force = false)
 	{
-		if (!m_Init || force)
-		{
-			const char* loc = __FUNCTION__;
+		bool added = false;
+		auto& palettes = m_Palettes[filename];
 
-			m_Init = false;
-			m_Palettes.clear();
-			m_ErrorReport.clear();
+		if (palettes.empty() || force)
+		{
 			string buf;
+			const char* loc = __FUNCTION__;
 
 			if (ReadFile(filename.c_str(), buf))
 			{
@@ -51,10 +53,11 @@ public:
 				{
 					xmlNode* rootNode = xmlDocGetRootElement(doc);
 
-					m_Palettes.reserve(buf.size() / 2048);//Roughly what it takes per palette.
-					ParsePalettes(rootNode);
+					palettes.clear();
+					palettes.reserve(buf.size() / 2048);//Roughly what it takes per palette.
+					ParsePalettes(rootNode, palettes);
 					xmlFreeDoc(doc);
-					m_Init = m_ErrorReport.empty();
+					added = true;
 				}
 				else
 				{
@@ -67,54 +70,81 @@ public:
 			}
 		}
 
-		return m_Init;
+		return added;
 	}
 
 	/// <summary>
-	/// Gets the palette at a specified index.
+	/// Get the palette at a random index in a random file in the map.
 	/// </summary>
-	/// <param name="i">The index of the palette to read. A value of -1 indicates a random palette.</param>
-	/// <returns>A pointer to the requested palette if the index was in range, else nullptr.</returns>
-	Palette<T>* GetPalette(int i)
+	Palette<T>* GetRandomPalette()
 	{
-		if (!m_Palettes.empty())
+		auto p = m_Palettes.begin();
+		int i = 0, paletteFileIndex = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand() % Size();
+		
+		while (i < paletteFileIndex && p != m_Palettes.end())
 		{
-			if (i == -1)
-				return &m_Palettes[QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand() % Size()];
-			else if (i < int(m_Palettes.size()))
-				return &m_Palettes[i];
+			++i;
+			++p;
+		}
+
+		if (i < Size())
+		{
+			int paletteIndex = QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand->Rand() % p->second.size();
+
+			if (paletteIndex < p->second.size())
+				return &p->second[paletteIndex];
 		}
 
 		return nullptr;
 	}
 
 	/// <summary>
-	/// Gets a pointer to a palette with a specified name.
+	/// Get the palette at a specified index in the specified file in the map.
 	/// </summary>
-	/// <param name="name">The name of the palette to retrieve</param>
-	/// <returns>A pointer to the palette if found, else nullptr</returns>
-	Palette<T>* GetPaletteByName(const string&& name)
+	/// <param name="filename">The filename of the palette to retrieve</param>
+	/// <param name="i">The index of the palette to read. A value of -1 indicates a random palette.</param>
+	/// <returns>A pointer to the requested palette if the index was in range, else nullptr.</returns>
+	Palette<T>* GetPalette(const string& filename, int i)
 	{
-		for (uint i = 0; i < Size(); i++)
-			if (m_Palettes[i].m_Name == name)
-				return &m_Palettes[i];
+		auto& palettes = m_Palettes[filename];
+
+		if (!palettes.empty() && i < int(palettes.size()))
+			return &palettes[i];
 
 		return nullptr;
 	}
 
 	/// <summary>
-	/// Gets a copy of the palette at a specified index with its hue adjusted by the specified amount.
+	/// Get a pointer to a palette with a specified name in the specified file in the map.
 	/// </summary>
-	/// <param name="i">The index of the palette to read. A value of -1 indicates a random palette.</param>
+	/// <param name="filename">The filename of the palette to retrieve</param>
+	/// <param name="name">The name of the palette to retrieve</param>
+	/// <returns>A pointer to the palette if found, else nullptr</returns>
+	Palette<T>* GetPaletteByName(const string& filename, const string& name)
+	{
+		for (auto& palettes : m_Palettes)
+			if (palettes.first == filename)
+				for (auto& palette : palettes.second)
+					if (palette.m_Name == name)
+						return &palette;
+
+		return nullptr;
+	}
+
+	/// <summary>
+	/// Get a copy of the palette at a specified index in the specified file in the map
+	/// with its hue adjusted by the specified amount.
+	/// </summary>
+	/// <param name="filename">The filename of the palette to retrieve</param>
+	/// <param name="i">The index of the palette to read.</param>
 	/// <param name="hue">The hue adjustment to apply</param>
 	/// <param name="palette">The palette to store the output</param>
 	/// <returns>True if successful, else false.</returns>
-	bool GetHueAdjustedPalette(int i, T hue, Palette<T>& palette)
+	bool GetHueAdjustedPalette(const string& filename, int i, T hue, Palette<T>& palette)
 	{
 		bool b = false;
-		Palette<T>* unadjustedPal = GetPalette(i);
 
-		if (unadjustedPal)
+		if (Palette<T>* unadjustedPal = GetPalette(filename, i))
 		{
 			unadjustedPal->MakeHueAdjustedPalette(palette, hue);
 			b = true;
@@ -129,23 +159,72 @@ public:
 	void Clear()
 	{
 		m_Palettes.clear();
-		m_Init = false;
 	}
 
 	/// <summary>
-	/// Accessors.
+	/// Get the size of the palettes map.
+	/// This will be the number of files read.
 	/// </summary>
-	bool Init() { return m_Init; }
+	/// <returns>The size of the palettes map</returns>
 	size_t Size() { return m_Palettes.size(); }
+
+	/// <summary>
+	/// Get the size of specified palette vector in the palettes map.
+	/// </summary>
+	/// <param name="index">The index of the palette in the map to retrieve</param>
+	/// <returns>The size of the palette vector at the specified index in the palettes map</returns>
+	size_t Size(size_t index)
+	{
+		size_t i = 0;
+		auto p = m_Palettes.begin();
+
+		while (i < index && p != m_Palettes.end())
+		{
+			++i;
+			++p;
+		}
+
+		return p->second.size();
+	}
+
+	/// <summary>
+	/// Get the size of specified palette vector in the palettes map.
+	/// </summary>
+	/// <param name="s">The filename of the palette in the map to retrieve</param>
+	/// <returns>The size of the palette vector at the specified index in the palettes map</returns>
+	size_t Size(const string& s)
+	{
+		return m_Palettes[s].size();
+	}
+
+	/// <summary>
+	/// Get the name of specified palette in the palettes map.
+	/// </summary>
+	/// <param name="index">The index of the palette in the map to retrieve</param>
+	/// <returns>The name of the palette vector at the specified index in the palettes map</returns>
+	const string& Name(size_t index)
+	{
+		size_t i = 0;
+		auto p = m_Palettes.begin();
+
+		while (i < index && p != m_Palettes.end())
+		{
+			++i;
+			++p;
+		}
+
+		return p->first;
+	}
 
 private:
 	/// <summary>
-	/// Parses an Xml node for all palettes present and stores in the palette list.
+	/// Parses an Xml node for all palettes present and store in the passed in palette vector.
 	/// Note that although the Xml color values are expected to be 0-255, they are converted and
 	/// stored as normalized colors, with values from 0-1.
 	/// </summary>
 	/// <param name="node">The parent note of all palettes in the Xml file.</param>
-	void ParsePalettes(xmlNode* node)
+	/// <param name="palettes">The vector to store the paresed palettes associated with this file in.</param>
+	void ParsePalettes(xmlNode* node, vector<Palette<T>>& palettes)
 	{
 		bool hexError = false;
 		char* val;
@@ -208,19 +287,18 @@ private:
 
 				if (!hexError)
 				{
-					m_Palettes.push_back(palette);
+					palettes.push_back(palette);
 				}
 			}
 			else
 			{
-				ParsePalettes(node->children);
+				ParsePalettes(node->children, palettes);
 			}
 
 			node = node->next;
 		}
 	}
 
-	static bool m_Init;//Initialized to false in Ember.cpp, and will be set to true upon successful reading of an Xml palette file.
-	static vector<Palette<T>> m_Palettes;//The vector that stores the palettes.
+	static map<string, vector<Palette<T>>> m_Palettes;//The map of filenames to vectors that store the palettes.
 };
 }

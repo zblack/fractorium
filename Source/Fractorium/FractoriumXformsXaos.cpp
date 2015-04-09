@@ -6,42 +6,24 @@
 /// </summary>
 void Fractorium::InitXformsXaosUI()
 {
-	connect(ui.XaosToRadio, SIGNAL(toggled(bool)), this, SLOT(OnXaosFromToToggled(bool)), Qt::QueuedConnection);
 	connect(ui.ClearXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnClearXaosButtonClicked(bool)), Qt::QueuedConnection);
 	connect(ui.RandomXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnRandomXaosButtonClicked(bool)), Qt::QueuedConnection);
 }
 
 /// <summary>
-/// Fill the xaos table with the values from the current xform.
+/// Fill the xaos table with the values from the ember.
 /// </summary>
 template <typename T>
-void FractoriumEmberController<T>::FillXaosWithCurrentXform()
+void FractoriumEmberController<T>::FillXaos()
 {
-	Xform<T>* currXform = CurrentXform();
-
-	if (!IsFinal(currXform))
+	for (int i = 0, count = int(XformCount()); i < count; i++)
 	{
-		for (int i = 0; i < m_Ember.XformCount(); i++)
-		{
-			DoubleSpinBox* spinBox = dynamic_cast<DoubleSpinBox*>(m_Fractorium->ui.XaosTable->cellWidget(i, 1));
+		auto* xform = m_Ember.GetXform(i);
 
-			//Fill in values column.
-			if (m_Fractorium->ui.XaosToRadio->isChecked())//"To": Single xform, advance index.
-				spinBox->SetValueStealth(currXform->Xaos(i));
-			else//"From": Advance xforms, single index.
-				if ((currXform = m_Ember.GetXform(i)))
-					spinBox->SetValueStealth(currXform->Xaos(m_Fractorium->ui.CurrentXformCombo->currentIndex()));
-
-			//Fill in name column.
-			Xform<T>* xform = m_Ember.GetXform(i);
-			QTableWidgetItem* xformNameItem = m_Fractorium->ui.XaosTable->item(i, 0);
-
-			if (xform && xformNameItem)
-				xformNameItem->setText(MakeXaosNameString(i));
-		}
+		for (int j = 0; j < count; j++)
+			if (auto* spinBox = dynamic_cast<DoubleSpinBox*>(m_Fractorium->ui.XaosTable->cellWidget(i, j)))
+				spinBox->SetValueStealth(xform->Xaos(j));
 	}
-
-	m_Fractorium->ui.XaosTable->setEnabled(!IsFinal(currXform));//Disable if final, else enable.
 }
 
 /// <summary>
@@ -55,22 +37,22 @@ QString FractoriumEmberController<T>::MakeXaosNameString(uint i)
 	Xform<T>* xform = m_Ember.GetXform(i);
 	QString name;
 
-	if (xform)
-	{
-		int indexPlus1 = m_Ember.GetXformIndex(xform) + 1;//GUI is 1 indexed to avoid confusing the user.
-		int curr = m_Fractorium->ui.CurrentXformCombo->currentIndex() + 1;
-
-		if (indexPlus1 != -1)
-		{
-			if (m_Fractorium->ui.XaosToRadio->isChecked())
-				name = QString("From ") + ToString(curr) + QString(" To ") + ToString(indexPlus1);
-			else
-				name = QString("From ") + ToString(indexPlus1) + QString(" To ") + ToString(curr);
-
-			//if (xform->m_Name != "")
-			//	name = name + " (" + QString::fromStdString(xform->m_Name) + ")";
-		}
-	}
+	//if (xform)
+	//{
+	//	int indexPlus1 = m_Ember.GetXformIndex(xform) + 1;//GUI is 1 indexed to avoid confusing the user.
+	//	int curr = m_Fractorium->ui.CurrentXformCombo->currentIndex() + 1;
+	//
+	//	if (indexPlus1 != -1)
+	//	{
+	//		if (m_Fractorium->ui.XaosToRadio->isChecked())
+	//			name = QString("From ") + ToString(curr) + QString(" To ") + ToString(indexPlus1);
+	//		else
+	//			name = QString("From ") + ToString(indexPlus1) + QString(" To ") + ToString(curr);
+	//
+	//		//if (xform->m_Name != "")
+	//		//	name = name + " (" + QString::fromStdString(xform->m_Name) + ")";
+	//	}
+	//}
 
 	return name;
 }
@@ -78,109 +60,93 @@ QString FractoriumEmberController<T>::MakeXaosNameString(uint i)
 /// <summary>
 /// Set the xaos value.
 /// Called when any xaos spinner is changed.
-/// Different action taken based on the state of to/from radio button.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="sender">The DoubleSpinBox that triggered this event</param>
 template <typename T>
 void FractoriumEmberController<T>::XaosChanged(DoubleSpinBox* sender)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
-	{
-		QTableWidget* xaosTable = m_Fractorium->ui.XaosTable;
+	auto p = sender->property("tableindex").toPoint();
 
-		if (!IsFinal(xform))//This should never get called for the final xform because the table will be disabled, but check just to be safe.
-		{
-			for (int i = 0; i < xaosTable->rowCount(); i++)//Find the spin box that triggered the event.
-			{
-				DoubleSpinBox* spinBox = dynamic_cast<DoubleSpinBox*>(xaosTable->cellWidget(i, 1));
-
-				if (spinBox == sender)
-				{
-					if (m_Fractorium->ui.XaosToRadio->isChecked())//"To": Single xform, advance index.
-					{
-						xform->SetXaos(i, spinBox->value());
-					}
-					else//"From": Advance xforms, single index.
-					{
-						if ((xform = m_Ember.GetXform(i)))//Single = is intentional.
-							xform->SetXaos(m_Fractorium->ui.CurrentXformCombo->currentIndex(), spinBox->value());
-					}
-
-					break;
-				}
-			}
-		}
-	});
+	if (auto* xform = m_Ember.GetXform(p.x()))
+		Update([&] { xform->SetXaos(p.y(), sender->value()); });
 }
 
 void Fractorium::OnXaosChanged(double d)
 {
-	if (DoubleSpinBox* senderSpinBox = dynamic_cast<DoubleSpinBox*>(this->sender()))
+	if (auto* senderSpinBox = dynamic_cast<DoubleSpinBox*>(this->sender()))
 		m_Controller->XaosChanged(senderSpinBox);
 }
 
 /// <summary>
-/// Update xaos display to use either "to" or "from" logic.
-/// Called when xaos to/from radio buttons checked.
-/// </summary>
-/// <param name="checked">Ignored</param>
-void Fractorium::OnXaosFromToToggled(bool checked)
-{
-	m_Controller->FillXaosWithCurrentXform();
-}
-
-/// <summary>
-/// Clear xaos table, recreate all spinners based on the xaos used by the current xform in the current ember.
-/// Called every time the current xform changes.
+/// Clear xaos table, recreate all spinners based on the xaos used in the current ember.
 /// </summary>
 void Fractorium::FillXaosTable()
 {
 	int spinHeight = 20;
+	int count = int(m_Controller->XformCount());
 	QWidget* w = nullptr;
-	ui.XaosTable->setRowCount(m_Controller->XformCount());//This will grow or shrink the number of rows and call the destructor for previous DoubleSpinBoxes.
+	QString lbl("lbl");
 
-	for (int i = 0; i < int(m_Controller->XformCount()); i++)
+	ui.XaosTable->setRowCount(count);//This will grow or shrink the number of rows and call the destructor for previous DoubleSpinBoxes.
+	ui.XaosTable->setColumnCount(count);
+
+	ui.XaosTable->verticalHeader()->setVisible(true);
+	ui.XaosTable->horizontalHeader()->setVisible(true);
+	ui.XaosTable->verticalHeader()->setSectionsClickable(false);
+	ui.XaosTable->horizontalHeader()->setSectionsClickable(false);
+
+	for (int i = 0; i < count; i++)
 	{
-		DoubleSpinBox* spinBox = new DoubleSpinBox(ui.XaosTable, spinHeight, 0.1);
-		QTableWidgetItem* xformNameItem = new QTableWidgetItem(m_Controller->MakeXaosNameString(i));
+		for (int j = 0; j < count; j++)
+		{
+			QPoint p(i, j);
+			DoubleSpinBox* spinBox = new DoubleSpinBox(ui.XaosTable, spinHeight, 0.1);
 
-		spinBox->DoubleClick(true);
-		spinBox->DoubleClickZero(1);
-		spinBox->DoubleClickNonZero(0);
-		ui.XaosTable->setItem(i, 0, xformNameItem);
-		ui.XaosTable->setCellWidget(i, 1, spinBox);
-		connect(spinBox, SIGNAL(valueChanged(double)), this, SLOT(OnXaosChanged(double)), Qt::QueuedConnection);
+			spinBox->setFixedWidth(35);
+			spinBox->DoubleClick(true);
+			spinBox->DoubleClickZero(1);
+			spinBox->DoubleClickNonZero(0);
+			spinBox->setProperty("tableindex", p);
+			ui.XaosTable->setCellWidget(i, j, spinBox);
+			
+			auto wp = ui.XaosTable->item(i, j);
 
-		if (i > 0)
-			w = SetTabOrder(this, w, spinBox);
-		else
-			w = spinBox;
+			if (wp)
+				wp->setTextAlignment(Qt::AlignCenter);
+
+			connect(spinBox, SIGNAL(valueChanged(double)), this, SLOT(OnXaosChanged(double)), Qt::QueuedConnection);
+
+			if (i == 0 && j == 0)
+				w = spinBox;
+			else
+				w = SetTabOrder(this, w, spinBox);
+		}
+	}
+	
+	for (int i = 0; i < count; i++)
+	{
+		ui.XaosTable->setHorizontalHeaderItem(i, new QTableWidgetItem("F" + QString::number(i + 1)));
+		ui.XaosTable->setVerticalHeaderItem(i, new QTableWidgetItem("T" + QString::number(i + 1)));
+		ui.XaosTable->horizontalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
+		ui.XaosTable->verticalHeader()->setSectionResizeMode(i, QHeaderView::ResizeToContents);
 	}
 
-	w = SetTabOrder(this, w, ui.XaosToRadio);
-	w = SetTabOrder(this, w, ui.XaosFromRadio);
+	ui.XaosTable->resizeRowsToContents();
+	ui.XaosTable->resizeColumnsToContents();
+
 	w = SetTabOrder(this, w, ui.ClearXaosButton);
 	w = SetTabOrder(this, w, ui.RandomXaosButton);
 }
 
 /// <summary>
 /// Clear all xaos from the current ember.
-/// Called when xaos to/from radio buttons checked.
 /// </summary>
-/// <param name="checked">Ignored</param>
 template <typename T>
 void FractoriumEmberController<T>::ClearXaos()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
-	{
-		m_Ember.ClearXaos();
-	});
-	
-	//Can't just call FillXaosWithCurrentXform() because the current xform might the final.
-	for (int i = 0; i < m_Ember.XformCount(); i++)
-		if (DoubleSpinBox* spinBox = dynamic_cast<DoubleSpinBox*>(m_Fractorium->ui.XaosTable->cellWidget(i, 1)))
-			spinBox->SetValueStealth(1.0);
+	Update([&] { m_Ember.ClearXaos(); });
+	FillXaos();
 }
 
 void Fractorium::OnClearXaosButtonClicked(bool checked) { m_Controller->ClearXaos(); }
@@ -195,25 +161,24 @@ void Fractorium::OnClearXaosButtonClicked(bool checked) { m_Controller->ClearXao
 template <typename T>
 void FractoriumEmberController<T>::RandomXaos()
 {
-	UpdateCurrentXform([&](Xform<T>* xform)
+	Update([&]
 	{
 		for (size_t i = 0; i < m_Ember.XformCount(); i++)
 		{
-			if (Xform<T>* localXform = m_Ember.GetXform(i))
+			if (auto* xform = m_Ember.GetXform(i))
 			{
 				for (size_t j = 0; j < m_Ember.XformCount(); j++)
 				{
 					if (m_Rand.RandBit())
-						localXform->SetXaos(j, T(m_Rand.RandBit()));
+						xform->SetXaos(j, T(m_Rand.RandBit()));
 					else
-						localXform->SetXaos(j, m_Rand.Frand<T>(0, 3));
+						xform->SetXaos(j, m_Rand.Frand<T>(0, 3));
 				}
 			}
 		}
 	});
-
-	//If current is final, it will update when they change to a non-final xform.
-	FillXaosWithCurrentXform();
+	
+	FillXaos();
 }
 
 void Fractorium::OnRandomXaosButtonClicked(bool checked) { m_Controller->RandomXaos(); }

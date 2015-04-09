@@ -76,7 +76,11 @@ FractoriumEmberController<T>::FractoriumEmberController(Fractorium* fractorium)
 	m_GLController = unique_ptr<GLEmberController<T>>(new GLEmberController<T>(fractorium, fractorium->ui.GLDisplay, this));
 	m_PreviewRenderer = unique_ptr<EmberNs::Renderer<T, T>>(new EmberNs::Renderer<T, T>());
 	SetupVariationTree();
-	InitPaletteTable("flam3-palettes.xml");
+
+	//Initial combo change event to fill the palette table will be called automatically later.
+	if (!InitPaletteList("./"))
+		throw "No palettes found, exiting.";
+
 	BackgroundChanged(QColor(0, 0, 0));//Default to black.
 	ClearUndo();
 

@@ -72,7 +72,7 @@ public:
 		m_OffsetX = 0;
 		m_OffsetY = 0;
 
-		m_PaletteList.Init(palettePath);
+		m_PaletteList.Add(palettePath);
 		m_StandardIterator = unique_ptr<StandardIterator<T>>(new StandardIterator<T>());
 		m_XaosIterator = unique_ptr<XaosIterator<T>>(new XaosIterator<T>());
 		m_Renderer = unique_ptr<Renderer<T, bucketT>>(renderer);
@@ -99,8 +99,8 @@ public:
 		ember.AddXform(xform2);
 		ember.AddXform(xform3);
 
-		if (m_PaletteList.Init())
-			ember.m_Palette = *m_PaletteList.GetPalette(-1);
+		if (m_PaletteList.Size())
+			ember.m_Palette = *m_PaletteList.GetRandomPalette();
 
 		return ember;
 	}
@@ -386,8 +386,8 @@ public:
 			{
 				Palette<T> palette;
 
-				if (m_PaletteList.Init())
-					palette = *m_PaletteList.GetPalette(-1);
+				if (m_PaletteList.Size())
+					palette = *m_PaletteList.GetRandomPalette();
 
 				palette.MakeHueAdjustedPalette(ember.m_Palette, ember.m_Hue);
 
@@ -640,8 +640,8 @@ public:
 		ember.Clear();
 		ember.m_Hue = (m_Rand.Rand() & 7) ? 0 : m_Rand.Frand01<T>();
 
-		if (m_PaletteList.Init())
-			palette = *m_PaletteList.GetPalette(-1);
+		if (m_PaletteList.Size())
+			palette = *m_PaletteList.GetRandomPalette();
 
 		palette.MakeHueAdjustedPalette(ember.m_Palette, ember.m_Hue);
 		ember.m_Time = 0;
@@ -926,8 +926,8 @@ public:
 
 			ember.m_Hue = 0.0;
 
-			if (m_PaletteList.Init())
-				palette = m_PaletteList.GetPalette(-1);
+			if (m_PaletteList.Size())
+				palette = m_PaletteList.GetRandomPalette();
 
 			if (palette)
 			{

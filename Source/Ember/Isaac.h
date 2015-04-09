@@ -41,6 +41,13 @@
 
 namespace EmberNs
 {
+
+union UintBytes
+{
+	unsigned char Bytes[4];
+	uint Uint;
+};
+
 /// <summary>
 /// QTIsaac class which allows using ISAAC in an OOP manner.
 /// </summary>
@@ -49,6 +56,8 @@ class EMBER_API QTIsaac
 {
 public:
 	enum { N = (1 << ALPHA) };
+	UintBytes m_Cache;
+	int m_LastIndex;
 
 	/// <summary>
 	/// Global ISAAC RNG to be used from anywhere. This is not thread safe, so take caution to only
@@ -83,6 +92,28 @@ public:
 	QTIsaac(T a = 0, T b = 0, T c = 0, T* s = nullptr)
 	{
 		Srand(a, b, c, s);
+		m_LastIndex = 0;
+		m_Cache.Uint = Rand();
+		T temp = RandByte();//Need to call at least once so other libraries can link.
+	}
+
+	/// <summary>
+	/// Return the next random integer in the range of 0-255.
+	/// If only a byte is needed, this is a more efficient way because
+	/// it only calls rand 1/4 of the time.
+	/// </summary>
+	/// <returns>The next random integer in the range of 0-255</returns>
+	inline T RandByte()
+	{
+		T ret = m_Cache.Bytes[m_LastIndex++];
+
+		if (m_LastIndex == 4)
+		{
+			m_LastIndex = 0;
+			m_Cache.Uint = Rand();
+		}
+
+		return ret;
 	}
 
 	/// <summary>
@@ -261,7 +292,7 @@ public:
 		if (s == nullptr)//Default to using time plus index as the seed if s was nullptr.
 		{
 			for (int i = 0; i < N; i++)
-				m_Rc.randrsl[i] = static_cast<T>(time(nullptr)) + i;
+				m_Rc.randrsl[i] = static_cast<T>(NowMs()) + i;
 		}
 		else
 		{
@@ -272,9 +303,9 @@ public:
 #ifndef ISAAC_FLAM3_DEBUG
 		if (a == 0 && b == 0 && c == 0)
 		{
-			m_Rc.randa = static_cast<T>(time(nullptr));
-			m_Rc.randb = static_cast<T>(time(nullptr)) * static_cast<T>(time(nullptr));
-			m_Rc.randc = static_cast<T>(time(nullptr)) * static_cast<T>(time(nullptr)) * static_cast<T>(time(nullptr));
+			m_Rc.randa = static_cast<T>(NowMs());
+			m_Rc.randb = static_cast<T>(NowMs()) * static_cast<T>(NowMs());
+			m_Rc.randc = static_cast<T>(NowMs()) * static_cast<T>(NowMs()) * static_cast<T>(NowMs());
 		}
 		else
 #endif

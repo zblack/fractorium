@@ -46,8 +46,8 @@ template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_
 	template EMBER_API class Post##varName##Variation<T>;
 
 #define EXPORT_SINGLE_TYPE_EMBER(T) \
-	template<> bool PaletteList<T>::m_Init = false; \
-	template<> vector<Palette<T>> PaletteList<T>::m_Palettes = vector<Palette<T>>(); \
+	template<> const char* PaletteList<T>::m_DefaultFilename = "flam3-palettes.xml"; \
+	template<> map<string, vector<Palette<T>>> PaletteList<T>::m_Palettes = map<string, vector<Palette<T>>>(); \
 	template<> bool XmlToEmber<T>::m_Init = false; \
 	template<> vector<string> XmlToEmber<T>::m_FlattenNames = vector<string>(); \
 	template<> vector<pair<string, string>> XmlToEmber<T>::m_BadParamNames = vector<pair<string, string>>(); \

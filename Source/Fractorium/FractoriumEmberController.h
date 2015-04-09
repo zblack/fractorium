@@ -177,14 +177,15 @@ public:
 	virtual void VariationSpinBoxValueChanged(double d) { }
 
 	//Xforms Xaos.
-	virtual void FillXaosWithCurrentXform() { }
+	virtual void FillXaos() { }
 	virtual QString MakeXaosNameString(uint i) { return ""; }
 	virtual void XaosChanged(DoubleSpinBox* sender) { }
 	virtual void ClearXaos() { }
 	virtual void RandomXaos() { }
 
 	//Palette.
-	virtual bool InitPaletteTable(const string& s) { return false; }
+	virtual int  InitPaletteList(const string& s) { return 0; }
+	virtual bool FillPaletteTable(const string& s) { return false; }
 	virtual void ApplyPaletteToEmber() { }
 	virtual void PaletteAdjust() { }
 	virtual QRgb GetQRgbFromPaletteIndex(uint i) { return QRgb(); }
@@ -235,6 +236,7 @@ protected:
 	QImage m_FinalPaletteImage;
 	QString m_LastSaveAll;
 	QString m_LastSaveCurrent;
+	string m_CurrentPaletteFilePath;
 	CriticalSection m_Cs;
 	std::thread m_WriteThread;
 	vector<byte> m_FinalImage[2];
@@ -405,14 +407,15 @@ public:
 	void FillVariationTreeWithXform(Xform<T>* xform);
 
 	//Xforms Xaos.
-	virtual void FillXaosWithCurrentXform() override;
+	virtual void FillXaos() override;
 	virtual QString MakeXaosNameString(uint i) override;
 	virtual void XaosChanged(DoubleSpinBox* sender) override;
 	virtual void ClearXaos() override;
 	virtual void RandomXaos() override;
 
 	//Palette.
-	virtual bool InitPaletteTable(const string& s) override;
+	virtual int  InitPaletteList(const string& s) override;
+	virtual bool FillPaletteTable(const string& s) override;
 	virtual void ApplyPaletteToEmber() override;
 	virtual void PaletteAdjust() override;
 	virtual QRgb GetQRgbFromPaletteIndex(uint i) override { return QRgb(); }
