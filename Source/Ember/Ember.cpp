@@ -1,6 +1,12 @@
 #include "EmberPch.h"
 #include "EmberDefines.h"
 #include "Isaac.h"
+
+namespace EmberNs
+{
+template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand = unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>>(new QTIsaac<ISAAC_SIZE, ISAAC_INT>());
+}
+
 #include "Curves.h"
 #include "Ember.h"
 #include "Utils.h"
@@ -38,7 +44,6 @@ namespace EmberNs
 {
 bool Timing::m_TimingInit = false;
 uint Timing::m_ProcessorCount;
-template<> unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>> QTIsaac<ISAAC_SIZE, ISAAC_INT>::GlobalRand = unique_ptr<QTIsaac<ISAAC_SIZE, ISAAC_INT>>(new QTIsaac<ISAAC_SIZE, ISAAC_INT>());
 
 #define EXPORTPREPOSTREGVAR(varName, T) \
 	template EMBER_API class varName##Variation<T>; \
