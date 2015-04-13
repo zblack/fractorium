@@ -77,6 +77,14 @@ namespace EmberNs
 #define EMPTYFIELD -9999
 typedef std::chrono::high_resolution_clock Clock;
 
+/// <summary>
+/// Thin wrapper around getting the current time in milliseconds.
+/// </summary>
+static inline size_t NowMs()
+{
+	return duration_cast<milliseconds>(Clock::now().time_since_epoch()).count();
+}
+
 #ifndef byte
 	typedef unsigned char byte;
 #endif
