@@ -232,7 +232,7 @@ private:
 		denom = (w->x * s3) + (w->y * s2 * 3 * t) + (w->z * s * 3 * t2) + (w->w * t3);
 
 
-		if (isnan(nom_x) || isnan(nom_y) || isnan(denom) || denom == 0)
+		if (std::isnan(nom_x) || std::isnan(nom_y) || std::isnan(denom) || denom == 0)
 			return;
 
 		solution.x = nom_x / denom;

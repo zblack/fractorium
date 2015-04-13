@@ -185,7 +185,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T u = sqrt(ClampGte0<T>(Zeps(m_A) * SQR(helper.In.x) + Zeps(m_B) * SQR(helper.In.y)));//Original did not clamp.
+		T u = std::sqrt(ClampGte0<T>(Zeps(m_A) * SQR(helper.In.x) + Zeps(m_B) * SQR(helper.In.y)));//Original did not clamp.
 
 		helper.Out.x = cos(u) * SafeTan<T>(helper.In.x) * m_Weight;
 		helper.Out.y = sin(u) * SafeTan<T>(helper.In.y) * m_Weight;
@@ -928,14 +928,14 @@ public:
 		f -= angle;
 
 		T x = f * m_Length;
-		T z = sqrt(1 + SQR(x) - 2 * x * cos(m_Alpha));
+		T z = std::sqrt(1 + SQR(x) - 2 * x * cos(m_Alpha));
 
 		if (int(angle) % 2)
 			angle = M_2PI / m_Power * (int(angle) / 2) + asin(sin(m_Alpha) * x / z);
 		else
 			angle = M_2PI / m_Power * (int(angle) / 2) - asin(sin(m_Alpha) * x / z);
 
-		z *= sqrt(rand.Frand01<T>());
+		z *= std::sqrt(rand.Frand01<T>());
 
 		T temp = angle - T(M_PI_2);
 
@@ -984,7 +984,7 @@ public:
 	virtual void Precalc() override
 	{
 		m_Alpha = T(M_PI) / m_Power;
-		m_Length = sqrt(1 + SQR(m_Range) - 2 * m_Range * cos(m_Alpha));
+		m_Length = std::sqrt(1 + SQR(m_Range) - 2 * m_Range * cos(m_Alpha));
 		m_Alpha = asin(sin(m_Alpha) * m_Range / m_Length);
 	}
 
@@ -1081,7 +1081,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T rad = sqrt(rand.Frand01<T>());
+		T rad = std::sqrt(rand.Frand01<T>());
 		T temp = rand.Frand01<T>() * M_2PI;
 
 		helper.Out.x = m_Weight * cos(temp) * rad;
@@ -2588,7 +2588,7 @@ public:
 		y = (imU * reV - reU * imV) / radV;
 
 		z = 1 / z;
-		r = pow(sqrt(SQR(x) + SQR(y)), z);
+		r = pow(std::sqrt(SQR(x) + SQR(y)), z);
 		n = Floor<T>(m_Power * rand.Frand01<T>());
 		alpha = (atan2(y, x) + n * M_2PI) / Floor<T>(m_Power);
 
@@ -3637,7 +3637,7 @@ public:
 
 		if (fabs(helper.In.y) <= m_Weight)
 		{
-			c2 = sqrt(SQR(m_Weight) - SQR(helper.In.y));
+			c2 = std::sqrt(SQR(m_Weight) - SQR(helper.In.y));
 
 			if (fabs(helper.In.x) <= c2)
 			{
@@ -3877,7 +3877,7 @@ public:
 		}
 
 		helper.Out.x = m_Weight * xmax * cos(nu);
-		helper.Out.y = m_Weight * sqrt(xmax - 1) * sqrt(xmax + 1) * sin(nu);
+		helper.Out.y = m_Weight * std::sqrt(xmax - 1) * std::sqrt(xmax + 1) * sin(nu);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 
@@ -4403,7 +4403,7 @@ public:
 		nu = fmod(nu + m_Rotate + T(M_PI), M_2PI) - T(M_PI);
 
 		helper.Out.x = m_Weight * xmax * cos(nu);
-		helper.Out.y = m_Weight * sqrt(xmax - 1) * sqrt(xmax + 1) * sin(nu);
+		helper.Out.y = m_Weight * std::sqrt(xmax - 1) * std::sqrt(xmax + 1) * sin(nu);
 		helper.Out.z = m_Weight * helper.In.z;
 	}
 

@@ -761,7 +761,7 @@ public:
 		if (fabs(m_Xpand) <= 1)
 			m_Fill = m_Xpand * T(0.5);
 		else
-			m_Fill = sqrt(m_Xpand) * T(0.5);
+			m_Fill = std::sqrt(m_Xpand) * T(0.5);
 
 		if (fabs(m_Weight) <= T(0.5))
 			m_Smooth = m_Weight * 2;//Causes full effect above m_Weight = 0.5.
@@ -996,7 +996,7 @@ public:
 		if (fabs(m_Xpand) <= 1)
 			m_Fill = m_Xpand * T(0.5);
 		else
-			m_Fill = sqrt(m_Xpand) * T(0.5);
+			m_Fill = std::sqrt(m_Xpand) * T(0.5);
 	}
 
 protected:
@@ -1289,7 +1289,7 @@ public:
 		m_Uy = sin(m_Delta * T(M_PI)) * cos(m_Phi * T(M_PI));
 		m_Uz = sin(m_Phi * T(M_PI));
 
-		T r = sqrt(SQR(m_Ux) + SQR(m_Uy) + SQR(m_Uz));
+		T r = std::sqrt(SQR(m_Ux) + SQR(m_Uy) + SQR(m_Uz));
 
 		//Normalize.
 		m_Ux /= r;
@@ -1340,7 +1340,7 @@ public:
 
 		if (r2 < m_Vv)
 		{
-			T r = m_Weight * sqrt(m_Vv / r2 - 1);
+			T r = m_Weight * std::sqrt(m_Vv / r2 - 1);
 
 			helper.Out.x = r * helper.In.x;
 			helper.Out.y = r * helper.In.y;
@@ -1767,7 +1767,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T t = helper.m_PrecalcSumSquares + SQR(helper.In.z);
-		T r = 1 / (sqrt(t) * (t + m_InvWeight));
+		T r = 1 / (std::sqrt(t) * (t + m_InvWeight));
 		T z = helper.In.z == 0 ? helper.m_PrecalcAtanyx : helper.In.z;
 
 		helper.Out.x = helper.In.x * r;
@@ -2118,7 +2118,7 @@ public:
 		const T ax = rand.Frand<T>(T(-0.5), T(0.5));
 		const T ay = rand.Frand<T>(T(-0.5), T(0.5));
 		const T az = rand.Frand<T>(T(-0.5), T(0.5));
-		const T r = sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
+		const T r = std::sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
 		const T rc = ((m_Invert != 0 ? std::max<T>(1 - r, 0) : std::max<T>(r, 0)) - m_MinDist) * m_InternalScatter;//Original called a macro named min, which internally performed max.
 		const T rs = std::max<T>(rc, 0);
 
@@ -2278,7 +2278,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		const v4T random(rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)), rand.Frand<T>(T(-0.5), T(0.5)));
-		const T distA = sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
+		const T distA = std::sqrt(Sqr(helper.In.x - m_X0) + Sqr(helper.In.y - m_Y0) + Sqr(helper.In.z - m_Z0));
 		const T distB = m_Invert != 0 ? std::max<T>(1 - distA, 0) : std::max<T>(distA, 0);//Original called a macro named min, which internally performed max.
 		const T dist = std::max<T>((distB - m_MinDist) * m_RMax, 0);
 
@@ -2301,7 +2301,7 @@ public:
 				}
 				else
 				{
-					const T rIn = sqrt(helper.m_PrecalcSumSquares + SQR(helper.In.z));
+					const T rIn = std::sqrt(helper.m_PrecalcSumSquares + SQR(helper.In.z));
 					const T sigma = asin(helper.In.z / rIn) + m_MulZ * random.z * dist;
 					const T phi = helper.m_PrecalcAtanyx + m_MulY * random.y * dist;
 					const T r = rIn + m_MulX * random.x * dist;
@@ -2480,7 +2480,7 @@ public:
 		switch (int(m_BlurShape))
 		{
 			case 0://Circle.
-				radius = sqrt(Sqr(helper.In.x - m_CenterX) + Sqr(helper.In.y - m_CenterY) + Sqr(helper.In.z - m_CenterZ));
+				radius = std::sqrt(Sqr(helper.In.x - m_CenterX) + Sqr(helper.In.y - m_CenterY) + Sqr(helper.In.z - m_CenterZ));
 				break;
 			case 1://Square.
 			default:
@@ -2517,7 +2517,7 @@ public:
 			}
 			else
 			{
-				const T rIn = sqrt(helper.m_PrecalcSumSquares + SQR(helper.In.z));
+				const T rIn = std::sqrt(helper.m_PrecalcSumSquares + SQR(helper.In.z));
 				const T sigma = asin(helper.In.z / rIn) + m_MulZ * random.z * dist;
 				const T phi = helper.m_PrecalcAtanyx + m_MulY * random.y * dist;
 				const T r = rIn + m_MulX * random.x * dist;
@@ -2577,7 +2577,7 @@ public:
 		    << "\t\tswitch ((int)" << blurShape << ")\n"
 		    << "\t\t{\n"
 		    << "\t\t	case 0:\n"
-		    << "\t\t		radius = sqrt(Sqr(vIn.x - " << centerX << ") + Sqr(vIn.y - " << centerY << ") + Sqr(vIn.z - " << centerZ << "));\n"
+			<< "\t\t		radius = sqrt(Sqr(vIn.x - " << centerX << ") + Sqr(vIn.y - " << centerY << ") + Sqr(vIn.z - " << centerZ << "));\n"
 		    << "\t\t		break;\n"
 		    << "\t\t	case 1:\n"
 		    << "\t\t		radius = max(fabs(vIn.x - " << centerX << "), max(fabs(vIn.y - " << centerY << "), (fabs(vIn.z - " << centerZ << "))));\n"
@@ -2613,7 +2613,7 @@ public:
 		    << "\t\t	}\n"
 		    << "\t\t	else\n"
 		    << "\t\t	{\n"
-		    << "\t\t		real_t rIn = sqrt(precalcSumSquares + SQR(vIn.z));\n"
+			<< "\t\t		real_t rIn = sqrt(precalcSumSquares + SQR(vIn.z));\n"
 		    << "\t\t		real_t sigma = asin(vIn.z / rIn) + " << mulZ << " * randz * dist;\n"
 		    << "\t\t		real_t phi = precalcAtanyx + " << mulY << " * randy * dist;\n"
 		    << "\t\t		real_t r = rIn + " << mulX << " * randx * dist;\n"

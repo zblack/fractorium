@@ -17,7 +17,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T t = m_Weight / sqrt(helper.m_PrecalcSumSquares + 1);
+		T t = m_Weight / std::sqrt(helper.m_PrecalcSumSquares + 1);
 
 		helper.Out.x = helper.In.x * t;
 		helper.Out.y = helper.In.y * t;
@@ -705,7 +705,7 @@ public:
 
 		T x = helper.In.x * m_Scale;
 		T y = helper.In.y * m_Scale;
-		T r = sqrt(SQR(x) + SQR(y));
+		T r = std::sqrt(SQR(x) + SQR(y));
 
 		if (r <= 1)
 		{
@@ -1519,7 +1519,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T r = m_Weight * sqrt(helper.m_PrecalcSumSquares + sin(helper.m_PrecalcAtanyx * m_A) + 1);
+		T r = m_Weight * std::sqrt(helper.m_PrecalcSumSquares + sin(helper.m_PrecalcAtanyx * m_A) + 1);
 
 		helper.Out.x = r * helper.m_PrecalcCosa;
 		helper.Out.y = r * helper.m_PrecalcSina;
@@ -2016,7 +2016,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T s, c;
-		T avgr = m_Weight * (sqrt(SQR(helper.In.y) + SQR(helper.In.x + 1)) / sqrt(SQR(helper.In.y) + SQR(helper.In.x - 1)));
+		T avgr = m_Weight * (std::sqrt(SQR(helper.In.y) + SQR(helper.In.x + 1)) / std::sqrt(SQR(helper.In.y) + SQR(helper.In.x - 1)));
 		T avga = (atan2(helper.In.y, helper.In.x - 1) - atan2(helper.In.y, helper.In.x + 1)) / 2;
 
 		sincos(avga, &s, &c);
@@ -2435,14 +2435,14 @@ public:
 		{
 			if (rand.Frand01<T>() > T(0.5))
 			{
-				d = sqrt(r + helper.In.x);
+				d = std::sqrt(r + helper.In.x);
 				helper.Out.x = m_V2 * d;
 				helper.Out.y = -(m_V2 / d * helper.In.y);
 			}
 			else
 			{
 				d = r + helper.In.x;
-				r = m_Weight / sqrt(r * (SQR(helper.In.y) + SQR(d)));
+				r = m_Weight / std::sqrt(r * (SQR(helper.In.y) + SQR(d)));
 				helper.Out.x = r * d;
 				helper.Out.y = r * helper.In.y;
 			}
@@ -2451,14 +2451,14 @@ public:
 		{
 			if (rand.Frand01<T>() > T(0.5))
 			{
-				d = sqrt(r + helper.In.x);
+				d = std::sqrt(r + helper.In.x);
 				helper.Out.x = -(m_V2 * d);
 				helper.Out.y = -(m_V2 / d * helper.In.y);
 			}
 			else
 			{
 				d = r + helper.In.x;
-				r = m_Weight / sqrt(r * (SQR(helper.In.y) + SQR(d)));
+				r = m_Weight / std::sqrt(r * (SQR(helper.In.y) + SQR(d)));
 				helper.Out.x = -(r * d);
 				helper.Out.y = r * helper.In.y;
 			}
@@ -2519,7 +2519,7 @@ public:
 
 	virtual void Precalc() override
 	{
-		m_V2 = m_Weight * sqrt(T(2)) / 2;
+		m_V2 = m_Weight * std::sqrt(T(2)) / 2;
 	}
 
 protected:
@@ -2818,7 +2818,7 @@ public:
 		T a = m_N * pa;
 
 		if (r > 0)
-			r = 1 / sqrt(r);
+			r = 1 / std::sqrt(r);
 		else
 			r = 1;
 
@@ -2916,7 +2916,7 @@ public:
 			(cos(2 * T(M_PI) / m_P) + cos(2 * T(M_PI) / m_Q));
 
 		if (r2 > 0)
-			m_R = 1 / sqrt(r2);
+			m_R = 1 / std::sqrt(r2);
 		else
 			m_R = 1;
 
@@ -3011,7 +3011,7 @@ public:
 			(cos(2 * T(M_PI) / m_P) + cos(2 * T(M_PI) / m_Q));
 
 		if (r2 > 0)
-			m_R = 1 / sqrt(r2);
+			m_R = 1 / std::sqrt(r2);
 		else
 			m_R = 1;
 
@@ -3105,7 +3105,7 @@ public:
 		T na = m_N * pa;
 
 		if (r > 0)
-			r = 1 / sqrt(1 + r);
+			r = 1 / std::sqrt(1 + r);
 		else
 			r = 1;
 
@@ -3226,7 +3226,7 @@ public:
 		T r = -(cos(pa) - 1) / (cos(pa) + cos(qa));
 
 		if (r > 0)
-			r = 1 / sqrt(1 + r);
+			r = 1 / std::sqrt(1 + r);
 		else
 			r = 1;
 
@@ -3330,7 +3330,7 @@ public:
 		T r = -(cos(pa) - 1) / (cos(pa) + cos(qa));
 
 		if (r > 0)
-			r = 1 / sqrt(1 + r);
+			r = 1 / std::sqrt(1 + r);
 		else
 			r = 1;
 
@@ -3949,7 +3949,7 @@ public:
 			if (helper.In.x >= 0)
 			{
 				xo = (r + 1) / (2 * helper.In.x);
-				ro = sqrt(SQR(helper.In.x - xo) + SQR(helper.In.y));
+				ro = std::sqrt(SQR(helper.In.x - xo) + SQR(helper.In.y));
 				theta = atan2(T(1), ro);
 				a = fmod(m_In * theta + atan2(helper.In.y, xo - helper.In.x) + theta, 2 * theta) - theta;
 				sincos(a, &s, &c);
@@ -3960,7 +3960,7 @@ public:
 			else
 			{
 				xo = - (r + 1) / (2 * helper.In.x);
-				ro = sqrt(SQR(-helper.In.x - xo) + SQR(helper.In.y));
+				ro = std::sqrt(SQR(-helper.In.x - xo) + SQR(helper.In.y));
 				theta = atan2(T(1), ro);
 				a = fmod(m_In * theta + atan2(helper.In.y, xo + helper.In.x) + theta, 2 * theta) - theta;
 				sincos(a, &s, &c);
@@ -3971,7 +3971,7 @@ public:
 		}
 		else
 		{
-			r = 1 / sqrt(r);
+			r = 1 / std::sqrt(r);
 			ts = sin(helper.m_PrecalcAtanyx);
 			tc = cos(helper.m_PrecalcAtanyx);
 			x = r * tc;
@@ -3980,7 +3980,7 @@ public:
 			if (x >= 0)
 			{
 				xo = (SQR(x) + SQR(y) + 1) / (2 * x);
-				ro = sqrt(SQR(x - xo) + SQR(y));
+				ro = std::sqrt(SQR(x - xo) + SQR(y));
 				theta = atan2(T(1), ro);
 				a = fmod(m_Out * theta + atan2(y, xo - x) + theta, 2 * theta) - theta;
 				sincos(a, &s, &c);
@@ -3989,7 +3989,7 @@ public:
 				y =  s * ro;
 				theta = atan2(y, x);
 				sincos(theta, &ts, &tc);
-				r = 1 / sqrt(SQR(x) + SQR(y));
+				r = 1 / std::sqrt(SQR(x) + SQR(y));
 
 				helper.Out.x = m_Weight * r * tc;
 				helper.Out.y = m_Weight * r * ts;
@@ -3997,7 +3997,7 @@ public:
 			else
 			{
 				xo = - (SQR(x) + SQR(y) + 1) / (2 * x);
-				ro = sqrt(SQR(-x - xo) + SQR(y));
+				ro = std::sqrt(SQR(-x - xo) + SQR(y));
 				theta = atan2(T(1), ro);
 				a = fmod(m_Out * theta + atan2(y, xo + x) + theta, 2 * theta) - theta;
 				sincos(a, &s, &c);
@@ -4006,7 +4006,7 @@ public:
 				y =  s * ro;
 				theta = atan2(y, x);
 				sincos(theta, &ts, &tc);
-				r = 1 / sqrt(SQR(x) + SQR(y));
+				r = 1 / std::sqrt(SQR(x) + SQR(y));
 
 				helper.Out.x = -(m_Weight * r * tc);
 				helper.Out.y = m_Weight * r * ts;
@@ -4186,8 +4186,8 @@ public:
 
 	virtual void Precalc() override
 	{
-		m_C1d = sqrt(1 + SQR(m_C1r));
-		m_C2d = sqrt(1 + SQR(m_C2r));
+		m_C1d = std::sqrt(1 + SQR(m_C1r));
+		m_C2d = std::sqrt(1 + SQR(m_C2r));
 
 		m_C1x = m_C1d * cos(fmod(m_C1a, T(M_PI)));
 		m_C1y = m_C1d * sin(fmod(m_C1a, T(M_PI)));
@@ -4610,7 +4610,7 @@ public:
 		T y = (helper.In.y * m_S) + m_CenterY;
 
 		//Calculate distance from center but constrain it to EPS.
-		T d = std::max(EPS, sqrt(SQR(x) * SQR(y)));
+		T d = std::max(EPS, std::sqrt(SQR(x) * SQR(y)));
 
 		//Normalize x and y.
 		T nx = x / d;
@@ -5393,8 +5393,8 @@ public:
 		T v = (dot00 * dot12 - dot01 * dot02) * invDenom;
 
 		// now combine with input
-		T um = sqrt(SQR(u) + SQR(helper.In.x)) * Sign<T>(u);
-		T vm = sqrt(SQR(v) + SQR(helper.In.y)) * Sign<T>(v);
+		T um = std::sqrt(SQR(u) + SQR(helper.In.x)) * Sign<T>(u);
+		T vm = std::sqrt(SQR(v) + SQR(helper.In.y)) * Sign<T>(v);
 
 		helper.Out.x = m_Weight * um;
 		helper.Out.y = m_Weight * vm;

@@ -1110,7 +1110,7 @@ public:
 
 				if (m_NeedPrecalcSqrtSumSquares)
 				{
-					iteratorHelper.m_PrecalcSqrtSumSquares = sqrt(iteratorHelper.m_PrecalcSumSquares);
+					iteratorHelper.m_PrecalcSqrtSumSquares = std::sqrt(iteratorHelper.m_PrecalcSumSquares);
 
 					if (m_NeedPrecalcAngles)
 					{
@@ -1134,7 +1134,7 @@ public:
 
 				if (m_NeedPrecalcSqrtSumSquares)
 				{
-					iteratorHelper.m_PrecalcSqrtSumSquares = sqrt(iteratorHelper.m_PrecalcSumSquares);
+					iteratorHelper.m_PrecalcSqrtSumSquares = std::sqrt(iteratorHelper.m_PrecalcSumSquares);
 
 					if (m_NeedPrecalcAngles)
 					{

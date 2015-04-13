@@ -868,7 +868,7 @@ public:
 
 		//Scale the image so that the total number of pixels is ~10,000.
 		pixTotal = ember.m_FinalRasW * ember.m_FinalRasH;
-		scalar = sqrt(T(10000) / pixTotal);
+		scalar = std::sqrt(T(10000) / pixTotal);
 		adjustedEmber.m_FinalRasW = static_cast<size_t>(ember.m_FinalRasW  * scalar);
 		adjustedEmber.m_FinalRasH = static_cast<size_t>(ember.m_FinalRasH  * scalar);
 		adjustedEmber.m_PixelsPerUnit *= scalar;

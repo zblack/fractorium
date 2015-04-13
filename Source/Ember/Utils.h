@@ -518,7 +518,7 @@ static inline T SafeSqrt(T x)
 	if (x <= 0)
 		return 0;
 
-	return sqrt(x);
+	return std::sqrt(x);
 }
 
 template <typename T>
@@ -567,7 +567,7 @@ static inline T Cube(T t)
 template <typename T>
 static inline T Hypot(T x, T y)
 {
-	return sqrt(SQR(x) + SQR(y));
+	return std::sqrt(SQR(x) + SQR(y));
 }
 
 /// <summary>

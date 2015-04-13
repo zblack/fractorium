@@ -207,7 +207,7 @@ T DEOpenCLKernelCreator<T>::SolveMaxDERad(uint maxBoxSize, T desiredFilterSize, 
 template <typename T>
 uint DEOpenCLKernelCreator<T>::SolveMaxBoxSize(uint localMem)
 {
-	return uint(floor(sqrt(floor(T(localMem) / 16.0))));//Divide by 16 because each element is float4.
+	return uint(floor(std::sqrt(floor(T(localMem) / 16.0))));//Divide by 16 because each element is float4.
 }
 
 /// <summary>

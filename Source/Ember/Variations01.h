@@ -213,7 +213,7 @@ public:
 /// <summary>
 /// Polar:
 /// nx = atan2(tx, ty) / M_PI;
-/// ny = sqrt(tx * tx + ty * ty) - 1.0;
+/// ny = std::sqrt(tx * tx + ty * ty) - 1.0;
 /// p[0] += weight * nx;
 /// p[1] += weight * ny;
 /// </summary>
@@ -250,7 +250,7 @@ public:
 /// <summary>
 /// Handkerchief:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// p[0] += weight * sin(a + r) * r;
 /// p[1] += weight * cos(a - r) * r;
 /// </summary>
@@ -287,7 +287,7 @@ public:
 /// <summary>
 /// Heart:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// a *= r;
 /// p[0] += weight * sin(a) * r;
 /// p[1] += weight * cos(a) * -r;
@@ -333,7 +333,7 @@ public:
 /// nx = tx * M_PI;
 /// ny = ty * M_PI;
 /// a = atan2(nx, ny);
-/// r = sqrt(nx * nx + ny * ny);
+/// r = std::sqrt(nx * nx + ny * ny);
 /// p[0] += weight * sin(r) * a / M_PI;
 /// p[1] += weight * cos(r) * a / M_PI;
 /// </summary>
@@ -399,7 +399,7 @@ private:
 /// <summary>
 /// Spiral:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty) + 1e-6;
+/// r = std::sqrt(tx * tx + ty * ty) + 1e-6;
 /// p[0] += weight * (cos(a) + sin(r)) / r;
 /// p[1] += weight * (sin(a) - cos(r)) / r;
 /// </summary>
@@ -442,7 +442,7 @@ public:
 /// <summary>
 /// Hyperbolic:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty) + 1e-6;
+/// r = std::sqrt(tx * tx + ty * ty) + 1e-6;
 /// p[0] += weight * sin(a) / r;
 /// p[1] += weight * cos(a) * r;
 /// </summary>
@@ -483,7 +483,7 @@ public:
 /// <summary>
 /// Diamond:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// p[0] += weight * sin(a) * cos(r);
 /// p[1] += weight * cos(a) * sin(r);
 /// </summary>
@@ -520,7 +520,7 @@ public:
 /// <summary>
 /// Ex:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// n0 = sin(a + r);
 /// n1 = cos(a - r);
 /// m0 = n0 * n0 * n0 * r;
@@ -592,7 +592,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T r = m_Weight * sqrt(helper.m_PrecalcSqrtSumSquares);
+		T r = m_Weight * std::sqrt(helper.m_PrecalcSqrtSumSquares);
 		T a = T(0.5) * helper.m_PrecalcAtanxy;
 
 		if (rand.RandBit())
@@ -755,7 +755,7 @@ private:
 /// <summary>
 /// Fisheye:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// r = 2 * r / (r + 1);
 /// nx = r * cos(a);
 /// ny = r * sin(a);
@@ -894,7 +894,7 @@ public:
 /// Power:
 /// a = atan2(tx, ty);
 /// sa = sin(a);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// r = pow(r, sa);
 /// nx = r * precalc_cosa;
 /// ny = r * sa;
@@ -984,7 +984,7 @@ public:
 /// Rings:
 /// dx = coef[2][0];
 /// dx = dx * dx + EPS;
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// r = fmod(r + dx, 2 * dx) - dx + r * (1 - dx);
 /// a = atan2(tx, ty);
 /// nx = cos(a) * r;
@@ -1037,7 +1037,7 @@ public:
 /// dx = M_PI * (dx * dx + EPS);
 /// dx2 = dx / 2;
 /// a = atan(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// a += (fmod(a + dy, dx) > dx2) ? -dx2 : dx2;
 /// nx = cos(a) * r;
 /// ny = sin(a) * r;
@@ -1090,7 +1090,7 @@ public:
 /// <summary>
 /// Blob:
 /// a = atan2(tx, ty);
-/// r = sqrt(tx * tx + ty * ty);
+/// r = std::sqrt(tx * tx + ty * ty);
 /// r = r * (bloblow + (blobhigh - bloblow) * (0.5 + 0.5 * sin(blobwaves * a)));
 /// nx = sin(a) * r;
 /// ny = cos(a) * r;
@@ -3473,7 +3473,7 @@ public:
 	{
 		T wx = m_Weight * T(1.3029400317411197908970256609023);//This precision came from the original.
 		T y2 = helper.In.y * 2;
-		T r = wx * sqrt(fabs(helper.In.y * helper.In.x) / Zeps(SQR(helper.In.x) + SQR(y2)));
+		T r = wx * std::sqrt(fabs(helper.In.y * helper.In.x) / Zeps(SQR(helper.In.x) + SQR(y2)));
 
 		helper.Out.x = r * helper.In.x;
 		helper.Out.y = r * y2;
@@ -3827,10 +3827,10 @@ public:
 	{
 		T tmp = helper.m_PrecalcSumSquares + 1;
 		T tmp2 = 2 * helper.In.x;
-		T r1 = sqrt(tmp + tmp2);
-		T r2 = sqrt(tmp - tmp2);
+		T r1 = std::sqrt(tmp + tmp2);
+		T r2 = std::sqrt(tmp - tmp2);
 		T xmax = (r1 + r2) * T(0.5);
-		T a1 = log(xmax + sqrt(xmax - 1));
+		T a1 = log(xmax + std::sqrt(xmax - 1));
 		T a2 = -acos(Clamp<T>(helper.In.x / xmax, -1, 1));
 		T w = m_Weight / T(11.57034632);//This is an interesting magic number.
 		T snv, csv, snhu, cshu;
@@ -3897,7 +3897,7 @@ public:
 	{
 		T tmp = helper.m_PrecalcSumSquares + 1;
 		T x2 = 2 * helper.In.x;
-		T xmax = T(0.5) * (sqrt(tmp + x2) + sqrt(tmp - x2));
+		T xmax = T(0.5) * (std::sqrt(tmp + x2) + std::sqrt(tmp - x2));
 		T a = helper.In.x / xmax;
 		T b = 1 - a * a;
 		T ssx = xmax - 1;
@@ -3906,12 +3906,12 @@ public:
 		if (b < 0)
 			b = 0;
 		else
-			b = sqrt(b);
+			b = std::sqrt(b);
 
 		if (ssx < 0)
 			ssx = 0;
 		else
-			ssx = sqrt(ssx);
+			ssx = std::sqrt(ssx);
 
 		helper.Out.x = w * atan2(a, b);
 
@@ -4139,7 +4139,7 @@ public:
 	{
 		T x = helper.In.x - m_X;
 		T y = helper.In.y + m_Y;
-		T r = sqrt(x * x + y * y);
+		T r = std::sqrt(x * x + y * y);
 
 		if (r < m_Weight)
 		{
@@ -4257,7 +4257,7 @@ public:
 	{
 		if (helper.m_PrecalcSumSquares < m_W2 && helper.m_PrecalcSumSquares != 0)
 		{
-			T r = m_Weight * sqrt((m_W2 / helper.m_PrecalcSumSquares) - 1);
+			T r = m_Weight * std::sqrt((m_W2 / helper.m_PrecalcSumSquares) - 1);
 
 			helper.Out.x = r * helper.In.x;
 			helper.Out.y = r * helper.In.y;
@@ -4726,14 +4726,14 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		if (helper.In.x > 0.0)
-			helper.Out.x = m_Weight * (sqrt(SQR(helper.In.x) + m_XX) - helper.In.x * m_XInside);
+			helper.Out.x = m_Weight * (std::sqrt(SQR(helper.In.x) + m_XX) - helper.In.x * m_XInside);
 		else
-			helper.Out.x = -(m_Weight * (sqrt(SQR(helper.In.x) + m_XX) + helper.In.x * m_XInside));
+			helper.Out.x = -(m_Weight * (std::sqrt(SQR(helper.In.x) + m_XX) + helper.In.x * m_XInside));
 
 		if (helper.In.y > 0.0)
-			helper.Out.y = m_Weight * (sqrt(SQR(helper.In.y) + m_YY) - helper.In.y * m_YInside);
+			helper.Out.y = m_Weight * (std::sqrt(SQR(helper.In.y) + m_YY) - helper.In.y * m_YInside);
 		else
-			helper.Out.y = -(m_Weight * (sqrt(SQR(helper.In.y) + m_YY) + helper.In.y * m_YInside));
+			helper.Out.y = -(m_Weight * (std::sqrt(SQR(helper.In.y) + m_YY) + helper.In.y * m_YInside));
 
 		helper.Out.z = m_Weight * helper.In.z;
 	}
@@ -6158,12 +6158,12 @@ public:
 		T xpw = helper.In.x + m_Weight;
 		T xmw = helper.In.x - m_Weight;
 		T yy = SQR(helper.In.y);
-		T frac = sqrt(yy + SQR(xmw));
+		T frac = std::sqrt(yy + SQR(xmw));
 
 		if (frac == 0)
 			frac = 1;
 
-		T avgr = m_Weight * (m_Spr * sqrt(sqrt(yy + SQR(xpw)) / frac));
+		T avgr = m_Weight * (m_Spr * std::sqrt(std::sqrt(yy + SQR(xpw)) / frac));
 		T avga = (atan2(helper.In.y, xmw) - atan2(helper.In.y, xpw)) * T(0.5);
 
 		helper.Out.x = avgr * cos(avga);
