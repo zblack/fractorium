@@ -67,6 +67,8 @@ using EmberNs::Renderer<T, T>::RendererBase::m_ProgressTimer;
 using EmberNs::Renderer<T, T>::RendererBase::EmberReport::m_ErrorReport;
 using EmberNs::Renderer<T, T>::m_RotMat;
 using EmberNs::Renderer<T, T>::m_Ember;
+using EmberNs::Renderer<T, T>::m_Csa;
+using EmberNs::Renderer<T, T>::m_CurvesSet;
 using EmberNs::Renderer<T, T>::CenterX;
 using EmberNs::Renderer<T, T>::CenterY;
 using EmberNs::Renderer<T, T>::K1;
