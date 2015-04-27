@@ -11,7 +11,12 @@
 /// <summary>
 /// An enum representing the type of edit being done.
 /// </summary>
-enum eEditUndoState : uint { REGULAR_EDIT = 0, UNDO_REDO = 1, EDIT_UNDO = 2 };
+enum eEditUndoState : uint { REGULAR_EDIT, UNDO_REDO, EDIT_UNDO };
+
+/// <summary>
+/// An enum representing which xforms an update should be applied to.
+/// </summary>
+enum eXformUpdate : uint { UPDATE_CURRENT, UPDATE_SELECTED, UPDATE_SELECTED_EXCEPT_FINAL, UPDATE_ALL, UPDATE_ALL_EXCEPT_FINAL };
 
 /// <summary>
 /// FractoriumEmberController and Fractorium need each other, but each can't include the other.
@@ -58,8 +63,8 @@ public:
 	//virtual void Clear() { }
 	virtual void AddXform() { }
 	virtual void DuplicateXform() { }
-	virtual void ClearCurrentXform() { }
-	virtual void DeleteCurrentXform() { }
+	virtual void ClearXform() { }
+	virtual void DeleteXforms() { }
 	virtual void AddFinalXform() { }
 	virtual bool UseFinalXform() { return false; }
 	virtual size_t XformCount() const { return 0; }
@@ -145,20 +150,23 @@ public:
 	virtual void AffineInterpTypeChanged(int i) { }
 	virtual void InterpTypeChanged(int i) { }
 	virtual void BackgroundChanged(const QColor& color) { }
-	
+	virtual void ClearColorCurves() { }
+	virtual void ColorCurveChanged(int curveIndex, int pointInxed, const QPointF& point) { }
+
 	//Xforms.
 	virtual void CurrentXformComboChanged(int index) { }
 	virtual void XformWeightChanged(double d) { }
 	virtual void EqualizeWeights() { }
 	virtual void XformNameChanged(int row, int col) { }
+	virtual void FillXforms() { }
 
 	//Xforms Affine.
 	virtual void AffineSetHelper(double d, int index, bool pre) { }
-	virtual void FlipCurrentXform(bool horizontal, bool vertical, bool pre) { }
-	virtual void RotateCurrentXformByAngle(double angle, bool pre) { }
-	virtual void MoveCurrentXform(double x, double y, bool pre) { }
-	virtual void ScaleCurrentXform(double scale, bool pre) { }
-	virtual void ResetCurrentXformAffine(bool pre) { }
+	virtual void FlipXforms(bool horizontal, bool vertical, bool pre) { }
+	virtual void RotateXformsByAngle(double angle, bool pre) { }
+	virtual void MoveXforms(double x, double y, bool pre) { }
+	virtual void ScaleXforms(double scale, bool pre) { }
+	virtual void ResetXformsAffine(bool pre) { }
 	virtual void FillBothAffines() { }
 
 	//Xforms Color.
@@ -167,8 +175,6 @@ public:
 	virtual void XformColorSpeedChanged(double d) { }
 	virtual void XformOpacityChanged(double d) { }
 	virtual void XformDirectColorChanged(double d) { }
-	virtual void ClearColorCurves() { }
-	virtual void ColorCurveChanged(int curveIndex, int pointInxed, const QPointF& point) { }//need to put this in a different section because it's not xform specific.//TODO
 	void SetPaletteRefTable(QPixmap* pixmap);
 
 	//Xforms Variations.
@@ -176,7 +182,9 @@ public:
 	virtual void ClearVariationsTree() { }
 	virtual void VariationSpinBoxValueChanged(double d) { }
 
-	//Xforms Xaos.
+	//Xforms Selection.
+
+	//Xaos.
 	virtual void FillXaos() { }
 	virtual QString MakeXaosNameString(uint i) { return ""; }
 	virtual void XaosChanged(DoubleSpinBox* sender) { }
@@ -281,8 +289,8 @@ public:
 	//virtual void Clear() override { }
 	virtual void AddXform() override;
 	virtual void DuplicateXform() override;
-	virtual void ClearCurrentXform() override;
-	virtual void DeleteCurrentXform() override;
+	virtual void ClearXform() override;
+	virtual void DeleteXforms() override;
 	virtual void AddFinalXform() override;
 	virtual bool UseFinalXform() override { return m_Ember.UseFinalXform(); }
 	//virtual bool IsFinal(uint i) { return false; }
@@ -371,22 +379,25 @@ public:
 	virtual void AffineInterpTypeChanged(int index) override;
 	virtual void InterpTypeChanged(int index) override;
 	virtual void BackgroundChanged(const QColor& col) override;
+	virtual void ClearColorCurves() override;
+	virtual void ColorCurveChanged(int curveIndex, int pointInxed, const QPointF& point) override;
 
 	//Xforms.
 	virtual void CurrentXformComboChanged(int index) override;
 	virtual void XformWeightChanged(double d) override;
 	virtual void EqualizeWeights() override;
 	virtual void XformNameChanged(int row, int col) override;
+	virtual void FillXforms() override;
 	void FillWithXform(Xform<T>* xform);
 	Xform<T>* CurrentXform();
 
 	//Xforms Affine.
 	virtual void AffineSetHelper(double d, int index, bool pre) override;
-	virtual void FlipCurrentXform(bool horizontal, bool vertical, bool pre) override;
-	virtual void RotateCurrentXformByAngle(double angle, bool pre) override;
-	virtual void MoveCurrentXform(double x, double y, bool pre) override;
-	virtual void ScaleCurrentXform(double scale, bool pre) override;
-	virtual void ResetCurrentXformAffine(bool pre) override;
+	virtual void FlipXforms(bool horizontal, bool vertical, bool pre) override;
+	virtual void RotateXformsByAngle(double angle, bool pre) override;
+	virtual void MoveXforms(double x, double y, bool pre) override;
+	virtual void ScaleXforms(double scale, bool pre) override;
+	virtual void ResetXformsAffine(bool pre) override;
 	virtual void FillBothAffines() override;
 	void FillAffineWithXform(Xform<T>* xform, bool pre);
 
@@ -396,8 +407,6 @@ public:
 	virtual void XformColorSpeedChanged(double d) override;
 	virtual void XformOpacityChanged(double d) override;
 	virtual void XformDirectColorChanged(double d) override;
-	virtual void ClearColorCurves() override;
-	virtual void ColorCurveChanged(int curveIndex, int pointInxed, const QPointF& point) override;
 	void FillColorWithXform(Xform<T>* xform);
 
 	//Xforms Variations.
@@ -444,15 +453,20 @@ private:
 	bool IsFinal(Xform<T>* xform);
 
 	//Xforms Color.
-	void SetCurrentXformColorIndex(double d);
+	void SetCurrentXformColorIndex(double d, bool updateRender);
 	void FillCurvesControl();
+
+	//Xforms Selection.
+	QString MakeXformCaption(size_t i);
+	bool XformCheckboxAt(int i, std::function<void(QCheckBox*)> func);
+	bool XformCheckboxAt(Xform<T>* xform, std::function<void(QCheckBox*)> func);
+	void UpdateXform(std::function<void(Xform<T>*)> func, eXformUpdate updateType = eXformUpdate::UPDATE_CURRENT, bool updateRender = true, eProcessAction action = FULL_RENDER);
 
 	//Palette.
 	void UpdateAdjustedPaletteGUI(Palette<T>& palette);
 
 	//Rendering/progress.
 	void Update(std::function<void (void)> func, bool updateRender = true, eProcessAction action = FULL_RENDER);
-	void UpdateCurrentXform(std::function<void (Xform<T>*)> func, bool updateRender = true, eProcessAction action = FULL_RENDER);
 	bool SyncSizes();
 
 	//Templated members.

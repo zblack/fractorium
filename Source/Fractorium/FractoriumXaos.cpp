@@ -4,7 +4,7 @@
 /// <summary>
 /// Initialize the xforms xaos UI.
 /// </summary>
-void Fractorium::InitXformsXaosUI()
+void Fractorium::InitXaosUI()
 {
 	connect(ui.ClearXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnClearXaosButtonClicked(bool)), Qt::QueuedConnection);
 	connect(ui.RandomXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnRandomXaosButtonClicked(bool)), Qt::QueuedConnection);
@@ -88,6 +88,7 @@ void Fractorium::FillXaosTable()
 	QWidget* w = nullptr;
 	QString lbl("lbl");
 
+	ui.XaosTable->blockSignals(true);
 	ui.XaosTable->setRowCount(count);//This will grow or shrink the number of rows and call the destructor for previous DoubleSpinBoxes.
 	ui.XaosTable->setColumnCount(count);
 
@@ -137,6 +138,7 @@ void Fractorium::FillXaosTable()
 
 	w = SetTabOrder(this, w, ui.ClearXaosButton);
 	w = SetTabOrder(this, w, ui.RandomXaosButton);
+	ui.XaosTable->blockSignals(false);
 }
 
 /// <summary>

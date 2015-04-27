@@ -169,7 +169,7 @@ void Fractorium::InitXformsAffineUI()
 template <typename T>
 void FractoriumEmberController<T>::AffineSetHelper(double d, int index, bool pre)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
 		DoubleSpinBox** spinners = pre ? m_Fractorium->m_PreSpins : m_Fractorium->m_PostSpins;
@@ -220,7 +220,7 @@ void FractoriumEmberController<T>::AffineSetHelper(double d, int index, bool pre
 					break;
 			}
 		}
-	});
+	}, eXformUpdate::UPDATE_SELECTED);
 }
 
 /// <summary>
@@ -235,16 +235,16 @@ void Fractorium::OnO1Changed(double d) { m_Controller->AffineSetHelper(d, 2, sen
 void Fractorium::OnO2Changed(double d) { m_Controller->AffineSetHelper(d, 5, sender() == m_PreO2Spin); }
 
 /// <summary>
-/// Flip the current pre/post affine vertically and/or horizontally.
+/// Flip the selected pre/post affines vertically and/or horizontally.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="horizontal">True to flip horizontally</param>
 /// <param name="vertical">True to flip vertically</param>
 /// <param name="pre">True if pre affine, else post affine.</param>
 template <typename T>
-void FractoriumEmberController<T>::FlipCurrentXform(bool horizontal, bool vertical, bool pre)
+void FractoriumEmberController<T>::FlipXforms(bool horizontal, bool vertical, bool pre)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
 
@@ -266,29 +266,31 @@ void FractoriumEmberController<T>::FlipCurrentXform(bool horizontal, bool vertic
 				affine->F(-affine->F());
 		}
 
-		FillAffineWithXform(xform, pre);
-	});
+	}, eXformUpdate::UPDATE_SELECTED);
+	
+	FillAffineWithXform(CurrentXform(), pre);
 }
 
-void Fractorium::OnFlipHorizontalButtonClicked(bool checked) { m_Controller->FlipCurrentXform(true, false, sender() == ui.PreFlipHorizontalButton); }
-void Fractorium::OnFlipVerticalButtonClicked(bool checked) { m_Controller->FlipCurrentXform(false, true, sender() == ui.PreFlipVerticalButton); }
+void Fractorium::OnFlipHorizontalButtonClicked(bool checked) { m_Controller->FlipXforms(true, false, sender() == ui.PreFlipHorizontalButton); }
+void Fractorium::OnFlipVerticalButtonClicked(bool checked) { m_Controller->FlipXforms(false, true, sender() == ui.PreFlipVerticalButton); }
 
 /// <summary>
-/// Rotate the current pre/post affine transform x degrees.
+/// Rotate the selected pre/post affines transform x degrees.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="angle">The angle to rotate by</param>
 /// <param name="pre">True if pre affine, else post affine.</param>
 template <typename T>
-void FractoriumEmberController<T>::RotateCurrentXformByAngle(double angle, bool pre)
+void FractoriumEmberController<T>::RotateXformsByAngle(double angle, bool pre)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
 
 		affine->Rotate(angle);
-		FillAffineWithXform(xform, pre);
-	});
+	}, eXformUpdate::UPDATE_SELECTED);
+
+	FillAffineWithXform(CurrentXform(), pre);
 }
 
 /// <summary>
@@ -297,8 +299,8 @@ void FractoriumEmberController<T>::RotateCurrentXformByAngle(double angle, bool 
 /// Resets the rendering process.
 /// </summary>
 /// <param name="checked">Ignored</param>
-void Fractorium::OnRotate90CButtonClicked(bool checked) { m_Controller->RotateCurrentXformByAngle(90, sender() == ui.PreRotate90CButton); }
-void Fractorium::OnRotate90CcButtonClicked(bool checked) { m_Controller->RotateCurrentXformByAngle(-90, sender() == ui.PreRotate90CcButton); }
+void Fractorium::OnRotate90CButtonClicked(bool checked) { m_Controller->RotateXformsByAngle(90, sender() == ui.PreRotate90CButton); }
+void Fractorium::OnRotate90CcButtonClicked(bool checked) { m_Controller->RotateXformsByAngle(-90, sender() == ui.PreRotate90CcButton); }
 
 /// <summary>
 /// Rotate the selected pre/post affine transform x degrees clockwise.
@@ -314,7 +316,7 @@ void Fractorium::OnRotateCButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 
 	if (ok)
-		m_Controller->RotateCurrentXformByAngle(d, pre);
+		m_Controller->RotateXformsByAngle(d, pre);
 }
 
 /// <summary>
@@ -331,27 +333,28 @@ void Fractorium::OnRotateCcButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 
 	if (ok)
-		m_Controller->RotateCurrentXformByAngle(-d, pre);
+		m_Controller->RotateXformsByAngle(-d, pre);
 }
 
 /// <summary>
-/// Move the current pre/post affine in the x and y directions by the specified amount.
+/// Move the selected pre/post affines in the x and y directions by the specified amount.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="x">The x direction to move</param>
 /// <param name="y">The y direction to move</param>
 /// <param name="pre">True if pre affine, else post affine.</param>
 template <typename T>
-void FractoriumEmberController<T>::MoveCurrentXform(double x, double y, bool pre)
+void FractoriumEmberController<T>::MoveXforms(double x, double y, bool pre)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
 		
 		affine->C(affine->C() + x);
 		affine->F(affine->F() + y);
-		FillAffineWithXform(xform, pre);
-	});
+	}, eXformUpdate::UPDATE_SELECTED);
+
+	FillAffineWithXform(CurrentXform(), pre);
 }
 
 /// <summary>
@@ -368,7 +371,7 @@ void Fractorium::OnMoveUpButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
-		m_Controller->MoveCurrentXform(0, d, pre);
+		m_Controller->MoveXforms(0, d, pre);
 }
 
 /// <summary>
@@ -385,7 +388,7 @@ void Fractorium::OnMoveDownButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
-		m_Controller->MoveCurrentXform(0, -d, pre);
+		m_Controller->MoveXforms(0, -d, pre);
 }
 
 /// <summary>
@@ -402,7 +405,7 @@ void Fractorium::OnMoveLeftButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
-		m_Controller->MoveCurrentXform(-d, 0, pre);
+		m_Controller->MoveXforms(-d, 0, pre);
 }
 
 /// <summary>
@@ -419,19 +422,19 @@ void Fractorium::OnMoveRightButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
-		m_Controller->MoveCurrentXform(d, 0, pre);
+		m_Controller->MoveXforms(d, 0, pre);
 }
 
 /// <summary>
-/// Scale the current pre/post affine by the specified amount.
+/// Scale the selected pre/post affines by the specified amount.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="scale">The scale value</param>
 /// <param name="pre">True if pre affine, else post affine.</param>
 template <typename T>
-void FractoriumEmberController<T>::ScaleCurrentXform(double scale, bool pre)
+void FractoriumEmberController<T>::ScaleXforms(double scale, bool pre)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
 		
@@ -439,8 +442,9 @@ void FractoriumEmberController<T>::ScaleCurrentXform(double scale, bool pre)
 		affine->B(affine->B() * scale);
 		affine->D(affine->D() * scale);
 		affine->E(affine->E() * scale);
-		FillAffineWithXform(xform, pre);
-	});
+	}, eXformUpdate::UPDATE_SELECTED);
+
+	FillAffineWithXform(CurrentXform(), pre);
 }
 
 /// <summary>
@@ -457,7 +461,7 @@ void Fractorium::OnScaleDownButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
-		m_Controller->ScaleCurrentXform(1.0 / (d / 100.0), pre);
+		m_Controller->ScaleXforms(1.0 / (d / 100.0), pre);
 }
 
 /// <summary>
@@ -474,24 +478,25 @@ void Fractorium::OnScaleUpButtonClicked(bool checked)
 	double d = ToDouble(combo->currentText(), &ok);
 	
 	if (ok)
-		m_Controller->ScaleCurrentXform(d / 100.0, pre);
+		m_Controller->ScaleXforms(d / 100.0, pre);
 }
 
 /// <summary>
-/// Reset pre/post affine to the identity matrix.
+/// Reset selected pre/post affines to the identity matrix.
 /// Called when reset pre/post affine buttons are clicked.
 /// Resets the rendering process.
 /// </summary>
 template <typename T>
-void FractoriumEmberController<T>::ResetCurrentXformAffine(bool pre)
+void FractoriumEmberController<T>::ResetXformsAffine(bool pre)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		Affine2D<T>* affine = pre ? &xform->m_Affine : &xform->m_Post;
 
 		affine->MakeID();
-		FillAffineWithXform(xform, pre);
-	});
+	}, eXformUpdate::UPDATE_SELECTED);
+
+	FillAffineWithXform(CurrentXform(), pre);
 }
 
 /// <summary>
@@ -499,7 +504,7 @@ void FractoriumEmberController<T>::ResetCurrentXformAffine(bool pre)
 /// Called when reset pre/post affine buttons are clicked.
 /// Resets the rendering process.
 /// </summary>
-void Fractorium::OnResetAffineButtonClicked(bool checked) { m_Controller->ResetCurrentXformAffine(sender() == ui.PreResetButton); }
+void Fractorium::OnResetAffineButtonClicked(bool checked) { m_Controller->ResetXformsAffine(sender() == ui.PreResetButton); }
 
 /// <summary>
 /// Fill the GUI with the pre and post affine xform values.

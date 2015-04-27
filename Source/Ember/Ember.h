@@ -621,7 +621,7 @@ public:
 			normalizedWeights.resize(m_Xforms.size());
 
 		ForEach(m_Xforms, [&](Xform<T>& xform) { norm += xform.m_Weight; });
-		ForEach(normalizedWeights, [&](T& weight) { weight = m_Xforms[i].m_Weight / norm; i++; });
+		ForEach(normalizedWeights, [&](T& weight) { weight = (norm == T(0) ? T(0) : m_Xforms[i].m_Weight / norm); i++; });
 	}
 
 	/// <summary>

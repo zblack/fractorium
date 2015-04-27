@@ -244,6 +244,9 @@
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXaos.cpp">
       <Filter>MainWindows</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsSelect.cpp">
+      <Filter>MainWindows</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_Fractorium.h">

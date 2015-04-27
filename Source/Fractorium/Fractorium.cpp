@@ -76,7 +76,8 @@ Fractorium::Fractorium(QWidget* p)
 	InitXformsColorUI();
 	InitXformsAffineUI();
 	InitXformsVariationsUI();
-	InitXformsXaosUI();
+	InitXformsSelectUI();
+	InitXaosUI();
 	InitPaletteUI();
 	InitLibraryUI();
 	InitMenusUI();

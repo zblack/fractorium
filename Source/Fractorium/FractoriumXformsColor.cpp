@@ -37,7 +37,7 @@ void Fractorium::InitXformsColorUI()
 }
 
 /// <summary>
-/// Set the color index of the current xform.
+/// Set the color index of the selected xforms.
 /// Update the color index scrollbar to match.
 /// Called when spinner in the color index cell in the palette ref table is changed.
 /// Optionally resets the rendering process.
@@ -47,17 +47,14 @@ void Fractorium::InitXformsColorUI()
 template <typename T>
 void FractoriumEmberController<T>::XformColorIndexChanged(double d, bool updateRender)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
-	{
-		QScrollBar* scroll = m_Fractorium->ui.XformColorScroll;
-		int scrollVal = d * scroll->maximum();
+	auto scroll = m_Fractorium->ui.XformColorScroll;
+	int scrollVal = d * scroll->maximum();
 
-		scroll->blockSignals(true);
-		scroll->setValue(scrollVal);
-		scroll->blockSignals(false);
+	scroll->blockSignals(true);
+	scroll->setValue(scrollVal);
+	scroll->blockSignals(false);
 
-		SetCurrentXformColorIndex(d);
-	}, updateRender);
+	SetCurrentXformColorIndex(d, updateRender);
 }
 
 void Fractorium::OnXformColorIndexChanged(double d) { OnXformColorIndexChanged(d, true); }
@@ -65,7 +62,7 @@ void Fractorium::OnXformColorIndexChanged(double d, bool updateRender) { m_Contr
 
 /// <summary>
 /// Set the color index of the current xform.
-/// Update the color index cell in the palette ref table to match.
+/// Will trigger an update which will cause the color index cell in the palette ref table to match.
 /// Called when color index scrollbar is changed.
 /// Resets the rendering process.
 /// </summary>
@@ -73,43 +70,40 @@ void Fractorium::OnXformColorIndexChanged(double d, bool updateRender) { m_Contr
 template <typename T>
 void FractoriumEmberController<T>::XformScrollColorIndexChanged(int d)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
-	{
-		m_Fractorium->m_XformColorIndexSpin->setValue(d / double(m_Fractorium->ui.XformColorScroll->maximum()));//Will trigger an update.
-	}, false);
+	m_Fractorium->m_XformColorIndexSpin->setValue(d / double(m_Fractorium->ui.XformColorScroll->maximum()));//Will trigger an update.
 }
 
 void Fractorium::OnXformScrollColorIndexChanged(int d) { m_Controller->XformScrollColorIndexChanged(d); }
 
 /// <summary>
-/// Set the color speed of the current xform.
+/// Set the color speed of the selected xforms.
 /// Called when xform color speed spinner is changed.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="d">The color speed, -1-1.</param>
 template <typename T>
-void FractoriumEmberController<T>::XformColorSpeedChanged(double d) { UpdateCurrentXform([&] (Xform<T>* xform) { xform->m_ColorSpeed = d; }); }
+void FractoriumEmberController<T>::XformColorSpeedChanged(double d) { UpdateXform([&] (Xform<T>* xform) { xform->m_ColorSpeed = d; }, eXformUpdate::UPDATE_SELECTED); }
 void Fractorium::OnXformColorSpeedChanged(double d) { m_Controller->XformColorSpeedChanged(d); }
 
 /// <summary>
-/// Set the opacity of the current xform.
+/// Set the opacity of the selected xforms.
 /// Called when xform opacity spinner is changed.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="d">The opacity, 0-1.</param>
 template <typename T>
-void FractoriumEmberController<T>::XformOpacityChanged(double d) { UpdateCurrentXform([&] (Xform<T>* xform) { xform->m_Opacity = d; }); }
+void FractoriumEmberController<T>::XformOpacityChanged(double d) { UpdateXform([&] (Xform<T>* xform) { xform->m_Opacity = d; }, eXformUpdate::UPDATE_SELECTED); }
 void Fractorium::OnXformOpacityChanged(double d) { m_Controller->XformOpacityChanged(d); }
 
 /// <summary>
-/// Set the direct color percentage of the current xform.
+/// Set the direct color percentage of the selected xforms.
 /// Called when xform direct color spinner is changed.
 /// Note this only affects xforms that include a dc_ variation.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="d">The direct color percentage, 0-1.</param>
 template <typename T>
-void FractoriumEmberController<T>::XformDirectColorChanged(double d) { UpdateCurrentXform([&] (Xform<T>* xform) { xform->m_DirectColor = d; }); }
+void FractoriumEmberController<T>::XformDirectColorChanged(double d) { UpdateXform([&] (Xform<T>* xform) { xform->m_DirectColor = d; }, eXformUpdate::UPDATE_SELECTED); }
 void Fractorium::OnXformDirectColorChanged(double d) { m_Controller->XformDirectColorChanged(d); }
 
 /// <summary>
@@ -201,27 +195,27 @@ void Fractorium::OnCurvesGreenRadioButtonToggled(bool checked) { if (checked) ui
 void Fractorium::OnCurvesBlueRadioButtonToggled(bool checked)  { if (checked) ui.CurvesView->SetTop(CurveIndex::BLUE);  }
 
 /// <summary>
-/// Set the current xform color index spinner to the current xform's color index.
+/// Set the selected xforms color index to the passed in value.
 /// Set the color cell in the palette ref table.
 /// </summary>
 /// <param name="d">The index value to set, 0-1.</param>
 template <typename T>
-void FractoriumEmberController<T>::SetCurrentXformColorIndex(double d)
+void FractoriumEmberController<T>::SetCurrentXformColorIndex(double d, bool updateRender)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		xform->m_ColorX = Clamp<T>(d, 0, 1);
-
+	
 		//Grab the current color from the index and assign it to the first cell of the first table.
 		v4T entry = m_Ember.m_Palette[Clamp<int>(d * COLORMAP_LENGTH_MINUS_1, 0, m_Ember.m_Palette.Size())];
 		
 		entry.r *= 255;
 		entry.g *= 255;
 		entry.b *= 255;
-
+	
 		QRgb rgb = uint(entry.r) << 16 | uint(entry.g) << 8 | uint(entry.b);
 		m_Fractorium->ui.XformColorIndexTable->item(0, 0)->setBackgroundColor(QColor::fromRgb(rgb));
-	}, false);
+	}, eXformUpdate::UPDATE_SELECTED, updateRender);
 }
 
 /// <summary>
@@ -247,7 +241,7 @@ void FractoriumEmberController<T>::FillCurvesControl()
 }
 
 /// <summary>
-/// Set the color index, speed and opacity spinners with the values of the current xform.
+/// Set the color index, speed and opacity spinners with the values of the passed in xform.
 /// Set the cells of the palette ref table as well.
 /// </summary>
 /// <param name="xform">The xform whose values will be copied to the GUI</param>

@@ -618,10 +618,12 @@ void FractoriumEmberController<T>::AddReflectiveSymmetry()
 {
 	QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
 
-	m_Ember.AddSymmetry(-1, m_Rand);
-	m_Fractorium->FillXforms();
-	combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
-	UpdateRender();
+	Update([&]()
+	{
+		m_Ember.AddSymmetry(-1, m_Rand);
+		FillXforms();
+		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+	});
 }
 
 void Fractorium::OnActionAddReflectiveSymmetry(bool checked) { m_Controller->AddReflectiveSymmetry(); }
@@ -635,10 +637,12 @@ void FractoriumEmberController<T>::AddRotationalSymmetry()
 {
 	QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
 
-	m_Ember.AddSymmetry(2, m_Rand);
-	m_Fractorium->FillXforms();
-	combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
-	UpdateRender();
+	Update([&]()
+	{
+		m_Ember.AddSymmetry(2, m_Rand);
+		FillXforms();
+		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+	});
 }
 
 void Fractorium::OnActionAddRotationalSymmetry(bool checked) { m_Controller->AddRotationalSymmetry(); }
@@ -652,10 +656,12 @@ void FractoriumEmberController<T>::AddBothSymmetry()
 {
 	QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
 
-	m_Ember.AddSymmetry(-2, m_Rand);
-	m_Fractorium->FillXforms();
-	combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
-	UpdateRender();
+	Update([&]()
+	{
+		m_Ember.AddSymmetry(-2, m_Rand);
+		FillXforms();
+		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+	});
 }
 
 void Fractorium::OnActionAddBothSymmetry(bool checked) { m_Controller->AddBothSymmetry(); }
@@ -665,7 +671,7 @@ void Fractorium::OnActionAddBothSymmetry(bool checked) { m_Controller->AddBothSy
 /// Resets the rendering process.
 /// </summary>
 template <typename T>
-void FractoriumEmberController<T>::Flatten() { UpdateCurrentXform([&] (Xform<T>* xform) { m_Ember.Flatten(XmlToEmber<T>::m_FlattenNames); FillVariationTreeWithXform(xform); }); }
+void FractoriumEmberController<T>::Flatten() { UpdateXform([&] (Xform<T>* xform) { m_Ember.Flatten(XmlToEmber<T>::m_FlattenNames); FillVariationTreeWithXform(xform); }); }
 void Fractorium::OnActionFlatten(bool checked) { m_Controller->Flatten(); }
 	
 /// <summary>
@@ -673,7 +679,7 @@ void Fractorium::OnActionFlatten(bool checked) { m_Controller->Flatten(); }
 /// Resets the rendering process.
 /// </summary>
 template <typename T>
-void FractoriumEmberController<T>::Unflatten() { UpdateCurrentXform([&] (Xform<T>* xform) { m_Ember.Unflatten(); FillVariationTreeWithXform(xform); }); }
+void FractoriumEmberController<T>::Unflatten() { UpdateXform([&] (Xform<T>* xform) { m_Ember.Unflatten(); FillVariationTreeWithXform(xform); }); }
 void Fractorium::OnActionUnflatten(bool checked) { m_Controller->Unflatten(); }
 
 /// <summary>
@@ -684,21 +690,23 @@ void Fractorium::OnActionUnflatten(bool checked) { m_Controller->Unflatten(); }
 template <typename T>
 void FractoriumEmberController<T>::ClearFlame()
 {
-	while (m_Ember.TotalXformCount() > 1)
-		m_Ember.DeleteTotalXform(m_Ember.TotalXformCount() - 1);
-
-	if (m_Ember.XformCount() == 1)
+	Update([&]()
 	{
-		if (Xform<T>* xform = m_Ember.GetXform(0))
-		{
-			xform->Clear();
-			xform->ParentEmber(&m_Ember);
-		}
-	}
+		while (m_Ember.TotalXformCount() > 1)
+			m_Ember.DeleteTotalXform(m_Ember.TotalXformCount() - 1);
 
-	m_Fractorium->FillXforms();
-	m_Fractorium->ui.CurrentXformCombo->setCurrentIndex(0);
-	UpdateRender();
+		if (m_Ember.XformCount() == 1)
+		{
+			if (Xform<T>* xform = m_Ember.GetXform(0))
+			{
+				xform->Clear();
+				xform->ParentEmber(&m_Ember);
+			}
+		}
+
+		FillXforms();
+		m_Fractorium->ui.CurrentXformCombo->setCurrentIndex(0);
+	});
 }
 
 void Fractorium::OnActionClearFlame(bool checked) { m_Controller->ClearFlame(); }

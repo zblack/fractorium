@@ -224,21 +224,79 @@ void FractoriumEmberController<T>::Update(std::function<void (void)> func, bool 
 }
 
 /// <summary>
-/// Wrapper to call a function on the current xform, then optionally add the requested action to the rendering queue.
+/// Wrapper to call a function on the specified xforms, then optionally add the requested action to the rendering queue.
+/// If no xforms are selected via the checkboxes, and the update type is UPDATE_SELECTED, then the function will be called only on the currently selected xform.
 /// </summary>
 /// <param name="func">The function to call</param>
+/// <param name="updateType">Whether to apply this update operation on the current, all or selected xforms. Default: UPDATE_CURRENT.</param>
 /// <param name="updateRender">True to update renderer, else false. Default: true.</param>
 /// <param name="action">The action to add to the rendering queue. Default: FULL_RENDER.</param>
 template <typename T>
-void FractoriumEmberController<T>::UpdateCurrentXform(std::function<void (Xform<T>*)> func, bool updateRender, eProcessAction action)
+void FractoriumEmberController<T>::UpdateXform(std::function<void(Xform<T>*)> func, eXformUpdate updateType, bool updateRender, eProcessAction action)
 {
-	if (Xform<T>* xform = CurrentXform())
-	{
-		func(xform);
+	size_t i = 0;
+	bool isCurrentFinal = m_Ember.IsFinalXform(CurrentXform());
+	bool doFinal = updateType != eXformUpdate::UPDATE_SELECTED_EXCEPT_FINAL && updateType != eXformUpdate::UPDATE_ALL_EXCEPT_FINAL;
 
-		if (updateRender)
-			UpdateRender(action);
+	switch (updateType)
+	{
+		case eXformUpdate::UPDATE_CURRENT:
+		{
+			if (Xform<T>* xform = CurrentXform())
+				func(xform);
+		}
+		break;
+
+		case eXformUpdate::UPDATE_SELECTED:
+		case eXformUpdate::UPDATE_SELECTED_EXCEPT_FINAL:
+		{
+			bool anyUpdated = false;
+
+			while (Xform<T>* xform = (doFinal ? m_Ember.GetTotalXform(i) : m_Ember.GetXform(i)))
+			{
+				if (QLayoutItem* child = m_Fractorium->m_XformsSelectionLayout->itemAt(i))
+				{
+					if (auto* w = dynamic_cast<QCheckBox*>(child->widget()))
+					{
+						if (w->isChecked())
+						{
+							func(xform);
+							anyUpdated = true;
+						}
+					}
+				}
+
+				i++;
+			}
+
+			if (!anyUpdated)//None were selected, so just apply to the current.
+				if (doFinal || !isCurrentFinal)//If do final, call func regardless. If not, only call if current is not final.
+					if (Xform<T>* xform = CurrentXform())
+						func(xform);
+		}
+
+		break;
+
+		case eXformUpdate::UPDATE_ALL:
+		{
+			while (Xform<T>* xform = m_Ember.GetTotalXform(i++))
+				func(xform);
+		}
+
+		break;
+
+		case eXformUpdate::UPDATE_ALL_EXCEPT_FINAL:
+		default:
+		{
+			while (Xform<T>* xform = m_Ember.GetXform(i++))
+				func(xform);
+		}
+
+		break;
 	}
+
+	if (updateRender)
+		UpdateRender(action);
 }
 
 /// <summary>
@@ -276,7 +334,7 @@ void FractoriumEmberController<T>::SetEmberPrivate(const Ember<U>& ember, bool v
 #endif
 
 	m_GLController->ResetMouseState();
-	m_Fractorium->FillXforms();//Must do this first because the palette setup in FillParamTablesAndPalette() uses the xforms combo.
+	FillXforms();//Must do this first because the palette setup in FillParamTablesAndPalette() uses the xforms combo.
 	FillParamTablesAndPalette();
 
 	//If a resize happened, this won't do anything because the new size is not reflected in the scroll area yet.

@@ -30,7 +30,7 @@ void Fractorium::InitXformsUI()
 	connect(ui.XformWeightNameTable, SIGNAL(cellChanged(int, int)), this, SLOT(OnXformNameChanged(int, int)), Qt::QueuedConnection);
 
 	ui.CurrentXformCombo->setProperty("soloxform", -1);
-	
+
 #ifndef WIN32    
 	//For some reason linux makes these 24x24, even though the designer explicitly says 16x16.
 	ui.AddXformButton->setIconSize(QSize(16, 16));
@@ -101,7 +101,7 @@ void Fractorium::OnCurrentXformComboChanged(int index) { m_Controller->CurrentXf
 template <typename T>
 void FractoriumEmberController<T>::AddXform()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	Update([&]()
 	{
 		Xform<T> newXform;
 		QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
@@ -109,7 +109,7 @@ void FractoriumEmberController<T>::AddXform()
 		newXform.m_Weight = 0.25;
 		newXform.m_ColorX = m_Rand.Frand01<T>();
 		m_Ember.AddXform(newXform);
-		m_Fractorium->FillXforms();
+		FillXforms();
 		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
 	});
 }
@@ -117,7 +117,7 @@ void FractoriumEmberController<T>::AddXform()
 void Fractorium::OnAddXformButtonClicked(bool checked) { m_Controller->AddXform(); }
 
 /// <summary>
-/// Duplicate the current xform in the current ember, and set it as the current xform.
+/// Duplicate the specified xforms in the current ember, and set the last one as the current xform.
 /// Called when the duplicate xform button is clicked.
 /// Resets the rendering process.
 /// </summary>
@@ -125,71 +125,112 @@ void Fractorium::OnAddXformButtonClicked(bool checked) { m_Controller->AddXform(
 template <typename T>
 void FractoriumEmberController<T>::DuplicateXform()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	vector<Xform<T>> vec;
+
+	vec.reserve(m_Ember.XformCount());
+
+	UpdateXform([&] (Xform<T>* xform)
+	{
+		vec.push_back(*xform);
+	}, eXformUpdate::UPDATE_SELECTED_EXCEPT_FINAL, false);
+
+	Update([&]()
 	{
 		QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
 
-		if (xform && !IsFinal(xform))
-		{
-			m_Ember.AddXform(*xform);
-			m_Fractorium->FillXforms();
-			combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
-		}
+		for (auto& it : vec)
+			m_Ember.AddXform(it);
+		
+		FillXforms();//Handles xaos.
+		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
 	});
 }
 
 void Fractorium::OnDuplicateXformButtonClicked(bool checked) { m_Controller->DuplicateXform(); }
 
 /// <summary>
-/// Clear all variations from the current xform, affine, palette and xaos are left untouched.
+/// Clear all variations from the selected xforms. Affine, palette and xaos are left untouched.
 /// Called when the clear xform button is clicked.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="checked">Ignored</param>
 template <typename T>
-void FractoriumEmberController<T>::ClearCurrentXform()
+void FractoriumEmberController<T>::ClearXform()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
-		xform->ClearAndDeleteVariations();
-		//Note xaos is left alone.
-		FillVariationTreeWithXform(xform);
-	});
+		xform->ClearAndDeleteVariations();//Note xaos is left alone.
+	}, eXformUpdate::UPDATE_SELECTED);
+
+	FillVariationTreeWithXform(CurrentXform());
 }
 
-void Fractorium::OnClearXformButtonClicked(bool checked) { m_Controller->ClearCurrentXform(); }
+void Fractorium::OnClearXformButtonClicked(bool checked) { m_Controller->ClearXform(); }
 
 /// <summary>
-/// Delete the current xform.
+/// Delete the selected xforms.
 /// Will not delete the last remaining non-final xform.
 /// Called when the delete xform button is clicked.
 /// Resets the rendering process.
 /// </summary>
 /// <param name="checked">Ignored</param>
 template <typename T>
-void FractoriumEmberController<T>::DeleteCurrentXform()
+void FractoriumEmberController<T>::DeleteXforms()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	int i = 0, offset = 0, current = 0, checked = 0;
+	bool haveFinal = false;
+	size_t count;
+	QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
+
+	//Iterating over the checkboxes must be done instead of using UpdateXform() to iterate over xforms
+	//because xforms are being deleted inside the loop.
+	//Also manually calling UpdateRender() rather than using the usual Update() call because
+	//it should only be called if an xform has actually been deleted.
+	m_Fractorium->ForEachXformCheckbox([&](int i, QCheckBox* w)
 	{
-		bool haveFinal = m_Fractorium->HaveFinal();
-		QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
-		int count = combo->count();
-		int index = combo->currentIndex();
+		count = m_Ember.TotalXformCount();
+		haveFinal = m_Ember.UseFinalXform();//Requery every time.
+		
+		if (w->isChecked())
+			checked++;
 
 		//Do not allow deleting the only remaining non-final xform.
-		if (haveFinal && count <= 2 && index == 0)
+		if (haveFinal && count <= 2 && i == 0)
 			return;
 
 		if (!haveFinal && count == 1)
 			return;
 
-		m_Ember.DeleteTotalXform(index);
-		m_Fractorium->FillXforms();
-		combo->setCurrentIndex(combo->count() - (haveFinal ? 2 : 1));//Set index to the last item before final.
+		if (w->isChecked())
+		{
+			//qDebug() << "Deleting " << w->text();
+			m_Ember.DeleteTotalXform(i - offset);//Subtract offset to account for previously deleted xforms.
+			offset++;
+		}
 	});
+
+	current = combo->currentIndex();
+	count = m_Ember.TotalXformCount();
+	haveFinal = m_Ember.UseFinalXform();//Requery again.
+
+	//Nothing was selected, so just delete current.
+	if (!checked &&
+		!(haveFinal && count <= 2 && current == 0) &&//Again disallow deleting the only remaining non-final xform.
+		!(!haveFinal && count == 1))
+	{
+		m_Ember.DeleteTotalXform(current);
+		offset++;
+	}
+
+	if (offset)
+	{
+		FillXforms();
+		combo->setCurrentIndex(combo->count() - (m_Ember.UseFinalXform() ? 2 : 1));//Set index to the last item before final. Note final is requeried one last time.
+		UpdateRender();
+	}
 }
 
-void Fractorium::OnDeleteXformButtonClicked(bool checked) { m_Controller->DeleteCurrentXform(); }
+void Fractorium::OnDeleteXformButtonClicked(bool checked) { m_Controller->DeleteXforms(); }
 
 /// <summary>
 /// Add a final xform to the ember and set it as the current xform.
@@ -201,26 +242,26 @@ void Fractorium::OnDeleteXformButtonClicked(bool checked) { m_Controller->Delete
 template <typename T>
 void FractoriumEmberController<T>::AddFinalXform()
 {
-	QComboBox* combo = m_Fractorium->ui.CurrentXformCombo;
-
 	//Check to see if a final xform is already present.
 	if (!m_Fractorium->HaveFinal())
 	{
-		Xform<T> xform;
+		Update([&]()
+		{
+			Xform<T> final;
+			auto combo = m_Fractorium->ui.CurrentXformCombo;
 
-		xform.AddVariation(new LinearVariation<T>());//Just a placeholder so other parts of the code don't see it as being empty.
-		m_Ember.SetFinalXform(xform);
-		combo->addItem("Final");
-		combo->setItemIcon(combo->count() - 1, m_Fractorium->m_FinalXformComboIcon);
-		combo->setCurrentIndex(combo->count() - 1);//Set index to the last item.
-		UpdateRender();
+			final.AddVariation(new LinearVariation<T>());//Just a placeholder so other parts of the code don't see it as being empty.
+			m_Ember.SetFinalXform(final);
+			FillXforms();
+			combo->setCurrentIndex(combo->count() - 1);//Set index to the last item.
+		});
 	}
 }
 
 void Fractorium::OnAddFinalXformButtonClicked(bool checked) { m_Controller->AddFinalXform(); }
 
 /// <summary>
-/// Set the weight of the current xform.
+/// Set the weight of the selected xforms.
 /// Called when weight spinner changes.
 /// Resets the rendering process.
 /// </summary>
@@ -228,11 +269,12 @@ void Fractorium::OnAddFinalXformButtonClicked(bool checked) { m_Controller->AddF
 template <typename T>
 void FractoriumEmberController<T>::XformWeightChanged(double d)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		xform->m_Weight = d;
-		SetNormalizedWeightText(xform);
-	});
+	}, eXformUpdate::UPDATE_SELECTED_EXCEPT_FINAL);
+
+	SetNormalizedWeightText(CurrentXform());
 }
 
 void Fractorium::OnXformWeightChanged(double d) { m_Controller->XformWeightChanged(d); }
@@ -243,17 +285,18 @@ void Fractorium::OnXformWeightChanged(double d) { m_Controller->XformWeightChang
 template <typename T>
 void FractoriumEmberController<T>::EqualizeWeights()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
 		m_Ember.EqualizeWeights();
 		m_Fractorium->m_XformWeightSpin->setValue(xform->m_Weight);//Will trigger an update, so pass false to updateRender below.
-	}, false);
+	}, eXformUpdate::UPDATE_CURRENT, false);
 }
 
 void Fractorium::OnEqualWeightButtonClicked(bool checked) { m_Controller->EqualizeWeights(); }
 
 /// <summary>
 /// Set the name of the current xform.
+/// Update the corresponding xform checkbox text with the name.
 /// Called when the user types in the name cell of the table.
 /// </summary>
 /// <param name="row">The row of the cell</param>
@@ -261,18 +304,18 @@ void Fractorium::OnEqualWeightButtonClicked(bool checked) { m_Controller->Equali
 template <typename T>
 void FractoriumEmberController<T>::XformNameChanged(int row, int col)
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	UpdateXform([&] (Xform<T>* xform)
 	{
-		int index = m_Ember.GetXformIndex(xform);
+		int index = m_Ember.GetTotalXformIndex(xform);
 
 		xform->m_Name = m_Fractorium->ui.XformWeightNameTable->item(row, col)->text().toStdString();
-
+		XformCheckboxAt(index, [&](QCheckBox* checkbox) { checkbox->setText(MakeXformCaption(index)); });
 		//if (index != -1)
 		//{
 		//	if (QTableWidgetItem* xformNameItem = m_Fractorium->ui.XaosTable->item(index, 0))
 		//		xformNameItem->setText(MakeXaosNameString(index));
 		//}
-	}, false);
+	}, eXformUpdate::UPDATE_CURRENT, false);
 }
 
 void Fractorium::OnXformNameChanged(int row, int col) { m_Controller->XformNameChanged(row, col); }
@@ -282,7 +325,7 @@ void Fractorium::OnXformNameChanged(int row, int col) { m_Controller->XformNameC
 /// </summary>
 /// <param name="xform">The xform whose values will be used to populate the widgets</param>
 template <typename T>
-void FractoriumEmberController<T>::FillWithXform(Xform<T>* xform)
+void FractoriumEmberController<T>::FillWithXform(Xform<T>* xform)//Need to see where all this is called from and sync with FillXform(). Maybe rename the latter.
 {
 	m_Fractorium->m_XformWeightSpin->SetValueStealth(xform->m_Weight);
 	SetNormalizedWeightText(xform);
@@ -332,32 +375,71 @@ bool FractoriumEmberController<T>::IsFinal(Xform<T>* xform)
 /// <summary>
 /// Fill the xforms combo box with the xforms in the current ember.
 /// Select the first one and fill all widgets with its values.
+/// Also dynamically generate a checkbox for each xform which will allow the user
+/// to select which xforms to apply operations to.
 /// </summary>
-void Fractorium::FillXforms()
+template <typename T>
+void FractoriumEmberController<T>::FillXforms()
 {
-	int i = 0, spinHeight = 20;
-	QComboBox* combo = ui.CurrentXformCombo;
+	int i = 0, count = int(XformCount());
+	auto combo = m_Fractorium->ui.CurrentXformCombo;
 
 	combo->blockSignals(true);
 	combo->clear();
 	
-	for (i = 0; i < int(m_Controller->XformCount()); i++)
+	//First clear all dynamically created checkboxes.
+	m_Fractorium->ClearXformsSelections();
+	m_Fractorium->m_XformsSelectionLayout->blockSignals(true);
+	
+	//Fill combo box and create new checkboxes.
+	for (i = 0; i < count; i++)
 	{
 		combo->addItem(ToString(i + 1));
-		combo->setItemIcon(i, m_XformComboIcons[i % XFORM_COLOR_COUNT]);
+		combo->setItemIcon(i, m_Fractorium->m_XformComboIcons[i % XFORM_COLOR_COUNT]);
 	}
 	
-	if (m_Controller->UseFinalXform())
+	i = 0;
+	while (i < count)
 	{
-		combo->addItem("Final");
-		combo->setItemIcon(i, m_FinalXformComboIcon);
+		if (i < count - 1)
+		{
+			auto cb1 = new QCheckBox(MakeXformCaption(i), m_Fractorium);
+			auto cb2 = new QCheckBox(MakeXformCaption(i + 1), m_Fractorium);
+	
+			m_Fractorium->m_XformSelections.push_back(cb1);
+			m_Fractorium->m_XformSelections.push_back(cb2);
+			m_Fractorium->m_XformsSelectionLayout->addRow(cb1, cb2);
+			i += 2;
+		}
+		else if (i < count)
+		{
+			auto cb = new QCheckBox(MakeXformCaption(i), m_Fractorium);
+	
+			m_Fractorium->m_XformSelections.push_back(cb);
+			m_Fractorium->m_XformsSelectionLayout->addRow(cb, new QWidget(m_Fractorium));
+			i++;
+		}
 	}
-
+	
+	//Special case for final xform.
+	if (UseFinalXform())
+	{
+		auto cb = new QCheckBox(MakeXformCaption(i), m_Fractorium);
+	
+		m_Fractorium->m_XformSelections.push_back(cb);
+		m_Fractorium->m_XformsSelectionLayout->addRow(cb, new QWidget(m_Fractorium));
+	
+		combo->addItem("Final");
+		combo->setItemIcon(i, m_Fractorium->m_FinalXformComboIcon);
+	}
+	
+	m_Fractorium->m_XformsSelectionLayout->blockSignals(false);
 	combo->blockSignals(false);
 	combo->setCurrentIndex(0);
-	FillXaosTable();
-	OnSoloXformCheckBoxStateChanged(Qt::Unchecked);
-	OnCurrentXformComboChanged(0);//Make sure the event gets called, because it won't if the zero index is already selected.
+	
+	m_Fractorium->FillXaosTable();
+	m_Fractorium->OnSoloXformCheckBoxStateChanged(Qt::Unchecked);
+	m_Fractorium->OnCurrentXformComboChanged(0);//Make sure the event gets called, because it won't if the zero index is already selected.
 }
 
 template class FractoriumEmberController<float>;

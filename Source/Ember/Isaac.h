@@ -199,7 +199,7 @@ public:
 	/// <returns>A random 0 or 1</returns>
 	inline uint RandBit()
 	{
-		return Rand() & 1;
+		return RandByte() & 1;
 	}
 
 	/// <summary>

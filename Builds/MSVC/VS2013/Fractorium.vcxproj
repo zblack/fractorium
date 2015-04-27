@@ -326,6 +326,7 @@ xcopy /F /Y /R /D "$(SolutionDir)..\..\..\Data\flam3-palettes.xml" "$(OutDir)"</
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXforms.cpp" />
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsAffine.cpp" />
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsColor.cpp" />
+    <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsSelect.cpp" />
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXformsVariations.cpp" />
     <ClCompile Include="..\..\..\Source\Fractorium\FractoriumXaos.cpp" />
     <ClCompile Include="..\..\..\Source\Fractorium\GLEmberController.cpp" />

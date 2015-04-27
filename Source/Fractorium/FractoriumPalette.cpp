@@ -202,7 +202,7 @@ void FractoriumEmberController<T>::UpdateAdjustedPaletteGUI(Palette<T>& palette)
 template <typename T>
 void FractoriumEmberController<T>::PaletteAdjust()
 {
-	UpdateCurrentXform([&] (Xform<T>* xform)
+	Update([&]()
 	{
 		ApplyPaletteToEmber();
 		UpdateAdjustedPaletteGUI(m_Ember.m_Palette);

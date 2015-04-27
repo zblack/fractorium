@@ -241,7 +241,11 @@ public slots:
 	void OnVariationsFilterLineEditTextChanged(const QString& text);
 	void OnVariationsFilterClearButtonClicked(bool checked);
 
-	//Xforms Xaos.
+	//Xforms Selection.
+	void OnXformsSelectAllButtonClicked(bool checked);
+	void OnXformsSelectNoneButtonClicked(bool checked);
+
+	//Xaos.
 	void OnXaosChanged(double d);
 	void OnClearXaosButtonClicked(bool checked);
 	void OnRandomXaosButtonClicked(bool checked);
@@ -287,7 +291,8 @@ private:
 	void InitXformsColorUI();
 	void InitXformsAffineUI();
 	void InitXformsVariationsUI();
-	void InitXformsXaosUI();
+	void InitXformsSelectUI();
+	void InitXaosUI();
 	void InitPaletteUI();
 	void InitLibraryUI();
 	void SetTabOrders();
@@ -301,7 +306,6 @@ private:
 	//Params.
 
 	//Xforms.
-	void FillXforms();
 
 	//Xforms Color.
 
@@ -309,7 +313,11 @@ private:
 
 	//Xforms Variations.
 
-	//Xforms Xaos.
+	//Xforms Selection.
+	void ClearXformsSelections();
+	void ForEachXformCheckbox(std::function<void(int, QCheckBox*)> func);
+
+	//Xaos.
 	void FillXaosTable();
 	
 	//Palette.
@@ -371,6 +379,8 @@ private:
 	//Xforms.
 	DoubleSpinBox* m_XformWeightSpin;
 	SpinnerButtonWidget* m_XformWeightSpinnerButtonWidget;
+	QFormLayout* m_XformsSelectionLayout;
+	QVector<QCheckBox*> m_XformSelections;
 
 	//Xforms Color.
 	QTableWidgetItem* m_XformColorValueItem;

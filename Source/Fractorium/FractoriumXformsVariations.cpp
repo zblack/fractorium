@@ -129,7 +129,7 @@ void FractoriumEmberController<T>::ClearVariationsTree()
 /// </summary>
 /// <param name="d">The spinner value</param>
 template <typename T>
-void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)
+void FractoriumEmberController<T>::VariationSpinBoxValueChanged(double d)//Would be awesome to make this work for all.//TODO
 {
 	QObject* objSender = m_Fractorium->sender();
 	QTreeWidget* tree = m_Fractorium->ui.VariationsTree;
