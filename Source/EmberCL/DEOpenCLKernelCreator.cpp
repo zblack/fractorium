@@ -207,7 +207,7 @@ T DEOpenCLKernelCreator<T>::SolveMaxDERad(uint maxBoxSize, T desiredFilterSize, 
 template <typename T>
 uint DEOpenCLKernelCreator<T>::SolveMaxBoxSize(uint localMem)
 {
-	return uint(floor(sqrt(floor(T(localMem) / 16.0))));//Divide by 16 because each element is float4.
+	return uint(floor(std::sqrt(floor(T(localMem) / 16.0))));//Divide by 16 because each element is float4.
 }
 
 /// <summary>
@@ -291,7 +291,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 
 		if (doScf)
 			os <<
-			"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), (real_t)2.0);\n";
+			"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + (real_t)1.0), (real_t)2.0);\n";
 	}
 
 	os <<
@@ -518,7 +518,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernel(size_t ss)
 
 		if (doScf)
 		os <<
-		"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + 1.0), (real_t)2.0);\n";
+		"	real_t scfact = pow(densityFilter->m_Supersample / (densityFilter->m_Supersample + (real_t)1.0), (real_t)2.0);\n";
 	}
 
 	//Compute the size of the temporary box which is the block width + 2 * filter width x block height + 2 * filter width.
@@ -776,7 +776,7 @@ string DEOpenCLKernelCreator<T>::CreateGaussianDEKernelNoLocalCache(size_t ss)
 		"	int densityBoxBottomY;\n";
 
 	if (doScf)
-	os << "	real_t scfact = pow((real_t)densityFilter->m_Supersample / ((real_t)densityFilter->m_Supersample + 1.0), (real_t)2.0);\n";
+	os << "	real_t scfact = pow((real_t)densityFilter->m_Supersample / ((real_t)densityFilter->m_Supersample + (real_t)1.0), (real_t)2.0);\n";
 	}
 
 	os <<

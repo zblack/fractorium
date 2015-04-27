@@ -634,7 +634,7 @@ public:
 						}
 
 						cxAng[k][col] = atan2(c1[1], c1[0]);
-						cxMag[k][col] = sqrt(c1[0] * c1[0] + c1[1] * c1[1]);
+						cxMag[k][col] = std::sqrt(c1[0] * c1[0] + c1[1] * c1[1]);
 
 						if (cxMag[k][col] == 0)
 							zlm[col] = 1;

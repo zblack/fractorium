@@ -185,7 +185,7 @@ public:
 			{
 				for (dek = -m_FilterWidth; dek <= m_FilterWidth; dek++)
 				{
-					filterVal = sqrt(T(dej * dej + dek * dek)) / filterHeight;
+					filterVal = std::sqrt(T(dej * dej + dek * dek)) / filterHeight;
 
 					//Only populate the coefs within this radius.
 					if (filterVal <= 1.0)
@@ -200,7 +200,7 @@ public:
 			{
 				for (dek = 0; dek <= dej; dek++)
 				{
-					filterVal = sqrt(T(dej * dej + dek * dek)) / filterHeight;
+					filterVal = std::sqrt(T(dej * dej + dek * dek)) / filterHeight;
 
 					//Only populate the coefs within this radius.
 					if (filterVal > 1.0)

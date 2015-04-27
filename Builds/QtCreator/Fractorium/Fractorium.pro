@@ -22,6 +22,7 @@ INCLUDEPATH += ../../../Source/Fractorium
 
 SOURCES += \
     ../../../Source/Fractorium/AboutDialog.cpp \
+    ../../../Source/Fractorium/CurvesGraphicsView.cpp \
     ../../../Source/Fractorium/DoubleSpinBox.cpp \
     ../../../Source/Fractorium/FinalRenderDialog.cpp \
     ../../../Source/Fractorium/FinalRenderEmberController.cpp \
@@ -36,11 +37,11 @@ SOURCES += \
     ../../../Source/Fractorium/FractoriumRender.cpp \
     ../../../Source/Fractorium/FractoriumSettings.cpp \
     ../../../Source/Fractorium/FractoriumToolbar.cpp \
+    ../../../Source/Fractorium/FractoriumXaos.cpp \
     ../../../Source/Fractorium/FractoriumXforms.cpp \
     ../../../Source/Fractorium/FractoriumXformsAffine.cpp \
     ../../../Source/Fractorium/FractoriumXformsColor.cpp \
     ../../../Source/Fractorium/FractoriumXformsVariations.cpp \
-    ../../../Source/Fractorium/FractoriumXformsXaos.cpp \
     ../../../Source/Fractorium/GLEmberController.cpp \
     ../../../Source/Fractorium/GLWidget.cpp \
     ../../../Source/Fractorium/Main.cpp \
@@ -49,6 +50,7 @@ SOURCES += \
 
 HEADERS  += \
     ../../../Source/Fractorium/AboutDialog.h \
+    ../../../Source/Fractorium/CurvesGraphicsView.h \
     ../../../Source/Fractorium/DoubleSpinBox.h \
     ../../../Source/Fractorium/EmberFile.h \
     ../../../Source/Fractorium/EmberTreeWidgetItem.h \

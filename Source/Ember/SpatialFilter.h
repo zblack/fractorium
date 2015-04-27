@@ -269,7 +269,7 @@ public:
 	/// <returns>The filtered value</returns>
 	virtual T Filter(T t) const
 	{
-		return exp(-2 * t * t) * sqrt(2 / T(M_PI));
+		return exp(-2 * t * t) * std::sqrt(2 / T(M_PI));
 	}
 };
 

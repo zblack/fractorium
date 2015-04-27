@@ -894,7 +894,7 @@ public:
 
 			if (m_NeedPrecalcSqrtSumSquares)
 			{
-				helper.m_PrecalcSqrtSumSquares = sqrt(helper.m_PrecalcSumSquares);
+				helper.m_PrecalcSqrtSumSquares = std::sqrt(helper.m_PrecalcSumSquares);
 
 				if (m_NeedPrecalcAngles)
 				{

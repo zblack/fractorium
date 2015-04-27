@@ -1150,7 +1150,7 @@ public:
 	{
 		T sx = helper.In.x - m_CenterX;
 		T sy = helper.In.y - m_CenterY;
-		T r = sqrt(SQR(sx) + SQR(sy)) - m_Offset;
+		T r = std::sqrt(SQR(sx) + SQR(sy)) - m_Offset;
 
 		r = r < 0 ? 0 : r;
 		r *= m_S2;
@@ -1394,7 +1394,7 @@ public:
 					y = T(DiscreteNoise(int(l + 21 * m1 + 33 * n1 + m_YSeed)) + n1) * m_Step;
 					offsetX = helper.In.x - x;
 					offsetY = helper.In.y - y;
-					r = sqrt(SQR(offsetX) + SQR(offsetY));
+					r = std::sqrt(SQR(offsetX) + SQR(offsetY));
 
 					if (r < rMin)
 					{
@@ -1985,7 +1985,7 @@ public:
 		T xi = helper.In.x - m_X;//Original altered the input pointed to for reg, but not for pre/post. Don't do that here.
 		T yi = helper.In.y - m_Y;
 
-		const T rad = sqrt(SQR(xi) + SQR(yi));
+		const T rad = std::sqrt(SQR(xi) + SQR(yi));
 		const T ang = atan2(yi, xi);
 		const T rdc = m_Radius + (rand.Frand01<T>() * T(0.5) * m_Ca);
 		const T s = sin(ang);
@@ -2242,7 +2242,7 @@ public:
 
 			if (r2 < m_SqrWeight)
 			{
-				T r = m_Weight * sqrt(m_SqrWeight / r2 - 1);
+				T r = m_Weight * std::sqrt(m_SqrWeight / r2 - 1);
 
 				helper.Out.x = r * helper.In.x;
 				helper.Out.y = r * helper.In.y;
@@ -2257,7 +2257,7 @@ public:
 		{
 			T x = helper.In.x - m_X;
 			T y = helper.In.y + m_Y;
-			T r = sqrt(SQR(x) + SQR(y));
+			T r = std::sqrt(SQR(x) + SQR(y));
 
 			if (r < m_Weight)
 			{
@@ -2807,7 +2807,7 @@ public:
 
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
-		T r = sqrt(fabs(helper.m_PrecalcSumSquares + helper.In.z));
+		T r = std::sqrt(fabs(helper.m_PrecalcSumSquares + helper.In.z));
 
 		r += m_Ar * sin(fma(m_Br, r, m_Cr));
 
@@ -3351,7 +3351,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sysz = SQR(helper.In.y) + SQR(helper.In.z);
-		T absV = sqrt(sysz);
+		T absV = std::sqrt(sysz);
 		T ni = m_Weight / (SQR(helper.In.x) + sysz);
 		T s = sin(helper.In.x);
 		T c = cos(helper.In.x);
@@ -3410,7 +3410,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sysz = SQR(helper.In.y) + SQR(helper.In.z);
-		T absV = sqrt(sysz);
+		T absV = std::sqrt(sysz);
 		T ni = m_Weight / (SQR(helper.In.x) + sysz);
 		T s = sin(absV);
 		T c = cos(absV);
@@ -3563,7 +3563,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sysz = SQR(helper.In.y) + SQR(helper.In.z);
-		T absV = sqrt(sysz);
+		T absV = std::sqrt(sysz);
 		T ni = m_Weight / (SQR(helper.In.x) + sysz);
 		T s = sin(helper.In.x);
 		T c = cos(helper.In.x);
@@ -3622,7 +3622,7 @@ public:
 	virtual void Func(IteratorHelper<T>& helper, Point<T>& outPoint, QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		T sysz = SQR(helper.In.y) + SQR(helper.In.z);
-		T absV = sqrt(sysz);
+		T absV = std::sqrt(sysz);
 		T ni = m_Weight / (SQR(helper.In.x) + sysz);
 		T s = sin(absV);
 		T c = cos(absV);
@@ -4023,7 +4023,7 @@ public:
 		T xx = (rand.Frand01<T>() - T(0.5)) * 2;
 		T yy = (rand.Frand01<T>() - T(0.5)) * 2;
 		T k = SignNz(yy);
-		T yymax = ((m_A * pow(fabs(xx), m_P) + k * m_B * sqrt(fabs(1 - SQR(xx)))) - m_A);
+		T yymax = ((m_A * pow(fabs(xx), m_P) + k * m_B * std::sqrt(fabs(1 - SQR(xx)))) - m_A);
 
 		//The function must be in a range 0-1 to work properly.
 		yymax /= Zeps(fabs(m_A) + fabs(m_B));
@@ -4381,7 +4381,7 @@ public:
 	{
 		m_OneOverEx = 1 / m_Exponent;
 		m_AbsSeed = fabs(m_Seed);
-		m_Seed2 = sqrt(Zeps(m_AbsSeed + (m_AbsSeed / 2))) / Zeps((m_AbsSeed * T(0.5))) * T(0.25);
+		m_Seed2 = std::sqrt(Zeps(m_AbsSeed + (m_AbsSeed / 2))) / Zeps((m_AbsSeed * T(0.5))) * T(0.25);
 		m_OneOverRmax = 1 / (T(0.5) * (pow(T(2), 1 / m_Exponent) - 1) * m_ArcWidth);
 		m_Scale = (cos(-m_Rotation) - sin(-m_Rotation)) / m_Weight;
 	}
@@ -4610,7 +4610,7 @@ public:
 			helper.Out.y = m_Weight * helper.In.y;
 			helper.Out.z = m_Weight * helper.In.z;
 
-			T t = m_Weight / Zeps((sqrt(SQR(helper.In.x)) + sqrt(helper.In.z) + sqrt(SQR(helper.In.y)) + sqrt(helper.In.z)));
+			T t = m_Weight / Zeps((std::sqrt(SQR(helper.In.x)) + std::sqrt(helper.In.z) + std::sqrt(SQR(helper.In.y)) + std::sqrt(helper.In.z)));
 
 			if (r >= 0)
 			{
@@ -4740,7 +4740,7 @@ public:
 		if (helper.In.x > 0)
 		{
 			c1mx = m_C1 - helper.In.x;
-			r = sqrt(SQR(c1mx) + SQR(helper.In.y));
+			r = std::sqrt(SQR(c1mx) + SQR(helper.In.y));
 
 			if (r <= m_R1)
 			{
@@ -4759,7 +4759,7 @@ public:
 		else
 		{
 			c1mx = -m_C2 - helper.In.x;
-			r = sqrt(SQR(c1mx) + SQR(helper.In.y));
+			r = std::sqrt(SQR(c1mx) + SQR(helper.In.y));
 
 			if (r <= m_R2)
 			{
@@ -5086,8 +5086,8 @@ public:
 		T tmp = helper.m_PrecalcSumSquares + 1;
 		T x2 = 2 * helper.In.x;
 		T y2 = 2 * helper.In.y;
-		T xmax = T(0.5) * (sqrt(tmp + x2) + sqrt(tmp - x2));
-		T ymax = T(0.5) * (sqrt(tmp + y2) + sqrt(tmp - y2));
+		T xmax = T(0.5) * (std::sqrt(tmp + x2) + std::sqrt(tmp - x2));
+		T ymax = T(0.5) * (std::sqrt(tmp + y2) + std::sqrt(tmp - y2));
 		T a = helper.In.x / Zeps(xmax);
 		T b = SafeSqrt(1 - SQR(a));
 
