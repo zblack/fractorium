@@ -249,6 +249,8 @@ public slots:
 	void OnXaosChanged(double d);
 	void OnClearXaosButtonClicked(bool checked);
 	void OnRandomXaosButtonClicked(bool checked);
+	void OnXaosRowDoubleClicked(int logicalIndex);
+	void OnXaosColDoubleClicked(int logicalIndex);
 
 	//Palette.
 	void OnPaletteFilenameComboChanged(const QString& text);
@@ -271,7 +273,7 @@ public:
 	//template<typename spinType, typename valType>//See below.
 	//static void SetupSpinner(QTableWidget* table, const QObject* receiver, int& row, int col, spinType*& spinBox, int height, valType min, valType max, valType step, const char* signal, const char* slot, bool incRow = true, valType val = 0, valType doubleClickZero = -999, valType doubleClickNonZero = -999);
 	static void SetupAffineSpinner(QTableWidget* table, const QObject* receiver, int row, int col, DoubleSpinBox*& spinBox, int height, double min, double max, double step, double prec, const char* signal, const char* slot);
-	static void SetupCombo(QTableWidget* table, const QObject* receiver, int& row, int col, StealthComboBox*& comboBox, vector<string>& vals, const char* signal, const char* slot, Qt::ConnectionType connectionType = Qt::QueuedConnection);
+	static void SetupCombo(QTableWidget* table, const QObject* receiver, int& row, int col, StealthComboBox*& comboBox, const vector<string>& vals, const char* signal, const char* slot, Qt::ConnectionType connectionType = Qt::QueuedConnection);
 	static void SetFixedTableHeader(QHeaderView* header, QHeaderView::ResizeMode mode = QHeaderView::Fixed);
 	static int FlipDet(Affine2D<float>& affine);
 

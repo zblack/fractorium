@@ -550,11 +550,11 @@ public:
 		CSimpleOpt::SOption endOption = SO_END_OF_OPTIONS;
 		entries.reserve(75);
 
-		ForEach(m_BoolArgs,   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		ForEach(m_IntArgs,    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		ForEach(m_UintArgs,   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		ForEach(m_DoubleArgs, [&](Eod* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
-		ForEach(m_StringArgs, [&](Eos* entry) { if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option); });
+		for (auto entry : m_BoolArgs)   if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option);
+		for (auto entry : m_IntArgs)    if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option);
+		for (auto entry : m_UintArgs)   if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option);
+		for (auto entry : m_DoubleArgs) if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option);
+		for (auto entry : m_StringArgs) if (entry->m_OptionUse & optUsage) entries.push_back(entry->m_Option);
 
 		entries.push_back(endOption);
 		return entries;
@@ -569,11 +569,11 @@ public:
 	{
 		ostringstream os;
 
-		ForEach(m_BoolArgs,   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		ForEach(m_IntArgs,    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		ForEach(m_UintArgs,   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		ForEach(m_DoubleArgs, [&](Eod* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
-		ForEach(m_StringArgs, [&](Eos* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl; });
+		for (auto entry : m_BoolArgs)   if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl;
+		for (auto entry : m_IntArgs)    if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl;
+		for (auto entry : m_UintArgs)   if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl;
+		for (auto entry : m_DoubleArgs) if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl;
+		for (auto entry : m_StringArgs) if (entry->m_OptionUse & optUsage) os << entry->m_DocString << endl;
 
 		return os.str();
 	}
@@ -588,11 +588,11 @@ public:
 		ostringstream os;
 
 		os << std::boolalpha;
-		ForEach(m_BoolArgs,   [&](Eob* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		ForEach(m_IntArgs,    [&](Eoi* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		ForEach(m_UintArgs,   [&](Eou* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		ForEach(m_DoubleArgs, [&](Eod* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
-		ForEach(m_StringArgs, [&](Eos* entry) { if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl; });
+		for (auto entry : m_BoolArgs)   if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl;
+		for (auto entry : m_IntArgs)    if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl;
+		for (auto entry : m_UintArgs)   if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl;
+		for (auto entry : m_DoubleArgs) if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl;
+		for (auto entry : m_StringArgs) if (entry->m_OptionUse & optUsage) os << entry->m_NameWithoutDashes << ": " << (*entry)() << endl;
 
 		return os.str();
 	}

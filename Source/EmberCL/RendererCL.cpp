@@ -1483,10 +1483,10 @@ void RendererCL<T>::FillSeeds()
 {
 	m_Seeds.resize(IterGridKernelCount());
 
-	for (size_t i = 0; i < m_Seeds.size(); i++)
+	for (auto& seed : m_Seeds)
 	{
-		m_Seeds[i].x = m_Rand[0].Rand();
-		m_Seeds[i].y = m_Rand[0].Rand();
+		seed.x = m_Rand[0].Rand();
+		seed.y = m_Rand[0].Rand();
 	}
 }
 

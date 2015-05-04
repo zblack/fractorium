@@ -365,11 +365,11 @@ public:
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (size_t i = 0; i < variations.size(); i++)
+			for (auto v : variations)
 			{
-				if (variations[i] != nullptr && variations[i]->VariationId() == id)
+				if (v != nullptr && v->VariationId() == id)
 				{
-					var = variations[i];
+					var = v;
 					keepGoing = false;
 					break;
 				}
@@ -390,11 +390,11 @@ public:
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (size_t i = 0; i < variations.size(); i++)
+			for (auto v : variations)
 			{
-				if (variations[i] != nullptr && variations[i]->Name() == name)
+				if (v != nullptr && v->Name() == name)
 				{
-					var = variations[i];
+					var = v;
 					keepGoing = false;
 					break;
 				}
@@ -593,8 +593,8 @@ public:
 		{
 			T norm = 0;
 
-			ForEach(variations, [&](Variation<T>* var) { norm += var->m_Weight; });
-			ForEach(variations, [&](Variation<T>* var) { var->m_Weight /= norm; });
+			for (auto var : variations) norm += var->m_Weight;
+			for (auto var : variations) var->m_Weight /= norm;
 		});
 	}
 
@@ -839,45 +839,30 @@ public:
 		m_HasPreOrRegularVars = PreVariationCount() > 0 || VariationCount() > 0;
 
 		//Only set precalcs for regular variations, they work differently for pre and post.
-		for (size_t i = 0; i < m_Variations.size(); i++)
+		for (auto var : m_Variations)
 		{
-			if (m_Variations[i]->NeedPrecalcSumSquares())
+			if (var->NeedPrecalcSumSquares())
 				m_NeedPrecalcSumSquares = true;
 
-			if (m_Variations[i]->NeedPrecalcSqrtSumSquares())
+			if (var->NeedPrecalcSqrtSumSquares())
 				m_NeedPrecalcSqrtSumSquares = true;
 
-			if (m_Variations[i]->NeedPrecalcAngles())
+			if (var->NeedPrecalcAngles())
 				m_NeedPrecalcAngles = true;
 
-			if (m_Variations[i]->NeedPrecalcAtanXY())
+			if (var->NeedPrecalcAtanXY())
 				m_NeedPrecalcAtanXY = true;
 
-			if (m_Variations[i]->NeedPrecalcAtanYX())
+			if (var->NeedPrecalcAtanYX())
 				m_NeedPrecalcAtanYX = true;
 		}
 
 		AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (size_t i = 0; i < variations.size(); i++)
+			for (auto var : variations)
 			{
-				/*if (variations[i]->NeedPrecalcSumSquares())
-					m_NeedPrecalcSumSquares = true;
-
-				if (variations[i]->NeedPrecalcSqrtSumSquares())
-					m_NeedPrecalcSqrtSumSquares = true;
-
-				if (variations[i]->NeedPrecalcAngles())
-					m_NeedPrecalcAngles = true;
-
-				if (variations[i]->NeedPrecalcAtanXY())
-					m_NeedPrecalcAtanXY = true;
-
-				if (variations[i]->NeedPrecalcAtanYX())
-					m_NeedPrecalcAtanYX = true;*/
-
-				variations[i]->ParentXform(this);
-				variations[i]->Precalc();
+				var->ParentXform(this);
+				var->Precalc();
 			}
 		});
 	}
@@ -925,10 +910,9 @@ public:
 		{
 			AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 			{
-				for (size_t i = 0; i < variations.size(); i++)
+				for (auto var : variations)
+				//for (size_t i = 0; i < variations.size(); i++)
 				{
-					Variation<T>* var = variations[i];
-
 					if (var->m_Weight != 0)//This should never happen, but just to be safe.
 					{
 						if (FindIf(names, [&] (const string& s) -> bool { return !_stricmp(s.c_str(), var->Name().c_str()); }))//If any variation is present, don't flatten.
@@ -942,14 +926,15 @@ public:
 					//Now traverse the parameters for this variation.
 					if (ParametricVariation<T>* parVar = dynamic_cast<ParametricVariation<T>*>(var))//If any parametric variation parameter is present and non-zero, don't flatten.
 					{
-						ForEach(names, [&] (const string& s)
+						for (auto& s : names)
 						{
 							if (parVar->GetParamVal(s.c_str()) != 0)
 							{
 								shouldFlatten = false;
 								keepGoing = false;
+								break;
 							}
-						});
+						}
 					}
 				}
 			});
@@ -1175,16 +1160,16 @@ public:
 
 		const_cast<Xform<T>*>(this)->AllVarsFunc([&] (vector<Variation<T>*>& variations, bool& keepGoing)
 		{
-			for (size_t i = 0; i < variations.size(); i++)
-				ss << variations[i]->ToString() << endl;
+			for (auto var : variations)
+				ss << var->ToString() << endl;
 
 			ss << endl;
 		});
 
 		if (XaosPresent())
 		{
-			for (size_t i = 0; i < m_Xaos.size(); i++)
-				ss << m_Xaos[i] << " ";
+			for (auto xaos : m_Xaos)
+				ss << xaos << " ";
 
 			ss << endl;
 		}

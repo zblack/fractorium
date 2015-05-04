@@ -134,8 +134,8 @@ void FractoriumOptionsDialog::OnPlatformComboCurrentIndexChanged(int index)
 
 	ui.DeviceCombo->clear();
 
-	for (size_t i = 0; i < devices.size(); i++)
-		ui.DeviceCombo->addItem(QString::fromStdString(devices[i]));
+	for (auto& device : devices)
+		ui.DeviceCombo->addItem(QString::fromStdString(device));
 
 	if (ui.PlatformCombo->currentIndex() == m_Settings->PlatformIndex())
 		ui.DeviceCombo->setCurrentIndex(m_Settings->DeviceIndex());

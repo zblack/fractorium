@@ -55,7 +55,7 @@ string IterOpenCLKernelCreator<T>::CreateIterKernelString(Ember<T>& ember, strin
 
 	xformFuncs << "\n" << parVarDefines << endl;
 	ember.GetPresentVariations(variations);
-	ForEach(variations, [&](Variation<T>* var) { if (var) xformFuncs << var->OpenCLFuncsString(); });
+	for (auto var : variations) if (var) xformFuncs << var->OpenCLFuncsString();
 
 	for (i = 0; i < totalXformCount; i++)
 	{

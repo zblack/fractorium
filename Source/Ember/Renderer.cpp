@@ -88,8 +88,8 @@ void Renderer<T, bucketT>::ComputeBounds()
 	//Check the size of the density estimation filter.
 	//If the radius of the density estimation filter is greater than the
 	//gutter width, have to pad with more.  Otherwise, use the same value.
-	for (size_t i = 0; i < m_Embers.size(); i++)
-		maxDEFilterWidth = std::max<size_t>(size_t(ceil(m_Embers[i].m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
+	for (auto& ember : m_Embers)
+		maxDEFilterWidth = std::max<size_t>(size_t(ceil(ember.m_MaxRadDE) * m_Ember.m_Supersample), maxDEFilterWidth);
 
 	//Need an extra ss = (int)floor(m_Supersample / 2.0) of pixels so that a local iteration count for DE can be determined.//SMOULDER
 	if (maxDEFilterWidth > 0)
@@ -748,16 +748,16 @@ bool Renderer<T, bucketT>::Alloc()
 		b &= (m_Samples.size() == m_ThreadsToUse);
 	}
 
-	for (size_t i = 0; i < m_Samples.size(); i++)
+	for (auto& sample : m_Samples)
 	{
-		if (m_Samples[i].size() != SubBatchSize())
+		if (sample.size() != SubBatchSize())
 		{
-			m_Samples[i].resize(SubBatchSize());
+			sample.resize(SubBatchSize());
 
 			if (m_ReclaimOnResize)
-				m_Samples[i].shrink_to_fit();
+				sample.shrink_to_fit();
 
-			b &= (m_Samples[i].size() == SubBatchSize());
+			b &= (sample.size() == SubBatchSize());
 		}
 	}
 
@@ -1215,6 +1215,9 @@ EmberStats Renderer<T, bucketT>::Iterate(size_t iterCount, size_t temporalSample
 	parallel_for(size_t(0), m_ThreadsToUse, [&] (size_t threadIndex)
 	{
 #endif
+#ifdef WIN32
+		//SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+#endif
 		//Timing t;
 		IterParams<T> params;
 
@@ -1441,7 +1444,7 @@ void Renderer<T, bucketT>::Accumulate(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand, Poin
 {
 	size_t histIndex, intColorIndex, histSize = m_HistBuckets.size();
 	bucketT colorIndex, colorIndexFrac;
-	const tvec4<bucketT, glm::defaultp>* dmap = &(palette->m_Entries[0]);
+	auto dmap = palette->m_Entries.data();
 	//T oneColDiv2 = m_CarToRas.OneCol() / 2;
 	//T oneRowDiv2 = m_CarToRas.OneRow() / 2;
 

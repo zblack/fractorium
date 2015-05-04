@@ -522,8 +522,8 @@ void FinalRenderEmberController<T>::SyncGuiToEmbers(size_t widthOverride, size_t
 {
 	if (m_FinalRenderDialog->ApplyToAll())
 	{
-		for (size_t i = 0; i < m_EmberFile.Size(); i++)
-			SyncGuiToEmber(m_EmberFile.m_Embers[i], widthOverride, heightOverride);
+		for (auto& ember : m_EmberFile.m_Embers)
+			SyncGuiToEmber(ember, widthOverride, heightOverride);
 	}
 	else
 	{

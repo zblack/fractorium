@@ -83,9 +83,9 @@ public:
 					f.write(temp.c_str(), temp.size());
 				}
 
-				for (size_t i = 0; i < embers.size(); i++)
+				for (auto& ember : embers)
 				{
-					string s = ToString(embers[i], "", printEditDepth, doEdits, intPalette, hexPalette);
+					string s = ToString(ember, "", printEditDepth, doEdits, intPalette, hexPalette);
 					f.write(s.c_str(), s.size());
 				}
 
@@ -202,7 +202,7 @@ public:
 		ember.GetPresentVariations(variations, false);
 
 		if (!variations.empty())
-			ForEach(variations, [&] (Variation<T>* var) { os << var->Name() << (var != variations.back() ? " " : "\""); });
+			for (auto var : variations) os << var->Name() << (var != variations.back() ? " " : "\"");
 		else
 			os << "\"";
 

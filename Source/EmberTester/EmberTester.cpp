@@ -1317,7 +1317,7 @@ void TestVarTime()
 	}
 
 	std::sort(times.begin(), times.end(), &SortPairByTime);
-	//ForEach(times, [&](pair<string, double>& p) { cout << p.first << "\t" << p.second << "" << endl; });
+	//forr (auto& p : times) cout << p.first << "\t" << p.second << "" << endl;
 }
 
 void TestCasting()

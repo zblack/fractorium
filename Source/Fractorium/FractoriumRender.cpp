@@ -212,9 +212,9 @@ eProcessAction FractoriumEmberControllerBase::CondenseAndClearProcessActions()
 	m_Cs.Enter();
 	eProcessAction action = NOTHING;
 
-	for (size_t i = 0; i < m_ProcessActions.size(); i++)
-		if (m_ProcessActions[i] > action)
-			action = m_ProcessActions[i];
+	for (auto a : m_ProcessActions)
+		if (a > action)
+			action = a;
 	
 	m_ProcessActions.clear();
 	m_Cs.Leave();
@@ -492,6 +492,7 @@ bool FractoriumEmberController<T>::Render()
 	//Upon finishing, or having nothing to do, rest.
 	if (ProcessState() == ACCUM_DONE)
 		QThread::msleep(1);
+		//QApplication::processEvents();
 
 	m_Rendering = false;
 	return success;

@@ -385,8 +385,8 @@ void FractoriumFinalRenderDialog::OnPlatformComboCurrentIndexChanged(int index)
 
 	ui.FinalRenderDeviceCombo->clear();
 
-	for (size_t i = 0; i < devices.size(); i++)
-		ui.FinalRenderDeviceCombo->addItem(QString::fromStdString(devices[i]));
+	for (auto& device : devices)
+		ui.FinalRenderDeviceCombo->addItem(QString::fromStdString(device));
 }
 
 /// <summary>

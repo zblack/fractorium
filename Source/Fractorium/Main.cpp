@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
 
 	Fractorium w;
 	w.show();
+	a.installEventFilter(&w);
 	return a.exec();
 }
 

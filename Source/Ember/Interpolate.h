@@ -472,8 +472,8 @@ public:
 	{
 		Xform<T> xform;
 
-		for (size_t xf = 0; xf < xforms.size(); xf++)
-			MergeXformVariations1Way(xforms[xf], &xform, false, clearWeights);
+		for (auto xf : xforms)
+			MergeXformVariations1Way(xf, &xform, false, clearWeights);
 
 		return xform;
 	}

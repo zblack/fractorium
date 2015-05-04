@@ -158,7 +158,7 @@ public:
 	virtual void XformWeightChanged(double d) { }
 	virtual void EqualizeWeights() { }
 	virtual void XformNameChanged(int row, int col) { }
-	virtual void FillXforms() { }
+	virtual void FillXforms(int index = 0) { }
 
 	//Xforms Affine.
 	virtual void AffineSetHelper(double d, int index, bool pre) { }
@@ -387,7 +387,7 @@ public:
 	virtual void XformWeightChanged(double d) override;
 	virtual void EqualizeWeights() override;
 	virtual void XformNameChanged(int row, int col) override;
-	virtual void FillXforms() override;
+	virtual void FillXforms(int index = 0) override;
 	void FillWithXform(Xform<T>* xform);
 	Xform<T>* CurrentXform();
 
@@ -421,7 +421,7 @@ public:
 	virtual void XaosChanged(DoubleSpinBox* sender) override;
 	virtual void ClearXaos() override;
 	virtual void RandomXaos() override;
-
+	
 	//Palette.
 	virtual int  InitPaletteList(const string& s) override;
 	virtual bool FillPaletteTable(const string& s) override;

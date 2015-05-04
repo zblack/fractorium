@@ -342,16 +342,16 @@ public:
 		ADDPREPOSTREGVAR(DCTriangle)
 		ADDPREPOSTREGVAR(DCZTransl)
 
-		ForEach(m_Variations, [&](Variation<T>* var) { var->Precalc(); });
+		for (auto var : m_Variations) var->Precalc();
 		std::sort(m_Variations.begin(), m_Variations.end(), [&](const Variation<T>* var1, const Variation<T>* var2) { return var1->VariationId() < var2->VariationId(); });
 
 		m_RegVariations.reserve(m_Variations.size()  / 3);
 		m_PreVariations.reserve(m_Variations.size()  / 3);
 		m_PostVariations.reserve(m_Variations.size() / 3);
 
-		ForEach(m_Variations, [&](Variation<T>* var) { if (var->VarType() == VARTYPE_REG)  m_RegVariations.push_back(var);  });
-		ForEach(m_Variations, [&](Variation<T>* var) { if (var->VarType() == VARTYPE_PRE)  m_PreVariations.push_back(var);  });
-		ForEach(m_Variations, [&](Variation<T>* var) { if (var->VarType() == VARTYPE_POST) m_PostVariations.push_back(var); });
+		for (auto var : m_Variations) if (var->VarType() == VARTYPE_REG)  m_RegVariations.push_back(var);
+		for (auto var : m_Variations) if (var->VarType() == VARTYPE_PRE)  m_PreVariations.push_back(var);
+		for (auto var : m_Variations) if (var->VarType() == VARTYPE_POST) m_PostVariations.push_back(var);
 
 		//Keep a list of which variations derive from ParametricVariation.
 		//Note that these are not new copies, rather just pointers to the original instances in m_Variations.

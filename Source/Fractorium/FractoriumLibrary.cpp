@@ -9,7 +9,6 @@ void Fractorium::InitLibraryUI()
 	connect(ui.LibraryTree, SIGNAL(itemChanged(QTreeWidgetItem*, int)),		  this, SLOT(OnEmberTreeItemChanged(QTreeWidgetItem*, int)),	   Qt::QueuedConnection);
 	connect(ui.LibraryTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(OnEmberTreeItemDoubleClicked(QTreeWidgetItem*, int)), Qt::QueuedConnection);
 	connect(ui.LibraryTree, SIGNAL(itemActivated(QTreeWidgetItem*, int)),	  this, SLOT(OnEmberTreeItemDoubleClicked(QTreeWidgetItem*, int)), Qt::QueuedConnection);
-	ui.LibraryTree->installEventFilter(this);//Needed for keypress events other than enter.
 }
 
 

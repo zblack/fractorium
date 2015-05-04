@@ -1261,11 +1261,9 @@ private:
 	/// <returns>The corrected name if one was found, else the passed in name.</returns>
 	static string GetCorrectedParamName(vector<pair<string, string>>& vec, const char* name)
 	{
-		for (size_t i = 0; i < vec.size(); i++)
-		{
-			if (!_stricmp(vec[i].first.c_str(), name))
-				return vec[i].second;
-		}
+		for (auto& v : vec)
+			if (!_stricmp(v.first.c_str(), name))
+				return v.second;
 
 		return name;
 	}
@@ -1281,21 +1279,21 @@ private:
 	/// <returns>The corrected name if one was found, else the passed in name.</returns>
 	static string GetCorrectedVariationName(vector<pair<pair<string, string>, vector<string>>>& vec, xmlAttrPtr att)
 	{
-		for (size_t i = 0; i < vec.size(); i++)
+		for (auto& v : vec)
 		{
-			if (!_stricmp(vec[i].first.first.c_str(), CCX(att->name)))//Do case insensitive here.
+			if (!_stricmp(v.first.first.c_str(), CCX(att->name)))//Do case insensitive here.
 			{
-				if (!vec[i].second.empty())
+				if (!v.second.empty())
 				{
-					for (size_t j = 0; j < vec[i].second.size(); j++)
+					for (size_t j = 0; j < v.second.size(); j++)
 					{
-						if (XmlContainsTag(att, vec[i].second[j].c_str()))
-							return vec[i].first.second;
+						if (XmlContainsTag(att, v.second[j].c_str()))
+							return v.first.second;
 					}
 				}
 				else
 				{
-					return vec[i].first.second;
+					return v.first.second;
 				}
 			}
 		}

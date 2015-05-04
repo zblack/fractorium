@@ -6,8 +6,15 @@
 /// </summary>
 void Fractorium::InitXaosUI()
 {
+	ui.XaosTable->verticalHeader()->setVisible(true);
+	ui.XaosTable->horizontalHeader()->setVisible(true);
+	ui.XaosTable->verticalHeader()->setSectionsClickable(true);
+	ui.XaosTable->horizontalHeader()->setSectionsClickable(true);
+
 	connect(ui.ClearXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnClearXaosButtonClicked(bool)), Qt::QueuedConnection);
 	connect(ui.RandomXaosButton, SIGNAL(clicked(bool)), this, SLOT(OnRandomXaosButtonClicked(bool)), Qt::QueuedConnection);
+	connect(ui.XaosTable->verticalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(OnXaosRowDoubleClicked(int)), Qt::QueuedConnection);
+	connect(ui.XaosTable->horizontalHeader(), SIGNAL(sectionDoubleClicked(int)), this, SLOT(OnXaosColDoubleClicked(int)), Qt::QueuedConnection);
 }
 
 /// <summary>
@@ -92,11 +99,6 @@ void Fractorium::FillXaosTable()
 	ui.XaosTable->setRowCount(count);//This will grow or shrink the number of rows and call the destructor for previous DoubleSpinBoxes.
 	ui.XaosTable->setColumnCount(count);
 
-	ui.XaosTable->verticalHeader()->setVisible(true);
-	ui.XaosTable->horizontalHeader()->setVisible(true);
-	ui.XaosTable->verticalHeader()->setSectionsClickable(false);
-	ui.XaosTable->horizontalHeader()->setSectionsClickable(false);
-
 	for (int i = 0; i < count; i++)
 	{
 		for (int j = 0; j < count; j++)
@@ -159,7 +161,6 @@ void Fractorium::OnClearXaosButtonClicked(bool checked) { m_Controller->ClearXao
 /// 50% that they're 0-3.
 /// Resets the rendering process.
 /// </summary>
-/// <param name="checked">Ignored</param>
 template <typename T>
 void FractoriumEmberController<T>::RandomXaos()
 {
@@ -184,6 +185,78 @@ void FractoriumEmberController<T>::RandomXaos()
 }
 
 void Fractorium::OnRandomXaosButtonClicked(bool checked) { m_Controller->RandomXaos(); }
+
+/// <summary>
+/// Toggle all xaos values in one row.
+/// The logic is:
+///		If any cell in the row is non zero, set all cells to zero, else 1.
+///		If shift is held down, reverse the logic.
+/// Resets the rendering process.
+/// </summary>
+/// <param name="logicalIndex">The index of the row that was double clicked</param>
+void Fractorium::OnXaosRowDoubleClicked(int logicalIndex)
+{
+	bool allZero = true;
+	int cols = ui.XaosTable->columnCount();
+	bool shift = QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+
+	for (int i = 0; i < cols; i++)
+	{
+		if (auto* spinBox = dynamic_cast<DoubleSpinBox*>(ui.XaosTable->cellWidget(logicalIndex, i)))
+		{
+			if (!IsNearZero(spinBox->value()))
+			{
+				allZero = false;
+				break;
+			}
+		}
+	}
+
+	if (shift)
+		allZero = !allZero;
+
+	double val = allZero ? 1.0 : 0.0;
+
+	for (int i = 0; i < cols; i++)
+		if (auto* spinBox = dynamic_cast<DoubleSpinBox*>(ui.XaosTable->cellWidget(logicalIndex, i)))
+			spinBox->setValue(val);
+}
+
+/// <summary>
+/// Toggle all xaos values in one column.
+/// The logic is:
+///		If any cell in the column is non zero, set all cells to zero, else 1.
+///		If shift is held down, reverse the logic.
+/// Resets the rendering process.
+/// </summary>
+/// <param name="logicalIndex">The index of the column that was double clicked</param>
+void Fractorium::OnXaosColDoubleClicked(int logicalIndex)
+{
+	bool allZero = true;
+	int rows = ui.XaosTable->rowCount();
+	bool shift = QGuiApplication::keyboardModifiers().testFlag(Qt::ShiftModifier);
+
+	for (int i = 0; i < rows; i++)
+	{
+		if (auto* spinBox = dynamic_cast<DoubleSpinBox*>(ui.XaosTable->cellWidget(i, logicalIndex)))
+		{
+			if (!IsNearZero(spinBox->value()))
+			{
+				allZero = false;
+				break;
+			}
+		}
+	}
+
+	if (shift)
+		allZero = !allZero;
+
+	double val = allZero ? 1.0 : 0.0;
+
+	for (int i = 0; i < rows; i++)
+		if (auto* spinBox = dynamic_cast<DoubleSpinBox*>(ui.XaosTable->cellWidget(i, logicalIndex)))
+			spinBox->setValue(val);
+}
 
 template class FractoriumEmberController<float>;
 

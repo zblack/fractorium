@@ -109,8 +109,8 @@ void FractoriumEmberController<T>::AddXform()
 		newXform.m_Weight = 0.25;
 		newXform.m_ColorX = m_Rand.Frand01<T>();
 		m_Ember.AddXform(newXform);
-		FillXforms();
-		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+		int index = m_Ember.TotalXformCount() - (m_Ember.UseFinalXform() ? 2 : 1);//Set index to the last item before final.
+		FillXforms(index);
 	});
 }
 
@@ -141,8 +141,8 @@ void FractoriumEmberController<T>::DuplicateXform()
 		for (auto& it : vec)
 			m_Ember.AddXform(it);
 		
-		FillXforms();//Handles xaos.
-		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+		int index = m_Ember.TotalXformCount() - (m_Ember.UseFinalXform() ? 2 : 1);//Set index to the last item before final.
+		FillXforms(index);//Handles xaos.
 	});
 }
 
@@ -224,8 +224,8 @@ void FractoriumEmberController<T>::DeleteXforms()
 
 	if (offset)
 	{
-		FillXforms();
-		combo->setCurrentIndex(combo->count() - (m_Ember.UseFinalXform() ? 2 : 1));//Set index to the last item before final. Note final is requeried one last time.
+		int index = m_Ember.TotalXformCount() - (m_Ember.UseFinalXform() ? 2 : 1);//Set index to the last item before final. Note final is requeried one last time.
+		FillXforms(index);
 		UpdateRender();
 	}
 }
@@ -252,8 +252,8 @@ void FractoriumEmberController<T>::AddFinalXform()
 
 			final.AddVariation(new LinearVariation<T>());//Just a placeholder so other parts of the code don't see it as being empty.
 			m_Ember.SetFinalXform(final);
-			FillXforms();
-			combo->setCurrentIndex(combo->count() - 1);//Set index to the last item.
+			int index = m_Ember.TotalXformCount() - 1;//Set index to the last item.
+			FillXforms(index);
 		});
 	}
 }
@@ -374,12 +374,13 @@ bool FractoriumEmberController<T>::IsFinal(Xform<T>* xform)
 
 /// <summary>
 /// Fill the xforms combo box with the xforms in the current ember.
-/// Select the first one and fill all widgets with its values.
+/// Select the index passed in and fill all widgets with its values.
 /// Also dynamically generate a checkbox for each xform which will allow the user
 /// to select which xforms to apply operations to.
 /// </summary>
+/// <param name="index">The index to select after populating, default 0.</param>
 template <typename T>
-void FractoriumEmberController<T>::FillXforms()
+void FractoriumEmberController<T>::FillXforms(int index)
 {
 	int i = 0, count = int(XformCount());
 	auto combo = m_Fractorium->ui.CurrentXformCombo;
@@ -435,11 +436,13 @@ void FractoriumEmberController<T>::FillXforms()
 	
 	m_Fractorium->m_XformsSelectionLayout->blockSignals(false);
 	combo->blockSignals(false);
-	combo->setCurrentIndex(0);
+
+	if (index < combo->count())
+		combo->setCurrentIndex(index);
 	
 	m_Fractorium->FillXaosTable();
 	m_Fractorium->OnSoloXformCheckBoxStateChanged(Qt::Unchecked);
-	m_Fractorium->OnCurrentXformComboChanged(0);//Make sure the event gets called, because it won't if the zero index is already selected.
+	m_Fractorium->OnCurrentXformComboChanged(index);//Make sure the event gets called, because it won't if the zero index is already selected.
 }
 
 template class FractoriumEmberController<float>;

@@ -51,6 +51,6 @@ void Fractorium::ErrorReportToQTextEdit(const vector<string>& errors, QTextEdit*
 	if (clear)
 		QMetaObject::invokeMethod(textEdit, "clear", Qt::QueuedConnection);
 
-	for (size_t i = 0; i < errors.size(); i++)
-		QMetaObject::invokeMethod(textEdit, "append", Qt::QueuedConnection, Q_ARG(const QString&, QString::fromStdString(errors[i]) + "\n"));
+	for (auto& error : errors)
+		QMetaObject::invokeMethod(textEdit, "append", Qt::QueuedConnection, Q_ARG(const QString&, QString::fromStdString(error) + "\n"));
 }

@@ -64,7 +64,7 @@ void FractoriumEmberController<T>::SetupVariationTree()
 		{
 			ParamWithName<T>* params = parVar->Params();
 
-			for (size_t j = 0; j< parVar->ParamCount(); j++)
+			for (size_t j = 0; j < parVar->ParamCount(); j++)
 			{
 				if (!params[j].IsPrecalc())
 				{

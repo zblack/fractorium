@@ -22,18 +22,6 @@ static inline bool FindIf(c& container, pr pred)
 }
 
 /// <summary>
-/// Thin wrapper around std::for_each() to relieve the caller of having to
-/// pass the implicitly obvious .begin() and .end().
-/// </summary>
-/// <param name="container">The container to call for_each() on</param>
-/// <param name="pred">The lambda to call on each element</param>
-template<class c, class fn>
-static inline void ForEach(c& container, fn func)
-{
-	std::for_each(container.begin(), container.end(), func);
-}
-
-/// <summary>
 /// Thin wrapper around computing the total size of a vector.
 /// </summary>
 /// <param name="vec">The vector to compute the size of</param>
@@ -149,7 +137,7 @@ public:
 	{
 		stringstream ss;
 
-		ForEach(errorReport, [&](const string& s) { ss << s << endl; });
+		for (auto& s : errorReport) ss << s << endl;
 
 		return ss.str();
 	}

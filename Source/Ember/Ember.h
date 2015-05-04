@@ -543,7 +543,7 @@ public:
 	{
 		bool b = false;
 
-		ForEach(m_Xforms, [&](const Xform<T>& xform) { b |= xform.XaosPresent(); });//If at least one entry is not equal to 1, then xaos is present.
+		for (auto& xform : m_Xforms) b |= xform.XaosPresent();//If at least one entry is not equal to 1, then xaos is present.
 
 		return b;
 	}
@@ -553,7 +553,7 @@ public:
 	/// </summary>
 	void ClearXaos()
 	{
-		ForEach(m_Xforms, [&](Xform<T>& xform) { xform.ClearXaos(); });
+		for (auto& xform : m_Xforms) xform.ClearXaos();
 	}
 
 	/// <summary>
@@ -605,7 +605,7 @@ public:
 	{
 		T weight = T(1) / m_Xforms.size();
 
-		ForEach(m_Xforms, [&](Xform<T>& xform) { xform.m_Weight = weight; });
+		for (auto& xform : m_Xforms) xform.m_Weight = weight;
 	}
 
 	/// <summary>
@@ -620,8 +620,8 @@ public:
 		if (normalizedWeights.size() != m_Xforms.size())
 			normalizedWeights.resize(m_Xforms.size());
 
-		ForEach(m_Xforms, [&](Xform<T>& xform) { norm += xform.m_Weight; });
-		ForEach(normalizedWeights, [&](T& weight) { weight = (norm == T(0) ? T(0) : m_Xforms[i].m_Weight / norm); i++; });
+		for (auto& xform : m_Xforms) norm += xform.m_Weight;
+		for (auto& weight : normalizedWeights) { weight = (norm == T(0) ? T(0) : m_Xforms[i].m_Weight / norm); i++; }
 	}
 
 	/// <summary>
@@ -635,7 +635,8 @@ public:
 		size_t i = 0, xformIndex = 0, totalVarCount = m_FinalXform.TotalVariationCount();
 
 		variations.clear();
-		ForEach(m_Xforms, [&](const Xform<T>& xform) { totalVarCount += xform.TotalVariationCount(); });
+		for (auto& xform : m_Xforms) totalVarCount += xform.TotalVariationCount();
+
 		variations.reserve(totalVarCount);
 
 		while (Xform<T>* xform = GetTotalXform(xformIndex++))
@@ -672,7 +673,7 @@ public:
 	{
 		bool flattened = false;
 
-		ForEach(m_Xforms, [&](Xform<T>& xform) { flattened |= xform.Flatten(names); });
+		for (auto& xform : m_Xforms) flattened |= xform.Flatten(names);
 
 		return flattened;
 	}
@@ -685,12 +686,12 @@ public:
 	{
 		bool unflattened = false;
 
-		ForEach(m_Xforms, [&](Xform<T>& xform)
+		for (auto& xform : m_Xforms)
 		{
 			unflattened |= xform.DeleteVariationById(VAR_PRE_FLATTEN);
 			unflattened |= xform.DeleteVariationById(VAR_FLATTEN);
 			unflattened |= xform.DeleteVariationById(VAR_POST_FLATTEN);
-		});
+		}
 
 		return unflattened;
 	}

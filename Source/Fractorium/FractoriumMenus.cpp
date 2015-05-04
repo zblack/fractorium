@@ -323,8 +323,8 @@ void FractoriumEmberController<T>::SaveEntireFileAsXml()
 		SaveCurrentToOpenedFile();//Save the current ember back to the opened file before writing to disk.
 		emberFile = m_EmberFile;
 
-		for (size_t i = 0; i < emberFile.Size(); i++)
-			ApplyXmlSavingTemplate(emberFile.m_Embers[i]);
+		for (auto& ember : emberFile.m_Embers)
+			ApplyXmlSavingTemplate(ember);
 
 		if (writer.Save(filename.toStdString().c_str(), emberFile.m_Embers, 0, true, false, true))
 		{
@@ -479,9 +479,9 @@ void FractoriumEmberController<T>::CopyAllXml()
 
 	os << "<flames>\n";
 
-	for (size_t i = 0; i < m_EmberFile.Size(); i++)
+	for (auto& e : m_EmberFile.m_Embers)
 	{
-		Ember<T> ember = m_EmberFile.m_Embers[i];
+		Ember<T> ember = e;
 
 		ApplyXmlSavingTemplate(ember);
 		os << emberToXml.ToString(ember, "", 0, false, false, true);
@@ -621,8 +621,8 @@ void FractoriumEmberController<T>::AddReflectiveSymmetry()
 	Update([&]()
 	{
 		m_Ember.AddSymmetry(-1, m_Rand);
-		FillXforms();
-		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+		int index = m_Ember.TotalXformCount() - (m_Ember.UseFinalXform() ? 2 : 1);//Set index to the last item before final.
+		FillXforms(index);
 	});
 }
 
@@ -640,8 +640,8 @@ void FractoriumEmberController<T>::AddRotationalSymmetry()
 	Update([&]()
 	{
 		m_Ember.AddSymmetry(2, m_Rand);
-		FillXforms();
-		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+		int index = m_Ember.TotalXformCount() - (m_Ember.UseFinalXform() ? 2 : 1);//Set index to the last item before final.
+		FillXforms(index);
 	});
 }
 
@@ -659,8 +659,8 @@ void FractoriumEmberController<T>::AddBothSymmetry()
 	Update([&]()
 	{
 		m_Ember.AddSymmetry(-2, m_Rand);
-		FillXforms();
-		combo->setCurrentIndex(combo->count() - (m_Fractorium->HaveFinal() ? 2 : 1));//Set index to the last item before final.
+		int index = m_Ember.TotalXformCount() - (m_Ember.UseFinalXform() ? 2 : 1);//Set index to the last item before final.
+		FillXforms(index);
 	});
 }
 
@@ -705,7 +705,6 @@ void FractoriumEmberController<T>::ClearFlame()
 		}
 
 		FillXforms();
-		m_Fractorium->ui.CurrentXformCombo->setCurrentIndex(0);
 	});
 }
 

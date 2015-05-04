@@ -1678,11 +1678,14 @@ public:
 	{
 		bool b = false;
 
-		ForEach(m_Params, [&](ParamWithName<T>& param)
+		for (auto& param : m_Params)
 		{
 			if (!_stricmp(param.Name().c_str(), name))
+			{
 				b = true;
-		});
+				break;
+			}
+		}
 
 		return b;
 	}
@@ -1694,9 +1697,9 @@ public:
 	/// <returns>A pointer to the parameter value if the name matched, else false.</returns>
 	T* GetParam(const char* name)
 	{
-		for (size_t i = 0; i < m_Params.size(); i++)
-			if (!_stricmp(m_Params[i].Name().c_str(), name))
-				return m_Params[i].Param();
+		for (auto& param : m_Params)
+			if (!_stricmp(param.Name().c_str(), name))
+				return param.Param();
 
 		return nullptr;
 	}
@@ -1708,9 +1711,9 @@ public:
 	/// <returns>A parameter value if the name matched, else 0.</returns>
 	T GetParamVal(const char* name) const
 	{
-		for (size_t i = 0; i < m_Params.size(); i++)
-			if (!_stricmp(m_Params[i].Name().c_str(), name))
-				return m_Params[i].ParamVal();
+		for (auto& param : m_Params)
+			if (!_stricmp(param.Name().c_str(), name))
+				return param.ParamVal();
 
 		return 0;
 	}
@@ -1725,14 +1728,15 @@ public:
 	{
 		bool b = false;
 
-		ForEach(m_Params, [&](ParamWithName<T>& param)
+		for (auto& param : m_Params)
 		{
 			if (!_stricmp(param.Name().c_str(), name))
 			{
 				param.Set(val);
 				b = true;
+				break;
 			}
-		});
+		}
 
 		if (b)
 			this->Precalc();
@@ -1772,7 +1776,7 @@ public:
 	virtual void Random(QTIsaac<ISAAC_SIZE, ISAAC_INT>& rand) override
 	{
 		Variation<T>::Random(rand);
-		ForEach(m_Params, [&](ParamWithName<T>& param) { param.Set(rand.Frand11<T>()); });
+		for (auto& param : m_Params) param.Set(rand.Frand11<T>());
 		this->Precalc();
 	}
 
@@ -1781,7 +1785,7 @@ public:
 	/// </summary>
 	void Clear()
 	{
-		ForEach(m_Params, [&](ParamWithName<T>& param) { *(param.Param()) = 0; });
+		for (auto& param : m_Params) *(param.Param()) = 0;
 		this->Precalc();
 	}
 
@@ -1795,11 +1799,11 @@ public:
 		vector<string> vec;
 
 		vec.reserve(m_Params.size());
-		ForEach(m_Params, [&](const ParamWithName<T>& param)
+		for (auto& param : m_Params)
 		{
 			if ((includePrecalcs && param.IsPrecalc()) || !param.IsPrecalc())
 				vec.push_back(param.Name());
-		});
+		}
 
 		return vec;
 	}
@@ -1813,7 +1817,7 @@ public:
 		ostringstream ss;
 
 		ss << Variation<T>::ToString() << endl;
-		ForEach(m_Params, [&](const ParamWithName<T>& param) { ss << param.ToString() << endl; });
+		for (auto& param : m_Params) ss << param.ToString() << endl;
 
 		return ss.str();
 	}

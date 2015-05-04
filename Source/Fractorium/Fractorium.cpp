@@ -139,7 +139,7 @@ Fractorium::Fractorium(QWidget* p)
 	ui.GeometryTable->setStyleSheet("QTableWidget::item { padding: 1px; }");
 	ui.FilterTable->setStyleSheet("QTableWidget::item { padding: 1px; }");
 	ui.IterationTable->setStyleSheet("QTableWidget::item { padding: 1px; }");
-	ui.AffineTab->setStyleSheet("QTableWidget::item { padding: 1px; }");
+	ui.XformAffineTab->setStyleSheet("QTableWidget::item { padding: 1px; }");
 	ui.XformWeightNameTable->setStyleSheet("QTableWidget::item { padding: 0px; }");
 	ui.XformColorIndexTable->setStyleSheet("QTableWidget::item { padding: 1px; }");
 	ui.XformColorValuesTable->setStyleSheet("QTableWidget::item { padding: 1px; }");
@@ -153,8 +153,6 @@ Fractorium::Fractorium(QWidget* p)
 	SetCoordinateStatus(0, 0, 0, 0);
 
 	SetTabOrders();
-	ui.GLParentScrollArea->installEventFilter(this);
-	
 	//At this point, everything has been setup except the renderer. Shortly after
 	//this constructor exits, GLWidget::InitGL() will create the initial flock and start the rendering timer
 	//which executes whenever the program is idle. Upon starting the timer, the renderer
@@ -278,11 +276,17 @@ bool Fractorium::eventFilter(QObject* o, QEvent* e)
 	{
 		m_WidthSpin->DoubleClickNonZero(ui.GLParentScrollArea->width());
 		m_HeightSpin->DoubleClickNonZero(ui.GLParentScrollArea->height());
-		//qDebug() << "scroll area resized";
 	}
-	else if (o == ui.LibraryTree)
+	else if (QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e))
 	{
-		if (QKeyEvent* ke = dynamic_cast<QKeyEvent*>(e))
+		if (ke->key() >= Qt::Key_F1 && ke->key() <= Qt::Key_F32)
+		{
+			int val = ke->key() - (int)Qt::Key_F1;
+
+			if (val < ui.CurrentXformCombo->count())
+				ui.CurrentXformCombo->setCurrentIndex(val);
+		}
+		else if (o == ui.LibraryTree)
 		{
 			if (ke->key() == Qt::Key_Delete && e->type() == QEvent::KeyRelease)
 			{
@@ -401,10 +405,10 @@ void Fractorium::dropEvent(QDropEvent* e)
 /// <param name="signal">The signal the combo box emits</param>
 /// <param name="slot">The slot to receive the signal</param>
 /// <param name="connectionType">Type of the connection. Default: Qt::QueuedConnection.</param>
-void Fractorium::SetupCombo(QTableWidget* table, const QObject* receiver, int& row, int col, StealthComboBox*& comboBox, vector<string>& vals, const char* signal, const char* slot, Qt::ConnectionType connectionType)
+void Fractorium::SetupCombo(QTableWidget* table, const QObject* receiver, int& row, int col, StealthComboBox*& comboBox, const vector<string>& vals, const char* signal, const char* slot, Qt::ConnectionType connectionType)
 {
 	comboBox = new StealthComboBox(table);
-	ForEach(vals, [&](const string& s) { comboBox->addItem(s.c_str()); });
+	for (auto& s : vals) comboBox->addItem(s.c_str());
 	table->setCellWidget(row, col, comboBox);
 	connect(comboBox, signal, receiver, slot, connectionType);
 	row++;

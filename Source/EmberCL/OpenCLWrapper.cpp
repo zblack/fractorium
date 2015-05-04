@@ -96,11 +96,11 @@ bool OpenCLWrapper::AddProgram(const string& name, const string& program, const 
 
 	if (CreateSPK(name, program, entryPoint, spk, doublePrecision))
 	{
-		for (size_t i = 0; i < m_Programs.size(); i++)
+		for (auto& program : m_Programs)
 		{
-			if (name == m_Programs[i].m_Name)
+			if (name == program.m_Name)
 			{
-				m_Programs[i] = spk;
+				program = spk;
 				return true;
 			}
 		}
